@@ -127,7 +127,7 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
-        upload-path="inspectStd"
+        upload-path="quality/inspectStd"
         :is-hand-delete="true"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
@@ -142,7 +142,7 @@
     :close-on-overlay-click="false"
     :header="formTitle"
     confirm-btn="保存"
-    width="95%"
+    width="98%"
     @confirm="onConfirmDtl"
   >
     <touchstoneForm ref="dtlFormRef"></touchstoneForm>
@@ -159,7 +159,6 @@ import { Ref, ref } from 'vue';
 import { api as apiMain } from '@/api/main';
 import { api } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import touchstoneForm from './touchstoneForm.vue';
@@ -422,6 +421,14 @@ const delBatch = async () => {
 
 // // 上传文件
 const fileList = ref([]);
+const getStdFileList = async () => {
+  const res = (await api.iqcInspectStd.getStdFile({
+    inspectionId: formData.value.id,
+  })) as any;
+  if (res) {
+    fileList.value = res;
+  }
+};
 
 const uploadSuccess = (file: AddFileType) => {
   MessagePlugin.info(`上传文件成功`);
@@ -680,6 +687,7 @@ defineExpose({
   fileList,
   getDtlById,
   getAllDtlById,
+  getStdFileList,
   getAllDtlFormCache,
   butControl,
   submitButControl,

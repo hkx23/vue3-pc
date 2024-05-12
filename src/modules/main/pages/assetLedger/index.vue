@@ -804,18 +804,10 @@ const onDelConfirm = async () => {
 
 // 批量删除
 const deleteBatches = async () => {
-  // 步骤 1: 检查删除前的数据总量
-  const initialLength = anomalyTypeData.list.length;
-  // 步骤 2: 执行删除操作
   await api.assetLedger.removeBatch(selectedRowKeys.value);
-  // 步骤 3: 检查当前页是否还有数据
-  if (initialLength === anomalyTypeData.list.length && pageUI.value.page > 1) {
-    // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
-    pageUI.value.page--;
-    await onGetAnomalyTypeData(); // 重新渲染数组
-    selectedRowKeys.value = [];
-    MessagePlugin.success('批量删除成功');
-  }
+  await onGetAnomalyTypeData(); // 重新渲染数组
+  selectedRowKeys.value = [];
+  MessagePlugin.success('批量删除成功');
 };
 
 // 关闭模态框事件

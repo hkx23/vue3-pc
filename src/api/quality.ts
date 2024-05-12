@@ -2669,10 +2669,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 业务类型名称 */
-  businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 业务类型名称 */
+  businessCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -3246,10 +3246,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3282,8 +3282,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3965,10 +3965,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -4570,11 +4570,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
   iqcInspectDtlId?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5772,13 +5772,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
   s3?: string;
-  iii?: string;
-  ii?: string;
   s2?: string;
-  s1?: string;
+  ii?: string;
+  iii?: string;
   i?: string;
+  s1?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */
@@ -5927,6 +5927,19 @@ export interface ResultBigDecimal {
   message?: string;
   /** 响应数据 */
   data?: number | null;
+}
+
+/** 通用响应类 */
+export interface ResultListFileUpload {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: FileUpload[] | null;
 }
 
 /** 通用响应类 */
@@ -7406,6 +7419,21 @@ export const api = {
       http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/addAndTemporaryStorage`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准头表
+     * @name GetStdFile
+     * @summary 获取标准的附件
+     * @request GET:/iqcInspectStd/getStdFile
+     * @secure
+     */
+    getStdFile: (query: { inspectionId: string }) =>
+      http.request<ResultListFileUpload['data']>(`/api/quality/iqcInspectStd/getStdFile`, {
+        method: 'GET',
+        params: query,
       }),
   },
   iqcInspectRecheckDtlFile: {
