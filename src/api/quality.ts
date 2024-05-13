@@ -2093,6 +2093,7 @@ export interface OqcInspectStdSearch {
 }
 
 export interface FileUpload {
+  filePath?: string;
   fileName?: string;
   signedUrl?: string;
   operateType?: string;
@@ -2667,12 +2668,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
+  /** 业务类型名称 */
+  businessCategoryName?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
-  /** 业务类型名称 */
-  businessCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -3246,10 +3247,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3282,8 +3283,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3965,10 +3966,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 停留时长 */
-  waitTime?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -4570,11 +4571,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
   iqcInspectDtlId?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5576,10 +5577,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5772,13 +5773,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s1?: string;
   s3?: string;
   s2?: string;
-  ii?: string;
+  s4?: string;
   iii?: string;
   i?: string;
-  s1?: string;
-  s4?: string;
+  ii?: string;
 } | null;
 
 /** 标签模板 */

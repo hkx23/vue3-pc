@@ -271,7 +271,7 @@ const onPrintChange = async (value: any, context) => {
 // 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async (moScheId) => {
-  const res = await api.pqcInspectFirst.getPrintTmplList({ moScheId });
+  const res = await api.pqcInspectPatrol.getPrintTmplList({ moScheId });
   onPrintTemplateList.list = res;
 };
 
@@ -292,19 +292,11 @@ const onPrint = async () => {
     selectedRowKeys.value.forEach((id) => {
       const foundItem = tableData.value.find((item) => item.id === id);
       const DataBase = {
-        SERIAL_NUMBER: foundItem.serialNumber,
-        TIME_CREATE: new Date(),
-        QTY: foundItem.wipNum,
-        MITEM_CODE: foundItem.mitemCode,
-        MITEM_NAME: foundItem.mitemName,
-        SCHE_CODE: foundItem.scheCode,
-        WC_NAME: foundItem.workcenterName,
-        DATETIME_SCHE: foundItem.datetimeSche,
-        ORG_NAME: foundItem.orgName,
+        ...foundItem,
       };
       printData.value.push({
         variable: DataBase,
-        datasource: { DataBase },
+        datasource: { Body: DataBase },
       });
     });
 

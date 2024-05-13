@@ -327,19 +327,11 @@ const onPrint = async () => {
     selectedRowKeys.value.forEach((id) => {
       const foundItem = tableData.value.find((item) => item.id === id);
       const DataBase = {
-        SERIAL_NUMBER: foundItem.serialNumber,
-        TIME_CREATE: new Date(),
-        QTY: foundItem.wipNum,
-        MITEM_CODE: foundItem.mitemCode,
-        MITEM_NAME: foundItem.mitemName,
-        SCHE_CODE: foundItem.scheCode,
-        WC_NAME: foundItem.workcenterName,
-        DATETIME_SCHE: foundItem.datetimeSche,
-        ORG_NAME: foundItem.orgName,
+        ...foundItem,
       };
       printData.value.push({
         variable: DataBase,
-        datasource: { DataBase },
+        datasource: { Body: DataBase },
       });
     });
 

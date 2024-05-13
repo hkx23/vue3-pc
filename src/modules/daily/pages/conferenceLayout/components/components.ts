@@ -8,7 +8,7 @@ import PoductionAchievementRateRanking from '@/pages/dashboard/base/components/p
 // demo
 import LineChart from './demo/LineChart.vue';
 import PieChart from './demo/PieChart.vue';
-// 所有二开的看板都需要在此初始化
+// 所有二开的看板都需要在此初始化    (注意: 组件需要暴露出refresh事件方法, 否则无法刷新组件)
 export const components = [
   {
     code: 'often-use-menu',
