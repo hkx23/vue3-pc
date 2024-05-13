@@ -10,7 +10,7 @@
         <t-col :flex="0.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
       <t-row :full="true">
-        <hr size="5" width="2000px" color="#808080" />
+        <hr size="1" width="2000px" color="#808080" />
       </t-row>
       <t-descriptions :column="4" :label-style="{ width: '130px' }">
         <t-descriptions-item label="工作中心" name="wcName">{{ headerDate.wcName }}</t-descriptions-item>
@@ -34,10 +34,8 @@
         <t-descriptions-item label="附件" name="attachment"
           ><t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
         </t-descriptions-item>
+        <t-descriptions-item> <t-image :src="stampUrl" class="stamp" /> </t-descriptions-item>
       </t-descriptions>
-      <div>
-        <t-image :src="stampUrl" class="stamp" />
-      </div>
     </cmp-card>
     <!-- !条码部分 -->
     <cmp-card v-if="barcodeData.length > 0">
@@ -87,7 +85,7 @@
               :label="tabData.itemCategoryName"
               :destroy-on-hide="true"
             >
-              <cmp-container>
+              <cmp-container style="margin-top: 12px">
                 <cmp-table
                   ref="tableRefTop"
                   v-model:pagination="pageUI"
@@ -98,26 +96,20 @@
                   :table-column="columns"
                   :table-data="itemData"
                   :total="itemData.length"
-                  select-on-row-click
                   max-height="300px"
-                  @select-change="selectChange"
                 >
                   <template #button>
-                    <t-radio-group v-model="radioValue" @change="onRadioChange">
-                      <t-radio allow-uncheck :value="1"> 仅显示不合格</t-radio>
+                    <t-radio-group v-model="tabData.inspectResult" @change="onRadioChange">
+                      <t-radio allow-uncheck value="NG"> 仅显示不合格</t-radio>
                     </t-radio-group>
-                    <t-input placeholder="请输入项目名称关键字">
+                    <t-input placeholder="请输入项目名称(回车)" @enter="keywordSearch">
                       <template #suffixIcon>
-                        <search-icon :style="{ cursor: 'pointer' }" @click="keywordSearch" />
+                        <search-icon :style="{ cursor: 'pointer' }" />
                       </template>
                     </t-input>
                   </template>
                   <template #operation="{ row }">
-                    <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
-                    <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
-                      <t-link theme="primary" style="padding-right: 8px">删除</t-link>
-                    </t-popconfirm>
-                    <t-link theme="primary" @click="onCopy(row)">复制</t-link>
+                    <t-link theme="primary" style="padding-right: 8px" @click="onView(row)">查看</t-link>
                   </template>
                 </cmp-table>
               </cmp-container>
@@ -125,7 +117,7 @@
           </t-tabs>
         </t-tab-panel>
         <t-tab-panel v-if="isShow" label="不合格处理" value="1" :destroy-on-hide="true">
-          <t-descriptions :label-style="{ width: '130px' }">
+          <t-descriptions style="margin-top: 12px" :label-style="{ width: '130px' }">
             <t-descriptions-item label="不合格分类：" name="defectCategoryName">{{
               firstData.defectCategoryName
             }}</t-descriptions-item>
@@ -134,11 +126,11 @@
             <t-descriptions-item label="处理意见：" name="correctOpinion">{{
               firstData.correctOpinion
             }}</t-descriptions-item>
-            <t-descriptions-item label="" name="correctOpinion">
+            <!-- <t-descriptions-item label="" name="correctOpinion">
               <t-radio-group v-model="radioValue">
                 <t-radio allow-uncheck:false :value="1"> 启用品质改善</t-radio>
               </t-radio-group></t-descriptions-item
-            >
+            > -->
             <t-descriptions-item label="改善单据：" name="improveNos">
               <template v-for="(improve, index) in firstData.improveNos" :key="index">
                 <t-link :value="improve" variant="text" theme="primary" name="edit" @click="onEditRowClick(improve)"
@@ -167,23 +159,13 @@
     </cmp-card>
   </cmp-container>
   <!-- !上传组件 弹框 -->
-  <t-dialog
-    v-model:visible="formVisible"
-    :close-on-overlay-click="false"
-    header="附件上传"
-    :confirm-btn="fileList.length >= 1 ? '确认' : null"
-    width="50%"
-    @confirm="onConfirmFile"
-  >
+  <t-dialog v-model:visible="formVisible" :close-on-overlay-click="false" header="附件上传" width="50%">
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
         upload-path="inspectStd"
         :is-hand-delete="true"
-        @upload-success="uploadSuccess"
-        @uploadfail="uploadfail"
-        @delete-success="deleteSuccess"
-        @batch-delete-success="batchDeleteSuccess"
+        :disabled="true"
       ></bcmp-upload-content>
     </cmp-container>
   </t-dialog>
@@ -192,38 +174,30 @@
 <script setup lang="ts">
 // import { debounce } from 'lodash';
 import { SearchIcon } from 'tdesign-icons-vue-next';
-import { Icon, MessagePlugin } from 'tdesign-vue-next';
-import { computed, Ref, ref, watch } from 'vue';
+import { Icon } from 'tdesign-vue-next';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { api, PqcInspectFirstVO } from '@/api/quality';
 import ngStamp from '@/assets/images/NG.png';
 import okStamp from '@/assets/images/OK.png';
 import underwayStamp from '@/assets/images/UNDERWAY.png';
-import { AddFileType } from '@/components/bcmp-upload-content/constants';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false);
-const delBtutControl = ref(false);
-const formTitle = ref('');
-const touchstoneFormVisible = ref(false);
 const dataTotal = ref(0);
-const dtlRowKeys: Ref<any[]> = ref([]);
-const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
-const opType = ref('add');
 const barcodeData = ref<PqcInspectFirstVO[]>([]); // 条码栏数据
 const id = ref(''); // 用于watch监听，控制加载
 const selectedCol = ref(0); // 条码部分被选中的index
 const selectBarcode = ref(); // 第三部分展示选中的啥条码
 const itemTab = ref<PqcInspectFirstVO[]>([]); // 检验项目类别Tab
-const radioValue = ref(1); // 仅显示不合格单选按钮
+const radioValue = ref(''); // 仅显示不合格单选按钮
 const itemData = ref<PqcInspectFirstVO[]>([]); // 检验项目数据
 const pqcInspectFirstId = ref(); // 首检单ID丢全局
 const pqcInspectFirstBarcodeId = ref(); // 首检单条码ID丢全局
 const itemTabValue = ref('0'); // 检验项目不合格分类tab的默认选中
-const tabValue = ref('ALL'); // 检验项目tab的默认选中
+const tabValue = ref(''); // 检验项目tab的默认选中
 const isShow = ref(false); // 不合格处理panel的开关
 const firstData = ref<PqcInspectFirstVO>(); // 检验单数据
 const isImproveRadioValue = ref(1); // 不合格处理界面启用品质改善控件
@@ -266,7 +240,7 @@ watch(id, async (newValue, oldValue) => {
         pqcInspectFirstId: pqcInspectFirstId.value,
         pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
       });
-      const newObject = { itemCategory: 'ALL', itemCategoryName: '全部' };
+      const newObject = { itemCategory: '', itemCategoryName: '全部' };
       tab.unshift(newObject);
       itemTab.value = tab;
       await getBarcodeItems();
@@ -322,7 +296,7 @@ const searchItems = async (item, index) => {
     pqcInspectFirstId: pqcInspectFirstId.value,
     pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
   });
-  const newObject = { itemCategory: 'ALL', itemCategoryName: '全部' };
+  const newObject = { itemCategory: '', itemCategoryName: '全部' };
   tab.unshift(newObject);
   itemTab.value = tab;
   // 获取项目数据
@@ -338,7 +312,7 @@ const searchItems = async (item, index) => {
 // 检验项目TAb 栏切换事件
 const tabChange = async (value: string) => {
   itemCategoryTab.value = value;
-  if (value === 'ALL') {
+  if (value === '') {
     await getBarcodeItems();
   } else {
     const res = await api.pqcInspectFirst.getBarcodeItems({
@@ -375,9 +349,7 @@ const itemTabChange = async (value: string) => {
 };
 
 const onRadioChange = async (checked: any) => {
-  const radioValueNum = !checked ? 1 : 0;
-  console.log('这是单选按钮的数据：', radioValueNum);
-  radioValue.value = radioValueNum;
+  radioValue.value = checked;
   await getBarcodeItems();
 };
 
@@ -388,6 +360,7 @@ const getBarcodeItems = async () => {
     pageSize: pageUI.value.rows,
     pqcInspectFirstId: pqcInspectFirstId.value,
     pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+    inspectResult: radioValue.value,
   });
   itemData.value = res.list;
 };
@@ -415,90 +388,15 @@ const onEditRowClick = (improve: String) => {
   }
 };
 
-// 父方法
-const onConfirmFile = () => {
-  formVisible.value = false;
-};
-const formData = ref({
-  operateTpye: 'add',
-  saveTpye: 'add',
-  id: '',
-  inspectStdCode: '',
-  inspectStdName: '',
-  groupInspectStdId: '',
-  revision: null,
-  timeEffective: '',
-  timeInvalid: '',
-  status: 'DRAFT',
-  statusName: '起草中',
-  inspectTypeList: [],
-});
-
-const selectChange = (value: any) => {
-  dtlRowKeys.value = value;
-  delBtutControl.value = dtlRowKeys.value?.length > 1;
-};
-
-const onEdit = (row) => {
-  formTitle.value = '检验项目编辑';
-  opType.value = 'edit';
+const onView = (row) => {
   const item = { ...row };
-  dtlFormRef.value.dtlData = item;
-  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
-  touchstoneFormVisible.value = true;
+  fileList.value = item.fileList ? item.fileList : [];
+  formVisible.value = true;
 };
-const onCopy = (row) => {
-  formTitle.value = '检验项目复制';
-  opType.value = 'add';
-  const item = { ...row };
-  dtlFormRef.value.dtlData = item;
-  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
-  dtlFormRef.value.dtlData.itemName = '';
-  touchstoneFormVisible.value = true;
-};
-const delDtlById = async (row) => {
-  if (formData.value.operateTpye === 'add') {
-    await api.iqcInspectStdDtl.removeBatch([row.id]);
-  } else {
-    allDtl.value.splice(row.index, 1);
-  }
-};
-
 // // 上传文件
 const fileList = ref([]);
 
-const uploadSuccess = (file: AddFileType) => {
-  MessagePlugin.info(`上传文件成功`);
-  fileList.value.push(file);
-  console.log('🚀 ~ file: detail.vue:208 ~ uploadSuccess ~ files.value:', fileList.value);
-
-  console.log('🚀 ~ file: detail.vue:209 ~ uploadSuccess ~ file:', file);
-};
-
-const uploadfail = (file: AddFileType) => {
-  MessagePlugin.info(`上传文件失败`);
-  console.log('uploadSuccess', file);
-};
-
-const deleteSuccess = (file: AddFileType) => {
-  MessagePlugin.info(`删除文件成功`);
-  console.log('deleteSuccess', file);
-  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
-};
-
-const batchDeleteSuccess = (files: AddFileType[]) => {
-  MessagePlugin.info(`删除文件成功`);
-  console.log('batchDeleteSuccess', files);
-  files.forEach((item) => {
-    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
-  });
-};
-const allDtl = ref([]);
 const columns = [
-  {
-    colKey: 'row-select',
-    type: 'multiple',
-  },
   {
     colKey: 'itemName',
     title: '项目名称',
@@ -572,7 +470,7 @@ const columns = [
 
 .barcodeDiv {
   width: 260px;
-  border-width: 2px;
+  border-width: 1px;
   border-style: solid;
   border-color: rgb(49 172 243);
   border-radius: 5px;

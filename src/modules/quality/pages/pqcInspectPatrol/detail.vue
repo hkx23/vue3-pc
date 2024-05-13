@@ -13,7 +13,7 @@
         <t-col :flex="0.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
       <t-row :full="true">
-        <hr size="5" width="2000px" color="#808080" />
+        <hr size="1" width="2000px" color="#808080" />
       </t-row>
       <t-descriptions :column="4" :label-style="{ width: '100px' }">
         <t-descriptions-item label="工作中心" name="wcName">{{ headerDate.wcName }}</t-descriptions-item>
@@ -27,10 +27,8 @@
         <t-descriptions-item label="附件：" name="attachment"
           ><t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link></t-descriptions-item
         >
+        <t-descriptions-item> <t-image :src="stampUrl" class="stamp" /> </t-descriptions-item>
       </t-descriptions>
-      <div>
-        <t-image :src="stampUrl" class="stamp" />
-      </div>
     </cmp-card>
     <!-- !检验项目表格模块 -->
     <cmp-card>
@@ -44,33 +42,31 @@
               :label="tabData.itemCategoryName"
               :destroy-on-hide="true"
             >
-              <cmp-container>
+              <cmp-container style="margin-top: 12px">
                 <cmp-table
                   ref="tableRefTop"
                   v-model:pagination="pageUI"
-                  row-key="moScheduleId"
+                  row-key="id"
                   :fixed-height="true"
                   :active-row-type="'single'"
                   :hover="true"
                   :table-column="columns"
                   :table-data="itemData"
                   :total="itemData.length"
-                  select-on-row-click
                   max-height="300px"
-                  @select-change="selectChange"
                 >
                   <template #button>
-                    <t-radio-group v-model="radioValue" @change="onRadioChange">
-                      <t-radio allow-uncheck :value="1"> 仅显示不合格</t-radio>
+                    <t-radio-group v-model="tabData.inspectResult" @change="onRadioChange">
+                      <t-radio allow-uncheck value="NG"> 仅显示不合格</t-radio>
                     </t-radio-group>
-                    <t-input placeholder="请输入项目名称关键字">
+                    <t-input placeholder="请输入项目名称(回车)" @enter="keywordSearch">
                       <template #suffixIcon>
-                        <search-icon :style="{ cursor: 'pointer' }" @click="keywordSearch" />
+                        <search-icon :style="{ cursor: 'pointer' }" />
                       </template>
                     </t-input>
                   </template>
                   <template #attachments="{ row }">
-                    <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">查看</t-link>
+                    <t-link theme="primary" style="padding-right: 8px" @click="onView(row)">查看</t-link>
                   </template>
                 </cmp-table>
               </cmp-container>
@@ -108,23 +104,13 @@
     </cmp-card>
   </cmp-container>
   <!-- !上传组件 弹框 -->
-  <t-dialog
-    v-model:visible="formVisible"
-    :close-on-overlay-click="false"
-    header="附件上传"
-    :confirm-btn="fileList.length >= 1 ? '确认' : null"
-    width="50%"
-    @confirm="onConfirmFile"
-  >
+  <t-dialog v-model:visible="formVisible" :close-on-overlay-click="false" header="附件上传" width="50%">
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
         upload-path="inspectStd"
         :is-hand-delete="true"
-        @upload-success="uploadSuccess"
-        @uploadfail="uploadfail"
-        @delete-success="deleteSuccess"
-        @batch-delete-success="batchDeleteSuccess"
+        :disabled="true"
       ></bcmp-upload-content>
     </cmp-container>
   </t-dialog>
@@ -133,33 +119,27 @@
 <script setup lang="ts">
 // import { debounce } from 'lodash';
 import { SearchIcon } from 'tdesign-icons-vue-next';
-import { Icon, MessagePlugin } from 'tdesign-vue-next';
-import { computed, Ref, ref, watch } from 'vue';
+import { Icon } from 'tdesign-vue-next';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { api, PqcInspectPatrolVO } from '@/api/quality';
 import ngStamp from '@/assets/images/NG.png';
 import okStamp from '@/assets/images/OK.png';
 import underwayStamp from '@/assets/images/UNDERWAY.png';
-import { AddFileType } from '@/components/bcmp-upload-content/constants';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false);
-const delBtutControl = ref(false);
 const formTitle = ref('');
-const touchstoneFormVisible = ref(false);
 const dataTotal = ref(0);
-const dtlRowKeys: Ref<any[]> = ref([]);
-const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const opType = ref('add');
 const id = ref(''); // 用于watch监听，控制加载
 const itemTab = ref<PqcInspectPatrolVO[]>([]); // 检验项目类别Tab
-const radioValue = ref(1); // 仅显示不合格单选按钮
+const radioValue = ref(''); // 仅显示不合格单选按钮
 const itemData = ref<PqcInspectPatrolVO[]>([]); // 检验项目数据
 const itemTabValue = ref('0'); // 检验项目不合格分类tab的默认选中
-const tabValue = ref('ALL'); // 检验项目tab的默认选中
+const tabValue = ref(''); // 检验项目tab的默认选中
 const isShow = ref(false); // 不合格处理panel的开关
 const patrolData = ref<PqcInspectPatrolVO>(); // 检验单数据
 const isImproveRadioValue = ref(1); // 不合格处理界面启用品质改善控件
@@ -195,7 +175,7 @@ watch(id, async (newValue, oldValue) => {
     const tab = await api.pqcInspectPatrol.getTabs({
       pqcInspectPatrolId: id.value,
     });
-    const newObject = { itemCategory: 'ALL', itemCategoryName: '全部' };
+    const newObject = { itemCategory: '', itemCategoryName: '全部' };
     tab.unshift(newObject);
     itemTab.value = tab;
     await getPatrolItems();
@@ -233,7 +213,7 @@ const onClose = () => {
 // 检验项目TAb 栏切换事件
 const tabChange = async (value: string) => {
   itemCategoryTab.value = value;
-  if (value === 'ALL') {
+  if (value === '') {
     await getPatrolItems();
   } else {
     const res = await api.pqcInspectPatrol.getPatrolItems({
@@ -269,9 +249,7 @@ const itemTabChange = async (value: string) => {
 };
 
 const onRadioChange = async (checked: any) => {
-  const radioValueNum = !checked ? 1 : 0;
-  console.log('这是单选按钮的数据：', radioValueNum);
-  radioValue.value = radioValueNum;
+  radioValue.value = checked;
   await getPatrolItems();
 };
 
@@ -281,6 +259,7 @@ const getPatrolItems = async () => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     pqcInspectPatrolId: id.value,
+    inspectResult: radioValue.value,
   });
   itemData.value = res.list;
 };
@@ -307,59 +286,17 @@ const onEditRowClick = (improve: String) => {
   }
 };
 
-// 父方法
-const onConfirmFile = () => {
-  formVisible.value = false;
-};
-
-const selectChange = (value: any) => {
-  dtlRowKeys.value = value;
-  delBtutControl.value = dtlRowKeys.value?.length > 1;
-};
-
-const onEdit = (row) => {
+const onView = (row) => {
   formTitle.value = '检验项目编辑';
   opType.value = 'edit';
   const item = { ...row };
-  dtlFormRef.value.dtlData = item;
-  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
-  touchstoneFormVisible.value = true;
+  fileList.value = item.fileList ? item.fileList : [];
+  formVisible.value = true;
 };
 
 // // 上传文件
 const fileList = ref([]);
-
-const uploadSuccess = (file: AddFileType) => {
-  MessagePlugin.info(`上传文件成功`);
-  fileList.value.push(file);
-  console.log('🚀 ~ file: detail.vue:208 ~ uploadSuccess ~ files.value:', fileList.value);
-
-  console.log('🚀 ~ file: detail.vue:209 ~ uploadSuccess ~ file:', file);
-};
-
-const uploadfail = (file: AddFileType) => {
-  MessagePlugin.info(`上传文件失败`);
-  console.log('uploadSuccess', file);
-};
-
-const deleteSuccess = (file: AddFileType) => {
-  MessagePlugin.info(`删除文件成功`);
-  console.log('deleteSuccess', file);
-  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
-};
-
-const batchDeleteSuccess = (files: AddFileType[]) => {
-  MessagePlugin.info(`删除文件成功`);
-  console.log('batchDeleteSuccess', files);
-  files.forEach((item) => {
-    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
-  });
-};
 const columns = [
-  {
-    colKey: 'row-select',
-    type: 'multiple',
-  },
   {
     colKey: 'itemCategoryName',
     title: '项目分类',
