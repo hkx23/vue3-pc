@@ -2756,10 +2756,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -2930,10 +2930,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3536,10 +3536,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 /** 库存转移头表 */
@@ -3807,10 +3807,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4105,9 +4105,8 @@ export interface MoIssuanceDTO {
   reason?: string;
   /** 提交的模型-明细信息 */
   submitList?: MoIssuanceDtlVO[];
-  /** 明细id */
   tranDtlId?: string;
-  /** 标签号码 */
+  /** 条码信息或批次号码 */
   labelNo?: string;
   /**
    * 来源仓是否启用先进先出
@@ -4127,6 +4126,14 @@ export interface MoIssuanceDTO {
   labelInfo?: Label;
   /** 配送卡表 */
   deliveryCardInfo?: DeliveryCard;
+  /** 批次数量 */
+  batchQty?: number;
+  /** 批次表ID */
+  onHandBatchId?: string;
+  warehouseId?: string;
+  mitemId?: string;
+  /** 需求数量 */
+  moRequestQty?: number;
 }
 
 /** 扫描条码型-明细信息 */
@@ -4262,17 +4269,17 @@ export interface MoIssuanceDtlVO {
    */
   scanQty?: number;
   /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
-  tlpickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   bfpickQty?: number;
+  tlpickQty?: number;
   flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
@@ -6845,8 +6852,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -9557,6 +9564,21 @@ export const api = {
      */
     scanMitemLabel: (data: MoIssuanceDTO) =>
       http.request<ResultString['data']>(`/api/warehouse/moIssuance/scanMitemLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name ScanBatchNo
+     * @summary 扫描批次信息
+     * @request POST:/moIssuance/scanBatchNo
+     * @secure
+     */
+    scanBatchNo: (data: MoIssuanceDTO) =>
+      http.request<ResultString['data']>(`/api/warehouse/moIssuance/scanBatchNo`, {
         method: 'POST',
         body: data as any,
       }),

@@ -691,6 +691,26 @@ export interface PqcInspectPatrolVO {
    * @format int32
    */
   scheQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
@@ -742,6 +762,8 @@ export interface PqcInspectPatrolVO {
   /** 检验依据 */
   inspectBasis?: string;
   oqcInspectStdFullList?: OqcInspectStdFullVO[];
+  /** 检验项目执行的文件列表 */
+  fileList?: ViewFileVO[];
 }
 
 /** 移动端附件查看 */
@@ -1787,6 +1809,26 @@ export type PqcInspectFirstVO = {
    * @format int32
    */
   scheQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
   /** 物料代码 */
   mitemCode?: string;
   /** 物料名称 */
@@ -1834,6 +1876,8 @@ export type PqcInspectFirstVO = {
   inspectBasis?: string;
   /** 不合格分类名称 */
   defectCategoryName?: string;
+  /** 产品检验项目执行的文件列表 */
+  fileList?: ViewFileVO[];
 } | null;
 
 /** 通用响应类 */
@@ -2670,10 +2714,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 业务类型名称 */
   businessCategoryName?: string;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 通用响应类 */
@@ -3247,10 +3291,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3966,10 +4010,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -4571,11 +4615,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
   iqcInspectDtlId?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5773,13 +5817,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
   s3?: string;
-  s2?: string;
-  s4?: string;
-  iii?: string;
-  i?: string;
+  s1?: string;
   ii?: string;
+  iii?: string;
+  s2?: string;
+  i?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */

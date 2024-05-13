@@ -1002,8 +1002,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -1783,6 +1783,26 @@ export interface SupportGroup {
 }
 
 /** 响应数据 */
+export type PagingDataSupportGroup = {
+  list?: SupportGroup[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSupportGroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSupportGroup;
+}
+
+/** 响应数据 */
 export type PagingDataSupportGroupVO = {
   list?: SupportGroupVO[];
   /** @format int32 */
@@ -2321,6 +2341,10 @@ export interface AssetLedgerVO {
    * @format date-time
    */
   createTime?: string;
+  /** 位置名称 */
+  positionName?: string;
+  /** 保管部门名称 */
+  departmentOwnerName?: string;
 }
 
 /** 响应数据 */
@@ -2401,8 +2425,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface SparePartVO {
@@ -5222,12 +5246,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  isState?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5438,15 +5462,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isBatchName?: string;
-  isRawName?: string;
   isProductName?: string;
-  isState?: boolean;
   isInProcessName?: string;
   isRawChecked?: boolean;
-  isProductChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5589,8 +5613,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8698,8 +8722,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -9537,8 +9561,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10124,14 +10148,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12722,6 +12746,21 @@ export const api = {
      */
     modifySupportGroup: (data: SupportGroup) =>
       http.request<ResultObject['data']>(`/api/main/supportGroup/modifySupportGroup`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
+     * @name Search
+     * @summary 获取处理组表（筛选用）
+     * @request POST:/supportGroup/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataSupportGroup['data']>(`/api/main/supportGroup/items`, {
         method: 'POST',
         body: data as any,
       }),

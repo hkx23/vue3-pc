@@ -43,6 +43,20 @@
                   <t-button theme="primary" @click="onAddData">新增</t-button>
                 </t-space>
               </template>
+
+              <template #state="{ row }">
+                <t-popconfirm
+                  :content="row.state == 0 ? t('checklistOrg.confirmEnable') : t('checklistOrg.confirmDisable')"
+                  @confirm="onRowStateChange(row)"
+                >
+                  <t-switch
+                    :custom-value="[1, 0]"
+                    :value="row.state"
+                    :default-value="row.state"
+                    size="large"
+                  ></t-switch>
+                </t-popconfirm>
+              </template>
             </cmp-table>
           </cmp-card>
           <cmp-card>
@@ -238,6 +252,12 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'personName',
     title: '执行人',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'state',
+    title: '状态',
     align: 'center',
     width: '100',
   },
@@ -539,6 +559,25 @@ const onCheckItemSelectChange = async (row) => {
     checklistOrgData.value.shiftCode = row.shiftCode;
     checklistOrgData.value.executeFrequenceCode = `${row.executeFrequence}`;
     checklistOrgData.value.personId = row.personId;
+  }
+};
+
+const onRowStateChange = async (row: any) => {
+  const postRow = _.cloneDeep(row);
+  const idsList = [];
+  idsList.push(row.id);
+  if (postRow.state === 1) {
+    postRow.state = 0;
+    await apiDaily.checklistOrg.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
+      MessagePlugin.success('禁用成功');
+      row.state = postRow.state;
+    });
+  } else {
+    postRow.state = 1;
+    await apiDaily.checklistOrg.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
+      MessagePlugin.success('启用成功');
+      row.state = postRow.state;
+    });
   }
 };
 </script>

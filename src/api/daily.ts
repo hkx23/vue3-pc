@@ -1749,14 +1749,14 @@ export interface ConferenceOrgVO {
   orgName?: string;
   workCenterCode?: string;
   workCenterName?: string;
-  convertOrgId?: string;
-  /** 转换后的组织编码 */
-  convertOrgName?: string;
-  /** 转换后的组织编码 */
-  convertOrgCode?: string;
   typeName?: string;
   /** 类型 */
   type?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
+  /** 转换后的组织编码 */
+  convertOrgName?: string;
+  convertOrgId?: string;
 }
 
 /** 响应数据 */
@@ -2243,6 +2243,257 @@ export interface ResultPagingDataCheckItemVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataCheckItemVO;
+}
+
+/** 点检单据明细附件 */
+export interface CheckBillDtlFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  checkBillDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+  name?: string;
+  url?: string;
+}
+
+/** 点检单据明细 */
+export interface CheckBillDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  checkBillHeadId?: string;
+  /** 项目代码 */
+  itemCode?: string;
+  /** 项目名称 */
+  itemName?: string;
+  /** 项目描述 */
+  itemDesc?: string;
+  /** 项目类型 */
+  itemType?: string;
+  /** 执行开始时间 */
+  executeBeginTime?: string;
+  /** 执行结束时间 */
+  executeEndTime?: string;
+  personResponsibilityId?: string;
+  /**
+   * 发现时间
+   * @format date-time
+   */
+  datetimeDiscover?: string;
+  /** 问题描述 */
+  problemDesc?: string;
+  /** 改善对策 */
+  correctMeasure?: string;
+  /** 转安灯单据号 */
+  adBillNo?: string;
+  /** 点检结果 */
+  checkResult?: string;
+  /** 责任人编码 */
+  personResponsibilityCode?: string;
+  /** 责任人名称 */
+  personResponsibilityName?: string;
+  /** 项目明细附件 */
+  fileList?: CheckBillDtlFileVO[];
+}
+
+/** 点检单据 */
+export interface CheckBillHeadVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  orgId?: string;
+  workcenterId?: string;
+  /** 点检清单代码 */
+  checklistCode?: string;
+  /** 点检清单名称 */
+  checklistName?: string;
+  /** 点检清单描述 */
+  checklistDesc?: string;
+  /** 点检清单类别 */
+  checklistCategory?: string;
+  /** 班次 */
+  shiftCode?: string;
+  personId?: string;
+  /** 点检结果 */
+  checkResult?: string;
+  /** 状态 */
+  status?: string;
+  checkBillHeadId?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 工作中心代码 */
+  wcCode?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /** 人员编号 */
+  personCode?: string;
+  /** 人员姓名 */
+  personName?: string;
+  /** 项目明细 */
+  dtlList?: CheckBillDtlVO[];
+  /** 是否暂存 */
+  isHold?: boolean;
+  shiftCodeName?: string;
+  checklistCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 检验结果名称 */
+  checkResultName?: string;
+}
+
+export interface CheckBillSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  /** 单号 */
+  billNo?: string;
+  /** 单据状态 */
+  statusList?: string[];
+  /** 明细行ID */
+  dtlIds?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataCheckBillHeadVO = {
+  list?: CheckBillHeadVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataCheckBillHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataCheckBillHeadVO;
+}
+
+/** 点检单据明细文件表 */
+export interface CheckBillDtlFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  checkBillDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+/** 通用响应类 */
+export interface ResultCheckBillHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 点检单据 */
+  data?: CheckBillHeadVO;
 }
 
 /** 安灯警报配置表 */
@@ -4064,6 +4315,51 @@ export const api = {
      * No description
      *
      * @tags 点检单据头表
+     * @name UpdateChecking
+     * @summary 单据更新点检中
+     * @request POST:/checkBillHead/updateChecking
+     * @secure
+     */
+    updateChecking: (data: CheckBillHeadVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillHead/updateChecking`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
+     * @name SubmitCheckBill
+     * @summary 单据更新点检中
+     * @request POST:/checkBillHead/submitCheckBill
+     * @secure
+     */
+    submitCheckBill: (data: CheckBillHeadVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillHead/submitCheckBill`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
+     * @name GetCheckBillList
+     * @summary 查询单据
+     * @request POST:/checkBillHead/getCheckBillList
+     * @secure
+     */
+    getCheckBillList: (data: CheckBillSearch) =>
+      http.request<ResultPagingDataCheckBillHeadVO['data']>(`/api/daily/checkBillHead/getCheckBillList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
      * @name CheckBillCreatedJob
      * @summary 本地测试JOB用
      * @request POST:/checkBillHead/checkBillCreatedJob
@@ -4072,6 +4368,68 @@ export const api = {
     checkBillCreatedJob: () =>
       http.request<ResultObject['data']>(`/api/daily/checkBillHead/checkBillCreatedJob`, {
         method: 'POST',
+      }),
+  },
+  checkBillDtlFile: {
+    /**
+     * No description
+     *
+     * @tags 点检单据明细文件表
+     * @name DeleteFile
+     * @summary 删除图片
+     * @request POST:/checkBillDtlFile/deleteFile
+     * @secure
+     */
+    deleteFile: (data: CheckBillDtlFile) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillDtlFile/deleteFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据明细文件表
+     * @name AddFile
+     * @summary 添加图片
+     * @request POST:/checkBillDtlFile/addFile
+     * @secure
+     */
+    addFile: (data: CheckBillDtlFile) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillDtlFile/addFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  checkBillDtl: {
+    /**
+     * No description
+     *
+     * @tags 点检单据明细表
+     * @name UpdateCheckResult
+     * @summary 更新点检结果
+     * @request POST:/checkBillDtl/updateCheckResult
+     * @secure
+     */
+    updateCheckResult: (data: CheckBillDtlVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillDtl/updateCheckResult`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据明细表
+     * @name GetCheckBillDtlList
+     * @summary 查询单据明细
+     * @request POST:/checkBillDtl/getCheckBillDtlList
+     * @secure
+     */
+    getCheckBillDtlList: (data: CheckBillSearch) =>
+      http.request<ResultCheckBillHeadVO['data']>(`/api/daily/checkBillDtl/getCheckBillDtlList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   alertCfg: {
