@@ -103,14 +103,14 @@ const scaleInfo = ref({
   x: 1,
 });
 const updateScale = (width, height) => {
-  // scaleInfo.value = {
-  //   x: width / props.designWidth,
-  //   y: height / props.designHeight,
-  // };
   scaleInfo.value = {
-    x: 1.624,
-    y: 1.62,
+    x: width / props.designWidth,
+    y: height / props.designHeight,
   };
+  // scaleInfo.value = {
+  //   x: 1.624,
+  //   y: 1.62,
+  // };
 };
 
 onMounted(() => {
