@@ -2756,10 +2756,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2930,10 +2930,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3317,6 +3317,17 @@ export interface ResultPagingDataMitemVO {
 }
 
 export interface PurchaseOrderSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  purchaseOrderId?: string;
   /** 交易事务单号 */
   billNo?: string;
   /** 采购单号 */
@@ -3337,6 +3348,7 @@ export interface PurchaseOrderSearch {
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
+  supplierId?: string;
 }
 
 /** 响应数据 */
@@ -3417,6 +3429,19 @@ export interface ResultPagingDataPurchaseOrderVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataPurchaseOrderVO;
+}
+
+/** 通用响应类 */
+export interface ResultListPurchaseOrderDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PurchaseOrderDtlVO[] | null;
 }
 
 export interface PurchaseOrderBatchSubmit {
@@ -3536,10 +3561,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 /** 库存转移头表 */
@@ -3807,10 +3832,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4278,9 +4303,9 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  bfpickQty?: number;
-  tlpickQty?: number;
   flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
 }
@@ -5310,13 +5335,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5914,6 +5939,29 @@ export interface ResultPagingDataMFTSubVO {
   /** 提示信息 */
   message?: string;
   data?: PagingDataMFTSubVO;
+}
+
+/** DemoJOB参数 */
+export interface DemoJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** DemoJOB参数 */
+  demoJobParam?: DemoJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
 }
 
 /** 入厂检验搜索条件 */
@@ -7230,19 +7278,6 @@ export type StockCheckBillExecuteBarcodeVO = {
   /** 批次 */
   batchLot?: string;
 } | null;
-
-/** 通用响应类 */
-export interface ResultListPurchaseOrderDtlVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PurchaseOrderDtlVO[] | null;
-}
 
 /** 通用响应类 */
 export interface ResultListWarehouse {
@@ -9223,6 +9258,36 @@ export const api = {
      * No description
      *
      * @tags 采购单表
+     * @name GetPurchaseOrderList
+     * @summary 获取采购订单列表
+     * @request POST:/purchaseOrder/getPurchaseOrderList
+     * @secure
+     */
+    getPurchaseOrderList: (data: PurchaseOrderSearch) =>
+      http.request<ResultPagingDataPurchaseOrderVO['data']>(`/api/warehouse/purchaseOrder/getPurchaseOrderList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 采购单表
+     * @name GetPurchaseOrderDtl
+     * @summary 获取采购订单明细
+     * @request POST:/purchaseOrder/getPurchaseOrderDtl
+     * @secure
+     */
+    getPurchaseOrderDtl: (data: PurchaseOrderSearch) =>
+      http.request<ResultListPurchaseOrderDtlVO['data']>(`/api/warehouse/purchaseOrder/getPurchaseOrderDtl`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 采购单表
      * @name BatchSubmitMitemReceipt
      * @summary 批量提交
      * @request POST:/purchaseOrder/batchSubmitMitemReceipt
@@ -10527,6 +10592,22 @@ export const api = {
      */
     generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/label/generateBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name DemoJob
+     * @summary DemoJOB
+     * @request POST:/jobCommon/demoJob
+     * @secure
+     */
+    demoJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/jobCommon/demoJob`, {
         method: 'POST',
         body: data as any,
       }),

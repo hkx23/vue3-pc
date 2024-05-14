@@ -12,6 +12,7 @@
           :table-data="tableDataMaterialRequisition"
           :loading="loading"
           :total="dataTotal"
+          max-height="300px"
           :hover="false"
           :stripe="false"
           :header-affixed-top="true"
