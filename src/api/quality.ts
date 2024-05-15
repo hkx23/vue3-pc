@@ -3368,8 +3368,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3667,6 +3667,13 @@ export interface IqcInspectRecheckSubmitVO {
   recheckReason?: string;
   /** 备注 */
   memo?: string;
+  /** 单据状态 */
+  status?: string;
+  id?: string;
+  /** 批次号 */
+  lotNo?: string;
+  eid?: string;
+  oid?: string;
   /** 复检处理意见VO */
   iqcInspectRecheckNg?: IqcInspectRecheckNgVO;
   iqcInspectStdList?: IqcInspectStdFullVO[];
@@ -5858,13 +5865,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  iii?: string;
-  i?: string;
-  ii?: string;
-  s2?: string;
-  s1?: string;
   s3?: string;
+  i?: string;
+  s2?: string;
+  iii?: string;
   s4?: string;
+  s1?: string;
+  ii?: string;
 } | null;
 
 /** 标签模板 */
@@ -7260,7 +7267,7 @@ export const api = {
      * @secure
      */
     materialReinspectionListJob: (data: JobCommonDTO) =>
-      http.request<ResultObject['data']>(`/api/quality/jobCommon/materialRinspectionListJob`, {
+      http.request<ResultString['data']>(`/api/quality/jobCommon/materialRinspectionListJob`, {
         method: 'POST',
         body: data as any,
       }),

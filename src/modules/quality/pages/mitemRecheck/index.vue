@@ -29,6 +29,11 @@
             <t-link theme="primary" @click="onLoadFJDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
           </t-space>
         </template>
+        <template #op="rowData">
+          <t-space v-if="rowData.row.status === 'UNINSPECT'">
+            <t-link theme="primary" @click="onLoadFJDialog(false, rowData)">检验</t-link>
+          </t-space>
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -140,11 +145,6 @@ const iqcHandleMethodOption = ref([]);
 const waitInspectDataTotal = ref(0);
 const waitInspectData = ref([]);
 const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
-  // {
-  //   colKey: 'row-select',
-  //   type: 'multiple',
-  //   width: 50,
-  // },
   { title: t('mitemRecheck.复检单号'), width: 160, colKey: 'recheckBillNo' },
   { title: t('mitemRecheck.复检类型'), width: 100, colKey: 'recheckTypeName' },
   { title: t('mitemRecheck.来源检验单'), width: 160, colKey: 'iqcBillNo' },
@@ -156,7 +156,8 @@ const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('mitemRecheck.批量'), width: 100, colKey: 'inspectQty' },
   { title: t('mitemRecheck.报检人'), width: 100, colKey: 'displayName' },
   { title: t('mitemRecheck.报检时间'), width: 200, colKey: 'timeCreate' },
-  // { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: t('mitemRecheck.状态'), width: 200, colKey: 'statusName' },
+  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 
 const getIqcInspectionStatus = async () => {
