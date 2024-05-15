@@ -39,11 +39,17 @@
         <template #title>
           {{ '项目列表' }}
         </template>
+        <template #files="rowData">
+          <t-space>
+            <t-link theme="primary" @click="onShowFiles(rowData.row)">查看</t-link>
+          </t-space>
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
 
   <formItem ref="formItemRef" @parent-refresh-event="getCheckBillDtlList" />
+  <cmp-files-upload ref="formFilesRef" upload-path="checkExecution" />
 </template>
 <script setup lang="ts">
 import _ from 'lodash';
@@ -51,6 +57,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apiDaily } from '@/api/daily';
+import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -86,13 +93,13 @@ const mainColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'billNo',
     title: '点检单据',
     align: 'center',
-    width: '110',
+    width: '150',
   },
   {
     colKey: 'timeCreate',
     title: '创建时间',
     align: 'center',
-    width: '110',
+    width: '180',
   },
   {
     colKey: 'orgCode',
@@ -379,7 +386,7 @@ const itemColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'fileList',
+    colKey: 'files',
     title: '附件',
     align: 'center',
     width: '130',
@@ -388,6 +395,23 @@ const itemColumns: PrimaryTableCol<TableRowData>[] = [
 const onItemSelectChange = async (value: any[]) => {
   // delItemRowKeys.value = value;
   console.log(value);
+};
+
+// 查看附件
+const formFilesRef = ref(null);
+const onShowFiles = async (rowData) => {
+  try {
+    const dtlIdList = [];
+    dtlIdList.push(rowData.id);
+
+    const list = await apiDaily.checkBillDtlFile.getFileListByBillNo({ dtlIds: dtlIdList });
+    rowData.fileList = list;
+
+    const { showForm } = formFilesRef.value;
+    await showForm(true, rowData.fileList);
+  } catch (e) {
+    console.log(e);
+  }
 };
 </script>
 

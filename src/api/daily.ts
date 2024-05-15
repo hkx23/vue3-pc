@@ -1775,11 +1775,11 @@ export interface ConferenceOrgVO {
   typeName?: string;
   /** 类型 */
   type?: string;
-  /** 转换后的组织编码 */
-  convertOrgName?: string;
+  convertOrgId?: string;
   /** 转换后的组织编码 */
   convertOrgCode?: string;
-  convertOrgId?: string;
+  /** 转换后的组织编码 */
+  convertOrgName?: string;
 }
 
 /** 响应数据 */
@@ -2354,6 +2354,8 @@ export interface CheckBillDtlVO {
   adBillNo?: string;
   /** 点检结果 */
   checkResult?: string;
+  /** 项目类型 */
+  itemTypeName?: string;
   /** 责任人编码 */
   personResponsibilityCode?: string;
   /** 责任人名称 */
@@ -2451,6 +2453,7 @@ export interface CheckBillSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  checkBillHeadId?: string;
   /** 单号 */
   billNo?: string;
   /** 组织编码 */
@@ -2491,6 +2494,19 @@ export interface ResultPagingDataCheckBillHeadVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataCheckBillHeadVO;
+}
+
+/** 通用响应类 */
+export interface ResultListCheckBillDtlFileVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: CheckBillDtlFileVO[] | null;
 }
 
 /** 点检单据明细文件表 */
@@ -4445,6 +4461,21 @@ export const api = {
       }),
   },
   checkBillDtlFile: {
+    /**
+     * No description
+     *
+     * @tags 点检单据明细文件表
+     * @name GetFileListByBillNo
+     * @summary 根据单号获取图片
+     * @request POST:/checkBillDtlFile/getFileListByBillNo
+     * @secure
+     */
+    getFileListByBillNo: (data: CheckBillSearch) =>
+      http.request<ResultListCheckBillDtlFileVO['data']>(`/api/daily/checkBillDtlFile/getFileListByBillNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
