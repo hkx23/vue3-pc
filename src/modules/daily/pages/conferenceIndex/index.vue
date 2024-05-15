@@ -113,7 +113,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'CONFERNCE_INDEX_DIMENSION',
       },
@@ -124,7 +124,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'CONFERNCE_INDEX_TYPE',
       },

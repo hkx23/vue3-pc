@@ -312,7 +312,7 @@
         <!-- 系统字典-状态-->
         <t-row :gutter="[10, 10]">
           <t-col flex="300px">
-            <bcmp-select-business v-model="stateValue" :is-multiple="isMultiple" type="state"></bcmp-select-business
+            <bcmp-select-business v-model="stateValue" :is-multiple="isMultiple" type="param"></bcmp-select-business
           ></t-col>
           <t-col flex="300px">
             <t-input v-model="stateValue" label="状态值" disabled />

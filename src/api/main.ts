@@ -2425,8 +2425,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SparePartVO {
@@ -3136,8 +3136,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5245,13 +5245,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
   isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5463,14 +5463,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isProductName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isState?: boolean;
+  stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -6118,6 +6118,29 @@ export interface Label {
   isHold?: number;
   /** 标签类型 */
   labelType?: string;
+}
+
+/** DemoJOB参数 */
+export interface DemoJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** DemoJOB参数 */
+  demoJobParam?: DemoJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
 }
 
 export interface IntegratedConsoleSearch {
@@ -7461,8 +7484,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8722,8 +8745,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -10148,14 +10171,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -15518,6 +15541,22 @@ export const api = {
     getLabelBarcodeRuleList: () =>
       http.request<ResultListBarcodeRule['data']>(`/api/main/label/getLabelBarcodeRuleList`, {
         method: 'GET',
+      }),
+  },
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name DemoJob
+     * @summary DemoJOB
+     * @request POST:/jobCommon/demoJob
+     * @secure
+     */
+    demoJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/main/jobCommon/demoJob`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   integratedConsole: {

@@ -2712,12 +2712,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
+  /** 检验结果名称 */
+  inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
-  /** 检验结果名称 */
-  inspectResultName?: string;
 }
 
 /** 通用响应类 */
@@ -2875,6 +2875,47 @@ export interface ResultListAddFileTypeVO {
   message?: string;
   /** 响应数据 */
   data?: AddFileTypeVO[] | null;
+}
+
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** 物料复检单生成JOB参数 */
+  materialReInspectionJobParams?: MaterialReInspectionJobParam[];
+  /** 物料复检单生成JOB参数 */
+  productionReInspectionJobParams?: ProductionReInspectionJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+/** 物料复检单生成JOB参数 */
+export interface MaterialReInspectionJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+/** 物料复检单生成JOB参数 */
+export interface ProductionReInspectionJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+  /** 抽样标准类型 */
+  samplingStandardType?: string;
+  /** 检验严格度 */
+  inspectStringency?: string;
+  /** 检验水平 */
+  inspectLevel?: string;
+  /** 抽样标准编码 */
+  samplingStandardCode?: string;
 }
 
 /** 物料检验标准分配表 */
@@ -3291,10 +3332,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4010,10 +4051,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 停留时长 */
-  waitTime?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -4615,11 +4656,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
   iqcInspectDtlId?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5621,10 +5662,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -5817,12 +5858,12 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
-  s1?: string;
-  ii?: string;
   iii?: string;
-  s2?: string;
   i?: string;
+  ii?: string;
+  s2?: string;
+  s1?: string;
+  s3?: string;
   s4?: string;
 } | null;
 
@@ -7191,6 +7232,37 @@ export const api = {
       http.request<ResultString['data']>(`/api/quality/oqcInspect/getDefectNames`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name ProductionlReinspectionListJob
+     * @summary 产品复检单生成JOB
+     * @request POST:/jobCommon/productionlReinspectionListJob
+     * @secure
+     */
+    productionlReinspectionListJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/quality/jobCommon/productionlReinspectionListJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name MaterialReinspectionListJob
+     * @summary 物料复检单生成JOB
+     * @request POST:/jobCommon/materialRinspectionListJob
+     * @secure
+     */
+    materialReinspectionListJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/quality/jobCommon/materialRinspectionListJob`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   iqcInspectStdMitem: {

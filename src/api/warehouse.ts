@@ -2756,10 +2756,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -2930,10 +2930,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3317,17 +3317,6 @@ export interface ResultPagingDataMitemVO {
 }
 
 export interface PurchaseOrderSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  purchaseOrderId?: string;
   /** 交易事务单号 */
   billNo?: string;
   /** 采购单号 */
@@ -3348,7 +3337,6 @@ export interface PurchaseOrderSearch {
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
-  supplierId?: string;
 }
 
 /** 响应数据 */
@@ -3429,19 +3417,6 @@ export interface ResultPagingDataPurchaseOrderVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataPurchaseOrderVO;
-}
-
-/** 通用响应类 */
-export interface ResultListPurchaseOrderDtlVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PurchaseOrderDtlVO[] | null;
 }
 
 export interface PurchaseOrderBatchSubmit {
@@ -3561,10 +3536,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 /** 库存转移头表 */
@@ -3832,10 +3807,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4289,23 +4264,23 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
   flpickQty?: number;
-  tlpickQty?: number;
   bfpickQty?: number;
+  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
 }
@@ -5062,15 +5037,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量和已领用量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量和待领用量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量和已领用量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 export interface MaterialRequisitionVO {
@@ -6900,8 +6875,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -7033,15 +7008,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 export interface GoodsSentOutVO {
@@ -7278,6 +7253,19 @@ export type StockCheckBillExecuteBarcodeVO = {
   /** 批次 */
   batchLot?: string;
 } | null;
+
+/** 通用响应类 */
+export interface ResultListPurchaseOrderDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PurchaseOrderDtlVO[] | null;
+}
 
 /** 通用响应类 */
 export interface ResultListWarehouse {
@@ -9250,36 +9238,6 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataPurchaseOrderVO['data']>(`/api/warehouse/purchaseOrder/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 采购单表
-     * @name GetPurchaseOrderList
-     * @summary 获取采购订单列表
-     * @request POST:/purchaseOrder/getPurchaseOrderList
-     * @secure
-     */
-    getPurchaseOrderList: (data: PurchaseOrderSearch) =>
-      http.request<ResultPagingDataPurchaseOrderVO['data']>(`/api/warehouse/purchaseOrder/getPurchaseOrderList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 采购单表
-     * @name GetPurchaseOrderDtl
-     * @summary 获取采购订单明细
-     * @request POST:/purchaseOrder/getPurchaseOrderDtl
-     * @secure
-     */
-    getPurchaseOrderDtl: (data: PurchaseOrderSearch) =>
-      http.request<ResultListPurchaseOrderDtlVO['data']>(`/api/warehouse/purchaseOrder/getPurchaseOrderDtl`, {
         method: 'POST',
         body: data as any,
       }),

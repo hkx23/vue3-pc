@@ -141,7 +141,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'Q_INSPECTION_STD_STATUS',
       },

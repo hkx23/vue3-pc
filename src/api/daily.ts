@@ -9,6 +9,42 @@
  * ---------------------------------------------------------------
  */
 
+/** 点检单据生成JOB参数 */
+export interface CheckBillCreatedJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** 点检单据生成JOB参数 */
+  checkBillCreatedJobParam?: CheckBillCreatedJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
 export interface IncidentTypeSearch {
   /**
    * 页码
@@ -29,19 +65,6 @@ export interface IncidentTypeSearch {
   id?: string;
   /** 多个id */
   ids?: string[];
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 安灯异常类型表 */
@@ -1234,12 +1257,12 @@ export interface ConferenceTemplateVO {
   conferenceCode?: string;
   /** 会议名称 */
   conferenceName?: string;
-  /** 有效值转换 */
-  isState?: boolean;
   /** 模板维度转换 */
   templateDimensionList?: string[];
   /** 模板维度名称转换 */
   templateDimensionNames?: string;
+  /** 有效值转换 */
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1547,12 +1570,12 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 有效值转换 */
-  isState?: boolean;
   /** 维度转换 */
   templateDimensionList?: string[];
   /** 维度名称转换 */
   templateDimensionNames?: string;
+  /** 有效值转换 */
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1753,9 +1776,9 @@ export interface ConferenceOrgVO {
   /** 类型 */
   type?: string;
   /** 转换后的组织编码 */
-  convertOrgCode?: string;
-  /** 转换后的组织编码 */
   convertOrgName?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
   convertOrgId?: string;
 }
 
@@ -2402,6 +2425,11 @@ export interface CheckBillHeadVO {
   isHold?: boolean;
   shiftCodeName?: string;
   checklistCategoryName?: string;
+  /** @format int32 */
+  executeFrequence?: number;
+  executeFrequenceName?: string;
+  /** 待取消的单据 */
+  cancelBillNoList?: string[];
   /** 状态名称 */
   statusName?: string;
   /** 检验结果名称 */
@@ -2425,10 +2453,24 @@ export interface CheckBillSearch {
   customerConditions?: Filter[];
   /** 单号 */
   billNo?: string;
+  /** 组织编码 */
+  orgCode?: string;
+  /** 车间编码 */
+  wcCode?: string;
+  /** 执行人 */
+  personCode?: string;
+  /** 点检清单 */
+  checklistCode?: string;
+  /** 清单类型 */
+  checklistCategory?: string;
   /** 单据状态 */
   statusList?: string[];
   /** 明细行ID */
   dtlIds?: string[];
+  /** 开始时间 */
+  dateTimeCreateBegin?: string;
+  /** 结束时间 */
+  dateTimeCreateEnd?: string;
 }
 
 /** 响应数据 */
@@ -2910,6 +2952,22 @@ export type DataTableVO = {
  */
 
 export const api = {
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name CheckBillCreatedJob
+     * @summary 点检单据生成JOB
+     * @request POST:/jobCommon/checkBillCreatedJob
+     * @secure
+     */
+    checkBillCreatedJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/jobCommon/checkBillCreatedJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   incidentType: {
     /**
      * No description
@@ -4345,13 +4403,13 @@ export const api = {
      * No description
      *
      * @tags 点检单据头表
-     * @name GetCheckBillList
-     * @summary 查询单据
-     * @request POST:/checkBillHead/getCheckBillList
+     * @name GetFullCheckBillList
+     * @summary 查询单据（完整信息）
+     * @request POST:/checkBillHead/getFullCheckBillList
      * @secure
      */
-    getCheckBillList: (data: CheckBillSearch) =>
-      http.request<ResultPagingDataCheckBillHeadVO['data']>(`/api/daily/checkBillHead/getCheckBillList`, {
+    getFullCheckBillList: (data: CheckBillSearch) =>
+      http.request<ResultPagingDataCheckBillHeadVO['data']>(`/api/daily/checkBillHead/getFullCheckBillList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4360,14 +4418,30 @@ export const api = {
      * No description
      *
      * @tags 点检单据头表
-     * @name CheckBillCreatedJob
-     * @summary 本地测试JOB用
-     * @request POST:/checkBillHead/checkBillCreatedJob
+     * @name GetCheckBillListByUser
+     * @summary 查询单据
+     * @request POST:/checkBillHead/getCheckBillListByUser
      * @secure
      */
-    checkBillCreatedJob: () =>
-      http.request<ResultObject['data']>(`/api/daily/checkBillHead/checkBillCreatedJob`, {
+    getCheckBillListByUser: (data: CheckBillSearch) =>
+      http.request<ResultPagingDataCheckBillHeadVO['data']>(`/api/daily/checkBillHead/getCheckBillListByUser`, {
         method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
+     * @name Cancelled
+     * @summary 点检单据取消
+     * @request POST:/checkBillHead/cancelled
+     * @secure
+     */
+    cancelled: (data: CheckBillHeadVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillHead/cancelled`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   checkBillDtlFile: {

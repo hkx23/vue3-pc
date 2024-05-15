@@ -620,7 +620,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: 'EFFECTIVE',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         isMultiple: true,
         category: 'Q_INSPECTION_STD_STATUS',

@@ -183,7 +183,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'INCIDENT_MODULE',
       },
@@ -204,7 +204,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'INCIDENT_DEAL_STATUS',
       },

@@ -2913,13 +2913,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopName?: string;
+  workshopId?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3096,8 +3096,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3475,14 +3475,14 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
+  workshopId?: string;
   stateName?: string;
   defectCodeStr?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
 }
@@ -4821,6 +4821,29 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** DemoJOB参数 */
+export interface DemoJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** DemoJOB参数 */
+  demoJobParam?: DemoJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
 export interface BatchDynamicInsertDTO {
   businessDomain?: string;
   tableName?: string;
@@ -5112,17 +5135,17 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
+  workshopId?: string;
   stateName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 工序 */
@@ -5671,8 +5694,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7819,6 +7842,22 @@ export const api = {
      */
     getMitemQualityInfo: (data: MitemForwardTraceSearch) =>
       http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getMitemQualityInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name DemoJob
+     * @summary DemoJOB
+     * @request POST:/jobCommon/demoJob
+     * @secure
+     */
+    demoJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/control/jobCommon/demoJob`, {
         method: 'POST',
         body: data as any,
       }),
