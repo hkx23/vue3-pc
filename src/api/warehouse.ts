@@ -261,10 +261,14 @@ export type UserWarehouseVO = {
   warehouseCode?: string;
   warehouseName?: string;
   warehouseCategory?: string;
+  /** @format int32 */
+  warehouseIsEnableLocation?: number;
   toWarehouseCode?: string;
   toWarehouseName?: string;
   toWarehouseId?: string;
   toWarehouseCategory?: string;
+  /** @format int32 */
+  toWarehouseIsEnableLocation?: number;
 } | null;
 
 /** 用户仓库权限+仓库转移规则 */
@@ -3317,6 +3321,17 @@ export interface ResultPagingDataMitemVO {
 }
 
 export interface PurchaseOrderSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  purchaseOrderId?: string;
   /** 交易事务单号 */
   billNo?: string;
   /** 采购单号 */
@@ -3337,6 +3352,7 @@ export interface PurchaseOrderSearch {
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
+  supplierId?: string;
 }
 
 /** 响应数据 */
@@ -3417,6 +3433,19 @@ export interface ResultPagingDataPurchaseOrderVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataPurchaseOrderVO;
+}
+
+/** 通用响应类 */
+export interface ResultListPurchaseOrderDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PurchaseOrderDtlVO[] | null;
 }
 
 export interface PurchaseOrderBatchSubmit {
@@ -4264,22 +4293,22 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
   /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
   bfpickQty?: number;
+  flpickQty?: number;
   tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
@@ -4642,6 +4671,276 @@ export interface ResultLocationVO {
   message?: string;
   /** 显示产品条码管理 */
   data?: LocationVO;
+}
+
+export interface MitemCancelDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  /** 原因 */
+  reason?: string;
+  /** 相关凭证号 */
+  voucherLineNo?: string;
+  /** 通知凭证 */
+  noticeVoucherLineNo?: string;
+  /** 到货批次 */
+  batchLot?: string;
+  /** 采购订单号 */
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 来源单据行号 */
+  sourceBillLineNo?: string;
+  /**
+   * 行号
+   * @format int32
+   */
+  index?: number;
+  tranDtlId?: string;
+  moBomId?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  uomName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  /**
+   * 是否来源仓库启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  /**
+   * 是否来源仓库先进先出
+   * @format int32
+   */
+  isFifo?: number;
+  districtCode?: string;
+  districtName?: string;
+  locationCode?: string;
+  locationName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  toDistrictCode?: string;
+  toDistrictName?: string;
+  toLocationCode?: string;
+  toLocationName?: string;
+  /**
+   * 是否目标仓库启用货位管理
+   * @format int32
+   */
+  isToEnableLocation?: number;
+  /**
+   * 是否目标仓库先进先出
+   * @format int32
+   */
+  isToFifo?: number;
+  workshopId?: string;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  /**
+   * 分子用量
+   * @format int32
+   */
+  numeratorQty?: number;
+  /**
+   * 分母用量
+   * @format int32
+   */
+  denomainatorQty?: number;
+  scheCode?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  /** 库存可用量 */
+  handQty?: number;
+  /** 交易单标签表 */
+  transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+}
+
+export interface MitemCancelVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  businessCategoryId?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 打印次数
+   * @format int32
+   */
+  printCount?: number;
+  /**
+   * 最后打印时间
+   * @format date-time
+   */
+  datetimeLastPrint?: string;
+  userLastPrintId?: string;
+  /**
+   * 批准时间
+   * @format date-time
+   */
+  datetimeApproved?: string;
+  userApprovedId?: string;
+  /**
+   * 驳回时间
+   * @format date-time
+   */
+  datetimeRejected?: string;
+  userRejectedId?: string;
+  /**
+   * 取消时间
+   * @format date-time
+   */
+  datetimeCanceled?: string;
+  userCanceledId?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
+  userTransferId?: string;
+  /**
+   * 作业完成时间
+   * @format date-time
+   */
+  datetimePicked?: string;
+  userPickedId?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  userReceiptedId?: string;
+  moScheId?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 车间代码 */
+  workshopCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /**
+   * 修改人时间
+   * @format date-time
+   */
+  modifiedTime?: string;
+  dtls?: MitemCancelDtlVO[];
+  /** 单据状态名称 */
+  statusName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemCancelVO = {
+  list?: MitemCancelVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemCancelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemCancelVO;
 }
 
 /** 杂项管理 */
@@ -5037,15 +5336,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量和待领用量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量和已领用量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量和待领用量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 export interface MaterialRequisitionVO {
@@ -7008,15 +7307,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 export interface GoodsSentOutVO {
@@ -7253,19 +7552,6 @@ export type StockCheckBillExecuteBarcodeVO = {
   /** 批次 */
   batchLot?: string;
 } | null;
-
-/** 通用响应类 */
-export interface ResultListPurchaseOrderDtlVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PurchaseOrderDtlVO[] | null;
-}
 
 /** 通用响应类 */
 export interface ResultListWarehouse {
@@ -9246,6 +9532,36 @@ export const api = {
      * No description
      *
      * @tags 采购单表
+     * @name GetPurchaseOrderList
+     * @summary 获取采购订单列表
+     * @request POST:/purchaseOrder/getPurchaseOrderList
+     * @secure
+     */
+    getPurchaseOrderList: (data: PurchaseOrderSearch) =>
+      http.request<ResultPagingDataPurchaseOrderVO['data']>(`/api/warehouse/purchaseOrder/getPurchaseOrderList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 采购单表
+     * @name GetPurchaseOrderDtl
+     * @summary 获取采购订单明细
+     * @request POST:/purchaseOrder/getPurchaseOrderDtl
+     * @secure
+     */
+    getPurchaseOrderDtl: (data: PurchaseOrderSearch) =>
+      http.request<ResultListPurchaseOrderDtlVO['data']>(`/api/warehouse/purchaseOrder/getPurchaseOrderDtl`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 采购单表
      * @name BatchSubmitMitemReceipt
      * @summary 批量提交
      * @request POST:/purchaseOrder/batchSubmitMitemReceipt
@@ -9513,6 +9829,21 @@ export const api = {
      * No description
      *
      * @tags 工单退料
+     * @name ScanBatchNo
+     * @summary 扫描批次信息
+     * @request POST:/moReturnMaterial/scanBatchNo
+     * @secure
+     */
+    scanBatchNo: (data: MoIssuanceDTO) =>
+      http.request<ResultString['data']>(`/api/warehouse/moReturnMaterial/scanBatchNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单退料
      * @name Items
      * @summary 工单发料-获取退料单列表----公共弹框控件
      * @request POST:/moReturnMaterial/items
@@ -9755,6 +10086,22 @@ export const api = {
      */
     scanLocationLabel: (data: MitemPutVO) =>
       http.request<ResultLocationVO['data']>(`/api/warehouse/mitemPut/scanLocationLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  mitemCancel: {
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name Search
+     * @summary 物料报废-获取物料报废单据列表----公共弹框控件
+     * @request POST:/mitemCancel/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataMitemCancelVO['data']>(`/api/warehouse/mitemCancel/items`, {
         method: 'POST',
         body: data as any,
       }),
