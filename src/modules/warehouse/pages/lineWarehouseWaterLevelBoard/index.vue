@@ -1,6 +1,7 @@
 <script setup lang="tsx">
 import { createColumnHelper, FlexRender, getCoreRowModel, useVueTable } from '@tanstack/vue-table';
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
 
 import { api, DeliveryCommandJobDTO } from '@/api/warehouse';
 import { usePage } from '@/hooks/modules/page';
@@ -97,17 +98,20 @@ const onDeleteBatches = async () => {
 const data = ref(defaultData);
 
 // 定时器
-setInterval(async () => {
+// setInterval(async () => {
+//   pageUI.value.page++;
+//   if (pageUI.value.page > Math.ceil(total.value / pageUI.value.rows)) {
+//     pageUI.value.page = 1;
+//   }
+//   await onDeleteBatches();
+// }, 3000); // 延迟时间是5000毫秒，即5秒
+const intervalTimer = setInterval(() => {
   pageUI.value.page++;
   if (pageUI.value.page > Math.ceil(total.value / pageUI.value.rows)) {
     pageUI.value.page = 1;
   }
-  await onDeleteBatches();
-}, 3000); // 延迟时间是5000毫秒，即5秒
-
-// const rerender = () => {
-//   data.value = defaultData;
-// };
+  onDeleteBatches();
+}, 3000);
 
 const table = useVueTable({
   get data() {
@@ -115,6 +119,15 @@ const table = useVueTable({
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
+});
+onBeforeRouteLeave((to, from, next) => {
+  // 需要销毁定时器,否则可能造成内存泄露
+  clearInterval(intervalTimer);
+  next();
+});
+onUnmounted(() => {
+  // 需要销毁定时器,否则可能造成内存泄露
+  clearInterval(intervalTimer);
 });
 </script>
 
