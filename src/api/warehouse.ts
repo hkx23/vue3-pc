@@ -4297,6 +4297,11 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4307,11 +4312,6 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
 }
 
 /** 通用响应类 */
@@ -4804,6 +4804,11 @@ export interface MitemCancelDtlVO {
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4814,11 +4819,6 @@ export interface MitemCancelDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
 }
 
 export interface MitemCancelVO {
@@ -6730,6 +6730,16 @@ export interface ResultPagingDataDeliveryCommandVO {
 
 /** 送货单扫描 */
 export interface DeliverySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
   /** 交易事务单号 */
   billNo?: string;
   /** 送货单号 */
@@ -6750,6 +6760,20 @@ export interface DeliverySearch {
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
+  /**
+   * 送货开始日期
+   * @format date-time
+   */
+  dateDeliveryStart?: string;
+  /**
+   * 送货结束日期
+   * @format date-time
+   */
+  dateDeliveryEnd?: string;
+  supplierId?: string;
+  /** 送货单状态 */
+  status?: string;
+  deliveryId?: string;
 }
 
 /** 送货单 */
@@ -6815,6 +6839,19 @@ export interface ResultPagingDataDeliveryVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataDeliveryVO;
+}
+
+/** 通用响应类 */
+export interface ResultListDeliveryDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DeliveryDtlVO[] | null;
 }
 
 /** 送货单扫描 */
@@ -7784,19 +7821,6 @@ export interface ResultPagingDataDeliveryDtlVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataDeliveryDtlVO;
-}
-
-/** 通用响应类 */
-export interface ResultListDeliveryDtlVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: DeliveryDtlVO[] | null;
 }
 
 /** 通用响应类 */
@@ -11154,6 +11178,36 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataDeliveryVO['data']>(`/api/warehouse/delivery/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 送货单表
+     * @name GetDeliveryList
+     * @summary 获取送货单列表
+     * @request POST:/delivery/getDeliveryList
+     * @secure
+     */
+    getDeliveryList: (data: DeliverySearch) =>
+      http.request<ResultPagingDataDeliveryVO['data']>(`/api/warehouse/delivery/getDeliveryList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 送货单表
+     * @name GetDeliveryDtl
+     * @summary 获取送货单明细
+     * @request POST:/delivery/getDeliveryDtl
+     * @secure
+     */
+    getDeliveryDtl: (data: DeliverySearch) =>
+      http.request<ResultListDeliveryDtlVO['data']>(`/api/warehouse/delivery/getDeliveryDtl`, {
         method: 'POST',
         body: data as any,
       }),

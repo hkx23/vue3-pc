@@ -26,23 +26,21 @@
     <cmp-row>
       <!-- ################# 子数据数据 ###################### -->
       <cmp-card :span="12">
-        <div class="pack-dtl-table">
-          <cmp-table
-            ref="tableDtlRef"
-            row-key="id"
-            active-row-type="single"
-            :table-column="tablePurchaseOrderDtlColumns"
-            :table-data="tableDataPurchaseOrderDtl"
-            :loading="loadingPurchaseOrderDtl"
-            :total="dataTotal"
-            :hover="false"
-            :stripe="false"
-            :header-affixed-top="true"
-            @refresh="fetchTable"
-          >
-            <template #title> {{ t('purchaseOrder.tableDtlSubTilte') }} </template>
-          </cmp-table>
-        </div>
+        <cmp-table
+          ref="tableDtlRef"
+          row-key="id"
+          active-row-type="single"
+          :table-column="tablePurchaseOrderDtlColumns"
+          :table-data="tableDataPurchaseOrderDtl"
+          :loading="loadingPurchaseOrderDtl"
+          :total="dataTotal"
+          :hover="false"
+          :stripe="false"
+          :header-affixed-top="true"
+          @refresh="fetchTable"
+        >
+          <template #title> {{ t('purchaseOrder.tableDtlSubTilte') }} </template>
+        </cmp-table>
       </cmp-card>
     </cmp-row>
   </cmp-container>
