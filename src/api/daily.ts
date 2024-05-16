@@ -1775,11 +1775,11 @@ export interface ConferenceOrgVO {
   typeName?: string;
   /** 类型 */
   type?: string;
-  /** 转换后的组织编码 */
-  convertOrgCode?: string;
+  convertOrgId?: string;
   /** 转换后的组织编码 */
   convertOrgName?: string;
-  convertOrgId?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
 }
 
 /** 响应数据 */
@@ -2298,7 +2298,6 @@ export interface CheckBillDtlFileVO {
   fileName?: string;
   /** 文件地址 */
   filePath?: string;
-  url?: string;
   serialNumber?: string;
   fullFileName?: string;
   fileType?: string;
@@ -2307,6 +2306,8 @@ export interface CheckBillDtlFileVO {
   timeUpload?: string;
   signedUrl?: string;
   percent?: number;
+  name?: string;
+  url?: string;
 }
 
 /** 点检单据明细 */

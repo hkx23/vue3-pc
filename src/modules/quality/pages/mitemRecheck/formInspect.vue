@@ -94,12 +94,12 @@
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-tabs :model-value="selectTabValue" @change="tabsChange">
-          <template #action>
+          <!-- <template #action>
             <div class="tabs_right_ops">
               <t-checkbox :label="t('mitemRecheck.只显示不合格')" style="width: 170px" />
               <t-input :placeholder="t('mitemRecheck.请输入搜索关键字')" />
             </div>
-          </template>
+          </template> -->
           <t-tab-panel value="tab1" :label="t('mitemRecheck.全部')" :destroy-on-hide="false">
             <cmp-table
               row-key="id"

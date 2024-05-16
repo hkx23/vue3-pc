@@ -1483,8 +1483,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface TimeSwitchProductVO {
@@ -2913,11 +2913,11 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
   workshopCode?: string;
   workshopId?: string;
-  workshopName?: string;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }
@@ -3321,8 +3321,8 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3477,13 +3477,13 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
   workshopCode?: string;
   workshopId?: string;
-  workshopName?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -5137,13 +5137,13 @@ export interface BarcodeWipCollectVO {
   moHold?: number;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
   workshopCode?: string;
   workshopId?: string;
-  workshopName?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }

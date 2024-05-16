@@ -4297,11 +4297,6 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  tlpickQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4312,6 +4307,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -4804,11 +4804,6 @@ export interface MitemCancelDtlVO {
    * @format double
    */
   scanQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  tlpickQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4819,6 +4814,11 @@ export interface MitemCancelDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
 }
 
 export interface MitemCancelVO {
@@ -5609,13 +5609,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */

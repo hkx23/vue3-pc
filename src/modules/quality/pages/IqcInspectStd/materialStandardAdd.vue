@@ -127,7 +127,7 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
-        upload-path="quality/inspectStd"
+        upload-path="inspectStd"
         :is-hand-delete="true"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
@@ -421,9 +421,9 @@ const delBatch = async () => {
 
 // // 上传文件
 const fileList = ref([]);
-const getStdFileList = async () => {
-  const res = (await api.iqcInspectStd.getStdFile({
-    inspectionId: formData.value.id,
+const getStdAttachList = async () => {
+  const res = (await api.iqcInspectStd.getStdAttachList({
+    id: formData.value.id,
   })) as any;
   if (res) {
     fileList.value = res;
@@ -687,7 +687,7 @@ defineExpose({
   fileList,
   getDtlById,
   getAllDtlById,
-  getStdFileList,
+  getStdAttachList,
   getAllDtlFormCache,
   butControl,
   submitButControl,
