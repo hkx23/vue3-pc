@@ -303,7 +303,7 @@ const jiashuju = ref([
   { deliveryCardStatuName: 'nihao1', timeCreate: '2000-11-11' },
 ]);
 
-// 1️⃣ 产品基础信息 表格列数据
+// 产品基础信息 表格列数据
 const productBasicInformation: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
@@ -372,7 +372,7 @@ const productBasicInformation: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
 ];
-// // 3️⃣ - 1️⃣物料信息 关键信息 表格列数据
+// 物料信息 关键信息 表格列数据
 const materialkey: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
@@ -441,7 +441,7 @@ const materialkey: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 3️⃣ - 2️⃣物料信息 工单投料信息 表格列数据
+// 物料信息 工单投料信息 表格列数据
 const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
@@ -524,7 +524,7 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 4️⃣包装信息 表格列数据
+// 包装信息 表格列数据
 // const packagingInformation: PrimaryTableCol<TableRowData>[] = [
 //   {
 //     colKey: 'deliveryCardStatuName',
@@ -634,7 +634,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 5️⃣ 品质信息 表格列数据
+// 品质信息 表格列数据
 const qualityInformation: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
@@ -674,7 +674,7 @@ const qualityInformation: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 6️⃣ 工艺文件信息 表格列数据
+// 工艺文件信息 表格列数据
 const processDocument: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
@@ -714,7 +714,7 @@ const processDocument: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 7️⃣ - 1️⃣ 产品不良 表格列数据
+// 产品不良 表格列数据
 const productDefect: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
@@ -796,7 +796,7 @@ const productDefect: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 7️⃣ - 2️⃣ 维修明细 表格列数据
+// 维修明细 表格列数据
 const maintenanceDetail: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'scanBarcode',
@@ -860,7 +860,7 @@ const maintenanceDetail: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 8️⃣ 出入库信息 表格列数据
+// 出入库信息 表格列数据
 const inventoryInOut: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',

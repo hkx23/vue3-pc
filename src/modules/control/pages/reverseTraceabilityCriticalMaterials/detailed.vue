@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <!-- from -->
     <div style="font-size: 18px">
-      <span v-if="!row?.moCode">{{ '工单信息( )' }}</span>
+      <span v-if="!row?.moCode">{{ '工单信息' }}</span>
       <span v-if="row?.moCode"> {{ `工单信息(工单号：${row?.moCode ? row?.moCode : ''})` }}</span>
     </div>
     <t-card class="list-card-container" :bordered="true">
