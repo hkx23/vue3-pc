@@ -583,7 +583,7 @@ const onShowAndLoadDialog = async (isEdit, rowData) => {
 
 // 合并检验
 const mergeInspection = async (isEdit) => {
-  checkSelected().then(async (isRun) => {
+  checkSelected(true).then(async (isRun) => {
     if (isRun) {
       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
       const { showMergeForm } = formInspectRef.value;
@@ -593,14 +593,14 @@ const mergeInspection = async (isEdit) => {
 };
 // 一键合格
 const directInspectOk = async () => {
-  checkSelected().then(async (isRun) => {
+  checkSelected(false).then(async (isRun) => {
     if (isRun) {
       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
       const sumPickQty = selectKeys.reduce((previousValue, currentValue) => previousValue + currentValue.pickQty, 0);
 
       const bills = [];
       selectKeys.forEach((item) => {
-        bills.push({ billNo: item.billNo, billNoDtlId: item.id });
+        bills.push({ billNo: item.billNo, billNoDtlId: item.id, iqcBillNo: item.iqcBillNo });
       });
 
       await apiQuality.iqcInspect.createdIqcInspectAndStockIn({
@@ -612,6 +612,8 @@ const directInspectOk = async () => {
         pickQty: sumPickQty,
         billNoList: bills,
         directInspectOk: true,
+        isCreatedIqcInspect: false, // 是否自动创建IQC检验单据
+        isCreatedStockIn: true, // 自动创建入库单
       });
 
       await fetchTable();
@@ -621,14 +623,14 @@ const directInspectOk = async () => {
 };
 // 一键判退
 const directInspectNg = async () => {
-  checkSelected().then(async (isRun) => {
+  checkSelected(false).then(async (isRun) => {
     if (isRun) {
       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
       const sumPickQty = selectKeys.reduce((previousValue, currentValue) => previousValue + currentValue.pickQty, 0);
 
       const bills = [];
       selectKeys.forEach((item) => {
-        bills.push({ billNo: item.billNo, billNoDtlId: item.id });
+        bills.push({ billNo: item.billNo, billNoDtlId: item.id, iqcBillNo: item.iqcBillNo });
       });
 
       await apiQuality.iqcInspect.createdIqcInspectAndStockIn({
@@ -640,6 +642,8 @@ const directInspectNg = async () => {
         pickQty: sumPickQty,
         billNoList: bills,
         directInspectNg: true,
+        isCreatedIqcInspect: false, // 是否自动创建IQC检验单据
+        isCreatedStockIn: true, // 自动创建入库单
       });
 
       await fetchTable();
@@ -648,7 +652,7 @@ const directInspectNg = async () => {
   });
 };
 
-const checkSelected = async () => {
+const checkSelected = async (isIqcBillNoVerify) => {
   if (selectWaitId.value.length <= 0) {
     MessagePlugin.error(t('mitemIncomingInspection.请选择待检单'));
     return false;
@@ -656,11 +660,13 @@ const checkSelected = async () => {
 
   const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
 
-  for (let index = 0; index < selectKeys.length; index++) {
-    const element = selectKeys[index];
-    if (!_.isEmpty(element.iqcBillNo)) {
-      MessagePlugin.error(t('mitemIncomingInspection.单据不允许重复检验'));
-      return false;
+  if (isIqcBillNoVerify) {
+    for (let index = 0; index < selectKeys.length; index++) {
+      const element = selectKeys[index];
+      if (!_.isEmpty(element.iqcBillNo)) {
+        MessagePlugin.error(t('mitemIncomingInspection.单据不允许重复检验'));
+        return false;
+      }
     }
   }
 

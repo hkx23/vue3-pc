@@ -3182,10 +3182,14 @@ export interface IqcInspectStdFullSearch {
   billNoList?: IqcInspectSubmitDeliveryNoVO[];
   /** 是否创建入库单据 */
   isCreatedStockIn?: boolean;
+  /** 是否创建IQC检验单据 */
+  isCreatedIqcInspect?: boolean;
 }
 
 /** 物料检验头表 */
 export interface IqcInspectSubmitDeliveryNoVO {
+  /** IQC单号 */
+  iqcBillNo?: string;
   /** 接收单号 */
   billNo?: string;
   billNoDtlId?: string;
@@ -3198,7 +3202,7 @@ export interface IqcInspectSubmitDeliveryNoVO {
 /** 检验测量值 */
 export interface IqcInspectMeasureVO {
   /**
-   * 主键ID
+   * 标准的明细行ID
    * @format int64
    */
   stdDtlId?: number;
@@ -3716,6 +3720,8 @@ export interface IqcInspectRecheckNgVO {
 
 /** 物料复检头表 */
 export interface IqcInspectRecheckSubmitVO {
+  /** 是否新增 */
+  isAdd?: boolean;
   /** IQC单号 */
   iqcBillNo?: string;
   /** IQC复检单号 */
@@ -3768,7 +3774,183 @@ export interface IqcInspectRecheckSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  /** 复检单号 */
+  recheckBillNo?: string;
   iqcInspectStdId?: string;
+}
+
+/** 物料复检检验明细表 */
+export interface IqcInspectRecheckDtlFullVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectRecheckId?: string;
+  /**
+   * 项目行号
+   * @format int32
+   */
+  itemSeq?: number;
+  /** 项目分类 */
+  itemCategory?: string;
+  /** 项目名称或内容 */
+  itemName?: string;
+  /** 项目特性 */
+  characteristics?: string;
+  /** 基准值 */
+  baseValue?: number;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 技术要求 */
+  technicalRequest?: string;
+  /** 抽样标准类型 */
+  samplingStandardType?: string;
+  /** 抽样标准编码 */
+  samplingStandardCode?: string;
+  /** 检验水平 */
+  inspectLevel?: string;
+  /** 检验工具 */
+  inspectTool?: string;
+  /** 不合格分类 */
+  unqualifyCategory?: string;
+  /** 检验依据 */
+  inspectBasis?: string;
+  /** 检验类型 */
+  inspectType?: string;
+  /** 检验属性 */
+  inspectProperty?: string;
+  /**
+   * 是否CTQ
+   * @format int32
+   */
+  isCtq?: number;
+  /** 不良数 */
+  ngQty?: number;
+  /** 不良描述 */
+  ngReason?: string;
+  /** 样本数 */
+  sampleQty?: number;
+  /** AC值 */
+  acValue?: number;
+  /** RE值 */
+  reValue?: number;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+  /** 标准状态 */
+  stdStatus?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 检验水平 */
+  inspectLevelName?: string;
+  /** 不合格分类 */
+  unqualifyCategoryName?: string;
+  /** 接收质量限 */
+  aql?: string;
+  /** 测量值 */
+  measureList?: IqcInspectRecheckMeasureVO[];
+  /** AC/RE */
+  acRe?: string;
+  /** 文件列表 */
+  fileList?: AddFileTypeVO[];
+  /** 检验严格度 */
+  inspectionStringency?: string;
+  /** 检验严格度 */
+  inspectionStringencyName?: string;
+  /** 计量单位符号 */
+  uom?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+  /** 项目分类 */
+  itemCategoryName?: string;
+  iqcInspectStdDtlId?: string;
+  iqcInspectRecheckDtlId?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
+}
+
+/** 检验测量值 */
+export interface IqcInspectRecheckMeasureVO {
+  /**
+   * 标准的明细行ID
+   * @format int64
+   */
+  stdDtlId?: number;
+  /**
+   * 检测值序号
+   * @format int32
+   */
+  inspectSeq?: number;
+  /** 测量值 */
+  measureValue?: number;
+  /** 样本数 */
+  sampleQty?: number;
+  /** 检验工具 */
+  inspectTool?: string;
+  /** 基准值 */
+  baseValue?: number;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 单位 */
+  uom?: string;
+}
+
+/** 响应数据 */
+export type PagingDataIqcInspectRecheckDtlFullVO = {
+  list?: IqcInspectRecheckDtlFullVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIqcInspectRecheckDtlFullVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIqcInspectRecheckDtlFullVO;
 }
 
 /** 复检搜索条件 */
@@ -3785,6 +3967,7 @@ export interface MitemInspectionBillSearch {
   endDatetimeRecheck?: string;
   mitemId?: string;
   supplierId?: string;
+  status?: string;
   personResponsibilityId?: string;
   inspectGroupId?: string;
   inspectGroupMitemCategoryId?: string[];
@@ -5942,12 +6125,12 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s3?: string;
+  i?: string;
+  s4?: string;
   iii?: string;
   s2?: string;
   s1?: string;
-  s3?: string;
-  s4?: string;
-  i?: string;
   ii?: string;
 } | null;
 
@@ -7797,6 +7980,24 @@ export const api = {
      * No description
      *
      * @tags 物料复检头表
+     * @name GetIqcRecheckDtlInfoByBillVo
+     * @summary 根据单号查询现有IQC复检单据
+     * @request POST:/iqcInspectRecheck/getIqcRecheckDtlInfoByBillVO
+     * @secure
+     */
+    getIqcRecheckDtlInfoByBillVo: (data: IqcInspectRecheckSearch) =>
+      http.request<ResultPagingDataIqcInspectRecheckDtlFullVO['data']>(
+        `/api/quality/iqcInspectRecheck/getIqcRecheckDtlInfoByBillVO`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 物料复检头表
      * @name GetIqcInspectBillVoByRecheck
      * @summary 获取仓库IQC检验单数据
      * @request POST:/iqcInspectRecheck/getIqcInspectBillVOByRecheck
@@ -7810,20 +8011,6 @@ export const api = {
           body: data as any,
         },
       ),
-
-    /**
-     * No description
-     *
-     * @tags 物料复检头表
-     * @name Test
-     * @summary 物料复检单自动生成JOB测试
-     * @request GET:/iqcInspectRecheck/test
-     * @secure
-     */
-    test: () =>
-      http.request<ResultObject['data']>(`/api/quality/iqcInspectRecheck/test`, {
-        method: 'GET',
-      }),
   },
   iqcInspectDtlFile: {
     /**
@@ -8052,20 +8239,6 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/quality/iqcInspect/CreatedIqcInspectAndStockIn`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 物料检验头表
-     * @name Test
-     * @summary 产品复检单生产JOB测试
-     * @request GET:/iqcInspect/test
-     * @secure
-     */
-    test: () =>
-      http.request<ResultObject['data']>(`/api/quality/iqcInspect/test`, {
-        method: 'GET',
       }),
   },
   inspectGroupInUser: {

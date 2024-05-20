@@ -1,7 +1,7 @@
 <template>
   <cmp-container :full="true">
     <cmp-card>
-      <cmp-query :opts="optsTab1" :is-expansion="true" @submit="conditionEnter" @reset="onReset" />
+      <cmp-query :opts="optsTab1" @submit="conditionEnter" @reset="onReset" />
     </cmp-card>
     <cmp-card>
       <cmp-table
@@ -21,17 +21,23 @@
       >
         <template #title>{{ t('mitemRecheck.工作台') }}</template>
         <template #button>
-          <t-button theme="primary" @click="onLoadFJDialog(true, null)">{{ t('mitemRecheck.新增复检') }}</t-button>
+          <t-button theme="primary" @click="onLoadFJDialog(true, true, null)">{{
+            t('mitemRecheck.新增复检')
+          }}</t-button>
         </template>
 
         <template #recheckBillNo="rowData">
           <t-space>
-            <t-link theme="primary" @click="onLoadFJDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
+            <t-link theme="primary" @click="onLoadFJDialog(false, rowData.row.status === 'UNINSPECT', rowData)">
+              {{ rowData.row.recheckBillNo }}
+            </t-link>
           </t-space>
         </template>
         <template #op="rowData">
           <t-space v-if="rowData.row.status === 'UNINSPECT'">
-            <t-link theme="primary" @click="onLoadFJDialog(false, rowData)">检验</t-link>
+            <t-link theme="primary" @click="onLoadFJDialog(false, rowData.row.status === 'UNINSPECT', rowData)"
+              >检验</t-link
+            >
           </t-space>
         </template>
       </cmp-table>
@@ -39,7 +45,11 @@
   </cmp-container>
 
   <!--弹窗-->
-  <formInspect ref="formRef" @parent-refresh-event="fetchTable" @form-close-event="onFormCloseDialog"></formInspect>
+  <formInspect
+    ref="formInspectRef"
+    @parent-refresh-event="fetchTable"
+    @form-close-event="onFormCloseDialog"
+  ></formInspect>
 </template>
 <script lang="ts" setup>
 import dayjs from 'dayjs';
@@ -56,7 +66,7 @@ import formInspect from './formInspect.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
-const formRef = ref(null);
+const formInspectRef = ref(null);
 
 const { loading } = useLoading();
 const { pageUI: pageTab1 } = usePage();
@@ -72,6 +82,7 @@ const formData = reactive({
     supplierId: '',
     iqcBillNo: '',
     recheckBillNo: '',
+    status: '',
   },
 });
 
@@ -135,6 +146,15 @@ const optsTab1 = computed(() => {
       bind: {
         type: 'iqcBillInfo',
         showTitle: false,
+      },
+    },
+    status: {
+      label: t('mitemRecheck.状态'),
+      comp: 'bcmp-select-param',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        paramGroup: 'Q_INSPECTION_RECHECK_STATUS',
       },
     },
   };
@@ -202,6 +222,7 @@ const conditionEnter = (query: any) => {
   formData.queryData.supplierId = query.supplierId;
   formData.queryData.recheckBillNo = query.recheckBillNo;
   formData.queryData.iqcBillNo = query.iqcBillNo;
+  formData.queryData.status = query.status;
 
   fetchTable();
 };
@@ -236,6 +257,7 @@ const fetchTable = async () => {
       personResponsibilityId: formData.queryData.personResponsibilityId,
       mitemId: formData.queryData.mitemId,
       supplierId: formData.queryData.supplierId,
+      status: formData.queryData.status,
     });
 
     waitInspectData.value = list.list;
@@ -252,20 +274,12 @@ const pageInit = async () => {
 const onSelectWaitInspectChange = (value: any) => {
   selectWaitId.value = value;
 };
-// const onShowDialog = async (isEdit, rowData) => {
-//   const { showInspectForm } = formRef.value;
-//   if (rowData !== null) {
-//     await showInspectForm(isEdit, rowData.row);
-//   } else {
-//     await showInspectForm(isEdit, null);
-//   }
-// };
-const onLoadFJDialog = async (isEdit, rowData) => {
-  const { showFJForm } = formRef.value;
-  if (rowData !== null) {
-    await showFJForm(isEdit, rowData.row);
+const onLoadFJDialog = async (isAdd, canInput, rowData) => {
+  const { showFJForm } = formInspectRef.value;
+  if (rowData === null) {
+    await showFJForm(isAdd, canInput, null);
   } else {
-    await showFJForm(isEdit, null);
+    await showFJForm(isAdd, canInput, rowData.row);
   }
 };
 const onFormCloseDialog = async () => {

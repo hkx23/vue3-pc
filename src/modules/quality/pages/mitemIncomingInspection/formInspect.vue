@@ -550,12 +550,12 @@ const onShowMeasureDialog = async (row) => {
 const onFormCloseDialog = async () => {
   formVisible.value = false;
 };
-const parentConfirm = async (measureList) => {
+const parentConfirm = async (measureList, isOK) => {
   if (!_.isEmpty(measureList)) {
     const { stdDtlId } = measureList[0];
-    const rowData = tableData.value.find((n) => n.id === stdDtlId);
+    const rowData = tableData.value.find((n) => n.iqcInspectStdDtlId === stdDtlId);
     rowData.measureList = measureList;
-    // rowData.inspectResultSwitch = isAllOK;
+    rowData.inspectResult = isOK ? 'OK' : 'NG';
   }
 };
 

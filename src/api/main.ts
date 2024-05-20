@@ -1002,8 +1002,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -5245,12 +5245,12 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isExemptionInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
   isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   stateName?: string;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isState?: boolean;
 }
 
@@ -5463,13 +5463,13 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isProductName?: string;
+  isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isBatchName?: string;
-  stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  stateName?: string;
   isState?: boolean;
 }
 
@@ -10175,10 +10175,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */

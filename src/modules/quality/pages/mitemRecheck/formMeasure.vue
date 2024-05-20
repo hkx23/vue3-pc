@@ -129,6 +129,7 @@ const showForm = async (edit, measureList) => {
   formVisible.value = true;
   reset();
   formMeasureData.measureList = _.cloneDeep(measureList);
+  // formMeasureData.measureList = measureList;
   formMeasureData.sampleQty = `${measureList[0].sampleQty}`;
   formMeasureData.inspectTool = `${measureList[0].inspectTool}`;
   formMeasureData.baseValue = `${measureList[0].baseValue}`;
