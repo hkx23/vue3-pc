@@ -29,7 +29,8 @@
     "codeField": "uom"
   },
   "name": "计量单位",
-  "componentType": "list",
+  "componentType": "table",
+  "customConditions":[{"field":"uom","operator":"in","value":"CM,g","type":"string"}],
   "dynamicTableName": "m_mitem_uom", 
   "dynamicBusinessDomain": "main",
   "dynamicKeywordFields": ["uom","uomName"],

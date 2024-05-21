@@ -292,7 +292,7 @@ const finalParentId = ref(props.parentId);
 const finaltableWidth = ref(props.tableWidth);
 const finalComponentType = ref(props.componentType);
 const finalListSetting = ref(props.listSetting);
-const finalCustomConditions = ref(props.customConditions);
+const finalCustomConditions = ref(null);
 const finalMultiple = ref(props.isMultiple || props.multiple);
 const finalQuerySetting = ref(null);
 const finalBottomQuerySetting = ref(null);
@@ -417,6 +417,13 @@ const loadTypeSetting = () => {
             finalBottomQuerySetting.value = res.bottomQuerySetting;
           }
         }
+
+        if (props.customConditions && props.customConditions.length > 0) {
+          finalCustomConditions.value = props.customConditions;
+        } else if (res && res.customConditions) {
+          finalCustomConditions.value = res.customConditions;
+        }
+
         // 动态查询接口用到的参数
         if (res.dynamicTableName) {
           if (!finalDynamicTabelName.value) {
