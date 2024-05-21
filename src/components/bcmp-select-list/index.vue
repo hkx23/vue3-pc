@@ -303,6 +303,25 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // 动态查询接口用到的参数
+  dynamicTableName: {
+    type: String,
+    default: '',
+  },
+  dynamicBusinessDomain: {
+    type: String,
+    default: '',
+  },
+  dynamicKeywordFields: {
+    type: Array,
+    default: () => {
+      return [];
+    },
+  },
+  dynamicDefaultSortFiled: {
+    type: String,
+    default: '',
+  },
 });
 const onOptionClick = (item, openReverse: boolean = true) => {
   if (props.multiple) {
@@ -505,7 +524,12 @@ const loadSelectedData = async () => {
     keyword: '',
     category: props.category,
     parentId: props.parentId,
+    dynamicTableName: props.dynamicTableName,
+    dynamicBusinessDomain: props.dynamicBusinessDomain,
+    dynamicKeywordFields: props.dynamicKeywordFields,
+    dynamicDefaultSortFiled: props.dynamicDefaultSortFiled,
   };
+
   try {
     const { list } = await http.post<any>(props.remoteUrl, searchCondition);
 
@@ -543,6 +567,10 @@ const remoteLoad = async (val: any) => {
     category: props.category,
     parentId: props.parentId,
     filters: finalFilterList,
+    dynamicTableName: props.dynamicTableName,
+    dynamicBusinessDomain: props.dynamicBusinessDomain,
+    dynamicKeywordFields: props.dynamicKeywordFields,
+    dynamicDefaultSortFiled: props.dynamicDefaultSortFiled,
   };
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
@@ -720,6 +748,10 @@ const fetchTreeNodeData = async (key: string | number, children: any[]) => {
     category: '',
     parentId: key,
     filters: [],
+    dynamicTableName: props.dynamicTableName,
+    dynamicBusinessDomain: props.dynamicBusinessDomain,
+    dynamicKeywordFields: props.dynamicKeywordFields,
+    dynamicDefaultSortFiled: props.dynamicDefaultSortFiled,
   };
   const { list } = await http.post<any>(props.listSetting.loadNodeUrl, searchCondition);
   const treeNodes = formatTreeNode(children);

@@ -255,6 +255,25 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // 动态查询接口用到的参数
+  dynamicTableName: {
+    type: String,
+    default: '',
+  },
+  dynamicBusinessDomain: {
+    type: String,
+    default: '',
+  },
+  dynamicKeywordFields: {
+    type: Array,
+    default: () => {
+      return [];
+    },
+  },
+  dynamicDefaultSortFiled: {
+    type: String,
+    default: '',
+  },
 });
 
 type Filters = { [key: string]: any };
@@ -637,6 +656,10 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
     parentId: props.parentId,
     sorts: sortList.value,
     filters: finalFilterList,
+    dynamicTableName: props.dynamicTableName,
+    dynamicBusinessDomain: props.dynamicBusinessDomain,
+    dynamicKeywordFields: props.dynamicKeywordFields,
+    dynamicDefaultSortFiled: props.dynamicDefaultSortFiled,
   };
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
