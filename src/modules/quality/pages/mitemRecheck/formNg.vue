@@ -115,6 +115,7 @@ let formData = reactive({
   recheckReason: '',
 });
 
+const isAdd = ref(false); // 是否新增
 const mainTableData = ref([]);
 const formNgData = reactive({
   personResponsibilityId: '',
@@ -186,6 +187,7 @@ const onConfirmForm = async () => {
       recheckReason: formData.recheckReason,
       iqcInspectStdList: mainTableData.value,
       iqcInspectRecheckNg: formNgData,
+      isAdd: isAdd.value,
     });
 
     Emit('form-close-event');

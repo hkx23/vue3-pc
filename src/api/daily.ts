@@ -1259,10 +1259,10 @@ export interface ConferenceTemplateVO {
   conferenceName?: string;
   /** 有效值转换 */
   isState?: boolean;
-  /** 模板维度转换 */
-  templateDimensionList?: string[];
   /** 模板维度名称转换 */
   templateDimensionNames?: string;
+  /** 模板维度转换 */
+  templateDimensionList?: string[];
 }
 
 /** 响应数据 */
@@ -1572,10 +1572,10 @@ export interface ConferenceVO {
   templateDimensionNameList?: string[];
   /** 有效值转换 */
   isState?: boolean;
-  /** 维度转换 */
-  templateDimensionList?: string[];
   /** 维度名称转换 */
   templateDimensionNames?: string;
+  /** 维度转换 */
+  templateDimensionList?: string[];
 }
 
 /** 响应数据 */
@@ -1772,14 +1772,14 @@ export interface ConferenceOrgVO {
   orgName?: string;
   workCenterCode?: string;
   workCenterName?: string;
-  typeName?: string;
-  /** 类型 */
-  type?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
   convertOrgId?: string;
   /** 转换后的组织编码 */
   convertOrgName?: string;
-  /** 转换后的组织编码 */
-  convertOrgCode?: string;
+  typeName?: string;
+  /** 类型 */
+  type?: string;
 }
 
 /** 响应数据 */
@@ -2440,10 +2440,10 @@ export interface CheckBillHeadVO {
   executeFrequenceName?: string;
   /** 待取消的单据 */
   cancelBillNoList?: string[];
-  /** 状态名称 */
-  statusName?: string;
   /** 检验结果名称 */
   checkResultName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 export interface CheckBillSearch {

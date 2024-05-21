@@ -3898,9 +3898,9 @@ export interface IqcInspectRecheckDtlFullVO {
   /** 项目分类 */
   itemCategoryName?: string;
   iqcInspectStdDtlId?: string;
-  iqcInspectRecheckDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectRecheckDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -6125,13 +6125,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
-  i?: string;
-  s4?: string;
-  iii?: string;
-  s2?: string;
   s1?: string;
+  s3?: string;
+  s4?: string;
+  i?: string;
+  s2?: string;
   ii?: string;
+  iii?: string;
 } | null;
 
 /** 标签模板 */
