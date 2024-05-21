@@ -204,7 +204,7 @@
 </template>
 
 <script setup lang="ts">
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 
 import { api, StockCheckBillDtl } from '@/api/warehouse';
@@ -230,6 +230,7 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '货位', width: 100, colKey: 'locationName' },
   // { title: '最小包装', width: 100, colKey: 'warehouseName2' },
   { title: '账面数', width: 100, colKey: 'onhandQty' },
+  { title: '实时库存数', width: 100, colKey: 'nowOnhandQty' },
   { title: '实盘数', width: 150, colKey: 'checkQty', cell: 'firmOfferNumberSlot' },
   { title: '差异数', width: 100, colKey: 'differenceQty', cell: 'differenceNumberSlot' },
   { title: '差异原因', width: 150, colKey: 'diffReason', cell: 'differenceReasonSlot' },
@@ -326,8 +327,37 @@ const finish = async (billId) => {
   await MessagePlugin.success('盘点完成!');
 };
 
+const confirmOnhandQty = () => {
+  const confirmDia = DialogPlugin({
+    header: '实时库存现有量与账面数不一致',
+    body: '实时库存现有量与账面数不一致,请确认是否继续调整',
+    confirmBtn: '确认',
+    cancelBtn: '取消',
+    onConfirm: async () => {
+      doAdjustment();
+      confirmDia.hide();
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
+  });
+};
 // 差异调整
 const getAdjustment = async () => {
+  let same = true;
+  tableDataInventory1.value.forEach((item) => {
+    if (item.onhandQty !== item.checkQty) {
+      same = false;
+    }
+  });
+  if (!same) {
+    confirmOnhandQty();
+  } else {
+    doAdjustment();
+  }
+};
+
+const doAdjustment = async () => {
   // 处理参数
   desData.value = tableDataInventory1.value;
   console.log('这是billid的值：', props.propsdtlId);
@@ -338,7 +368,7 @@ const getAdjustment = async () => {
     billId,
     billNo,
     warehouseId,
-    dtls: desData.value,
+    dtlsWithBarcode: desData.value,
   });
   emit('updateStatus', '已关闭'); // 发射事件，可以携带新状态作为参数
   // 提示调整完成
