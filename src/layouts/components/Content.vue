@@ -1,12 +1,14 @@
 <template>
   <!-- <router-view /> -->
-  <router-view v-show="activeRouteIsNotIframe" v-slot="{ Component, route }">
-    <!-- <transition name="fade"> -->
-    <keep-alive>
-      <component :is="Component" :key="route.fullPath" />
-    </keep-alive>
-    <!-- </transition> -->
-  </router-view>
+  <div v-show="activeRouteIsNotIframe" class="component-wrapper">
+    <router-view v-slot="{ Component, route }">
+      <!-- <transition name="fade"> -->
+      <keep-alive>
+        <component :is="Component" :key="route.fullPath" />
+      </keep-alive>
+      <!-- </transition> -->
+    </router-view>
+  </div>
   <frame-page v-show="!activeRouteIsNotIframe" />
 </template>
 
@@ -59,5 +61,9 @@ const activeRouteIsNotIframe = computed(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.component-wrapper {
+  height: 100%;
 }
 </style>

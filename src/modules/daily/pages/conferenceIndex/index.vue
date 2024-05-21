@@ -59,6 +59,7 @@ import { computed, onMounted, Ref, ref } from 'vue';
 import { api as apiDaily } from '@/api/daily';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import formAdd from './form.vue';
 import { useLang } from './lang';
@@ -113,7 +114,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'CONFERNCE_INDEX_DIMENSION',
       },
@@ -124,7 +125,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'CONFERNCE_INDEX_TYPE',
       },
@@ -157,7 +158,7 @@ const queryCondition = ref({
   datePlanRange: datePlanRangeDefault.value,
 });
 
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const { t } = useLang();
 // table定义
 const column = ref([
@@ -189,7 +190,7 @@ const conferenceIndexData = ref([]);
 // 获取通告列表和通告总数信息
 const onFetchData = async () => {
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     if (queryCondition.value.datePlanRange) {
       if (queryCondition.value.datePlanRange[0]) {
         queryCondition.value.datetimeStart = queryCondition.value.datePlanRange[0].toString();
@@ -210,7 +211,7 @@ const onFetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const parentCloseEvent = async (isRefresh: boolean) => {

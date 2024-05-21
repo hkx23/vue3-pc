@@ -514,6 +514,7 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -1783,6 +1784,26 @@ export interface SupportGroup {
 }
 
 /** 响应数据 */
+export type PagingDataSupportGroup = {
+  list?: SupportGroup[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSupportGroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSupportGroup;
+}
+
+/** 响应数据 */
 export type PagingDataSupportGroupVO = {
   list?: SupportGroupVO[];
   /** @format int32 */
@@ -1834,6 +1855,105 @@ export interface SupportGroupVO {
   enterprise?: string;
   /** 组织架构 */
   organization?: string;
+}
+
+export interface SupplierInUserSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 供应商代码 */
+  supplierInUserCode?: string;
+  supplierId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListSupplierInUserVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: SupplierInUserVO[] | null;
+}
+
+/** 响应数据 */
+export type SupplierInUserVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userId?: string;
+  supplierId?: string;
+  userName?: string;
+  displayName?: string;
+  email?: string;
+  personCode?: string;
+} | null;
+
+/** 供应商与用户关系表 */
+export interface SupplierInUser {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userId?: string;
+  supplierId?: string;
+}
+
+export interface SupplierInUserDTO {
+  /** 响应数据 */
+  supplierInUserVO?: SupplierInUserVO;
+  /** 供应商用户 */
+  supplierInUserUsers?: SupplierInUser[];
+  /** id集合 */
+  ids?: string[];
+  supplierId?: string;
 }
 
 /** 响应数据 */
@@ -2321,6 +2441,10 @@ export interface AssetLedgerVO {
    * @format date-time
    */
   createTime?: string;
+  /** 位置名称 */
+  positionName?: string;
+  /** 保管部门名称 */
+  departmentOwnerName?: string;
 }
 
 /** 响应数据 */
@@ -5035,6 +5159,7 @@ export interface MoSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -5157,6 +5282,7 @@ export interface MitemInSupplierSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -5221,13 +5347,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isForceInspectionChecked?: boolean;
   stateName?: string;
   isState?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  isForceInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5399,6 +5525,7 @@ export interface MitemVO {
   mitemName?: string;
   /** 物料描述 */
   mitemDesc?: string;
+  mitemId?: string;
   mitemCategoryId?: string;
   /** 物料类别编码 */
   mitemCategoryCode?: string;
@@ -5408,6 +5535,8 @@ export interface MitemVO {
   supplyCategory?: string;
   /** 单位 */
   uom?: string;
+  /** 单位名称 */
+  uomName?: string;
   /**
    * 是否成品，1：是；0：否
    * @format int32
@@ -5438,15 +5567,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isBatchName?: string;
-  isRawName?: string;
-  isProductName?: string;
-  isState?: boolean;
-  isInProcessName?: string;
   isRawChecked?: boolean;
-  isProductChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
+  isBatchName?: string;
+  stateName?: string;
+  isState?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5589,8 +5718,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6094,6 +6223,29 @@ export interface Label {
   isHold?: number;
   /** 标签类型 */
   labelType?: string;
+}
+
+/** DemoJOB参数 */
+export interface DemoJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** DemoJOB参数 */
+  demoJobParam?: DemoJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
 }
 
 export interface IntegratedConsoleSearch {
@@ -7342,6 +7494,7 @@ export interface DefectCodeSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -9537,8 +9690,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10124,14 +10277,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12730,6 +12883,21 @@ export const api = {
      * No description
      *
      * @tags 处理组表
+     * @name Search
+     * @summary 获取处理组表（筛选用）
+     * @request POST:/supportGroup/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataSupportGroup['data']>(`/api/main/supportGroup/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
      * @name GetPersonList
      * @summary 查询人员信息
      * @request POST:/supportGroup/getPersonList
@@ -12828,6 +12996,52 @@ export const api = {
     getSupportGroupType: () =>
       http.request<ResultPagingDataParam['data']>(`/api/main/supportGroup/getSupportGroupType`, {
         method: 'GET',
+      }),
+  },
+  supplierInUser: {
+    /**
+     * No description
+     *
+     * @tags 供应商与用户关系表
+     * @name ListUser
+     * @summary 获取供应商用户
+     * @request POST:/supplierInUser/listUser
+     * @secure
+     */
+    listUser: (data: SupplierInUserSearch) =>
+      http.request<ResultListSupplierInUserVO['data']>(`/api/main/supplierInUser/listUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商与用户关系表
+     * @name DeleteUser
+     * @summary 删除供应商用户
+     * @request POST:/supplierInUser/deleteUser
+     * @secure
+     */
+    deleteUser: (data: SupplierInUserDTO) =>
+      http.request<ResultObject['data']>(`/api/main/supplierInUser/deleteUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商与用户关系表
+     * @name AddUser
+     * @summary 新增供应商用户
+     * @request POST:/supplierInUser/addUser
+     * @secure
+     */
+    addUser: (data: SupplierInUserDTO) =>
+      http.request<ResultObject['data']>(`/api/main/supplierInUser/addUser`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   supplier: {
@@ -15479,6 +15693,22 @@ export const api = {
     getLabelBarcodeRuleList: () =>
       http.request<ResultListBarcodeRule['data']>(`/api/main/label/getLabelBarcodeRuleList`, {
         method: 'GET',
+      }),
+  },
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name DemoJob
+     * @summary DemoJOB
+     * @request POST:/jobCommon/demoJob
+     * @secure
+     */
+    demoJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/main/jobCommon/demoJob`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   integratedConsole: {

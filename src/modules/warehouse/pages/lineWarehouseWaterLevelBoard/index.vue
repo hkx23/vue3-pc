@@ -1,6 +1,7 @@
 <script setup lang="tsx">
 import { createColumnHelper, FlexRender, getCoreRowModel, useVueTable } from '@tanstack/vue-table';
-import { onMounted, ref } from 'vue';
+import { useIntervalFn } from '@vueuse/core';
+import { onActivated, onDeactivated, onMounted, ref } from 'vue';
 
 import { api, DeliveryCommandJobDTO } from '@/api/warehouse';
 import { usePage } from '@/hooks/modules/page';
@@ -97,17 +98,13 @@ const onDeleteBatches = async () => {
 const data = ref(defaultData);
 
 // 定时器
-setInterval(async () => {
-  pageUI.value.page++;
-  if (pageUI.value.page > Math.ceil(total.value / pageUI.value.rows)) {
-    pageUI.value.page = 1;
-  }
-  await onDeleteBatches();
-}, 3000); // 延迟时间是5000毫秒，即5秒
-
-// const rerender = () => {
-//   data.value = defaultData;
-// };
+// setInterval(async () => {
+//   pageUI.value.page++;
+//   if (pageUI.value.page > Math.ceil(total.value / pageUI.value.rows)) {
+//     pageUI.value.page = 1;
+//   }
+//   await onDeleteBatches();
+// }, 3000); // 延迟时间是5000毫秒，即5秒
 
 const table = useVueTable({
   get data() {
@@ -115,6 +112,22 @@ const table = useVueTable({
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
+});
+
+const { pause, resume } = useIntervalFn(() => {
+  pageUI.value.page++;
+  if (pageUI.value.page > Math.ceil(total.value / pageUI.value.rows)) {
+    pageUI.value.page = 1;
+  }
+  onDeleteBatches();
+}, 5000);
+
+onActivated(() => {
+  resume();
+});
+
+onDeactivated(() => {
+  pause();
 });
 </script>
 

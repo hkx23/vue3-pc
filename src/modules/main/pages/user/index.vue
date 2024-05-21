@@ -86,6 +86,7 @@ import { computed, onMounted, ref } from 'vue';
 import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import { FormRef } from './constants';
 import dialogOrg from './dialogOrg.vue';
@@ -106,7 +107,7 @@ const formRef = ref<FormRef>(null);
 
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 // 表格数据总数
 const dataTotal = ref(0);
 // 表格数据
@@ -183,7 +184,7 @@ const conditionEnter = (data: any) => {
 };
 // 加载用户数据表格
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     // 查询条件
     const searchCondition = {
@@ -206,7 +207,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 

@@ -115,13 +115,14 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import InventorySheetMaintenance from './inventory-sheet-maintenance.vue';
 import newInventoryManagemment from './new-inventory-managemment.vue';
 
 const { pageUI: firstPageUI } = usePage();
 const { pageUI: detailsPageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const inventoryManagement = ref([]);
 const tableDataReckoning = ref([]); //* 表格数据1
 const tableMaterialDetails = ref([]); //* 表格数据2
@@ -220,7 +221,7 @@ const onPrintClick = async () => {
   let isSuccess = true;
   printData.value = [];
   const promiseAll = [];
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     selectedRowKeys.value.forEach((element) => {
       const billInfo = tableDataReckoning.value.find((item: any) => item.billId === element);
@@ -243,7 +244,7 @@ const onPrintClick = async () => {
     console.log(e);
     isSuccess = false;
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
   return isSuccess;
 };
@@ -266,19 +267,19 @@ const getPrintBillInfo = (billNo, billId) => {
 
 //* 表格数据 1
 const fetchTable = async () => {
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
   inventoryManagement.value = [];
   tableDataReckoning.value = [];
   queryComponent.value.search();
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 
 const handleRowSelectChange = async (billId) => {
   propsdtlId.value = billId; // 选中后将数据传给作废接口作为参数
   if (billId.length > 0) {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     fetchTables(billId); // 改变选框时从新请求数据
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 /** 辅助函数
@@ -298,7 +299,7 @@ watch(propsdtlId, (newBillId) => {
 
 //* 表格数据 2
 const fetchTables = async (billId) => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   detailsPageUI.value.page = 1; // 子表默认为第一页数据
   const data = await api.stockCheckBill.getDtlList({
     pageNum: detailsPageUI.value.page,
@@ -307,7 +308,7 @@ const fetchTables = async (billId) => {
   });
   tableMaterialDetails.value = data.list;
   dataTotals.value = data.total;
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 
 const handleUpdateStatus = async (e) => {
@@ -348,7 +349,7 @@ const lastQueryParams = ref({});
 //* 查询
 const onInput = async (data: any) => {
   firstPageUI.value.page = 1;
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   const { billNo, status, warehouseId, timeCreate = [] } = data;
 
   // 保存当前的查询条件
@@ -369,7 +370,7 @@ const onInput = async (data: any) => {
     tableDataReckoning.value = [...data.list];
     dataTotal.value = data.total;
   }
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 
 //* 重置

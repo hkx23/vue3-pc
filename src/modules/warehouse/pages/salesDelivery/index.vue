@@ -81,6 +81,7 @@ import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import formSalesDelivery from './formSalesDelivery.vue';
 import { useLang } from './lang';
@@ -88,7 +89,7 @@ import { useLang } from './lang';
 const { t } = useLang();
 
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 
 const { loading: loadingChildren, setLoading: setLoadingChildren } = useLoading();
 
@@ -233,7 +234,7 @@ const onSearch = (query: any) => {
 // 加载销售发货表格
 const fetchTable = async () => {
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     tableChildrenData.value = [];
     tableRef.value.setSelectedRowKeys([]);
 
@@ -253,7 +254,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 
@@ -317,7 +318,7 @@ const onPrintClick = async () => {
   let isSuccess = true;
   printData.value = [];
   const promiseAll = [];
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     selectRowKeys.value.forEach((element) => {
       const billInfo = tableMainData.value.find((item) => item.billNo === element);
@@ -339,7 +340,7 @@ const onPrintClick = async () => {
     console.log(e);
     isSuccess = false;
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
   return isSuccess;
 };

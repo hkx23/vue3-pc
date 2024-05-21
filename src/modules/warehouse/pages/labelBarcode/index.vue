@@ -411,6 +411,7 @@ import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 // 表单定义规则
 function validateNumberOne(value: any): boolean | CustomValidateResolveType {
@@ -481,7 +482,7 @@ const pageLoading = ref(false);
 const isMySelf = ref(true);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const stockInRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUIBracode } = usePage(); // 分页工具
 const { pageUI: pageUIMannage } = usePage(); // 分页工具
@@ -1510,7 +1511,7 @@ const onRightFetchData = async () => {
 
 // 加载工单数据表格
 const fetchMoTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     queryCondition.value.pageNum = pageUI.value.page;
     queryCondition.value.pageSize = pageUI.value.rows;
@@ -1531,13 +1532,13 @@ const fetchMoTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 
 // 加载条码管理数据表格
 const fetchBracodeManageTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     manageQueryCondition.value.pageNum = pageUIMannage.value.page;
     manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
@@ -1558,7 +1559,7 @@ const fetchBracodeManageTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 // moCode: '',

@@ -57,8 +57,10 @@
 </template>
 <script lang="ts" setup>
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
+
+import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -100,7 +102,7 @@ const onConfirmForm = async () => {
       }
     }
 
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
 
     Emit('parent-confirm-event', formData.measureList, isAllOK);
 
@@ -108,7 +110,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const reset = () => {

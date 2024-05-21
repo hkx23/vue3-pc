@@ -37,7 +37,7 @@ const isRefreshing = computed(() => {
 </script>
 <style lang="less" scoped>
 .tdesign-wrapper {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   min-height: 0;

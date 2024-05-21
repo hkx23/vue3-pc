@@ -152,7 +152,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'QUALITY_IMPROVEMENT_STATUS',
       },
@@ -163,7 +163,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         category: 'Q_INSPECTION_TYPE',
       },

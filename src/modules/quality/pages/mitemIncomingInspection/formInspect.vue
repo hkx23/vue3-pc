@@ -50,18 +50,20 @@
             formData.billNoStr
           }}</t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.查看附件')">
-            <t-link theme="primary">{{ t('mitemIncomingInspection.查看附件') }}</t-link></t-descriptions-item
-          >
+            <t-link theme="primary" @click="onShowHeadFiles(formData)">{{
+              t('mitemIncomingInspection.查看附件')
+            }}</t-link>
+          </t-descriptions-item>
         </t-descriptions>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-tabs :model-value="selectTabValue" @change="tabsChange">
-          <template #action>
+          <!-- <template #action>
             <div class="tabs_right_ops">
               <t-checkbox :label="t('mitemIncomingInspection.只显示不合格')" style="width: 170px" />
               <t-input :placeholder="t('mitemIncomingInspection.请输入搜索关键字')" />
             </div>
-          </template>
+          </template> -->
           <t-tab-panel value="tab1" :label="t('mitemIncomingInspection.全部')" :destroy-on-hide="false">
             <cmp-table
               row-key="id"
@@ -91,8 +93,11 @@
                   }}</t-link>
                 </t-space>
               </template>
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
+              <template #inspectResult="{ row }">
+                <t-radio-group v-model="row.inspectResult" :disabled="!isEdit">
+                  <t-radio value="OK">合格</t-radio>
+                  <t-radio value="NG">不合格</t-radio>
+                </t-radio-group>
               </template>
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
@@ -137,8 +142,11 @@
                   }}</t-link>
                 </t-space>
               </template>
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
+              <template #inspectResult="{ row }">
+                <t-radio-group v-model="row.inspectResult" :disabled="!isEdit">
+                  <t-radio value="OK">合格</t-radio>
+                  <t-radio value="NG">不合格</t-radio>
+                </t-radio-group>
               </template>
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
@@ -183,8 +191,12 @@
                   }}</t-link>
                 </t-space>
               </template>
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
+
+              <template #inspectResult="{ row }">
+                <t-radio-group v-model="row.inspectResult" :disabled="!isEdit">
+                  <t-radio value="OK">合格</t-radio>
+                  <t-radio value="NG">不合格</t-radio>
+                </t-radio-group>
               </template>
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
@@ -221,7 +233,7 @@
 </template>
 <script lang="ts" setup>
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
@@ -229,6 +241,7 @@ import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
+import utils from '@/utils/common';
 
 import formMeasure from './formMeasure.vue';
 import formNg from './formNg.vue';
@@ -267,6 +280,7 @@ const formData = reactive({
   inspectionStringency: '',
   inspectionStringencyName: '',
   inspectStdName: '',
+  inspectStdId: '',
 });
 
 const { loading } = useLoading();
@@ -279,14 +293,14 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   //   type: 'multiple',
   //   width: 50,
   // },
-  { title: t('mitemIncomingInspection.项目类别'), width: 100, colKey: 'itemCategory' },
+  { title: t('mitemIncomingInspection.项目类别'), width: 100, colKey: 'itemCategoryName' },
   { title: t('mitemIncomingInspection.检验内容'), width: 160, colKey: 'itemName' },
   { title: t('mitemIncomingInspection.技术要求'), width: 160, colKey: 'technicalRequest' },
   { title: t('mitemIncomingInspection.项目特性'), width: 100, colKey: 'characteristicsName' },
   { title: t('mitemIncomingInspection.检验工具'), width: 100, colKey: 'inspectTool' },
   { title: t('mitemIncomingInspection.样本数'), width: 100, colKey: 'sampleQty' },
   { title: 'AC/RE', width: 100, colKey: 'acRe' },
-  { title: t('mitemIncomingInspection.检验结果'), width: 100, colKey: 'inspectResultSwitch' },
+  { title: t('mitemIncomingInspection.检验结果'), width: 200, colKey: 'inspectResult' },
   { title: t('mitemIncomingInspection.测量值'), width: 100, colKey: 'measureOp' },
   { title: t('mitemIncomingInspection.不良数'), width: 120, colKey: 'ngQty' },
   { title: t('mitemIncomingInspection.不良描述'), width: 200, colKey: 'ngReason' },
@@ -321,10 +335,7 @@ const onConfirmForm = async () => {
   try {
     for (let index = 0; index < tableData.value.length; index++) {
       const item = tableData.value[index];
-      if (item.inspectResultSwitch) {
-        item.inspectResult = 'OK';
-      } else {
-        item.inspectResult = 'NG';
+      if (item.inspectResult === 'NG') {
         const ngQty = Number(item.ngQty);
         if (_.isNaN(ngQty)) {
           MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数'));
@@ -351,12 +362,12 @@ const onConfirmForm = async () => {
       }
     }
 
-    const ngList = tableData.value.filter((n) => !n.inspectResultSwitch);
+    const ngList = tableData.value.filter((n) => n.inspectResult === 'NG');
     if (ngList.length > 0) {
       const { showForm } = formNgRef.value;
       showForm(false, formData, tableData);
     } else {
-      LoadingPlugin(true);
+      utils.loadingPluginFullScreen(true);
 
       await apiQuality.iqcInspect.submitIqcInspect({
         iqcBillNo: formData.iqcBillNo,
@@ -383,7 +394,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const tabsChange = async (tabValue) => {
@@ -489,6 +500,7 @@ const showForm = async (edit, load, row) => {
   formData.supplierName = row.supplierName;
   formData.inspectionStringency = row.inspectionStringency;
   formData.inspectionStringencyName = row.inspectionStringencyName;
+  formData.inspectStdId = row.iqcInspectStdId;
 
   if (isEdit.value || isLoad.value) {
     // 加载现有单据的明细
@@ -539,12 +551,12 @@ const onShowMeasureDialog = async (row) => {
 const onFormCloseDialog = async () => {
   formVisible.value = false;
 };
-const parentConfirm = async (measureList, isAllOK) => {
+const parentConfirm = async (measureList, isOK) => {
   if (!_.isEmpty(measureList)) {
     const { stdDtlId } = measureList[0];
-    const rowData = tableData.value.find((n) => n.id === stdDtlId);
+    const rowData = tableData.value.find((n) => n.iqcInspectStdDtlId === stdDtlId);
     rowData.measureList = measureList;
-    rowData.inspectResultSwitch = isAllOK;
+    rowData.inspectResult = isOK ? 'OK' : 'NG';
   }
 };
 
@@ -609,19 +621,21 @@ const batchDeleteSuccess = async (files: AddFileType[]) => {
     console.log(e);
   }
 };
-const onShowFiles = async (rowData) => {
-  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
 
+const onShowHeadFiles = async (rowData) => {
   try {
+    const list = await apiQuality.iqcInspectStd.getStdAttachList({ id: rowData.inspectStdId });
     const { showForm } = formFilesRef.value;
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
-      rowData.row.fileList = list;
-
-      await showForm(true, rowData.row.fileList);
-    } else {
-      await showForm(true, null);
-    }
+    await showForm(true, list);
+  } catch (e) {
+    console.log(e);
+  }
+};
+const onShowFiles = async (rowData) => {
+  try {
+    const list = await apiQuality.iqcInspectStd.getStdDtlAttachList({ id: rowData.row.iqcInspectStdDtlId });
+    const { showForm } = formFilesRef.value;
+    await showForm(true, list);
   } catch (e) {
     console.log(e);
   }

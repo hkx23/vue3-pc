@@ -66,11 +66,12 @@ import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import WarehouseForm from './form.vue';
 
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const keyword = ref('');
 const selectedWarehouseRowKeys = ref([]);
 const tableDataWarehouse = ref([]);
@@ -148,7 +149,7 @@ const conditionReset = () => {
 const dataTotal = ref(0);
 
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     selectedWarehouseRowKeys.value = [];
     tableDataWarehouse.value = [];
@@ -163,7 +164,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 

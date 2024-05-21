@@ -534,7 +534,7 @@ const onEdit = async (row) => {
   formRef.value.formData.operateTpye = 'edit';
   await formRef.value.getAllDtlById();
   await formRef.value.getAllDtlFormCache();
-  await formRef.value.getStdFileList();
+  await formRef.value.getStdAttachList();
   pageShow.value = true;
 };
 const onCopyStd = async (row) => {
@@ -594,7 +594,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: 'EFFECTIVE',
       bind: {
-        type: 'state',
+        type: 'param',
         showTitle: false,
         isMultiple: true,
         category: 'Q_INSPECTION_STD_STATUS',

@@ -41,8 +41,12 @@
           <t-tab-panel value="tab1" :label="t('returnManagement.tabName1')" :destroy-on-hide="false">
             <t-row style="margin-top: 10px; margin-bottom: 10px">
               <t-col style="margin-right: 10px">
-                <bcmp-select-business v-model="formData.supplierCode" type="supplier" :show-title="false">
-                </bcmp-select-business>
+                <bcmp-select-business
+                  v-model="formData.supplierCode"
+                  type="supplier"
+                  :show-title="false"
+                  @selection-change="onChangeSupplier"
+                />
               </t-col>
               <t-col>
                 <bcmp-select-business
@@ -50,8 +54,8 @@
                   :parent-id="formData.supplierCode"
                   type="iqcBillInfo"
                   :show-title="false"
-                >
-                </bcmp-select-business>
+                  :custom-conditions="formData.iqcBillInfoConditions"
+                />
               </t-col>
             </t-row>
             <t-row>
@@ -79,8 +83,7 @@
                   type="purchaseOrder"
                   :show-title="false"
                   @selection-change="onChangePo"
-                >
-                </bcmp-select-business>
+                />
               </t-col>
               <t-col style="margin-right: 10px">
                 <bcmp-select-business
@@ -89,8 +92,7 @@
                   :custom-conditions="formData.warehouseConditions"
                   :show-title="false"
                   @selection-change="onChangeWarehouse"
-                >
-                </bcmp-select-business>
+                />
               </t-col>
               <t-col style="margin-right: 10px">
                 <bcmp-select-business
@@ -98,8 +100,7 @@
                   type="mitemPurchaseOrder"
                   :custom-conditions="formData.mitemConditions"
                   :show-title="false"
-                >
-                </bcmp-select-business>
+                />
               </t-col>
             </t-row>
             <t-row>
@@ -141,13 +142,15 @@ export default {
 </script>
 <script setup lang="ts">
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref, watch } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
+import utils from '@/utils/common';
 
+import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import { useLang } from './lang';
 
 const Emit = defineEmits(['parent-refresh-event']);
@@ -178,6 +181,7 @@ const formData = reactive({
   mitemConditions: [],
   deliveryDtlList: [],
   purchaseOrderList: [],
+  iqcBillInfoConditions: [],
 });
 
 // 多字段监控
@@ -272,7 +276,7 @@ const onConfirmForm = async () => {
         return;
       }
 
-      LoadingPlugin(true);
+      utils.loadingPluginFullScreen(true);
       await apiWarehouse.returnManagement.submitBillNoByIqc({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
@@ -298,7 +302,7 @@ const onConfirmForm = async () => {
         return;
       }
 
-      LoadingPlugin(true);
+      utils.loadingPluginFullScreen(true);
       await apiWarehouse.returnManagement.submitBillNoByPurchaseOrder({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
@@ -313,7 +317,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const tabsChange = async (tabValue) => {
@@ -340,17 +344,23 @@ const getReturnDeliveryDtl = async () => {
     tableData.value = [];
 
     const data = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.asnBillNo });
-    tableData.value.push({ ...data });
-    // tableData.value.push({
-    //   billNo: data.billNo,
-    //   supplierName: data.supplierName,
-    //   mitemCode: data.mitemCode,
-    //   mitemName: data.mitemName,
-    //   sumNgQty: data.sumNgQty,
-    //   curReturnQty: data.curReturnQty,
-    //   deliveryNo: data.deliveryNo,
-    // });
+    if (data != null) {
+      // 校验：一个检验单只可以有一张非取消状态的退货单，若已经存在，则选择单据时直接过滤掉
+      const res = await apiWarehouse.returnManagement.getReturnManagementList({
+        pageNum: 1,
+        pageSize: 99999,
+        asnBillNo: formData.asnBillNo, // 'IQC202403020032'
+      });
+      if (res && res.list.length > 0) {
+        const list = res.list.filter((n) => n.status !== 'CANCELED');
+        if (list.length > 0) {
+          MessagePlugin.error(t('returnManagement.采购订单已有退货单，请检查'));
+          return;
+        }
+      }
+    }
 
+    tableData.value.push({ ...data });
     tableSelectedRowKeys.value = [];
     tableSelectedRowData.value = [];
   }
@@ -377,12 +387,19 @@ const onChangeWarehouse = async (value) => {
   formData.mitemConditions = list;
   formData.warehouseId = value.id;
 };
-
 const onChangePo = async (value) => {
   const list = [];
   list.push({ field: 'poBillNo', operator: 'EQ', value: value.billNo });
   formData.warehouseConditions = list;
   formData.poBillNo = value.billNo;
+};
+const onChangeSupplier = async (value) => {
+  const list = [];
+  list.push(
+    { field: 'inspectResult', operator: 'EQ', value: 'NG' },
+    { field: 'status', operator: 'EQ', value: 'COMPLETED' },
+  );
+  formData.iqcBillInfoConditions = list;
 };
 
 const showForm = async (edit, billNo) => {

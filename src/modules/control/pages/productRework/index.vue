@@ -207,12 +207,13 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import _, { isEmpty } from 'lodash';
-import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api, ProductReworkVO, WipKeyPartCollectVO } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 import { useUserStore } from '@/store';
+import utils from '@/utils/common';
 
 import { messageModel, scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
@@ -342,7 +343,7 @@ const serialNumberEnter = async (value) => {
     if (!checkBarcodeRepeat(mainform.value.serialNumber)) {
       return;
     }
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     // 原子校验
     // TODO 校验成功
     await api.productRework
@@ -405,11 +406,11 @@ const serialNumberEnter = async (value) => {
           resetBarcode(isNeedClear);
           writeMessageListError(reData.scanMessage);
         }
-        LoadingPlugin(false);
+        utils.loadingPluginFullScreen(false);
       })
       .catch((message) => {
         console.log(message);
-        LoadingPlugin(false);
+        utils.loadingPluginFullScreen(false);
       });
 
     // TODO 校验失败，写日志到右侧表
@@ -592,7 +593,7 @@ const onRemove = (row) => {
 
 // 执行
 const onConfirm = async () => {
-  LoadingPlugin(true);
+  utils.loadingPluginFullScreen(true);
   // 原子校验
   // TODO 校验成功
   // const scanTime = dayjs().format('YYYY-MM-DD hh:mm:ss');
@@ -606,11 +607,11 @@ const onConfirm = async () => {
     .then(() => {
       resetHandle();
       writeMessageListSuccess(t('productRework.success'));
-      LoadingPlugin(false);
+      utils.loadingPluginFullScreen(false);
     })
     .catch((message) => {
       console.log(message);
-      LoadingPlugin(false);
+      utils.loadingPluginFullScreen(false);
       writeMessageListError(message);
     });
 };

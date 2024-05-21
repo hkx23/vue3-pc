@@ -33,21 +33,26 @@ const opts = computed(() => {
       comp: 't-input',
       event: 'input',
       defaultVal: '',
-      bind: {
-        disablel: true,
-      },
     },
     moCode: {
       label: '工单号',
-      comp: 't-input',
-      event: 'input',
+      comp: 'bcmp-select-business',
       defaultVal: '',
+      placeholder: '请选择工单',
+      bind: {
+        type: 'mo',
+        showTitle: false,
+        disabled: editMoCode.value,
+      },
     },
     parentPkgBarcode: {
       label: '包装箱码',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
+      bind: {
+        disabled: editParentPkgBarcode.value,
+      },
     },
   };
 });
@@ -78,7 +83,24 @@ const onReset = async () => {
   };
 };
 
-const handleTabChange = async () => {
+const editMoCode = ref(true);
+const editParentPkgBarcode = ref(true);
+const handleTabChange = async (tabValue) => {
+  if (tabValue === 1) {
+    // 工单信息
+    editMoCode.value = false;
+    editParentPkgBarcode.value = true;
+  } else if (tabValue === 3) {
+    // 工单信息
+    editMoCode.value = false;
+    editParentPkgBarcode.value = false;
+  } else {
+    editMoCode.value = true;
+    editParentPkgBarcode.value = true;
+    queryComponent.value.state.form.moCode = '';
+    queryComponent.value.state.form.parentPkgBarcode = '';
+  }
+
   if (
     !queryComponent.value.state.form.serialNumber &&
     !queryComponent.value.state.form.moCode &&
@@ -86,6 +108,7 @@ const handleTabChange = async () => {
   ) {
     return;
   }
+
   onInput(queryComponent.value.state.form);
 };
 </script>

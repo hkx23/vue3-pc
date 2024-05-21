@@ -36,7 +36,7 @@
               :show-title="false"
               :name="t('conferenceIndex.指标类型')"
               :placeholder="t('common.placeholder.select')"
-              type="state"
+              type="param"
               category="CONFERNCE_INDEX_TYPE"
               :clearable="true"
             ></bcmp-select-business>
@@ -50,7 +50,7 @@
               :show-title="false"
               :name="t('conferenceIndex.指标维度')"
               :placeholder="t('common.placeholder.select')"
-              type="state"
+              type="param"
               category="CONFERNCE_INDEX_DIMENSION"
               :clearable="true"
             ></bcmp-select-business>

@@ -70,11 +70,12 @@ export default {
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin as LoadingPluginNg, MessagePlugin } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality, BarcodeVO, OqcInspectBillFullVO, OqcInspectStdFullVO } from '@/api/quality';
+import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -121,7 +122,7 @@ const onConfirmForm = async () => {
       return;
     }
 
-    LoadingPluginNg(true);
+    utils.loadingPluginFullScreen(true);
 
     await apiQuality.oqcInspect.submitJyQqcInspect({
       oqcInspectId: formData.id,
@@ -140,7 +141,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPluginNg(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const reset = () => {

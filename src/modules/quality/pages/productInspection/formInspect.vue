@@ -415,14 +415,7 @@ export default {
 
 <script setup lang="ts">
 import _, { isEmpty } from 'lodash';
-import {
-  FormInstanceFunctions,
-  LoadingPlugin,
-  MessagePlugin,
-  NotifyPlugin,
-  PrimaryTableCol,
-  TableRowData,
-} from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -430,6 +423,7 @@ import { api as apiQuality, BarcodeVO, OqcInspectBillFullVO, OqcInspectStdFullVO
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
+import utils from '@/utils/common';
 
 import formMeasure from './formMeasure.vue';
 import formNg from './formNg.vue';
@@ -668,7 +662,7 @@ const checkFieldsRequired = async (isTempSave: boolean) => {
 const checkJyPreSubmit = async (isTempSave: boolean) => {
   let success = false;
   try {
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     success = await apiQuality.oqcInspect.checkJyPreSubmit({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -683,7 +677,7 @@ const checkJyPreSubmit = async (isTempSave: boolean) => {
     success = false;
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
   return success;
 };
@@ -691,7 +685,7 @@ const checkJyPreSubmit = async (isTempSave: boolean) => {
 // 报检-新增产品检验单据-暂存与提交
 const submitBJQqcInspect = async (isTempSave: boolean) => {
   try {
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     await apiQuality.oqcInspect.submitBjQqcInspect({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -712,14 +706,14 @@ const submitBJQqcInspect = async (isTempSave: boolean) => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 
 // 检验执行-暂存与提交
 const submitJYQqcInspect = async (isTempSave: boolean) => {
   try {
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     await apiQuality.oqcInspect.submitJyQqcInspect({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -741,7 +735,7 @@ const submitJYQqcInspect = async (isTempSave: boolean) => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 
@@ -946,7 +940,7 @@ const scanProductBarcode = async (value) => {
     if (!checkBarcodeRepeat(value)) {
       return;
     }
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     try {
       const list = (await apiQuality.oqcInspect.scanProductBarcode({
         oqcInspectId: formData.id,
@@ -966,7 +960,7 @@ const scanProductBarcode = async (value) => {
     } catch (error) {
       console.error(error.message);
     } finally {
-      LoadingPlugin(false);
+      utils.loadingPluginFullScreen(false);
     }
   }
 };
@@ -974,7 +968,7 @@ const scanProductBarcode = async (value) => {
 // 检验扫码
 const scanYJProductBarcode = async (value) => {
   if (!isEmpty(value)) {
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     try {
       const barcodeInfo = (await apiQuality.oqcInspect.scanYjProductBarcode({
         oqcInspectId: formData.id,
@@ -994,7 +988,7 @@ const scanYJProductBarcode = async (value) => {
     } catch (error) {
       console.error(error.message);
     } finally {
-      LoadingPlugin(false);
+      utils.loadingPluginFullScreen(false);
     }
   }
 };
@@ -1133,7 +1127,7 @@ const loadDefaultTable = async () => {
 // 检验 - 加载条码检验项信息
 const loadBarcodeTable = async (rowBarcodeInfo: BarcodeVO) => {
   try {
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     const list = await apiQuality.oqcInspect.getStdDtlListByMitem({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -1151,7 +1145,7 @@ const loadBarcodeTable = async (rowBarcodeInfo: BarcodeVO) => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 

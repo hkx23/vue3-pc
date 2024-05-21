@@ -1,0 +1,21 @@
+{
+  "delivery": {
+    "tableSubTilte": "送货单列表",
+    "tableDtlSubTilte":"送货单明细列表",
+    "supplierCode": "供应商编码",
+    "supplierName": "供应商名称",
+    "mitemCode": "产品编码",
+    "mitemName": "产品名称",
+    "mitemDesc": "产品描述",
+    "supplierId": "供应商",
+    "lineSeq": "送货单行号",
+    "qty": "送货数量",
+    "receivedQty": "接收数量",
+    "poNo": "采购订单号",
+    "poLineNo": "采购订单行号",
+    "datePo": "采购日期",
+    "dateDelivery": "送货日期",
+    "statusName": "状态",
+    "billNo": "送货单号"
+  }
+}

@@ -2,18 +2,18 @@
   <t-dialog
     v-model:visible="formVisible"
     :header="t('mitemRecheck.物料复检')"
-    width="98%"
+    :width="isAdd ? '70%' : '98%'"
     placement="top"
     top="56px"
     :cancel-btn="
-      isEdit
+      isInput
         ? {
             content: t('mitemRecheck.取消'),
           }
         : null
     "
     :confirm-btn="
-      isEdit
+      isInput
         ? {
             content: t('mitemRecheck.提交'),
             theme: 'primary',
@@ -26,16 +26,18 @@
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :title="t('mitemRecheck.复检单号：') + formInspectData.recheckBillNo" :column="4" size="large">
-          <t-descriptions-item :label="t('mitemRecheck.复检类型')"
-            ><t-select
+          <t-descriptions-item :label="t('mitemRecheck.复检类型')">
+            <t-select
+              v-if="isAdd"
               v-model="formInspectData.recheckType"
               :options="recheckTypeOption"
-              :disabled="!isEdit"
               @change="recheckTypeChange"
-          /></t-descriptions-item>
+            />
+            <div v-else>{{ formInspectData.recheckTypeName }}</div>
+          </t-descriptions-item>
           <t-descriptions-item :label="t('mitemRecheck.来源检验单')">
             <bcmp-select-business
-              v-if="formInspectData.recheckType === 'EXCEPTION' && isEdit"
+              v-if="formInspectData.recheckType === 'EXCEPTION' && isAdd"
               ref="recheckTypeRef"
               v-model="formInspectData.iqcBillNo"
               :select-txt="formInspectData.iqcBillNo"
@@ -43,11 +45,11 @@
               :show-title="false"
               @selection-change="onIqcBillNoSelectionChange"
             />
-            <t-input v-else v-model="formInspectData.iqcBillNo" disabled placeholder="" />
+            <div v-else>{{ formInspectData.iqcBillNo }}</div>
           </t-descriptions-item>
           <t-descriptions-item :label="t('mitemRecheck.物料编码')">
             <bcmp-select-business
-              v-if="formInspectData.recheckType !== 'EXCEPTION' && isEdit"
+              v-if="formInspectData.recheckType !== 'EXCEPTION' && isAdd"
               v-model="formInspectData.mitemId"
               :select-txt="formInspectData.mitemCode"
               type="mitem"
@@ -55,7 +57,7 @@
               label-field="mitemCode"
               @selection-change="onMitemSelectionChange"
             />
-            <t-input v-else v-model="formInspectData.mitemCode" disabled placeholder="" />
+            <div v-else>{{ formInspectData.mitemCode }}</div>
           </t-descriptions-item>
           <t-descriptions-item :label="t('mitemRecheck.物料名')">
             <div class="div_break_word">
@@ -64,42 +66,38 @@
           </t-descriptions-item>
           <t-descriptions-item :label="t('mitemRecheck.供应商编码')">
             <bcmp-select-business
-              v-if="formInspectData.recheckType !== 'EXCEPTION' && isEdit"
+              v-if="formInspectData.recheckType !== 'EXCEPTION' && isAdd"
               v-model="formInspectData.supplierCode"
               :select-txt="formInspectData.supplierCode"
               type="mitemInSupplier"
               :show-title="false"
               :parent-id="formInspectData.mitemId"
               label-field="supplierCode"
-              @selection-change="onSupplierSelectionChange" />
-            <t-input v-else v-model="formInspectData.supplierCode" disabled placeholder=""
-          /></t-descriptions-item>
-          <t-descriptions-item :label="t('mitemRecheck.供应商名称')">{{
-            formInspectData.supplierName
-          }}</t-descriptions-item>
+              @selection-change="onSupplierSelectionChange"
+            />
+            <div v-else>{{ formInspectData.supplierCode }}</div>
+          </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemRecheck.供应商名称')">
+            {{ formInspectData.supplierName }}
+          </t-descriptions-item>
           <t-descriptions-item :label="t('mitemRecheck.批量')">
-            <t-input-number v-model="formInspectData.inspectQty" :disabled="!isEdit" @change="inspectQtyChange" />
+            <t-input-number v-if="isAdd" v-model="formInspectData.inspectQty" @change="inspectQtyChange" />
+            <div v-else>{{ formInspectData.inspectQty }}</div>
           </t-descriptions-item>
           <t-descriptions-item>
-            <template #label>
-              <t-link v-if="isEdit" theme="primary" @click="linkLoadTableStd">{{
+            <!-- <template #label>
+              <t-link v-if="isAdd" theme="primary" @click="linkLoadTableStd">{{
                 t('mitemRecheck.加载检验项目')
               }}</t-link>
-            </template>
+            </template> -->
           </t-descriptions-item>
-          <t-descriptions-item :label="t('mitemRecheck.复检原因')"
-            ><t-textarea v-model="formInspectData.recheckReason" clearable :disabled="!isEdit"
-          /></t-descriptions-item>
+          <t-descriptions-item :label="t('mitemRecheck.复检原因')">
+            <t-textarea v-model="formInspectData.recheckReason" clearable :disabled="!isInput" />
+          </t-descriptions-item>
         </t-descriptions>
       </cmp-card>
-      <cmp-card :span="12" :ghost="false" :bordered="true">
+      <cmp-card v-if="!isAdd" :span="12" :ghost="false" :bordered="true">
         <t-tabs :model-value="selectTabValue" @change="tabsChange">
-          <template #action>
-            <div class="tabs_right_ops">
-              <t-checkbox :label="t('mitemRecheck.只显示不合格')" style="width: 170px" />
-              <t-input :placeholder="t('mitemRecheck.请输入搜索关键字')" />
-            </div>
-          </template>
           <t-tab-panel value="tab1" :label="t('mitemRecheck.全部')" :destroy-on-hide="false">
             <cmp-table
               row-key="id"
@@ -131,24 +129,27 @@
                 </t-space>
               </template>
 
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
+              <template #inspectResult="{ row }">
+                <t-radio-group v-model="row.inspectResult" :disabled="!isInput">
+                  <t-radio value="OK">合格</t-radio>
+                  <t-radio value="NG">不合格</t-radio>
+                </t-radio-group>
               </template>
 
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">{{ t('mitemRecheck.填写') }}</div>
+                  <div v-if="isInput">{{ t('mitemRecheck.填写') }}</div>
                   <div v-else>{{ t('mitemRecheck.查看') }}</div>
                 </t-link>
               </template>
 
               <template #ngQty="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngQty" />
+                <t-input v-if="isInput" v-model="row.ngQty" />
                 <div v-else>{{ row.ngQty }}</div>
               </template>
 
               <template #ngReason="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngReason" />
+                <t-input v-if="isInput" v-model="row.ngReason" />
                 <div v-else>{{ row.ngReason }}</div>
               </template>
             </cmp-table>
@@ -182,24 +183,27 @@
                 </t-space>
               </template>
 
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
+              <template #inspectResult="{ row }">
+                <t-radio-group v-model="row.inspectResult" :disabled="!isInput">
+                  <t-radio value="OK">合格</t-radio>
+                  <t-radio value="NG">不合格</t-radio>
+                </t-radio-group>
               </template>
 
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">{{ t('mitemRecheck.填写') }}</div>
+                  <div v-if="isAdd">{{ t('mitemRecheck.填写') }}</div>
                   <div v-else>{{ t('mitemRecheck.查看') }}</div>
                 </t-link>
               </template>
 
               <template #ngQty="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngQty" />
+                <t-input v-if="isAdd" v-model="row.ngQty" />
                 <div v-else>{{ row.ngQty }}</div>
               </template>
 
               <template #ngReason="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngReason" />
+                <t-input v-if="isAdd" v-model="row.ngReason" />
                 <div v-else>{{ row.ngReason }}</div>
               </template>
             </cmp-table>
@@ -233,24 +237,27 @@
                 </t-space>
               </template>
 
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
+              <template #inspectResult="{ row }">
+                <t-radio-group v-model="row.inspectResult" :disabled="!isInput">
+                  <t-radio value="OK">合格</t-radio>
+                  <t-radio value="NG">不合格</t-radio>
+                </t-radio-group>
               </template>
 
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">{{ t('mitemRecheck.填写') }}</div>
+                  <div v-if="isAdd">{{ t('mitemRecheck.填写') }}</div>
                   <div v-else>{{ t('mitemRecheck.查看') }}</div>
                 </t-link>
               </template>
 
               <template #ngQty="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngQty" />
+                <t-input v-if="isAdd" v-model="row.ngQty" />
                 <div v-else>{{ row.ngQty }}</div>
               </template>
 
               <template #ngReason="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngReason" />
+                <t-input v-if="isAdd" v-model="row.ngReason" />
                 <div v-else>{{ row.ngReason }}</div>
               </template>
             </cmp-table>
@@ -274,15 +281,15 @@
 </template>
 <script lang="ts" setup>
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref, watch } from 'vue';
 
-// import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
+import utils from '@/utils/common';
 
 import formMeasure from './formMeasure.vue';
 import formNg from './formNg.vue';
@@ -301,13 +308,14 @@ const recheckTypeRef = ref(null);
 const selectTabValue = ref('tab1');
 const selectIqcInspectRecheckDtlId = ref(null);
 
-const isEdit = ref(true); // 是否可编辑
+const isAdd = ref(true); // 是否新增
+const isInput = ref(false); // 是否能录入信息
 const uploadPathType = ref('IqcInspectRecheck');
 const formInspectData = reactive({
   iqcBillNo: '',
   recheckBillNo: '',
   billNoStr: '',
-  billNoList: [{ billNo: '', erpLineNo: '', billNoDtlId: '' }],
+  billNoList: [],
   mitemId: '',
   mitemCode: '',
   mitemName: '',
@@ -337,14 +345,14 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   //   type: 'multiple',
   //   width: 50,
   // },
-  { title: t('mitemRecheck.项目类别'), width: 100, colKey: 'itemCategory' },
+  { title: t('mitemRecheck.项目类别'), width: 100, colKey: 'itemCategoryName' },
   { title: t('mitemRecheck.检验内容'), width: 160, colKey: 'itemName' },
   { title: t('mitemRecheck.技术要求'), width: 160, colKey: 'technicalRequest' },
   { title: t('mitemRecheck.项目特性'), width: 100, colKey: 'characteristicsName' },
   { title: t('mitemRecheck.检验工具'), width: 100, colKey: 'inspectTool' },
   { title: t('mitemRecheck.样本数'), width: 100, colKey: 'sampleQty' },
   { title: 'AC/RE', width: 100, colKey: 'acRe' },
-  { title: t('mitemRecheck.检验结果'), width: 100, colKey: 'inspectResultSwitch' },
+  { title: t('mitemRecheck.检验结果'), width: 200, colKey: 'inspectResult' },
   { title: t('mitemRecheck.测量值'), width: 100, colKey: 'measureOp' },
   { title: t('mitemRecheck.不良数'), width: 120, colKey: 'ngQty' },
   { title: t('mitemRecheck.不良描述'), width: 200, colKey: 'ngReason' },
@@ -387,10 +395,7 @@ watch(
 const recheckTypeOption = ref([]);
 const getRecheckTypeOption = async () => {
   recheckTypeOption.value = [];
-  recheckTypeOption.value.push({
-    value: 'EXCEPTION',
-    label: t('mitemRecheck.异常复检'),
-  });
+  recheckTypeOption.value.push({ value: 'EXCEPTION', label: t('mitemRecheck.异常复检') });
   recheckTypeOption.value.push({ value: 'OVERDUE', label: t('mitemRecheck.超期复检') });
   recheckTypeOption.value.push({ value: 'RECHECK', label: t('mitemRecheck.常规复检') });
 };
@@ -405,39 +410,38 @@ const onConfirmForm = async () => {
       return;
     }
 
-    for (let index = 0; index < tableData.value.length; index++) {
-      const item = tableData.value[index];
-      if (item.inspectResultSwitch) {
-        item.inspectResult = 'OK';
-      } else {
-        item.inspectResult = 'NG';
-        if (item.characteristics === 'COUNT' && _.isEmpty(item.ngQty)) {
-          MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数'));
-          return;
-        }
-
-        if (item.characteristics === 'QUANTITATIVE') {
-          if (_.isEmpty(item.ngQty) || item.ngQty === '') {
+    if (!isAdd.value) {
+      for (let index = 0; index < tableData.value.length; index++) {
+        const item = tableData.value[index];
+        if (item.inspectResult === 'NG') {
+          if (item.characteristics === 'COUNT' && _.isEmpty(item.ngQty)) {
             MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数'));
             return;
           }
-          if (item.ngQty > item.sampleQty) {
-            MessagePlugin.error(t('mitemRecheck.不良数不能大于样本数'));
-            return;
-          }
-          if (item.ngQty <= 0) {
-            MessagePlugin.error(t('mitemRecheck.请输入正确不良数'));
-            return;
+
+          if (item.characteristics === 'QUANTITATIVE') {
+            if (_.isEmpty(item.ngQty) || item.ngQty === '') {
+              MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数'));
+              return;
+            }
+            if (item.ngQty > item.sampleQty) {
+              MessagePlugin.error(t('mitemRecheck.不良数不能大于样本数'));
+              return;
+            }
+            if (item.ngQty <= 0) {
+              MessagePlugin.error(t('mitemRecheck.请输入正确不良数'));
+              return;
+            }
           }
         }
       }
     }
-    const ngList = tableData.value.filter((n) => !n.inspectResultSwitch);
-    if (ngList.length > 0) {
+    const ngList = tableData.value.filter((n) => n.inspectResult === 'NG');
+    if (!isAdd.value && ngList.length > 0) {
       const { showForm } = formNgRef.value;
       showForm(false, formInspectData, tableData);
     } else {
-      LoadingPlugin(true);
+      utils.loadingPluginFullScreen(true);
 
       await apiQuality.iqcInspectRecheck.submitIqcInspectRecheck({
         iqcBillNo: formInspectData.iqcBillNo,
@@ -458,6 +462,7 @@ const onConfirmForm = async () => {
         recheckType: formInspectData.recheckType,
         recheckReason: formInspectData.recheckReason,
         iqcInspectStdList: tableData.value,
+        isAdd: isAdd.value,
         // iqcInspectNg: null,
       });
 
@@ -467,7 +472,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const tabsChange = async (tabValue) => {
@@ -485,40 +490,26 @@ const getBillNo = async () => {
 };
 
 const onShowFiles = async (rowData) => {
-  selectIqcInspectRecheckDtlId.value = rowData.row.iqcInspectRecheckDtlId;
-
   try {
+    const list = await apiQuality.iqcInspectStd.getStdDtlAttachList({ id: rowData.row.iqcInspectStdDtlId });
     const { showForm } = formFilesRef.value;
-    if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
-      const list = await apiQuality.iqcInspectRecheckDtlFile.getIqcInspectRecheckDtlFileList(
-        selectIqcInspectRecheckDtlId.value,
-      );
-      rowData.row.fileList = list;
 
-      await showForm(true, rowData.row.fileList);
-    } else {
-      await showForm(true, null);
-    }
+    await showForm(!isInput.value, list);
   } catch (e) {
     console.log(e);
   }
 };
 const loadTable = async () => {
   try {
-    const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
+    const res = await apiQuality.iqcInspectRecheck.getIqcRecheckDtlInfoByBillVo({
       recheckBillNo: formInspectData.recheckBillNo,
-      // iqcBillNo: formInspectData.iqcBillNo,
-      mitemCategoryId: formInspectData.mitemCategoryId,
-      mitemId: formInspectData.mitemId,
-      pickQty: `${formInspectData.inspectQty}`,
-      inspectionStringency: formInspectData.inspectionStringency,
     });
-    tableData.value = list;
-    tableDataCount.value = list.filter((item) => item.characteristics === 'COUNT');
-    tableDataCquantitative.value = list.filter((item) => item.characteristics === 'QUANTITATIVE');
+    tableData.value = res.list;
+    tableDataCount.value = res.list.filter((item) => item.characteristics === 'COUNT');
+    tableDataCquantitative.value = res.list.filter((item) => item.characteristics === 'QUANTITATIVE');
 
-    if (list.length > 0) {
-      formInspectData.inspectStdName = list[0].inspectStdName;
+    if (res.list.length > 0) {
+      formInspectData.inspectStdName = res.list[0].inspectStdName;
     } else {
       formInspectData.inspectStdName = '';
     }
@@ -528,7 +519,7 @@ const loadTable = async () => {
 };
 const loadTableStd = async () => {
   try {
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
       // iqcBillNo: formInspectData.iqcBillNo,
       mitemCategoryId: formInspectData.mitemCategoryId,
@@ -548,114 +539,86 @@ const loadTableStd = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
-const linkLoadTableStd = async () => {
-  if (_.isEmpty(formInspectData.recheckType)) {
-    MessagePlugin.error(t('mitemRecheck.请选择复检类型'));
-    return;
-  }
-  if (_.isEmpty(formInspectData.mitemId)) {
-    MessagePlugin.error(t('mitemRecheck.请选择物料'));
-    return;
+// const linkLoadTableStd = async () => {
+//   if (_.isEmpty(formInspectData.recheckType)) {
+//     MessagePlugin.error(t('mitemRecheck.请选择复检类型'));
+//     return;
+//   }
+//   if (_.isEmpty(formInspectData.mitemId)) {
+//     MessagePlugin.error(t('mitemRecheck.请选择物料'));
+//     return;
+//   }
+
+//   if (_.isEmpty(formInspectData.supplierId)) {
+//     MessagePlugin.error(t('mitemRecheck.请选择供应商'));
+//     return;
+//   }
+//   if (formInspectData.inspectQty <= 0) {
+//     MessagePlugin.error(t('mitemRecheck.请输入有效批量'));
+//     return;
+//   }
+//   await loadTableStd();
+//   if (tableData.value.length === 0) {
+//     MessagePlugin.error(t('mitemRecheck.未找到检验项目'));
+//   }
+// };
+const reset = async () => {
+  if (_.isEmpty(formInspectData.recheckBillNo)) {
+    getBillNo();
   }
 
-  if (_.isEmpty(formInspectData.supplierId)) {
-    MessagePlugin.error(t('mitemRecheck.请选择供应商'));
-    return;
-  }
-  if (formInspectData.inspectQty <= 0) {
-    MessagePlugin.error(t('mitemRecheck.请输入有效批量'));
-    return;
-  }
-  await loadTableStd();
-  if (tableData.value.length === 0) {
-    MessagePlugin.error(t('mitemRecheck.未找到检验项目'));
-  }
-};
-const reset = async () => {
-  if (isEdit.value) {
-    getBillNo();
-    getRecheckTypeOption();
-  }
+  getRecheckTypeOption();
   tableData.value = [];
   tableDataCount.value = [];
   tableDataCquantitative.value = [];
 
-  formInspectData.iqcBillNo = '';
-  formInspectData.recheckBillNo = '';
-  formInspectData.billNoStr = '';
-  formInspectData.billNoList = [{ billNo: '', erpLineNo: '', billNoDtlId: '' }];
-  formInspectData.mitemId = '';
-  formInspectData.mitemCode = '';
-  formInspectData.mitemName = '';
-  formInspectData.mitemDesc = '';
-  formInspectData.mitemCategoryId = '';
-  formInspectData.mitemCategoryCode = '';
-  formInspectData.mitemCategoryName = '';
-  formInspectData.inspectQty = 0;
-  formInspectData.supplierId = '';
-  formInspectData.supplierCode = '';
-  formInspectData.supplierName = '';
-  formInspectData.inspectionStringency = '';
-  formInspectData.inspectionStringencyName = '';
-  formInspectData.inspectStdName = '';
-  formInspectData.recheckType = '';
-  formInspectData.recheckTypeName = '';
-  formInspectData.recheckReason = '';
+  utils.reset(formInspectData);
 };
-const showFJForm = async (edit, row) => {
-  isEdit.value = edit;
+const showFJForm = async (add, input, row) => {
   formVisible.value = true;
+  isAdd.value = add;
+  isInput.value = input;
+  formInspectData.recheckBillNo = row === null ? '' : row.recheckBillNo;
 
   reset();
 
   if (row !== null) {
-    formInspectData.recheckBillNo = row.recheckBillNo;
+    Object.assign(formInspectData, row);
+
     formInspectData.billNoList.push({
       billNo: row.recheckBillNo,
       erpLineNo: row.erpLineNo,
       billNoDtlId: row.id,
     });
     formInspectData.billNoStr = formInspectData.billNoList.map((n) => n.billNo).join(',');
-    formInspectData.recheckType = row.recheckType;
-    formInspectData.recheckReason = row.recheckReason;
-    formInspectData.iqcBillNo = row.iqcBillNo;
 
-    formInspectData.mitemId = row.mitemId;
-    formInspectData.mitemCode = row.mitemCode;
-    formInspectData.mitemName = row.mitemName;
-    formInspectData.mitemCategoryId = row.mitemCategoryId;
-    formInspectData.mitemCategoryCode = row.mitemCategoryCode;
-    formInspectData.mitemCategoryName = row.mitemCategoryName;
-    formInspectData.supplierId = row.supplierId;
-    formInspectData.supplierCode = row.supplierCode;
-    formInspectData.supplierName = row.supplierName;
-    formInspectData.inspectQty = row.inspectQty;
-    formInspectData.inspectionStringency = row.inspectionStringency;
-    // onFjBillNoSelectionChange();
-    await loadTable();
+    if (_.isEmpty(formInspectData.recheckBillNo)) {
+      await loadTableStd();
+    } else {
+      await loadTable();
+    }
   }
 };
 
 const onShowMeasureDialog = async (row) => {
   const { showForm } = formMeasureRef.value;
-  await showForm(isEdit.value, row.measureList);
+  await showForm(isInput, row.measureList);
 };
 const onFormCloseDialog = async () => {
   formVisible.value = false;
   Emit('form-close-event');
 };
-const parentConfirm = async (measureList, isAllOK) => {
+const parentConfirm = async (measureList, isOK) => {
   if (!_.isEmpty(measureList)) {
     const { stdDtlId } = measureList[0];
-    const rowData = tableData.value.find((n) => n.id === stdDtlId);
+    const rowData = tableData.value.find((n) => n.iqcInspectStdDtlId === stdDtlId);
     rowData.measureList = measureList;
-    rowData.inspectResultSwitch = isAllOK;
+    rowData.inspectResult = isOK ? 'OK' : 'NG';
   }
 };
-
 const clearFormData = async () => {
   formInspectData.iqcBillNo = '';
   formInspectData.mitemId = '';
@@ -676,7 +639,7 @@ const clearFormData = async () => {
   tableDataCquantitative.value = [];
 };
 const onIqcBillNoSelectionChange = async () => {
-  console.log('onIqcBillNoSelectionChange 更新');
+  // console.log('onIqcBillNoSelectionChange 更新');
   try {
     if (!_.isEmpty(formInspectData.iqcBillNo)) {
       const model = await apiQuality.iqcInspect.getIqcBillInfo({
@@ -695,7 +658,7 @@ const onIqcBillNoSelectionChange = async () => {
         formInspectData.mitemCategoryName = model.mitemCategoryName;
         formInspectData.inspectionStringency = model.inspectionStringency;
 
-        await loadTableStd();
+        // await loadTableStd();
       }
     } else {
       clearFormData();
@@ -739,7 +702,6 @@ const recheckTypeChange = async () => {
 };
 
 // begin 文件上传
-
 const formFilesRef = ref(null);
 const showUplaodImg = async (rowData) => {
   selectIqcInspectRecheckDtlId.value = rowData.row.iqcInspectRecheckDtlId;
@@ -753,7 +715,7 @@ const showUplaodImg = async (rowData) => {
       rowData.row.fileList = list;
     }
     const { showForm } = formFilesRef.value;
-    await showForm(false, rowData.row.fileList);
+    await showForm(!isInput.value, rowData.row.fileList);
   } catch (e) {
     console.log(e);
   }
@@ -807,7 +769,6 @@ const batchDeleteSuccess = async (files: AddFileType[]) => {
 defineExpose({
   form: formRef,
   reset,
-  // showInspectForm,
   showFJForm,
   loadTable,
 });

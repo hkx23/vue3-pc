@@ -98,6 +98,7 @@ import { computed, ref, watch } from 'vue';
 import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import TabsContainer from './tabsContainer.vue';
 
@@ -106,7 +107,7 @@ const formTitle = ref('');
 const containerVisible = ref(false); //* 弹窗默认关闭
 const tableContainerData1 = ref([]);
 const dataTotal1 = ref(0);
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const formData = ref({
   containerTypeCode: '',
   containerTypeName: '',
@@ -173,7 +174,7 @@ const onInput = async (data: any) => {
 
 //* 表格数据
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   const result = await api.containerType.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
@@ -181,7 +182,7 @@ const fetchTable = async () => {
   });
   tableContainerData1.value = result.list;
   dataTotal1.value = result.total;
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 
 // 校验规则

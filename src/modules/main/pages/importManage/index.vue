@@ -55,13 +55,14 @@ import useClipboard from 'vue-clipboard3';
 import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import DialogImportSetting from './dialogImportSetting.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const importDialogRef = ref(null);
 const editDialogVisable = ref(false);
 // 表格数据总数
@@ -142,7 +143,7 @@ const downFile = (downUrl) => {
 
 // 加载角色数据表格
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     // 查询条件
     const searchCondition = {
@@ -159,7 +160,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 

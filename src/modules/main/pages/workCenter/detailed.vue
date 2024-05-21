@@ -114,7 +114,7 @@ const formRef: Ref<FormInstanceFunctions> = ref(null);
 const total = ref(10);
 const deleteVisible = ref(false);
 const { pageUI } = usePage(); // 页面数
-// const { loading, setLoading } = useLoading();
+// const { loading} = useLoading();
 const Emit = defineEmits([
   'addedShow',
   'FormClear',
@@ -195,7 +195,7 @@ const fetchData = async () => {
   Object.assign(formData, props.wordCenterId);
   console.log(formData.state);
   try {
-    // setLoading(true);
+    // utils.loadingPluginFullScreen(true);
     // 子节点请求
     const res = await api.workcenter.getChildCenter({
       id: props.wordCenterId.id,
@@ -235,7 +235,7 @@ const fetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    // setLoading(false);
+    // utils.loadingPluginFullScreen(false);
   }
 };
 // 存在渲染数据数组

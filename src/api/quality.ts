@@ -269,6 +269,7 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -438,6 +439,61 @@ export interface ResultListBigDecimal {
   message?: string;
   /** 响应数据 */
   data?: (number | null)[];
+}
+
+/** 巡回检验明细附件 */
+export interface PqcInspectPatrolDtlFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  pqcInspectPatrolDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+  serialNumber?: string;
+  fullFileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+  name?: string;
+  url?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
 }
 
 /** 上传控件文件VO */
@@ -691,6 +747,26 @@ export interface PqcInspectPatrolVO {
    * @format int32
    */
   scheQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
@@ -742,6 +818,8 @@ export interface PqcInspectPatrolVO {
   /** 检验依据 */
   inspectBasis?: string;
   oqcInspectStdFullList?: OqcInspectStdFullVO[];
+  /** 检验项目执行的文件列表 */
+  fileList?: ViewFileVO[];
 }
 
 /** 移动端附件查看 */
@@ -769,57 +847,6 @@ export interface ResultString {
   message?: string;
   /** 响应数据 */
   data?: string | null;
-}
-
-/** 前端文件VO */
-export interface FileVO {
-  id?: string;
-  /** 文件名 */
-  name?: string;
-  size?: string;
-  /** 文件MIME类型 */
-  type?: string;
-  lastModified?: string;
-  /** 文件相对路径 */
-  webkitRelativePath?: string;
-  /** 文件路径（也可能是Base64数据） */
-  url?: string;
-  /** 上传状态 */
-  status?: string;
-  /** 文件内容 */
-  fileContent?: string;
-}
-
-/** 巡回检验明细附件 */
-export interface PqcInspectPatrolDtlFileVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  pqcInspectPatrolDtlId?: string;
-  /** 文件名称 */
-  fileName?: string;
-  /** 文件地址 */
-  filePath?: string;
 }
 
 /** 巡回检验明细（根据item分类） */
@@ -892,6 +919,7 @@ export interface PqcInspectPatrolDtlVO {
   ngReason?: string;
   /** 检验结果 */
   inspectResult?: string;
+  inspectStdDtlId?: string;
   /** 项目分类 */
   itemCategoryName?: string;
   /** 检验类型 */
@@ -900,9 +928,10 @@ export interface PqcInspectPatrolDtlVO {
   characteristicsName?: string;
   /** 检验水平 */
   inspectLevelName?: string;
-  pqcInspectPatrolDtlFileVOList?: PqcInspectPatrolDtlFileVO[];
   /** 上传的图片 */
-  uploadFiles?: FileVO[];
+  pqcInspectPatrolDtlFileVOList?: PqcInspectPatrolDtlFileVO[];
+  /** 检验标准项目的标准附件 */
+  inspectStdDtlAttachment?: ViewFileVO[];
 }
 
 /** 巡回检验全信息 */
@@ -994,6 +1023,8 @@ export interface PqcInspectPatrolFullVO {
   /** 不合格分类 */
   defectCategoryName?: string;
   pqcInspectPatrolDtlItemCategoryVOList?: PqcInspectPatrolDtlItemCategoryVO[];
+  /** 检验标准头表附件 */
+  inspectStdHeadAttachment?: ViewFileVO[];
 }
 
 /** 巡回检验不合格处理意见VO */
@@ -1011,19 +1042,6 @@ export interface PqcInspectPatrolNgVO {
   handleMethod?: string;
 }
 
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
-}
-
 /** 巡回检验查询 */
 export interface PqcInspectPatrolSearch {
   /** @format int32 */
@@ -1037,6 +1055,7 @@ export interface PqcInspectPatrolSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -1787,6 +1806,26 @@ export type PqcInspectFirstVO = {
    * @format int32
    */
   scheQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
   /** 物料代码 */
   mitemCode?: string;
   /** 物料名称 */
@@ -1834,6 +1873,8 @@ export type PqcInspectFirstVO = {
   inspectBasis?: string;
   /** 不合格分类名称 */
   defectCategoryName?: string;
+  /** 产品检验项目执行的文件列表 */
+  fileList?: ViewFileVO[];
 } | null;
 
 /** 通用响应类 */
@@ -2668,12 +2709,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 业务类型名称 */
-  businessCategoryName?: string;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
+  /** 业务类型名称 */
+  businessCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -2833,6 +2874,47 @@ export interface ResultListAddFileTypeVO {
   data?: AddFileTypeVO[] | null;
 }
 
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** 物料复检单生成JOB参数 */
+  materialReInspectionJobParams?: MaterialReInspectionJobParam[];
+  /** 物料复检单生成JOB参数 */
+  productionReInspectionJobParams?: ProductionReInspectionJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+/** 物料复检单生成JOB参数 */
+export interface MaterialReInspectionJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+/** 物料复检单生成JOB参数 */
+export interface ProductionReInspectionJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+  /** 抽样标准类型 */
+  samplingStandardType?: string;
+  /** 检验严格度 */
+  inspectStringency?: string;
+  /** 检验水平 */
+  inspectLevel?: string;
+  /** 抽样标准编码 */
+  samplingStandardCode?: string;
+}
+
 /** 物料检验标准分配表 */
 export interface IqcInspectStdMitem {
   id?: string;
@@ -2949,8 +3031,8 @@ export interface ResultPagingDataIqcInspectStdMitemVO {
   data?: PagingDataIqcInspectStdMitemVO;
 }
 
-/** 物料检验标准明细附件表 */
-export interface IqcInspectStdDtlFile {
+/** 单据明细附件 */
+export interface IqcInspectStdDtlFileVO {
   id?: string;
   /**
    * 创建时间
@@ -2979,6 +3061,16 @@ export interface IqcInspectStdDtlFile {
   fileName?: string;
   /** 文件地址 */
   filePath?: string;
+  serialNumber?: string;
+  fullFileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+  name?: string;
+  url?: string;
 }
 
 /** 物料检验标准头表 */
@@ -3062,7 +3154,7 @@ export interface IqcInspectStdDtlVO {
   /** 单位名称 */
   uomName?: string;
   /** 其附件记录列表 */
-  fileList?: IqcInspectStdDtlFile[];
+  fileList?: IqcInspectStdDtlFileVO[];
   /** 上传的附件信息列表 */
   files?: FileUpload[];
 }
@@ -3092,10 +3184,14 @@ export interface IqcInspectStdFullSearch {
   billNoList?: IqcInspectSubmitDeliveryNoVO[];
   /** 是否创建入库单据 */
   isCreatedStockIn?: boolean;
+  /** 是否创建IQC检验单据 */
+  isCreatedIqcInspect?: boolean;
 }
 
 /** 物料检验头表 */
 export interface IqcInspectSubmitDeliveryNoVO {
+  /** IQC单号 */
+  iqcBillNo?: string;
   /** 接收单号 */
   billNo?: string;
   billNoDtlId?: string;
@@ -3108,7 +3204,7 @@ export interface IqcInspectSubmitDeliveryNoVO {
 /** 检验测量值 */
 export interface IqcInspectMeasureVO {
   /**
-   * 主键ID
+   * 标准的明细行ID
    * @format int64
    */
   stdDtlId?: number;
@@ -3283,8 +3379,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3430,6 +3526,74 @@ export interface ResultPagingDataIqcInspectStd {
   data?: PagingDataIqcInspectStd;
 }
 
+/** 通用响应类 */
+export interface ResultListIqcInspectStdDtlFileVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: IqcInspectStdDtlFileVO[] | null;
+}
+
+/** 单据附件 */
+export type IqcInspectStdFileVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectStdId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+  serialNumber?: string;
+  fullFileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+  name?: string;
+  url?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListIqcInspectStdFileVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: IqcInspectStdFileVO[] | null;
+}
+
 export interface IqcInspectStdSearch {
   /**
    * 页码
@@ -3526,6 +3690,7 @@ export interface IqcInspectDtlFileSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -3558,6 +3723,8 @@ export interface IqcInspectRecheckNgVO {
 
 /** 物料复检头表 */
 export interface IqcInspectRecheckSubmitVO {
+  /** 是否新增 */
+  isAdd?: boolean;
   /** IQC单号 */
   iqcBillNo?: string;
   /** IQC复检单号 */
@@ -3582,6 +3749,13 @@ export interface IqcInspectRecheckSubmitVO {
   recheckReason?: string;
   /** 备注 */
   memo?: string;
+  /** 单据状态 */
+  status?: string;
+  id?: string;
+  /** 批次号 */
+  lotNo?: string;
+  eid?: string;
+  oid?: string;
   /** 复检处理意见VO */
   iqcInspectRecheckNg?: IqcInspectRecheckNgVO;
   iqcInspectStdList?: IqcInspectStdFullVO[];
@@ -3600,10 +3774,187 @@ export interface IqcInspectRecheckSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  /** 复检单号 */
+  recheckBillNo?: string;
   iqcInspectStdId?: string;
+}
+
+/** 物料复检检验明细表 */
+export interface IqcInspectRecheckDtlFullVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectRecheckId?: string;
+  /**
+   * 项目行号
+   * @format int32
+   */
+  itemSeq?: number;
+  /** 项目分类 */
+  itemCategory?: string;
+  /** 项目名称或内容 */
+  itemName?: string;
+  /** 项目特性 */
+  characteristics?: string;
+  /** 基准值 */
+  baseValue?: number;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 技术要求 */
+  technicalRequest?: string;
+  /** 抽样标准类型 */
+  samplingStandardType?: string;
+  /** 抽样标准编码 */
+  samplingStandardCode?: string;
+  /** 检验水平 */
+  inspectLevel?: string;
+  /** 检验工具 */
+  inspectTool?: string;
+  /** 不合格分类 */
+  unqualifyCategory?: string;
+  /** 检验依据 */
+  inspectBasis?: string;
+  /** 检验类型 */
+  inspectType?: string;
+  /** 检验属性 */
+  inspectProperty?: string;
+  /**
+   * 是否CTQ
+   * @format int32
+   */
+  isCtq?: number;
+  /** 不良数 */
+  ngQty?: number;
+  /** 不良描述 */
+  ngReason?: string;
+  /** 样本数 */
+  sampleQty?: number;
+  /** AC值 */
+  acValue?: number;
+  /** RE值 */
+  reValue?: number;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+  /** 标准状态 */
+  stdStatus?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 检验水平 */
+  inspectLevelName?: string;
+  /** 不合格分类 */
+  unqualifyCategoryName?: string;
+  /** 接收质量限 */
+  aql?: string;
+  /** 测量值 */
+  measureList?: IqcInspectRecheckMeasureVO[];
+  /** AC/RE */
+  acRe?: string;
+  /** 文件列表 */
+  fileList?: AddFileTypeVO[];
+  /** 检验严格度 */
+  inspectionStringency?: string;
+  /** 检验严格度 */
+  inspectionStringencyName?: string;
+  /** 计量单位符号 */
+  uom?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+  /** 项目分类 */
+  itemCategoryName?: string;
+  iqcInspectStdDtlId?: string;
+  iqcInspectRecheckDtlId?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
+}
+
+/** 检验测量值 */
+export interface IqcInspectRecheckMeasureVO {
+  /**
+   * 标准的明细行ID
+   * @format int64
+   */
+  stdDtlId?: number;
+  /**
+   * 检测值序号
+   * @format int32
+   */
+  inspectSeq?: number;
+  /** 测量值 */
+  measureValue?: number;
+  /** 样本数 */
+  sampleQty?: number;
+  /** 检验工具 */
+  inspectTool?: string;
+  /** 基准值 */
+  baseValue?: number;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 单位 */
+  uom?: string;
+}
+
+/** 响应数据 */
+export type PagingDataIqcInspectRecheckDtlFullVO = {
+  list?: IqcInspectRecheckDtlFullVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIqcInspectRecheckDtlFullVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIqcInspectRecheckDtlFullVO;
 }
 
 /** 复检搜索条件 */
@@ -3620,6 +3971,7 @@ export interface MitemInspectionBillSearch {
   endDatetimeRecheck?: string;
   mitemId?: string;
   supplierId?: string;
+  status?: string;
   personResponsibilityId?: string;
   inspectGroupId?: string;
   inspectGroupMitemCategoryId?: string[];
@@ -4061,6 +4413,7 @@ export interface IqcInspectSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -4430,6 +4783,7 @@ export interface MitemReceiveBillVO {
   inspectionStringency?: string;
   /** 检验严格度 */
   inspectionStringencyName?: string;
+  iqcInspectStdId?: string;
   id?: string;
 }
 
@@ -4571,6 +4925,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  /** 项目分类 */
+  itemCategoryName?: string;
+  iqcInspectStdDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
   iqcInspectDtlId?: string;
@@ -5773,13 +6130,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
-  s3?: string;
-  s2?: string;
   s4?: string;
-  iii?: string;
   i?: string;
   ii?: string;
+  s1?: string;
+  iii?: string;
+  s2?: string;
+  s3?: string;
 } | null;
 
 /** 标签模板 */
@@ -6204,6 +6561,37 @@ export const api = {
      */
     getAqlList: (data: SamplingAqlSearch) =>
       http.request<ResultListBigDecimal['data']>(`/api/quality/samplingAql/getAqlList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  pqcInspectPatrolDtlFile: {
+    /**
+     * No description
+     *
+     * @tags 巡检检验明细附件表
+     * @name DeleteFile
+     * @summary 删除图片
+     * @request POST:/pqcInspectPatrolDtlFile/deleteFile
+     * @secure
+     */
+    deleteFile: (data: PqcInspectPatrolDtlFileVO) =>
+      http.request<ResultBoolean['data']>(`/api/quality/pqcInspectPatrolDtlFile/deleteFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验明细附件表
+     * @name AddFile
+     * @summary 添加图片
+     * @request POST:/pqcInspectPatrolDtlFile/addFile
+     * @secure
+     */
+    addFile: (data: PqcInspectPatrolDtlFileVO) =>
+      http.request<ResultBoolean['data']>(`/api/quality/pqcInspectPatrolDtlFile/addFile`, {
         method: 'POST',
         body: data as any,
       }),
@@ -7149,6 +7537,37 @@ export const api = {
         params: query,
       }),
   },
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name ProductionlReinspectionListJob
+     * @summary 产品复检单生成JOB
+     * @request POST:/jobCommon/productionlReinspectionListJob
+     * @secure
+     */
+    productionlReinspectionListJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/quality/jobCommon/productionlReinspectionListJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name MaterialReinspectionListJob
+     * @summary 物料复检单生成JOB
+     * @request POST:/jobCommon/materialRinspectionListJob
+     * @secure
+     */
+    materialReinspectionListJob: (data: JobCommonDTO) =>
+      http.request<ResultString['data']>(`/api/quality/jobCommon/materialRinspectionListJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   iqcInspectStdMitem: {
     /**
      * No description
@@ -7366,6 +7785,36 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准头表
+     * @name GetStdDtlAttachList
+     * @summary 获取标准项的附件
+     * @request POST:/iqcInspectStd/getStdDtlAttachList
+     * @secure
+     */
+    getStdDtlAttachList: (data: IqcInspectStdDtlVO) =>
+      http.request<ResultListIqcInspectStdDtlFileVO['data']>(`/api/quality/iqcInspectStd/getStdDtlAttachList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准头表
+     * @name GetStdAttachList
+     * @summary 获取主表的附件
+     * @request POST:/iqcInspectStd/getStdAttachList
+     * @secure
+     */
+    getStdAttachList: (data: IqcInspectStdVO) =>
+      http.request<ResultListIqcInspectStdFileVO['data']>(`/api/quality/iqcInspectStd/getStdAttachList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准头表
      * @name GetList
      * @summary 查询检验标准主界面数据
      * @request POST:/iqcInspectStd/getList
@@ -7536,6 +7985,24 @@ export const api = {
      * No description
      *
      * @tags 物料复检头表
+     * @name GetIqcRecheckDtlInfoByBillVo
+     * @summary 根据单号查询现有IQC复检单据
+     * @request POST:/iqcInspectRecheck/getIqcRecheckDtlInfoByBillVO
+     * @secure
+     */
+    getIqcRecheckDtlInfoByBillVo: (data: IqcInspectRecheckSearch) =>
+      http.request<ResultPagingDataIqcInspectRecheckDtlFullVO['data']>(
+        `/api/quality/iqcInspectRecheck/getIqcRecheckDtlInfoByBillVO`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 物料复检头表
      * @name GetIqcInspectBillVoByRecheck
      * @summary 获取仓库IQC检验单数据
      * @request POST:/iqcInspectRecheck/getIqcInspectBillVOByRecheck
@@ -7549,20 +8016,6 @@ export const api = {
           body: data as any,
         },
       ),
-
-    /**
-     * No description
-     *
-     * @tags 物料复检头表
-     * @name Test
-     * @summary 物料复检单自动生成JOB测试
-     * @request GET:/iqcInspectRecheck/test
-     * @secure
-     */
-    test: () =>
-      http.request<ResultObject['data']>(`/api/quality/iqcInspectRecheck/test`, {
-        method: 'GET',
-      }),
   },
   iqcInspectDtlFile: {
     /**
@@ -7791,20 +8244,6 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/quality/iqcInspect/CreatedIqcInspectAndStockIn`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 物料检验头表
-     * @name Test
-     * @summary 产品复检单生产JOB测试
-     * @request GET:/iqcInspect/test
-     * @secure
-     */
-    test: () =>
-      http.request<ResultObject['data']>(`/api/quality/iqcInspect/test`, {
-        method: 'GET',
       }),
   },
   inspectGroupInUser: {

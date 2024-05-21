@@ -112,13 +112,14 @@ import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const formVisible = ref(false); // 控制弹窗显示
 const controlShow = ref(false); // 控制确认按钮编辑和新增
 const formRef: Ref<FormInstanceFunctions> = ref(null);
@@ -140,7 +141,7 @@ onMounted(() => {
 const onHandelList = async () => {
   const STATE = inputValue.value.statevalue;
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     if (STATE === -1) {
       inputValue.value.state = [1, 0];
     } else if (STATE === 1) {
@@ -163,7 +164,7 @@ const onHandelList = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 // 下拉初始数据

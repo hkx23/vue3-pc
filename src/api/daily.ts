@@ -9,6 +9,42 @@
  * ---------------------------------------------------------------
  */
 
+/** 点检单据生成JOB参数 */
+export interface CheckBillCreatedJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** 点检单据生成JOB参数 */
+  checkBillCreatedJobParam?: CheckBillCreatedJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
 export interface IncidentTypeSearch {
   /**
    * 页码
@@ -29,19 +65,6 @@ export interface IncidentTypeSearch {
   id?: string;
   /** 多个id */
   ids?: string[];
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 安灯异常类型表 */
@@ -89,6 +112,7 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -1234,12 +1258,12 @@ export interface ConferenceTemplateVO {
   conferenceCode?: string;
   /** 会议名称 */
   conferenceName?: string;
+  /** 模板维度名称转换 */
+  templateDimensionNames?: string;
   /** 有效值转换 */
   isState?: boolean;
   /** 模板维度转换 */
   templateDimensionList?: string[];
-  /** 模板维度名称转换 */
-  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1547,12 +1571,12 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
+  /** 维度名称转换 */
+  templateDimensionNames?: string;
   /** 有效值转换 */
   isState?: boolean;
   /** 维度转换 */
   templateDimensionList?: string[];
-  /** 维度名称转换 */
-  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1749,14 +1773,14 @@ export interface ConferenceOrgVO {
   orgName?: string;
   workCenterCode?: string;
   workCenterName?: string;
-  convertOrgId?: string;
-  /** 转换后的组织编码 */
-  convertOrgName?: string;
-  /** 转换后的组织编码 */
-  convertOrgCode?: string;
   typeName?: string;
   /** 类型 */
   type?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
+  convertOrgId?: string;
+  /** 转换后的组织编码 */
+  convertOrgName?: string;
 }
 
 /** 响应数据 */
@@ -1888,6 +1912,7 @@ export interface ChecklistOrgSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2052,6 +2077,7 @@ export interface ChecklistItemSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2137,6 +2163,7 @@ export interface ChecklistSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2216,6 +2243,7 @@ export interface CheckItemSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2243,6 +2271,301 @@ export interface ResultPagingDataCheckItemVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataCheckItemVO;
+}
+
+/** 点检单据明细附件 */
+export interface CheckBillDtlFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  checkBillDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+  serialNumber?: string;
+  fullFileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+  name?: string;
+  url?: string;
+}
+
+/** 点检单据明细 */
+export interface CheckBillDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  checkBillHeadId?: string;
+  /** 项目代码 */
+  itemCode?: string;
+  /** 项目名称 */
+  itemName?: string;
+  /** 项目描述 */
+  itemDesc?: string;
+  /** 项目类型 */
+  itemType?: string;
+  /** 执行开始时间 */
+  executeBeginTime?: string;
+  /** 执行结束时间 */
+  executeEndTime?: string;
+  personResponsibilityId?: string;
+  /**
+   * 发现时间
+   * @format date-time
+   */
+  datetimeDiscover?: string;
+  /** 问题描述 */
+  problemDesc?: string;
+  /** 改善对策 */
+  correctMeasure?: string;
+  /** 转安灯单据号 */
+  adBillNo?: string;
+  /** 点检结果 */
+  checkResult?: string;
+  /** 项目类型 */
+  itemTypeName?: string;
+  /** 责任人编码 */
+  personResponsibilityCode?: string;
+  /** 责任人名称 */
+  personResponsibilityName?: string;
+  /** 项目明细附件 */
+  fileList?: CheckBillDtlFileVO[];
+}
+
+/** 点检单据 */
+export interface CheckBillHeadVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  orgId?: string;
+  workcenterId?: string;
+  /** 点检清单代码 */
+  checklistCode?: string;
+  /** 点检清单名称 */
+  checklistName?: string;
+  /** 点检清单描述 */
+  checklistDesc?: string;
+  /** 点检清单类别 */
+  checklistCategory?: string;
+  /** 班次 */
+  shiftCode?: string;
+  personId?: string;
+  /** 点检结果 */
+  checkResult?: string;
+  /** 状态 */
+  status?: string;
+  checkBillHeadId?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 工作中心代码 */
+  wcCode?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /** 人员编号 */
+  personCode?: string;
+  /** 人员姓名 */
+  personName?: string;
+  /** 项目明细 */
+  dtlList?: CheckBillDtlVO[];
+  /** 是否暂存 */
+  isHold?: boolean;
+  shiftCodeName?: string;
+  checklistCategoryName?: string;
+  /** @format int32 */
+  executeFrequence?: number;
+  executeFrequenceName?: string;
+  /** 待取消的单据 */
+  cancelBillNoList?: string[];
+  /** 检验结果名称 */
+  checkResultName?: string;
+  /** 状态名称 */
+  statusName?: string;
+}
+
+export interface CheckBillSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  tableName?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  checkBillHeadId?: string;
+  /** 单号 */
+  billNo?: string;
+  /** 组织编码 */
+  orgCode?: string;
+  /** 车间编码 */
+  wcCode?: string;
+  /** 执行人 */
+  personCode?: string;
+  /** 点检清单 */
+  checklistCode?: string;
+  /** 清单类型 */
+  checklistCategory?: string;
+  /** 单据状态 */
+  statusList?: string[];
+  /** 明细行ID */
+  dtlIds?: string[];
+  /** 开始时间 */
+  dateTimeCreateBegin?: string;
+  /** 结束时间 */
+  dateTimeCreateEnd?: string;
+}
+
+/** 响应数据 */
+export type PagingDataCheckBillHeadVO = {
+  list?: CheckBillHeadVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataCheckBillHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataCheckBillHeadVO;
+}
+
+/** 通用响应类 */
+export interface ResultListCheckBillDtlFileVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: CheckBillDtlFileVO[] | null;
+}
+
+/** 点检单据明细文件表 */
+export interface CheckBillDtlFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  checkBillDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+/** 通用响应类 */
+export interface ResultCheckBillHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 点检单据 */
+  data?: CheckBillHeadVO;
 }
 
 /** 安灯警报配置表 */
@@ -2659,6 +2982,22 @@ export type DataTableVO = {
  */
 
 export const api = {
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name CheckBillCreatedJob
+     * @summary 点检单据生成JOB
+     * @request POST:/jobCommon/checkBillCreatedJob
+     * @secure
+     */
+    checkBillCreatedJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/jobCommon/checkBillCreatedJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   incidentType: {
     /**
      * No description
@@ -4064,14 +4403,152 @@ export const api = {
      * No description
      *
      * @tags 点检单据头表
-     * @name CheckBillCreatedJob
-     * @summary 本地测试JOB用
-     * @request POST:/checkBillHead/checkBillCreatedJob
+     * @name UpdateChecking
+     * @summary 单据更新点检中
+     * @request POST:/checkBillHead/updateChecking
      * @secure
      */
-    checkBillCreatedJob: () =>
-      http.request<ResultObject['data']>(`/api/daily/checkBillHead/checkBillCreatedJob`, {
+    updateChecking: (data: CheckBillHeadVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillHead/updateChecking`, {
         method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
+     * @name SubmitCheckBill
+     * @summary 单据更新点检中
+     * @request POST:/checkBillHead/submitCheckBill
+     * @secure
+     */
+    submitCheckBill: (data: CheckBillHeadVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillHead/submitCheckBill`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
+     * @name GetFullCheckBillList
+     * @summary 查询单据（完整信息）
+     * @request POST:/checkBillHead/getFullCheckBillList
+     * @secure
+     */
+    getFullCheckBillList: (data: CheckBillSearch) =>
+      http.request<ResultPagingDataCheckBillHeadVO['data']>(`/api/daily/checkBillHead/getFullCheckBillList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
+     * @name GetCheckBillListByUser
+     * @summary 查询单据
+     * @request POST:/checkBillHead/getCheckBillListByUser
+     * @secure
+     */
+    getCheckBillListByUser: (data: CheckBillSearch) =>
+      http.request<ResultPagingDataCheckBillHeadVO['data']>(`/api/daily/checkBillHead/getCheckBillListByUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
+     * @name Cancelled
+     * @summary 点检单据取消
+     * @request POST:/checkBillHead/cancelled
+     * @secure
+     */
+    cancelled: (data: CheckBillHeadVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillHead/cancelled`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  checkBillDtlFile: {
+    /**
+     * No description
+     *
+     * @tags 点检单据明细文件表
+     * @name GetFileListByBillNo
+     * @summary 根据单号获取图片
+     * @request POST:/checkBillDtlFile/getFileListByBillNo
+     * @secure
+     */
+    getFileListByBillNo: (data: CheckBillSearch) =>
+      http.request<ResultListCheckBillDtlFileVO['data']>(`/api/daily/checkBillDtlFile/getFileListByBillNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据明细文件表
+     * @name DeleteFile
+     * @summary 删除图片
+     * @request POST:/checkBillDtlFile/deleteFile
+     * @secure
+     */
+    deleteFile: (data: CheckBillDtlFile) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillDtlFile/deleteFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据明细文件表
+     * @name AddFile
+     * @summary 添加图片
+     * @request POST:/checkBillDtlFile/addFile
+     * @secure
+     */
+    addFile: (data: CheckBillDtlFile) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillDtlFile/addFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  checkBillDtl: {
+    /**
+     * No description
+     *
+     * @tags 点检单据明细表
+     * @name UpdateCheckResult
+     * @summary 更新点检结果
+     * @request POST:/checkBillDtl/updateCheckResult
+     * @secure
+     */
+    updateCheckResult: (data: CheckBillDtlVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkBillDtl/updateCheckResult`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检单据明细表
+     * @name GetCheckBillDtlList
+     * @summary 查询单据明细
+     * @request POST:/checkBillDtl/getCheckBillDtlList
+     * @secure
+     */
+    getCheckBillDtlList: (data: CheckBillSearch) =>
+      http.request<ResultCheckBillHeadVO['data']>(`/api/daily/checkBillDtl/getCheckBillDtlList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   alertCfg: {

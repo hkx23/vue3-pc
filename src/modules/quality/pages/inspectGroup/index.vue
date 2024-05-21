@@ -173,6 +173,7 @@ import { api as apiQuality } from '@/api/quality';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import formGroup from './formGroup.vue';
 import formMitemDtl from './formMitemDtl.vue';
@@ -183,7 +184,7 @@ const { t } = useLang();
 
 const { pageUI } = usePage();
 const { pageUI: pageUIUser } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const { pageUI: pageMitem } = usePage();
 const { loading: loadingMitem, setLoading: setLoadingMitem } = useLoading();
 const { loading: loadingPackDtl, setLoading: setLoadingUser } = useLoading();
@@ -321,7 +322,7 @@ const conditionEnter = (data: any) => {
 
 // 加载包装规则表格
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     const data = (await apiQuality.inspectGroup.getList({
       keyword: optsValue.value.keyword,
@@ -336,7 +337,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 // 加载包装规则明细表格

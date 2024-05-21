@@ -169,7 +169,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiControl } from '@/api/control';
@@ -179,6 +179,7 @@ import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { useUserStore } from '@/store';
+import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -655,7 +656,7 @@ const getMitemList = async () => {
 // 冻结解冻提交
 const onConfirmForm = async () => {
   try {
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     await apiQuality.hold.saveData({
       qcHoldInfo: formData,
       keyList: keyList.value,
@@ -668,7 +669,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 
