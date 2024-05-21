@@ -17,6 +17,10 @@
     :custom-conditions="finalCustomConditions"
     :keywords="finalKeywords"
     :table-width="finaltableWidth"
+    :dynamic-table-name="finalDynamicTabelName"
+    :dynamic-business-domain="finalDynamicBusinessDomain"
+    :dynamic-keyword-fields="finalDynamicKeywordFields"
+    :dynamic-default-sort-filed="finalDynamicDefaultSortFiled"
     :query-setting="finalQuerySetting"
     :bottom-query-setting="finalBottomQuerySetting"
     v-bind="selectAttr"
@@ -44,6 +48,10 @@
     :table-width="finaltableWidth"
     :list-setting="finalListSetting"
     :auto-width="autoWidth"
+    :dynamic-table-name="finalDynamicTabelName"
+    :dynamic-business-domain="finalDynamicBusinessDomain"
+    :dynamic-keyword-fields="finalDynamicKeywordFields"
+    :dynamic-default-sort-filed="finalDynamicDefaultSortFiled"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
@@ -69,6 +77,10 @@
     :table-width="finaltableWidth"
     :list-setting="finalListSetting"
     :auto-width="autoWidth"
+    :dynamic-table-name="finalDynamicTabelName"
+    :dynamic-business-domain="finalDynamicBusinessDomain"
+    :dynamic-keyword-fields="finalDynamicKeywordFields"
+    :dynamic-default-sort-filed="finalDynamicDefaultSortFiled"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
@@ -280,11 +292,15 @@ const finalParentId = ref(props.parentId);
 const finaltableWidth = ref(props.tableWidth);
 const finalComponentType = ref(props.componentType);
 const finalListSetting = ref(props.listSetting);
-const finalCustomConditions = ref(props.customConditions);
+const finalCustomConditions = ref(null);
 const finalMultiple = ref(props.isMultiple || props.multiple);
 const finalQuerySetting = ref(null);
 const finalBottomQuerySetting = ref(null);
-
+// 动态查询接口用到的参数
+const finalDynamicTabelName = ref(null); // 表名
+const finalDynamicBusinessDomain = ref(null); // 业务领域
+const finalDynamicKeywordFields = ref(null); // 模糊查询的关键字字段
+const finalDynamicDefaultSortFiled = ref(null); // 默认排序字段
 const onSelectionChange = (val: any, valuKeys: any) => {
   if (!finalMultiple.value) {
     emits('update:modelValue', val[finalKeywords.value.value]);
@@ -399,6 +415,34 @@ const loadTypeSetting = () => {
         if (res.bottomQuerySetting) {
           if (!finalBottomQuerySetting.value) {
             finalBottomQuerySetting.value = res.bottomQuerySetting;
+          }
+        }
+
+        if (props.customConditions && props.customConditions.length > 0) {
+          finalCustomConditions.value = props.customConditions;
+        } else if (res && res.customConditions) {
+          finalCustomConditions.value = res.customConditions;
+        }
+
+        // 动态查询接口用到的参数
+        if (res.dynamicTableName) {
+          if (!finalDynamicTabelName.value) {
+            finalDynamicTabelName.value = res.dynamicTableName;
+          }
+        }
+        if (res.dynamicBusinessDomain) {
+          if (!finalDynamicBusinessDomain.value) {
+            finalDynamicBusinessDomain.value = res.dynamicBusinessDomain;
+          }
+        }
+        if (res.dynamicKeywordFields) {
+          if (!finalDynamicKeywordFields.value) {
+            finalDynamicKeywordFields.value = res.dynamicKeywordFields;
+          }
+        }
+        if (res.dynamicDefaultSortFiled) {
+          if (!finalDynamicDefaultSortFiled.value) {
+            finalDynamicDefaultSortFiled.value = res.dynamicDefaultSortFiled;
           }
         }
       })

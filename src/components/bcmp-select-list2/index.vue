@@ -179,6 +179,25 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // 动态查询接口用到的参数
+  dynamicTableName: {
+    type: String,
+    default: '',
+  },
+  dynamicBusinessDomain: {
+    type: String,
+    default: '',
+  },
+  dynamicKeywordFields: {
+    type: Array,
+    default: () => {
+      return [];
+    },
+  },
+  dynamicDefaultSortFiled: {
+    type: String,
+    default: '',
+  },
 });
 const onOptionClick = (item) => {
   state.defaultValue = item;
@@ -311,6 +330,10 @@ const remoteLoad = async (val: any) => {
     keyword: selectSearch.value,
     category: props.category,
     parentId: props.parentId,
+    dynamicTableName: props.dynamicTableName,
+    dynamicBusinessDomain: props.dynamicBusinessDomain,
+    dynamicKeywordFields: props.dynamicKeywordFields,
+    dynamicDefaultSortFiled: props.dynamicDefaultSortFiled,
   };
 
   // 判断两次查询条件是否一样，一样的话，不获取数据

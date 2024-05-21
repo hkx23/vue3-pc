@@ -1,0 +1,38 @@
+{
+  "title": "动态查询示例：",
+  "placeholder": "请选择：",
+  "url": "/api/main/dynamicManage/dynamicQueryData",
+  "httptype": "POST",
+  "category": "",
+  "tableWidth": 800,
+  "columns": [
+    {
+      "title": "计量单位",
+      "key": "uom",
+      "align": "left"
+    },
+    {
+      "title": "计量单位名称",
+      "key": "uomName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "uomName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "uomName",
+    "codeField": "uom"
+  },
+  "name": "计量单位",
+  "componentType": "table",
+  "customConditions":[{"field":"uom","operator":"in","value":"CM,g","type":"string"}],
+  "dynamicTableName": "m_mitem_uom", 
+  "dynamicBusinessDomain": "main",
+  "dynamicKeywordFields": ["uom","uomName"],
+  "dynamicDefaultSortFiled":  "timeCreate"
+}

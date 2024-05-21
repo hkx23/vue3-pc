@@ -398,6 +398,19 @@
             <t-input v-model="routingValue" label="工艺路线值" disabled />
           </t-col>
         </t-row>
+        <!-- 动态查询组件-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="dynamicValue"
+              :is-multiple="isMultiple"
+              type="dynamicQueryDemo"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="dynamicValue" label="动态组件值" disabled />
+          </t-col>
+        </t-row>
       </t-space>
     </cmp-card>
   </cmp-container>
@@ -442,7 +455,7 @@ const workstationAuthValue = ref();
 const routingValue = ref();
 const moValue = ref('');
 const moScheduleValue = ref();
-
+const dynamicValue = ref();
 onMounted(() => {});
 </script>
 
