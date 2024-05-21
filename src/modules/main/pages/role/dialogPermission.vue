@@ -275,7 +275,7 @@ api.param.getListByGroupCode({ parmGroupCode: 'S_CLIENT_TYPE' }).then((data) => 
 // 加载角色数据表格
 const fetchPermissionData = async () => {
   loading.value = true;
-  // setLoading(true);
+  // utils.loadingPluginFullScreen(true);
   try {
     const data = (await api.permission.getTreePermissionsByRoleId({ roleId: props.id })) as any;
 
@@ -288,7 +288,7 @@ const fetchPermissionData = async () => {
     console.log(e);
   } finally {
     loading.value = false;
-    // setLoading(false);
+    // utils.loadingPluginFullScreen(false);
   }
 };
 

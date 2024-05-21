@@ -41,10 +41,11 @@ import { ref, watch } from 'vue';
 
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 const { pageUI } = usePage();
 const detailTotal = ref(0);
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
@@ -78,10 +79,10 @@ const props = defineProps({
 watch(
   () => props.sunData,
   (newVal) => {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     tableDocumentDetails.value = newVal;
     detailTotal.value = newVal.length;
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   },
   { immediate: true },
 );

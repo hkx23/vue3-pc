@@ -62,6 +62,7 @@ import { api } from '@/api/quality';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 const formData = ref({
   sampingStdId: '',
@@ -77,7 +78,7 @@ const onClose = async () => {
 const editIcon = () => h(EditIcon, { size: '18px' });
 const deleIcon = () => h(DeleteIcon, { size: '18px' });
 const saveIcon = () => h(SaveIcon, { size: '18px' });
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const { pageUI } = usePage();
 const tableDataWarehouse = ref([]);
 const falg = ref(false);
@@ -1144,7 +1145,7 @@ onMounted(() => {
   console.log('123123');
 });
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     const data = (await api.samplingStdDtl.getList({
       sampingStdId: formData.value.sampingStdId,
@@ -1161,7 +1162,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const setRow = (data) => {

@@ -215,11 +215,12 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { api, api as apiMain } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 const { pageUI } = usePage();
 const containerVisible1 = ref(false); //* 弹窗默认关闭
 const containerVisible2 = ref(false);
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const tableContainerData1 = ref([]);
 const tableContainerData2 = ref([]);
 const dataTotal1 = ref(0);
@@ -433,7 +434,7 @@ const onInput = async (data: any) => {
     return; // 如果没有选中，则终止函数执行
   }
   pageUI.value.page = 1;
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   inventoryManagement1.value = [];
   tableContainerData1.value = [];
   const { status, keyword } = data;
@@ -448,7 +449,7 @@ const onInput = async (data: any) => {
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 //* 查询2
 const inventoryManagement2 = ref([]);
@@ -458,7 +459,7 @@ const onInput2 = async (data: any) => {
     MessagePlugin.warning('请先选中主表数据');
     return; // 如果没有选中，则终止函数执行
   }
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   pageUI.value.page = 1;
   inventoryManagement2.value = [];
   tableContainerData2.value = [];
@@ -479,7 +480,7 @@ const onInput2 = async (data: any) => {
 // 父调子fn
 /* * data 主表接口 的id 查右侧的数据 */
 const fetchTable = async (data: any) => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   inventoryManagement1.value = [];
   tableContainerData1.value = [];
   if (!data.value) {
@@ -491,14 +492,14 @@ const fetchTable = async (data: any) => {
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 
 // fetchTable 物料关联
 const fetchTable2 = async (data: any) => {
   inventoryManagement2.value = [];
   tableContainerData2.value = [];
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   if (!data.value) {
     const result = await api.containerInMitem.getList({
       pageNum: pageUI.value.page,
@@ -508,7 +509,7 @@ const fetchTable2 = async (data: any) => {
     tableContainerData2.value = result.list;
     dataTotal2.value = result.total;
   }
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 
 // 提交1

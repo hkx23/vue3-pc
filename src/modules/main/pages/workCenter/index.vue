@@ -235,7 +235,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 
 const data = ref([]); // 存储数据给到新增数据
 const { pageUI } = usePage();
-// const { loading, setLoading } = useLoading();
+// const { loading} = useLoading();
 const page = ref({
   total: 10,
   current: 1,

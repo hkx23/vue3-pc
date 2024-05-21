@@ -43,8 +43,8 @@ import { useRouter } from 'vue-router';
 
 import { api as apiMain } from '@/api/main';
 import UserIcon from '@/assets/assets-empty.svg?component';
-import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -65,7 +65,6 @@ const queryCondition = ref({
   datetimeEnd: '',
 });
 
-const { setLoading } = useLoading();
 const { t } = useLang();
 
 // table数据
@@ -73,7 +72,7 @@ const noticeData = ref([]);
 // 获取通告列表和通告总数信息
 const onFetchData = async () => {
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     // 获取通告列表信息
     pageUI.value.page = 1;
     pageUI.value.rows = 4;
@@ -86,7 +85,7 @@ const onFetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 

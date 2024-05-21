@@ -129,6 +129,7 @@ import { api as apiDaily } from '@/api/daily';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import formItem from './formItem.vue';
 import { useLang } from './lang';
@@ -308,21 +309,25 @@ const onInput = async (data: any) => {
 };
 
 const fetchTable = async () => {
-  const res = await apiDaily.checklist.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    checklistCode: formData.value.checklistCode,
-    checklistName: formData.value.checklistName,
-    checklistCategory: formData.value.checklistCategory,
-    shiftCode: formData.value.shiftCode,
-    executeFrequenceCode: formData.value.executeFrequenceCode,
-  });
+  try {
+    utils.loadingPluginFullScreen(true);
+    const res = await apiDaily.checklist.getList({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      checklistCode: formData.value.checklistCode,
+      checklistName: formData.value.checklistName,
+      checklistCategory: formData.value.checklistCategory,
+      shiftCode: formData.value.shiftCode,
+      executeFrequenceCode: formData.value.executeFrequenceCode,
+    });
 
-  checklistData.list = res.list;
-  checklistTotal.value = res.total;
-  selectedRowKeys.value = [];
-  delItemRowKeys.value = [];
-  MessagePlugin.success('查询成功');
+    checklistData.list = res.list;
+    checklistTotal.value = res.total;
+    selectedRowKeys.value = [];
+    delItemRowKeys.value = [];
+  } finally {
+    utils.loadingPluginFullScreen(false);
+  }
 };
 
 const onSecondarySubmit = () => {

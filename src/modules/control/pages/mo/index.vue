@@ -85,6 +85,7 @@ import { api as apimain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import detailed from './detailed.vue';
 import { useLang } from './lang';
@@ -92,7 +93,7 @@ import routingUpdate from './routingUpdate.vue';
 
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const currentrow = ref({}); // 当前行工单信息
 
 const moDataRef = ref(null);
@@ -172,7 +173,7 @@ const dataTotal = ref(0);
 const detailFormRef = ref(null);
 const fetchTable = async () => {
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     if (queryCondition.value.datePlanRange) {
       if (queryCondition.value.datePlanRange[0]) {
         queryCondition.value.datetimePlanStart = queryCondition.value.datePlanRange[0].toString();
@@ -194,14 +195,14 @@ const fetchTable = async () => {
   } catch (e) {
     console.log('cus', e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 
 // 初始化系统字典工单类型
 const initMoClass = async () => {
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     const res = (await apimain.param.getListByGroupCode({
       parmGroupCode: 'C_MO_TYPE',
     })) as any;
@@ -209,14 +210,14 @@ const initMoClass = async () => {
   } catch (e) {
     console.log('cus', e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 
 // 初始化系统字典工单状态
 const initMoType = async () => {
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
     const res = (await apimain.param.getListByGroupCode({
       parmGroupCode: 'C_MO_STATUS',
     })) as any;
@@ -226,7 +227,7 @@ const initMoType = async () => {
   } catch (e) {
     console.log('cus', e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const onHandleCancellation = () => {
@@ -388,7 +389,7 @@ const onHandleRoutingShow = (value: any) => {
 // 工单状态控制
 const onUpdateMoStatus = async (value) => {
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
 
     checkSelected().then(async (isRun) => {
       if (isRun) {
@@ -406,13 +407,13 @@ const onUpdateMoStatus = async (value) => {
   } catch (e) {
     console.log('cus', e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 // 工单置尾
 const onUpdateMoHold = async (value) => {
   try {
-    setLoading(true);
+    utils.loadingPluginFullScreen(true);
 
     checkSelected().then(async (isRun) => {
       if (isRun) {
@@ -430,7 +431,7 @@ const onUpdateMoHold = async (value) => {
   } catch (e) {
     console.log('cus', e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 

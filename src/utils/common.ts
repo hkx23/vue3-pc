@@ -1,7 +1,10 @@
 // 通用方法
 import _ from 'lodash';
+import { LoadingPlugin } from 'tdesign-vue-next';
 
 import { api as apiMain } from '@/api/main';
+
+let loadingStart; // 用于存储loadingPluginFullScreen时候,调用时间戳的变量
 
 export default {
   // 初始化对象
@@ -32,7 +35,6 @@ export default {
     // 将浮点数转换为整数并确保其落在指定范围内
     return randomBigInt;
   },
-
   // 获取minio的配置信息
   getFileServerHost() {
     return new Promise((resolve, reject) => {
@@ -44,6 +46,7 @@ export default {
       }
     });
   },
+  // 根据path获取附件URL
   getSignedUrl(pathFileName: string) {
     return new Promise((resolve, reject) => {
       const data = apiMain.file.getSignedUrlByFullName({ pathFileName });
@@ -53,6 +56,28 @@ export default {
         reject();
       }
     });
+  },
+  // 显示LOADING页面,默认至少显示1秒
+  loadingPluginFullScreen(isLoading, loadingWaiting = 500) {
+    const instance = LoadingPlugin({
+      fullscreen: true,
+      attach: 'body', // 挂载元素，默认挂载到组件本身所在的位置
+      preventScrollThrough: false, // 防止滚动穿透，全屏加载模式有效
+      loading: isLoading,
+    });
+
+    if (isLoading) {
+      loadingStart = Date.now(); // 存储开始加载的时间戳
+    } else {
+      const elapsed = Date.now() - loadingStart; // 计算已经过的时间
+      if (elapsed < loadingWaiting) {
+        setTimeout(() => {
+          instance.hide();
+        }, loadingWaiting - elapsed); // 等待足够的时间直到5秒为止
+      } else {
+        instance.hide(); // 已超过5秒，立即隐藏
+      }
+    }
   },
 
   // 可以在这里继续添加更多的通用方法。

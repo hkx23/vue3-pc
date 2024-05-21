@@ -99,6 +99,7 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -208,6 +209,7 @@ export interface UserWarehouseSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -284,6 +286,7 @@ export interface UserWarehouseWithTransferConstraintSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -387,6 +390,7 @@ export interface TransferHeadSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2132,6 +2136,7 @@ export interface SaleOrderSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2240,10 +2245,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2321,6 +2326,7 @@ export interface SaleDeliveryDtlSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2498,6 +2504,7 @@ export interface SaleDeliverySearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2654,9 +2661,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -2759,11 +2766,11 @@ export interface DeliveryDtlVO {
   batchLot?: string;
   /** 批次接收量 */
   batchLotQty?: number;
+  transferDtlId?: string;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
-  transferDtlId?: string;
 }
 
 /** 物料检验单明细 */
@@ -2933,11 +2940,11 @@ export interface PurchaseOrderDtlVO {
   batchLot?: string;
   /** 批次接收量 */
   batchLotQty?: number;
+  transferDtlId?: string;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
-  transferDtlId?: string;
 }
 
 /** 退货管理VO */
@@ -2970,6 +2977,7 @@ export interface WarehouseSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -3070,6 +3078,7 @@ export interface ReturnManagementSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -3243,6 +3252,7 @@ export interface MitemSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -3465,6 +3475,7 @@ export interface OnhandTransferSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -3921,6 +3932,7 @@ export interface OnhandQtySearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -4297,6 +4309,11 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4307,11 +4324,6 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -4561,6 +4573,7 @@ export interface MitemReceiptSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -4673,6 +4686,40 @@ export interface ResultLocationVO {
   data?: LocationVO;
 }
 
+/** 工单发料提交模型 */
+export interface MitemCancelDTO {
+  billNo?: string;
+  /** 报废原因 */
+  reason?: string;
+  /** 备注 */
+  memo?: string;
+  /** 报废科目 */
+  account?: string;
+  /** 费用部门 */
+  costDepartment?: string;
+  /** 提交的模型-明细信息 */
+  submitList?: MitemCancelDtlVO[];
+  tranDtlId?: string;
+  /** 条码信息或批次号码 */
+  labelNo?: string;
+  /** 扫描条码型-明细信息 */
+  dtlInfo?: MitemCancelDtlVO;
+  /** 标签类型 */
+  labelCategory?: string;
+  /** 标签表 */
+  labelInfo?: Label;
+  /** 配送卡表 */
+  deliveryCardInfo?: DeliveryCard;
+  /** 批次数量 */
+  batchQty?: number;
+  /** 批次表ID */
+  onHandBatchId?: string;
+  warehouseId?: string;
+  locId?: string;
+  mitemId?: string;
+}
+
+/** 扫描条码型-明细信息 */
 export interface MitemCancelDtlVO {
   id?: string;
   /**
@@ -4735,7 +4782,6 @@ export interface MitemCancelDtlVO {
    */
   index?: number;
   tranDtlId?: string;
-  moBomId?: string;
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
@@ -4748,11 +4794,6 @@ export interface MitemCancelDtlVO {
    * @format int32
    */
   isEnableLocation?: number;
-  /**
-   * 是否来源仓库先进先出
-   * @format int32
-   */
-  isFifo?: number;
   districtCode?: string;
   districtName?: string;
   locationCode?: string;
@@ -4768,35 +4809,14 @@ export interface MitemCancelDtlVO {
    * @format int32
    */
   isToEnableLocation?: number;
-  /**
-   * 是否目标仓库先进先出
-   * @format int32
-   */
-  isToFifo?: number;
   workshopId?: string;
   /**
    * 是否启用批次,1：是；0：否
    * @format int32
    */
   isBatchNo?: number;
-  /**
-   * 分子用量
-   * @format int32
-   */
-  numeratorQty?: number;
-  /**
-   * 分母用量
-   * @format int32
-   */
-  denomainatorQty?: number;
-  scheCode?: string;
-  /**
-   * 排产数量
-   * @format int32
-   */
-  scheQty?: number;
   /** 库存可用量 */
-  handQty?: number;
+  onhandQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
@@ -4804,21 +4824,6 @@ export interface MitemCancelDtlVO {
    * @format double
    */
   scanQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
 }
 
 export interface MitemCancelVO {
@@ -4897,13 +4902,6 @@ export interface MitemCancelVO {
    */
   datetimeReceipted?: string;
   userReceiptedId?: string;
-  moScheId?: string;
-  /** 排产工单 */
-  scheCode?: string;
-  /** 车间代码 */
-  workshopCode?: string;
-  /** 车间名称 */
-  workshopName?: string;
   /** 创建人名称 */
   creatorName?: string;
   /**
@@ -4918,6 +4916,30 @@ export interface MitemCancelVO {
    * @format date-time
    */
   modifiedTime?: string;
+  warehouseId?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  locId?: string;
+  /** 货位编码 */
+  locCode?: string;
+  /** 货位名称 */
+  locName?: string;
+  /** 报废原因 */
+  reason?: string;
+  /** 报废科目 */
+  account?: string;
+  /** 费用部门 */
+  costDepartment?: string;
+  /** 备注 */
+  memo?: string;
+  /** 报废原因 */
+  reasonName?: string;
+  /** 报废科目 */
+  accountName?: string;
+  /** 费用部门 */
+  costDepartmentName?: string;
   dtls?: MitemCancelDtlVO[];
   /** 单据状态名称 */
   statusName?: string;
@@ -4956,6 +4978,7 @@ export interface MiscellaneousManageSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -5143,6 +5166,8 @@ export interface MiscellaneousManageVO {
   costDepartment?: string;
   /** 单据状态 */
   billNoStatusName?: string;
+  /** 编码 */
+  businessCategoryCode?: string;
   /** 交易事务 */
   businessCategoryName?: string;
   /** 业务类型 */
@@ -7211,8 +7236,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -7740,6 +7765,18 @@ export interface ResultMoIssuanceVO {
   /** 提示信息 */
   message?: string;
   data?: MoIssuanceVO;
+}
+
+/** 通用响应类 */
+export interface ResultMitemCancelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: MitemCancelVO;
 }
 
 /** 通用响应类 */
@@ -10119,6 +10156,51 @@ export const api = {
      * No description
      *
      * @tags 工单发料
+     * @name Submit
+     * @summary 物料报废-提交
+     * @request POST:/mitemCancel/submit
+     * @secure
+     */
+    submit: (data: MitemCancelDTO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/mitemCancel/submit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name ScanMitemLabel
+     * @summary 扫描标签信息
+     * @request POST:/mitemCancel/scanMitemLabel
+     * @secure
+     */
+    scanMitemLabel: (data: MitemCancelDTO) =>
+      http.request<ResultString['data']>(`/api/warehouse/mitemCancel/scanMitemLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name ScanBatchNo
+     * @summary 扫描批次信息
+     * @request POST:/mitemCancel/scanBatchNo
+     * @secure
+     */
+    scanBatchNo: (data: MitemCancelDTO) =>
+      http.request<ResultString['data']>(`/api/warehouse/mitemCancel/scanBatchNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
      * @name Search
      * @summary 物料报废-获取物料报废单据列表----公共弹框控件
      * @request POST:/mitemCancel/items
@@ -10128,6 +10210,36 @@ export const api = {
       http.request<ResultPagingDataMitemCancelVO['data']>(`/api/warehouse/mitemCancel/items`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name DeleteTransferDtlAndBarcodeMultiple
+     * @summary 删除明细与明细下的条码或批次
+     * @request POST:/mitemCancel/deleteTransferDtlAndBarcodeMultiple
+     * @secure
+     */
+    deleteTransferDtlAndBarcodeMultiple: (data: TransferHeadSearch) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/mitemCancel/deleteTransferDtlAndBarcodeMultiple`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name GetMitemCancelByBillNo
+     * @summary 物料报废-根据单据号获取物料报废单
+     * @request GET:/mitemCancel/getMitemCancelByBillNo
+     * @secure
+     */
+    getMitemCancelByBillNo: (query: { billNo: string }) =>
+      http.request<ResultMitemCancelVO['data']>(`/api/warehouse/mitemCancel/getMitemCancelByBillNo`, {
+        method: 'GET',
+        params: query,
       }),
   },
   miscellaneousManage: {
@@ -10940,6 +11052,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name AcceptSendSaveJob
+     * @summary 收发存预计算JOB
+     * @request POST:/jobCommon/acceptSendSaveJob
+     * @secure
+     */
+    acceptSendSaveJob: (data: JobCommonDTO) =>
+      http.request<ResultString['data']>(`/api/warehouse/jobCommon/acceptSendSaveJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   iqcInspect: {
     /**
@@ -11392,20 +11519,6 @@ export const api = {
       http.request<ResultPagingDataAcceptSendSaveReportVO['data']>(`/api/warehouse/acceptSendSaveReport/getList`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 收发存报表
-     * @name Test
-     * @summary JOB方法测试
-     * @request GET:/acceptSendSaveReport/test
-     * @secure
-     */
-    test: () =>
-      http.request<ResultObject['data']>(`/api/warehouse/acceptSendSaveReport/test`, {
-        method: 'GET',
       }),
   },
   goodsSentOut: {

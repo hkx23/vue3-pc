@@ -335,6 +335,7 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -739,6 +740,7 @@ export interface WipRepairSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -915,8 +917,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1151,6 +1153,7 @@ export interface WipKeypartSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2007,8 +2010,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2911,15 +2914,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3126,6 +3129,7 @@ export interface ProcessSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -3475,11 +3479,11 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopName?: string;
   isState?: boolean;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   stateName?: string;
   scanDatetimeStr?: string;
@@ -3713,6 +3717,7 @@ export interface PkgRelationSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -5135,17 +5140,17 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
-  workshopName?: string;
   isState?: boolean;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 工序 */

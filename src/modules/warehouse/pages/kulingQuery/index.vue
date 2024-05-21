@@ -40,11 +40,12 @@ import { computed, onMounted, ref } from 'vue';
 import { api, StorageAgeQueryVO } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import kulingDetails from './kulingDetails.vue';
 
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const formTitle = ref('');
 const dataTotal = ref(0);
 const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
@@ -152,7 +153,7 @@ onMounted(async () => {
 
 //* 表格数据
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   selectedReceiptRowKeys.value = [];
   tableDataReceipt.value = [];
   const data = await api.storageAgeQuery.getList({
@@ -162,7 +163,7 @@ const fetchTable = async () => {
   console.log('🚀 ~ fetchTable ~ data:', data);
   tableDataReceipt.value = data.list;
   dataTotal.value = data.total;
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 
 //* 表格刷新
@@ -173,7 +174,7 @@ const tabRefresh = async () => {
 //* 查询
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   const { mitemId, warehouseId, districtId, locationId } = data;
   const [stockInDateStart, stockInDateEnd] = data.stockInDate;
   if (!data.value) {
@@ -191,7 +192,7 @@ const onInput = async (data: any) => {
     tableDataReceipt.value = result.list;
     dataTotal.value = result.total;
   }
-  setLoading(false);
+  utils.loadingPluginFullScreen(false);
 };
 </script>
 

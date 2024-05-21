@@ -233,7 +233,7 @@
 </template>
 <script lang="ts" setup>
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
@@ -241,6 +241,7 @@ import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
+import utils from '@/utils/common';
 
 import formMeasure from './formMeasure.vue';
 import formNg from './formNg.vue';
@@ -366,7 +367,7 @@ const onConfirmForm = async () => {
       const { showForm } = formNgRef.value;
       showForm(false, formData, tableData);
     } else {
-      LoadingPlugin(true);
+      utils.loadingPluginFullScreen(true);
 
       await apiQuality.iqcInspect.submitIqcInspect({
         iqcBillNo: formData.iqcBillNo,
@@ -393,7 +394,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const tabsChange = async (tabValue) => {

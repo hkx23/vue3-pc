@@ -67,20 +67,21 @@
 <script setup lang="ts">
 import JSZip from 'jszip';
 import _ from 'lodash';
-import { Data, FormRules, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import AppInfo from './appInfo';
 import { useLang } from './lang';
 
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 
 const opts = computed(() => {
   return {
@@ -149,10 +150,7 @@ const showForm = () => {
   formVisible.value = true;
 };
 const selectFile = (files: File[]) => {
-  const loadingFile = LoadingPlugin({
-    attach: () => formRef.value,
-    text: t('appBase.parsing'),
-  });
+  utils.loadingPluginFullScreen(true);
   const zip = new JSZip();
   zip
     .loadAsync(files[0])
@@ -168,10 +166,10 @@ const selectFile = (files: File[]) => {
       formData.appName = appInfo.getLabel();
       formData.appBuild = appInfo.getVersionCode();
       formData.appVersion = appInfo.getVersionName();
-      loadingFile.hide();
+      utils.loadingPluginFullScreen(false);
     })
     .catch(() => {
-      loadingFile.hide();
+      utils.loadingPluginFullScreen(false);
     });
 };
 const onConfirmForm = () => {
@@ -182,7 +180,7 @@ const onConfirmForm = () => {
   });
 };
 const getList = () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   api.appBase
     .getList({
       pageNum: pageUI.value.page,
@@ -191,19 +189,16 @@ const getList = () => {
       appType: queryData.value.appType,
     })
     .then((data) => {
-      setLoading(false);
+      utils.loadingPluginFullScreen(false);
       appData.data = data.list;
       appData.total = data.total;
     })
     .catch(() => {
-      setLoading(false);
+      utils.loadingPluginFullScreen(false);
     });
 };
 const addApp = () => {
-  const loading = LoadingPlugin({
-    attach: () => formRef.value,
-    text: t('appBase.saving'),
-  });
+  utils.loadingPluginFullScreen(true);
   api.appBase
     .add(
       {
@@ -222,10 +217,11 @@ const addApp = () => {
       MessagePlugin.success(t('appBase.saveSuccess'));
       formVisible.value = false;
       getList();
-      loading.hide();
+
+      utils.loadingPluginFullScreen(false);
     })
     .catch(() => {
-      loading.hide();
+      utils.loadingPluginFullScreen(false);
     });
 };
 onMounted(() => {

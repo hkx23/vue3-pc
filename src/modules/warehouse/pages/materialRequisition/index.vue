@@ -86,6 +86,7 @@ import { api as apiWarehouse, MaterialRequisitionDTO } from '@/api/warehouse';
 import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import formMaterialRequisition from './formMaterialRequisition.vue';
 import { useLang } from './lang';
@@ -93,7 +94,7 @@ import { useLang } from './lang';
 const { t } = useLang();
 
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 
 const { loading: loadingMaterialDtl, setLoading: setLoadingMaterialDtl } = useLoading();
 const isAdd = ref(true);
@@ -224,7 +225,7 @@ const conditionEnter = (data: any) => {
 
 // 加载领料制单表格
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     if (optsValue.value.datePlanRange) {
       if (optsValue.value.datePlanRange[0]) {
@@ -251,7 +252,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
     fetchMaterialDtlTable();
   }
 };
@@ -317,7 +318,7 @@ const onPrintClick = async () => {
   let isSuccess = true;
   printData.value = [];
   const promiseAll = [];
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     selectRowKeys.value.forEach((element) => {
       const billInfo = tableDataMaterialRequisition.value.find((item: any) => item.id === element);
@@ -340,7 +341,7 @@ const onPrintClick = async () => {
     console.log(e);
     isSuccess = false;
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
   return isSuccess;
 };

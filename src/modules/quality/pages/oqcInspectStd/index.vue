@@ -144,6 +144,7 @@ import ImportButton from '@/components/bcmp-import-multiple-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import materialAllotForm from './form.vue';
 import materialStandardAdd from './materialStandardAdd.vue';
@@ -152,7 +153,7 @@ const formRef = ref(null); // 新增表单数据清除，获取表单实例
 const assignFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const formVisible = ref(false); // 新增表单数据清除，获取表单实例
 const pageLoading = ref(false);
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUIMannage } = usePage(); // 分页工具
 // $打印上 表格数据
@@ -555,7 +556,7 @@ const subSearchClick = (data: any) => {
 
 // 加载数据表格
 const fetchMainTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     queryCondition.value.pageNum = pageUI.value.page;
     queryCondition.value.pageSize = pageUI.value.rows;
@@ -576,12 +577,12 @@ const fetchMainTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 // 加载数据表格
 const fetchSubTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     subQueryCondition.value.pageNum = pageUIMannage.value.page;
     subQueryCondition.value.pageSize = pageUIMannage.value.rows;
@@ -602,7 +603,7 @@ const fetchSubTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 

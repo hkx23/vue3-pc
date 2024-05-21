@@ -112,6 +112,7 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -1257,10 +1258,10 @@ export interface ConferenceTemplateVO {
   conferenceCode?: string;
   /** 会议名称 */
   conferenceName?: string;
-  /** 有效值转换 */
-  isState?: boolean;
   /** 模板维度名称转换 */
   templateDimensionNames?: string;
+  /** 有效值转换 */
+  isState?: boolean;
   /** 模板维度转换 */
   templateDimensionList?: string[];
 }
@@ -1570,10 +1571,10 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 有效值转换 */
-  isState?: boolean;
   /** 维度名称转换 */
   templateDimensionNames?: string;
+  /** 有效值转换 */
+  isState?: boolean;
   /** 维度转换 */
   templateDimensionList?: string[];
 }
@@ -1772,14 +1773,14 @@ export interface ConferenceOrgVO {
   orgName?: string;
   workCenterCode?: string;
   workCenterName?: string;
+  typeName?: string;
+  /** 类型 */
+  type?: string;
   /** 转换后的组织编码 */
   convertOrgCode?: string;
   convertOrgId?: string;
   /** 转换后的组织编码 */
   convertOrgName?: string;
-  typeName?: string;
-  /** 类型 */
-  type?: string;
 }
 
 /** 响应数据 */
@@ -1911,6 +1912,7 @@ export interface ChecklistOrgSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2075,6 +2077,7 @@ export interface ChecklistItemSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2160,6 +2163,7 @@ export interface ChecklistSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2239,6 +2243,7 @@ export interface CheckItemSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2458,6 +2463,7 @@ export interface CheckBillSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];

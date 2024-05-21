@@ -70,6 +70,7 @@ import { api, WorkstationAuthVO } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 const asyncLoadingRadio = ref('load-more');
 const asyncLoading = computed(() => {
@@ -84,7 +85,7 @@ const total = ref(10); // 用户分页总数
 const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
 const saveLoading = ref(false); // 选择的
-const { loading, setLoading } = useLoading(); // loading
+const { loading } = useLoading(); // loading
 const permission = ref({
   user: '', // 用户
   work: '',
@@ -210,7 +211,7 @@ const onFetchData = async () => {
 
 const onTable = async () => {
   // 右边列表
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     const list = await api.workstation.getlist({
       pageNum: pageUI.value.page,
@@ -223,7 +224,7 @@ const onTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 

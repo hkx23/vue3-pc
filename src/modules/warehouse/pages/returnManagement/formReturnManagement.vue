@@ -142,12 +142,13 @@ export default {
 </script>
 <script setup lang="ts">
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref, watch } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
+import utils from '@/utils/common';
 
 import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import { useLang } from './lang';
@@ -275,7 +276,7 @@ const onConfirmForm = async () => {
         return;
       }
 
-      LoadingPlugin(true);
+      utils.loadingPluginFullScreen(true);
       await apiWarehouse.returnManagement.submitBillNoByIqc({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
@@ -301,7 +302,7 @@ const onConfirmForm = async () => {
         return;
       }
 
-      LoadingPlugin(true);
+      utils.loadingPluginFullScreen(true);
       await apiWarehouse.returnManagement.submitBillNoByPurchaseOrder({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
@@ -316,7 +317,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const tabsChange = async (tabValue) => {

@@ -53,13 +53,14 @@ import { computed, nextTick, onMounted, ref } from 'vue';
 import { api as apiWarehouse, PurchaseOrderDtlVO, PurchaseOrderVO } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
 const { t } = useLang();
 
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 
 const { loading: loadingPurchaseOrderDtl, setLoading: setLoadingPurchaseOrderDtl } = useLoading();
 
@@ -126,7 +127,7 @@ const conditionEnter = (data: any) => {
 
 // 加载领料制单表格
 const fetchTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     const data = await apiWarehouse.purchaseOrder.getPurchaseOrderList({
       pageNum: pageUI.value.page,
@@ -138,7 +139,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
     fetchPurchaseOrderDtlTable();
   }
 };

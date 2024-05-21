@@ -281,7 +281,7 @@
 </template>
 <script lang="ts" setup>
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref, watch } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
@@ -441,7 +441,7 @@ const onConfirmForm = async () => {
       const { showForm } = formNgRef.value;
       showForm(false, formInspectData, tableData);
     } else {
-      LoadingPlugin(true);
+      utils.loadingPluginFullScreen(true);
 
       await apiQuality.iqcInspectRecheck.submitIqcInspectRecheck({
         iqcBillNo: formInspectData.iqcBillNo,
@@ -472,7 +472,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const tabsChange = async (tabValue) => {
@@ -519,7 +519,7 @@ const loadTable = async () => {
 };
 const loadTableStd = async () => {
   try {
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
       // iqcBillNo: formInspectData.iqcBillNo,
       mitemCategoryId: formInspectData.mitemCategoryId,
@@ -539,7 +539,7 @@ const loadTableStd = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 // const linkLoadTableStd = async () => {

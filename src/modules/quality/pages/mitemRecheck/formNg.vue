@@ -76,11 +76,12 @@
 </template>
 <script lang="ts" setup>
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
+import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -164,7 +165,7 @@ const onConfirmForm = async () => {
       MessagePlugin.error(t('mitemRecheck.跟进人不能为空'));
       return;
     }
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
 
     // formNgData.isStartImprove = formNgData.isPdca ? 1 : 0;
     await apiQuality.iqcInspectRecheck.submitIqcInspectRecheck({
@@ -195,7 +196,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 const reset = () => {

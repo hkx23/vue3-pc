@@ -144,7 +144,7 @@ import { api as apiDaily } from '@/api/daily';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
-import common from '@/utils/common';
+import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -386,10 +386,10 @@ const onSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
     if (_.isEmpty(checklistOrgData.value.id)) {
       formVisible.value = !(await onAddRequest()); // 新增请求
-      common.reset(checklistOrgData.value);
+      utils.reset(checklistOrgData.value);
     } else {
       formVisible.value = !(await onUpdateRequest()); // 编辑请求
-      common.reset(checklistOrgData.value);
+      utils.reset(checklistOrgData.value);
     }
   }
 };

@@ -38,11 +38,11 @@
 </template>
 <script lang="ts" setup>
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
 import { api as apiDaily } from '@/api/daily';
-import common from '@/utils/common';
+import utils from '@/utils/common';
 
 // const { t } = useLang();
 // import { useLang } from './lang';
@@ -84,7 +84,7 @@ const onConfirmForm = async () => {
       return;
     }
 
-    LoadingPlugin(true);
+    utils.loadingPluginFullScreen(true);
 
     if (isEdit.value) {
       await apiDaily.checklistItem.update({
@@ -107,14 +107,14 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 
 const showForm = async (edit, row) => {
   formVisible.value = true;
   isEdit.value = edit;
-  common.reset(formData);
+  utils.reset(formData);
 
   formData.checklistId = row.id;
   formData.checklistCode = row.checklistCode;

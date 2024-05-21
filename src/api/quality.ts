@@ -269,6 +269,7 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -1054,6 +1055,7 @@ export interface PqcInspectPatrolSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -2707,12 +2709,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -3377,8 +3379,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3688,6 +3690,7 @@ export interface IqcInspectDtlFileSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -3771,6 +3774,7 @@ export interface IqcInspectRecheckSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -3898,9 +3902,9 @@ export interface IqcInspectRecheckDtlFullVO {
   /** 项目分类 */
   itemCategoryName?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectRecheckDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectRecheckDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -4409,6 +4413,7 @@ export interface IqcInspectSearch {
   state?: number;
   parentId?: string;
   category?: string;
+  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
@@ -4923,9 +4928,9 @@ export interface IqcInspectDtlFullVO {
   /** 项目分类 */
   itemCategoryName?: string;
   iqcInspectStdDtlId?: string;
-  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5929,10 +5934,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -6125,13 +6130,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
-  s3?: string;
   s4?: string;
   i?: string;
-  s2?: string;
   ii?: string;
+  s1?: string;
   iii?: string;
+  s2?: string;
+  s3?: string;
 } | null;
 
 /** 标签模板 */

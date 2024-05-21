@@ -105,7 +105,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 // 加载角色数据表格
 const fetchOrgData = async () => {
   loading.value = true;
-  // setLoading(true);
+  // utils.loadingPluginFullScreen(true);
   try {
     // 按用户获取用户与组织关系数据
     const data = (await api.userInOrg.getUserInOrgByUserId({ userId: props.id })) as any;
@@ -116,7 +116,7 @@ const fetchOrgData = async () => {
     console.log(e);
   } finally {
     loading.value = false;
-    // setLoading(false);
+    // utils.loadingPluginFullScreen(false);
   }
 };
 const rehandleSelectChange = (value, { selectedRowData }) => {

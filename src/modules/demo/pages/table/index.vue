@@ -39,9 +39,10 @@ import { onActivated, reactive, ref } from 'vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import utils from '@/utils/common';
 
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 
 const tableRef = ref();
 
@@ -55,11 +56,11 @@ const data = reactive({
 
 // 数据列表
 const fetchData = () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   setTimeout(() => {
     data.list = apiMockData(pageUI.value.rows);
     data.total = data.list.length * 30;
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }, 600);
 };
 

@@ -94,6 +94,7 @@ import { ref, watch } from 'vue';
 
 import { api, RoleUserDTO } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
+import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -134,11 +135,11 @@ const selectedData = ref([]);
 const selectedCount = ref(0);
 const selectedSelectCount = ref(0);
 
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const { loading: selectedLoading, setLoading: setSelectedLoading } = useLoading();
 // 加载角色数据表格
 const fetchWaitTable = async () => {
-  setLoading(true);
+  utils.loadingPluginFullScreen(true);
   try {
     // 查询条件
     const roleUserDTO = {
@@ -157,7 +158,7 @@ const fetchWaitTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    utils.loadingPluginFullScreen(false);
   }
 };
 // 加载角色数据表格
