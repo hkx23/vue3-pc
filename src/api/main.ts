@@ -1856,6 +1856,105 @@ export interface SupportGroupVO {
   organization?: string;
 }
 
+export interface SupplierInUserSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 供应商代码 */
+  supplierInUserCode?: string;
+  supplierId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListSupplierInUserVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: SupplierInUserVO[] | null;
+}
+
+/** 响应数据 */
+export type SupplierInUserVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userId?: string;
+  supplierId?: string;
+  userName?: string;
+  displayName?: string;
+  email?: string;
+  personCode?: string;
+} | null;
+
+/** 供应商与用户关系表 */
+export interface SupplierInUser {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userId?: string;
+  supplierId?: string;
+}
+
+export interface SupplierInUserDTO {
+  /** 响应数据 */
+  supplierInUserVO?: SupplierInUserVO;
+  /** 供应商用户 */
+  supplierInUserUsers?: SupplierInUser[];
+  /** id集合 */
+  ids?: string[];
+  supplierId?: string;
+}
+
 /** 响应数据 */
 export type PagingDataSupplier = {
   list?: Supplier[];
@@ -3136,8 +3235,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -5245,13 +5344,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
   stateName?: string;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
+  isState?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5462,12 +5561,12 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isProductName?: string;
-  isRawName?: string;
+  isState?: boolean;
   isInProcessName?: string;
+  isRawName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
   isBatchName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
@@ -7484,8 +7583,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -10173,10 +10272,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -12890,6 +12989,52 @@ export const api = {
     getSupportGroupType: () =>
       http.request<ResultPagingDataParam['data']>(`/api/main/supportGroup/getSupportGroupType`, {
         method: 'GET',
+      }),
+  },
+  supplierInUser: {
+    /**
+     * No description
+     *
+     * @tags 供应商与用户关系表
+     * @name ListUser
+     * @summary 获取供应商用户
+     * @request POST:/supplierInUser/listUser
+     * @secure
+     */
+    listUser: (data: SupplierInUserSearch) =>
+      http.request<ResultListSupplierInUserVO['data']>(`/api/main/supplierInUser/listUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商与用户关系表
+     * @name DeleteUser
+     * @summary 删除供应商用户
+     * @request POST:/supplierInUser/deleteUser
+     * @secure
+     */
+    deleteUser: (data: SupplierInUserDTO) =>
+      http.request<ResultObject['data']>(`/api/main/supplierInUser/deleteUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商与用户关系表
+     * @name AddUser
+     * @summary 新增供应商用户
+     * @request POST:/supplierInUser/addUser
+     * @secure
+     */
+    addUser: (data: SupplierInUserDTO) =>
+      http.request<ResultObject['data']>(`/api/main/supplierInUser/addUser`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   supplier: {
