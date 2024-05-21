@@ -73,9 +73,9 @@ export default {
       if (elapsed < loadingWaiting) {
         setTimeout(() => {
           instance.hide();
-        }, loadingWaiting - elapsed); // 等待足够的时间直到5秒为止
+        }, loadingWaiting - elapsed); // 等待足够的时间
       } else {
-        instance.hide(); // 已超过5秒，立即隐藏
+        instance.hide();
       }
     }
   },
