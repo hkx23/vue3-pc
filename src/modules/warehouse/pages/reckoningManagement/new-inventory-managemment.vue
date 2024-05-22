@@ -216,7 +216,6 @@ const onInput = async (data: any) => {
   if (isResetting.value) {
     return;
   }
-  utils.loadingPluginFullScreen(true);
 
   if (!data.stockCheckType) {
     MessagePlugin.error('盘点类型为必填项');
@@ -228,6 +227,7 @@ const onInput = async (data: any) => {
   }
   pageUI.value.page = 1;
   if (!data.value) {
+    utils.loadingPluginFullScreen(true);
     const { stockCheckType, warehouseId, districtId, locationId, mitemId } = data;
     const result = await api.stockCheckBill.getOnHand({
       pageNum: pageUI.value.page,
