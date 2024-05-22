@@ -35,6 +35,7 @@
           :loading="loadingDeliveryDtl"
           :total="dataTotal"
           :hover="false"
+          :fixed-height="true"
           :stripe="false"
           :header-affixed-top="true"
           @refresh="fetchTable"
