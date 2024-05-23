@@ -99,10 +99,13 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
 }
 
 export interface Filter {
@@ -209,10 +212,13 @@ export interface UserWarehouseSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   categoryCodes?: string[];
   warehouseId?: string;
   toWarehouseId?: string;
@@ -286,10 +292,13 @@ export interface UserWarehouseWithTransferConstraintSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
 }
 
 /** 响应数据 */
@@ -390,10 +399,13 @@ export interface TransferHeadSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /**
    * 开始时间
    * @format date-time
@@ -1717,6 +1729,8 @@ export interface StorageAgeQueryVO {
   thirtyDays?: number;
   /** 条码号 */
   barcodeNo?: string;
+  /** 批次号 */
+  batchLot?: string;
   /** 数量 */
   balanceQty?: number;
   /** 标签的库存 */
@@ -1725,6 +1739,8 @@ export interface StorageAgeQueryVO {
   barcodeStock?: number;
   /** 配送卡的库存 */
   deliveryStock?: number;
+  /** 批次的库存 */
+  batchStock?: number;
   expiredDays?: string;
 }
 
@@ -2034,7 +2050,7 @@ export interface StockCheckBillVO {
   locationName?: string;
   /** 帐面数 */
   onhandQty?: number;
-  /** 实时库存现有量 */
+  /** 实时库存先有量 */
   nowOnhandQty?: number;
   /** 实盘数 */
   checkQty?: number;
@@ -2179,10 +2195,13 @@ export interface SaleOrderSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   customerId?: string;
 }
 
@@ -2288,10 +2307,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2369,10 +2388,13 @@ export interface SaleDeliveryDtlSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   saleDeliveryId?: string;
 }
 
@@ -2547,10 +2569,13 @@ export interface SaleDeliverySearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 单据号 */
   billNo?: string;
   customerId?: string;
@@ -3020,10 +3045,13 @@ export interface WarehouseSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
 }
 
 /** 响应数据 */
@@ -3121,10 +3149,13 @@ export interface ReturnManagementSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 退货单号 */
   returnBillNo?: string;
   /** 送货单号 */
@@ -3295,10 +3326,13 @@ export interface MitemSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   mitemCategoryKeyword?: string;
   /** @format int32 */
   isRaw?: number;
@@ -3518,10 +3552,13 @@ export interface OnhandTransferSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 单据号 */
   billNo?: string;
   /** 原因 */
@@ -3975,10 +4012,13 @@ export interface OnhandQtySearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   warehouseId?: string;
   districtId?: string;
   locationId?: string;
@@ -4353,20 +4393,20 @@ export interface MoIssuanceDtlVO {
    */
   waitingScanQty?: number;
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  tlpickQty?: number;
-  flpickQty?: number;
   bfpickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -4616,10 +4656,13 @@ export interface MitemReceiptSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 来料接收单号 */
   billNo?: string;
   /**
@@ -5021,10 +5064,13 @@ export interface MiscellaneousManageSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 单据号 */
   billNo?: string;
   /** 原因 */
@@ -8711,6 +8757,8 @@ export const api = {
       /** @format int32 */
       pageSize: number;
       onhandId: string;
+      stockInDateStart: string;
+      stockInDateEnd: string;
     }) =>
       http.request<ResultPagingDataStorageAgeQueryVO['data']>(`/api/warehouse/storageAgeQuery/getDtl`, {
         method: 'GET',
@@ -9637,7 +9685,7 @@ export const api = {
      *
      * @tags 采购单表
      * @name GetPurchaseOrderList
-     * @summary 获取采购订单列表
+     * @summary 获取采购订单列表--包含数据权限
      * @request POST:/purchaseOrder/getPurchaseOrderList
      * @secure
      */
@@ -11205,6 +11253,21 @@ export const api = {
      * No description
      *
      * @tags 动态服务
+     * @name DynamicQueryData
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryData
+     * @secure
+     */
+    dynamicQueryData: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/dynamicManage/dynamicQueryData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
      * @name BatchUpdateData
      * @summary 根据领域进行动态表字段更新
      * @request POST:/dynamicManage/batchUpdateData
@@ -11357,7 +11420,7 @@ export const api = {
      *
      * @tags 送货单表
      * @name GetDeliveryList
-     * @summary 获取送货单列表
+     * @summary 获取送货单列表-包含数据权限
      * @request POST:/delivery/getDeliveryList
      * @secure
      */

@@ -2,7 +2,8 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query ref="queryComponent" :opts="optsKuling" :bool-enter="false" @submit="onInput"> </cmp-query>
+      <cmp-query ref="queryComponent" :opts="optsKuling" :bool-enter="false" :loading="loading" @submit="onInput">
+      </cmp-query>
     </cmp-card>
     <!-- cmp-table 表格组件  -->
     <cmp-card :span="12">
@@ -30,17 +31,22 @@
     </cmp-card>
   </cmp-container>
   <!-- 库龄详情组件 -->
-  <kuling-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" :sun-data="sunData" />
+  <kuling-details
+    v-model:visible="RPDRoutingVisible"
+    :form-title="formTitle"
+    :onhand-id="currentOnhandId"
+    :start-date="startDate"
+    :end-date="endDate"
+  />
 </template>
 
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
-import { api, StorageAgeQueryVO } from '@/api/warehouse';
+import { api } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import kulingDetails from './kulingDetails.vue';
 
@@ -51,7 +57,7 @@ const dataTotal = ref(0);
 const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
 const selectedReceiptRowKeys = ref([]);
 const tableDataReceipt = ref([]); //* 表格数据
-const sunData = ref<StorageAgeQueryVO[]>([]); // 用来存储接口调用结果
+// const sunData = ref<StorageAgeQueryVO[]>([]); // 用来存储接口调用结果
 
 //* 组件配置  --查询界面选择
 const optsKuling = computed(() => {
@@ -133,17 +139,22 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '条码明细', align: 'left', fixed: 'right', width: 85, colKey: 'labelNo' },
 ];
 
+const queryComponent = ref<any>(null);
+const startDate = ref('');
+const endDate = ref('');
+const currentOnhandId = ref('');
 // 明细
 const onEditRowClick = async (value: any) => {
   formTitle.value = '库龄详情-条码明细';
   RPDRoutingVisible.value = true;
   const { onhandId } = value.row;
-  const result = await api.storageAgeQuery.getDtl({
-    pageNum: 1,
-    pageSize: pageUI.value.rows,
-    onhandId,
-  });
-  sunData.value = result.list;
+  currentOnhandId.value = onhandId;
+  const searchData = queryComponent.value.getFromData();
+
+  const [startDateValue, endDateValue] = searchData.stockInDate || ['', ''];
+
+  startDate.value = startDateValue;
+  endDate.value = endDateValue;
 };
 
 //* 初始渲染
@@ -153,7 +164,7 @@ onMounted(async () => {
 
 //* 表格数据
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  loading.value = true;
   selectedReceiptRowKeys.value = [];
   tableDataReceipt.value = [];
   const data = await api.storageAgeQuery.getList({
@@ -163,7 +174,7 @@ const fetchTable = async () => {
   console.log('🚀 ~ fetchTable ~ data:', data);
   tableDataReceipt.value = data.list;
   dataTotal.value = data.total;
-  utils.loadingPluginFullScreen(false);
+  loading.value = false;
 };
 
 //* 表格刷新
@@ -174,25 +185,30 @@ const tabRefresh = async () => {
 //* 查询
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  utils.loadingPluginFullScreen(true);
+  loading.value = true;
   const { mitemId, warehouseId, districtId, locationId } = data;
   const [stockInDateStart, stockInDateEnd] = data.stockInDate;
   if (!data.value) {
     pageUI.value.page = 1;
-    const result = await api.storageAgeQuery.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      mitemId,
-      warehouseId,
-      districtId,
-      locationId,
-      stockInDateStart,
-      stockInDateEnd,
-    });
-    tableDataReceipt.value = result.list;
-    dataTotal.value = result.total;
+    await api.storageAgeQuery
+      .getList({
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+        mitemId,
+        warehouseId,
+        districtId,
+        locationId,
+        stockInDateStart,
+        stockInDateEnd,
+      })
+      .then((res) => {
+        tableDataReceipt.value = res.list;
+        dataTotal.value = res.total;
+      })
+      .finally(() => {
+        loading.value = false;
+      });
   }
-  utils.loadingPluginFullScreen(false);
 };
 </script>
 

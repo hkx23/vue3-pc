@@ -21,6 +21,7 @@
           empty="没有符合条件的数据"
           :show-toolbar="false"
           :hover="true"
+          @refresh="tabRefresh"
         >
           <!-- <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
@@ -39,9 +40,9 @@
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref, watch } from 'vue';
 
+import { api } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 const { pageUI } = usePage();
 const detailTotal = ref(0);
@@ -50,7 +51,8 @@ const { loading } = useLoading();
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   // { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
-  { title: '条码号', colKey: 'barcodeNo', width: 200 },
+  { title: '标签号', colKey: 'barcodeNo', width: 200 },
+  { title: '批次号', colKey: 'batchLot', width: 200 },
   { title: '物料编码', width: 120, colKey: 'mitemCode' },
   { title: '物料描述', width: 120, colKey: 'mitemDesc' },
   { title: '仓库编码', width: 85, colKey: 'warehouseCode' },
@@ -66,23 +68,70 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const tableDocumentDetails = ref([]);
-
 // 接收父组件的参数
 const props = defineProps({
   formTitle: {
     type: String,
   },
-  sunData: Array,
+  onhandId: {
+    type: String,
+  },
+  startDate: {
+    type: String,
+  },
+  endDate: {
+    type: String,
+  },
 });
+const tabRefresh = async () => {
+  // 获取库存现有量明细
+  loading.value = true;
+  // const data = await api.storageAgeQuery.getList({
+  //   pageNum: pageUI.value.page,
+  //   pageSize: pageUI.value.rows,
+  // });
 
-// 监听 sunData 的变化
+  const result = await api.storageAgeQuery.getDtl({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    onhandId: props.onhandId,
+    stockInDateStart: refStartDate.value,
+    stockInDateEnd: refEndDate.value,
+  });
+  console.log('🚀 ~ fetchTable ~ data:', result);
+  tableDocumentDetails.value = result.list;
+  detailTotal.value = result.total;
+  loading.value = false;
+};
+const refOnhandId = ref(props.onhandId);
+// 监听 onHandId 的变化
 watch(
-  () => props.sunData,
+  () => props.onhandId,
   (newVal) => {
-    utils.loadingPluginFullScreen(true);
-    tableDocumentDetails.value = newVal;
-    detailTotal.value = newVal.length;
-    utils.loadingPluginFullScreen(false);
+    refOnhandId.value = newVal;
+    tabRefresh();
+  },
+  { immediate: true },
+);
+
+const refStartDate = ref(props.startDate);
+// 监听 startDate 的变化
+watch(
+  () => props.startDate,
+  (newVal) => {
+    refStartDate.value = newVal;
+    tabRefresh();
+  },
+  { immediate: true },
+);
+
+const refEndDate = ref(props.endDate);
+// 监听 endDate 的变化
+watch(
+  () => props.endDate,
+  (newVal) => {
+    refEndDate.value = newVal;
+    tabRefresh();
   },
   { immediate: true },
 );
