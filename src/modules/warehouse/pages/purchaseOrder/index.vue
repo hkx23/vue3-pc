@@ -36,6 +36,7 @@
           :total="dataTotal"
           :hover="false"
           :stripe="false"
+          :fixed-height="true"
           :header-affixed-top="true"
           @refresh="fetchTable"
         >
