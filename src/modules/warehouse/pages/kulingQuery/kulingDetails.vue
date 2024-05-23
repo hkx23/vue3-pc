@@ -47,6 +47,25 @@ import { usePage } from '@/hooks/modules/page';
 const { pageUI } = usePage();
 const detailTotal = ref(0);
 const { loading } = useLoading();
+// 接收父组件的参数
+const props = defineProps({
+  formTitle: {
+    type: String,
+  },
+  onhandId: {
+    type: String,
+  },
+  startDate: {
+    type: String,
+  },
+  endDate: {
+    type: String,
+  },
+});
+const refStartDate = ref(props.startDate);
+const refEndDate = ref(props.endDate);
+const refOnhandId = ref(props.onhandId);
+
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
@@ -68,21 +87,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const tableDocumentDetails = ref([]);
-// 接收父组件的参数
-const props = defineProps({
-  formTitle: {
-    type: String,
-  },
-  onhandId: {
-    type: String,
-  },
-  startDate: {
-    type: String,
-  },
-  endDate: {
-    type: String,
-  },
-});
+
 const tabRefresh = async () => {
   // 获取库存现有量明细
   loading.value = true;
@@ -103,34 +108,35 @@ const tabRefresh = async () => {
   detailTotal.value = result.total;
   loading.value = false;
 };
-const refOnhandId = ref(props.onhandId);
+
 // 监听 onHandId 的变化
 watch(
   () => props.onhandId,
   (newVal) => {
     refOnhandId.value = newVal;
+    pageUI.value.page = 1;
     tabRefresh();
   },
   { immediate: true },
 );
 
-const refStartDate = ref(props.startDate);
 // 监听 startDate 的变化
 watch(
   () => props.startDate,
   (newVal) => {
     refStartDate.value = newVal;
+    pageUI.value.page = 1;
     tabRefresh();
   },
   { immediate: true },
 );
 
-const refEndDate = ref(props.endDate);
 // 监听 endDate 的变化
 watch(
   () => props.endDate,
   (newVal) => {
     refEndDate.value = newVal;
+    pageUI.value.page = 1;
     tabRefresh();
   },
   { immediate: true },
