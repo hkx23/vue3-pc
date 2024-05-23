@@ -24,6 +24,7 @@
     "tipsQtyFailed": "包装的数量大于箱数量",
     "saveSuccess": "保存成功",
     "saveFailed": "保存失败",
-    "tipsProcessCategoryInconsistent": "工序对应的采集类型[{0}]与当前页面类型[包装]不一致，请检查！"
+    "tipsProcessCategoryInconsistent": "工序对应的采集类型[{0}]与当前页面类型[包装]不一致，请检查！",
+    "tipsWorkstationIsHold": "当前工站被锁定，请检查!"
   }
 }

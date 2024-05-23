@@ -106,6 +106,7 @@ const scanType = ref('normal');
 const isOnlinePrint = ref(false);
 const isProcessConsistent = ref(false);
 const processCategory = ref();
+const isWorckstationIsHold = ref(false);
 // 获取是否在线打印配置
 apiMain.profileValue
   .getValueByProfileCode({
@@ -117,21 +118,27 @@ apiMain.profileValue
       isOnlinePrint.value = true;
     }
   });
-const init = () => {
+const init = async () => {
   // 判断工站对应的工序是否正确
-  apiMain.workstation
-    .getProcessCategory({
-      workstationId: userStore.currUserOrgInfo.workStationId,
-    })
-    .then((val) => {
-      processCategory.value = val;
-      if (val !== 'PACK') {
-        pushMessage('error', t('productPacking.tipsProcessCategoryInconsistent', [val]));
-      } else {
-        isProcessConsistent.value = true;
-        pushMessage('info', t('productPacking.plsScanLabel'));
-      }
-    });
+  const category = await apiMain.workstation.getProcessCategory({
+    workstationId: userStore.currUserOrgInfo.workStationId,
+  });
+  processCategory.value = category;
+  if (category !== 'PACK') {
+    pushMessage('error', t('productPacking.tipsProcessCategoryInconsistent', [category]));
+    return;
+  }
+  isProcessConsistent.value = true;
+
+  // 判断工站是否暂挂
+  const ws = await apiMain.workstation.getItemById(userStore.currUserOrgInfo.workStationId);
+  if (ws.isHold === 1) {
+    isWorckstationIsHold.value = true;
+    pushMessage('error', t('productPacking.tipsWorkstationIsHold'));
+    return;
+  }
+
+  pushMessage('info', t('productPacking.plsScanLabel'));
 };
 init();
 const workChange = () => {
@@ -170,6 +177,10 @@ const scanTypeChange = (val: any) => {
 const scan = () => {
   if (!isProcessConsistent.value) {
     pushMessage('error', t('productPacking.tipsProcessCategoryInconsistent', [processCategory.value]));
+    return;
+  }
+  if (isWorckstationIsHold.value) {
+    pushMessage('error', t('productPacking.tipsWorkstationIsHold'));
     return;
   }
   if (isScanPkg.value) {
