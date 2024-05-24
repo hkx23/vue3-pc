@@ -4,7 +4,7 @@ import { LoadingPlugin } from 'tdesign-vue-next';
 
 import { api as apiMain } from '@/api/main';
 
-let loadingStart; // 用于存储loadingPluginFullScreen时候,调用时间戳的变量
+// let loadingStart; // 用于存储loadingPluginFullScreen时候,调用时间戳的变量
 
 export default {
   // 初始化对象
@@ -59,29 +59,31 @@ export default {
   },
   // 显示LOADING页面,默认至少显示0.5秒
   loadingPluginFullScreen(isLoading, loadingWaiting = 50) {
-    const instance = LoadingPlugin({
-      fullscreen: true,
-      attach: 'body', // 挂载元素，默认挂载到组件本身所在的位置
-      preventScrollThrough: false, // 防止滚动穿透，全屏加载模式有效
-      loading: isLoading,
-    });
+    LoadingPlugin(isLoading);
+    console.log(`等待加载:${loadingWaiting}`);
+    // const instance = LoadingPlugin({
+    //   fullscreen: true,
+    //   // attach: 'body', // 挂载元素，默认挂载到组件本身所在的位置
+    //   preventScrollThrough: false, // 防止滚动穿透，全屏加载模式有效
+    //   loading: isLoading,
+    // });
 
-    if (isLoading) {
-      loadingStart = Date.now(); // 存储开始加载的时间戳
-    } else {
-      const elapsed = Date.now() - loadingStart; // 计算已经过的时间
-      // console.log(`间隔时间：${elapsed}`);
-      if (elapsed < loadingWaiting && elapsed > 0 && loadingWaiting - elapsed > 0) {
-        const timer = setTimeout(() => {
-          if (instance) {
-            instance.hide();
-          }
-          clearTimeout(timer);
-        }, loadingWaiting - elapsed);
-      } else if (instance) {
-        instance.hide();
-      }
-    }
+    // if (isLoading) {
+    //   loadingStart = Date.now(); // 存储开始加载的时间戳
+    // } else {
+    //   const elapsed = Date.now() - loadingStart; // 计算已经过的时间
+    //   // console.log(`间隔时间：${elapsed}`);
+    //   if (elapsed < loadingWaiting && elapsed > 0 && loadingWaiting - elapsed > 0) {
+    //     const timer = setTimeout(() => {
+    //       if (instance) {
+    //         instance.hide();
+    //       }
+    //       clearTimeout(timer);
+    //     }, loadingWaiting - elapsed);
+    //   } else if (instance) {
+    //     instance.hide();
+    //   }
+    // }
   },
 
   // 可以在这里继续添加更多的通用方法。
