@@ -269,10 +269,13 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
 }
 
 /** 响应数据 */
@@ -1055,10 +1058,13 @@ export interface PqcInspectPatrolSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 检验单据 */
   billNo?: string;
   /** 待取消的检验单据 */
@@ -2709,10 +2715,10 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
 }
@@ -3379,8 +3385,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3690,10 +3696,13 @@ export interface IqcInspectDtlFileSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   iqcInspectDtlId?: string;
   uploadPath?: string;
 }
@@ -3774,10 +3783,13 @@ export interface IqcInspectRecheckSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 复检单号 */
   recheckBillNo?: string;
   iqcInspectStdId?: string;
@@ -4413,10 +4425,13 @@ export interface IqcInspectSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** IQC单号 */
   iqcBillNo?: string;
   mitemId?: string;
@@ -4928,9 +4943,9 @@ export interface IqcInspectDtlFullVO {
   /** 项目分类 */
   itemCategoryName?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5934,10 +5949,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -6132,11 +6147,11 @@ export type SampleCodeVO = {
   batchEnd?: number;
   s4?: string;
   i?: string;
-  ii?: string;
-  s1?: string;
   iii?: string;
-  s2?: string;
   s3?: string;
+  s1?: string;
+  ii?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */
@@ -8656,6 +8671,21 @@ export const api = {
       }),
   },
   dynamicManage: {
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryData
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryData
+     * @secure
+     */
+    dynamicQueryData: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/quality/dynamicManage/dynamicQueryData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

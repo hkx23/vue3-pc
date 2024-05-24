@@ -514,10 +514,13 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
 }
 
 /** 响应数据 */
@@ -3236,8 +3239,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5159,10 +5162,13 @@ export interface MoSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 工单编码 */
   moCode?: string;
   /** 工单类型 */
@@ -5282,10 +5288,13 @@ export interface MitemInSupplierSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   mitemKeyword?: string;
   supplierKeyword?: string;
 }
@@ -5348,12 +5357,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   isForceInspectionChecked?: boolean;
-  stateName?: string;
-  isState?: boolean;
-  isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5567,15 +5576,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isInProcessName?: string;
   isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   isBatchName?: string;
-  stateName?: string;
-  isState?: boolean;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -6447,6 +6456,191 @@ export interface ResultPagingDataIntegratedConsoleVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIntegratedConsoleVO;
+}
+
+/** 设备与点检项目关系表 */
+export interface InspectItemInEquipmentVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectItemId?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  /** 点检项目代码 */
+  inspectItemCode?: string;
+  /** 点检项目名称 */
+  inspectItemName?: string;
+  /** 资产类型 */
+  assetTypeCode?: string;
+  assetTypeName?: string;
+  /** 资产品牌 */
+  assetBrandCode?: string;
+  assetBrandName?: string;
+  /** 资产型号 */
+  assetModelCode?: string;
+  assetModelName?: string;
+}
+
+export interface InspectItemInEquipmentSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  ids?: string[];
+  inspectItemId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataInspectItemInEquipmentVO = {
+  list?: InspectItemInEquipmentVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectItemInEquipmentVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectItemInEquipmentVO;
+}
+
+/** 设备点检项目表 */
+export interface InspectItemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 点检项目代码 */
+  inspectItemCode?: string;
+  /** 点检项目名称 */
+  inspectItemName?: string;
+  /** 点检标准 */
+  inspectItemStandard?: string;
+  /** 点检方式或方法 */
+  inspectMethod?: string;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 单位 */
+  uom?: string;
+  /** 点检类型 */
+  inspectItemType?: string;
+  /**
+   * 是否拍照
+   * @format int32
+   */
+  isPhoto?: number;
+  /** 点检方式或方法 */
+  inspectMethodName?: string;
+  /** 点检类型 */
+  inspectItemTypeName?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+}
+
+export interface InspectItemSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  /** 点检项目名称 */
+  inspectItemName?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataInspectItemVO = {
+  list?: InspectItemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectItemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectItemVO;
 }
 
 /** 导入配置表 */
@@ -7494,10 +7688,13 @@ export interface DefectCodeSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   id?: string;
   /** 多个ID */
   ids?: string[];
@@ -7590,8 +7787,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -10279,10 +10476,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -15727,6 +15924,142 @@ export const api = {
         body: data as any,
       }),
   },
+  inspectItemInEquipment: {
+    /**
+     * No description
+     *
+     * @tags 设备与点检项目关系表
+     * @name Update
+     * @summary 编辑资产关联
+     * @request POST:/inspectItemInEquipment/update
+     * @secure
+     */
+    update: (data: InspectItemInEquipmentVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemInEquipment/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与点检项目关系表
+     * @name Insert
+     * @summary 新增资产关联
+     * @request POST:/inspectItemInEquipment/insert
+     * @secure
+     */
+    insert: (data: InspectItemInEquipmentVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemInEquipment/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与点检项目关系表
+     * @name GetList
+     * @summary 根据项目ID获取资产关联信息
+     * @request POST:/inspectItemInEquipment/getList
+     * @secure
+     */
+    getList: (data: InspectItemInEquipmentSearch) =>
+      http.request<ResultPagingDataInspectItemInEquipmentVO['data']>(`/api/main/inspectItemInEquipment/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与点检项目关系表
+     * @name BatchDeleteItem
+     * @summary 批量删除资产关联
+     * @request POST:/inspectItemInEquipment/batchDeleteItem
+     * @secure
+     */
+    batchDeleteItem: (data: InspectItemInEquipmentSearch) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemInEquipment/batchDeleteItem`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectItem: {
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name Update
+     * @summary 编辑点检项目
+     * @request POST:/inspectItem/update
+     * @secure
+     */
+    update: (data: InspectItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItem/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name Search
+     * @request POST:/inspectItem/items
+     * @secure
+     */
+    search: (data: InspectItemSearch) =>
+      http.request<ResultPagingDataInspectItemVO['data']>(`/api/main/inspectItem/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name Insert
+     * @summary 新增点检项目
+     * @request POST:/inspectItem/insert
+     * @secure
+     */
+    insert: (data: InspectItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItem/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/inspectItem/getList
+     * @secure
+     */
+    getList: (data: InspectItemSearch) =>
+      http.request<ResultPagingDataInspectItemVO['data']>(`/api/main/inspectItem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name BatchUpdateState
+     * @summary 批量删除点检项目
+     * @request POST:/inspectItem/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: InspectItemSearch) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItem/batchUpdateState`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   importManage: {
     /**
      * No description
@@ -16204,6 +16537,21 @@ export const api = {
       }),
   },
   dynamicManage: {
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryData
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryData
+     * @secure
+     */
+    dynamicQueryData: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicQueryData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

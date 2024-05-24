@@ -335,10 +335,13 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
 }
 
 export interface Filter {
@@ -740,10 +743,13 @@ export interface WipRepairSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   moScheId?: string;
   /** 开始时间 */
   beginDate?: string;
@@ -917,8 +923,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1153,10 +1159,13 @@ export interface WipKeypartSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 产品条码 */
   scanBarcodeList?: string[];
 }
@@ -2010,8 +2019,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -3099,8 +3108,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3129,10 +3138,13 @@ export interface ProcessSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
 }
 
 export interface CommonImportProductCapacityVO {
@@ -3325,9 +3337,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
+  defectCodeStr?: string;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3479,16 +3491,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
   stateName?: string;
+  defectCodeStr?: string;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  defectCodeStr?: string;
+  isState?: boolean;
 }
 
 /** 缺陷代码 */
@@ -3717,10 +3729,13 @@ export interface PkgRelationSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   /** 产品条码 */
   barcode?: string;
   /** 产品编码 */
@@ -5140,7 +5155,6 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
@@ -5151,6 +5165,7 @@ export interface BarcodeWipCollectVO {
   datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  isState?: boolean;
 }
 
 /** 工序 */
@@ -5392,6 +5407,16 @@ export type WipPkgInfoVO = {
   /** 单位 */
   uom?: string;
   moScheId?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 产品条码是否暂挂
+   * @format int32
+   */
+  wipIsHold?: number;
   /** 条码数量 */
   barcodeQty?: number;
   packRuleId?: string;
@@ -5699,8 +5724,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7928,6 +7953,21 @@ export const api = {
       }),
   },
   dynamicManage: {
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryData
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryData
+     * @secure
+     */
+    dynamicQueryData: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/control/dynamicManage/dynamicQueryData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

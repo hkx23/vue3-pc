@@ -112,10 +112,13 @@ export interface CommonSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
 }
 
 export interface Filter {
@@ -1183,6 +1186,58 @@ export interface ResultListEventFile {
   data?: EventFile[] | null;
 }
 
+export interface BatchDynamicUpdateDTO {
+  /** 表唯一主键 */
+  primaryKey?: string;
+  /** 领域名称 */
+  businessDomain?: string;
+  /** 表名 */
+  tableName?: string;
+  /** 更新的字段列表 */
+  columnList?: DynamicColumn[];
+  /** 更新的数据信息 */
+  rows?: Record<string, object>[];
+}
+
+/** 动态列字段 */
+export interface DynamicColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 字段名称 */
+  columnField?: string;
+  /** 字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDateType?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /** 默认值 */
+  defaultValue?: string;
+}
+
 export interface ConferenceTemplateSearch {
   /**
    * 页码
@@ -1258,12 +1313,12 @@ export interface ConferenceTemplateVO {
   conferenceCode?: string;
   /** 会议名称 */
   conferenceName?: string;
-  /** 模板维度名称转换 */
-  templateDimensionNames?: string;
   /** 有效值转换 */
   isState?: boolean;
   /** 模板维度转换 */
   templateDimensionList?: string[];
+  /** 模板维度名称转换 */
+  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1571,12 +1626,12 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 维度名称转换 */
-  templateDimensionNames?: string;
   /** 有效值转换 */
   isState?: boolean;
   /** 维度转换 */
   templateDimensionList?: string[];
+  /** 维度名称转换 */
+  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1773,14 +1828,14 @@ export interface ConferenceOrgVO {
   orgName?: string;
   workCenterCode?: string;
   workCenterName?: string;
+  /** 转换后的组织编码 */
+  convertOrgName?: string;
+  convertOrgId?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
   typeName?: string;
   /** 类型 */
   type?: string;
-  /** 转换后的组织编码 */
-  convertOrgCode?: string;
-  convertOrgId?: string;
-  /** 转换后的组织编码 */
-  convertOrgName?: string;
 }
 
 /** 响应数据 */
@@ -1912,10 +1967,13 @@ export interface ChecklistOrgSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   checklistCode?: string;
   checklistName?: string;
   checklistCategory?: string;
@@ -2077,10 +2135,13 @@ export interface ChecklistItemSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   ids?: string[];
   checklistId?: string;
 }
@@ -2163,10 +2224,13 @@ export interface ChecklistSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   checklistCode?: string;
   checklistName?: string;
   checklistCategory?: string;
@@ -2243,10 +2307,13 @@ export interface CheckItemSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   itemCode?: string;
   itemName?: string;
   itemType?: string;
@@ -2445,10 +2512,10 @@ export interface CheckBillHeadVO {
   executeFrequenceName?: string;
   /** 待取消的单据 */
   cancelBillNoList?: string[];
-  /** 检验结果名称 */
-  checkResultName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 检验结果名称 */
+  checkResultName?: string;
 }
 
 export interface CheckBillSearch {
@@ -2463,10 +2530,13 @@ export interface CheckBillSearch {
   state?: number;
   parentId?: string;
   category?: string;
-  tableName?: string;
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
   checkBillHeadId?: string;
   /** 单号 */
   billNo?: string;
@@ -3655,6 +3725,37 @@ export const api = {
      */
     add: (data: EventDTO) =>
       http.request<ResultObject['data']>(`/api/daily/event/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  dynamicManage: {
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryData
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryData
+     * @secure
+     */
+    dynamicQueryData: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/dynamicQueryData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name BatchUpdateData
+     * @summary 根据领域进行动态表字段更新
+     * @request POST:/dynamicManage/batchUpdateData
+     * @secure
+     */
+    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
       }),
