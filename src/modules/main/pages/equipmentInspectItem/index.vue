@@ -194,6 +194,9 @@ const submitFalg = ref(false);
 const formData = ref({
   inspectItemCode: '',
   inspectItemName: '',
+  assetTypeId: '',
+  assetBrandId: '',
+  assetModelId: '',
 });
 // 表格数据总条数
 const inspectItemTotal = ref(0);
@@ -349,6 +352,37 @@ const opts = computed(() => {
       event: 'input',
       defaultVal: '',
     },
+    assetTypeId: {
+      label: '资产类型',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'assetType',
+        showTitle: false,
+      },
+    },
+    assetBrandId: {
+      label: '资产品牌',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'assetBrand',
+        showTitle: false,
+      },
+    },
+    assetModelId: {
+      label: '资产型号',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'assetModel',
+        showTitle: false,
+        // parentId: 'formData.assetTypeId',
+      },
+    },
   };
 });
 
@@ -365,6 +399,9 @@ const fetchTable = async () => {
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       inspectItemName: formData.value.inspectItemName,
+      assetTypeId: formData.value.assetTypeId,
+      assetBrandId: formData.value.assetBrandId,
+      assetModelId: formData.value.assetModelId,
     });
 
     inspectItemData.list = res.list;

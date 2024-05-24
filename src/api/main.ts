@@ -1006,8 +1006,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -3239,8 +3239,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -5356,11 +5356,11 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
   stateName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isState?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
 }
@@ -5576,13 +5576,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isProductName?: string;
-  isRawName?: string;
+  isState?: boolean;
   isInProcessName?: string;
-  isBatchName?: string;
+  isRawName?: string;
   isRawChecked?: boolean;
+  isBatchName?: string;
+  isProductName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
@@ -6656,6 +6656,8 @@ export interface InspectItemVO {
   inspectItemTypeName?: string;
   /** 计量单位符号 */
   uomName?: string;
+  /** 文件列表 */
+  fileList?: AddFileTypeVO[];
 }
 
 export interface InspectItemSearch {
@@ -6679,6 +6681,9 @@ export interface InspectItemSearch {
   dynamicDefaultSortFiled?: string;
   /** 点检项目名称 */
   inspectItemName?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
   ids?: string[];
 }
 
@@ -7832,8 +7837,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -10523,10 +10528,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
