@@ -37,6 +37,11 @@
               <t-button theme="primary" @click="onAddData">新增</t-button>
             </t-space>
           </template>
+          <template #files="rowData">
+            <t-space>
+              <t-link theme="primary" @click="showUplaodImg(rowData)">{{ '查看' }}</t-link>
+            </t-space>
+          </template>
         </cmp-table>
       </cmp-container>
     </cmp-card>
@@ -142,9 +147,6 @@
             />
           </t-form-item>
         </t-descriptions-item>
-        <t-descriptions-item>
-          <t-form-item label="上传附件" name=""> </t-form-item>
-        </t-descriptions-item>
       </t-descriptions>
     </t-form>
     <template #footer>
@@ -154,6 +156,13 @@
   </t-dialog>
 
   <formItem ref="formItemRef" @parent-refresh-event="getEquipmentInspectItemList" />
+  <cmp-files-upload
+    ref="formFilesRef"
+    upload-path="InspectItem"
+    @upload-success="uploadSuccess"
+    @delete-success="deleteSuccess"
+    @batch-delete-success="batchDeleteSuccess"
+  />
 </template>
 <script setup lang="ts">
 import _ from 'lodash';
@@ -161,6 +170,8 @@ import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } f
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
+import { AddFileType } from '@/components/bcmp-upload-content/constants';
+import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -256,6 +267,13 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     title: '单位',
     align: 'center',
     width: '110',
+  },
+  {
+    title: '附件',
+    align: 'left',
+    fixed: 'right',
+    width: 100,
+    colKey: 'files',
   },
   {
     colKey: 'state',
@@ -577,6 +595,65 @@ const onItemDeleteBatches = async () => {
     delItemRowKeys.value = [];
   }
 };
+
+// begin 文件上传
+
+const formFilesRef = ref(null);
+const selectRowId = ref('');
+const showUplaodImg = async (rowData) => {
+  selectRowId.value = rowData.row.id;
+  try {
+    if (!_.isEmpty(selectRowId.value)) {
+      const list = await apiMain.inspectItemFile.getInspectItemFileList(selectRowId.value);
+      rowData.row.fileList = list;
+    }
+    const { showForm } = formFilesRef.value;
+    await showForm(false, rowData.row.fileList);
+  } catch (e) {
+    console.log(e);
+  }
+};
+const uploadSuccess = async (file: AddFileType) => {
+  try {
+    if (!_.isEmpty(selectRowId.value)) {
+      await apiMain.inspectItemFile.addInspectItemFile({
+        inspectItemId: selectRowId.value,
+        fileName: file.fileName,
+      });
+      MessagePlugin.success('文件上传成功');
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+const deleteSuccess = async (file: AddFileType) => {
+  try {
+    if (!_.isEmpty(selectRowId.value)) {
+      await apiMain.inspectItemFile.deleteInspectItemFile({
+        inspectItemId: selectRowId.value,
+        fileName: file.fileName,
+      });
+      MessagePlugin.success(t('mitemIncomingInspection.文件删除成功'));
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+const batchDeleteSuccess = async (files: AddFileType[]) => {
+  try {
+    if (!_.isEmpty(selectRowId.value)) {
+      const deleteList = [];
+      files.forEach((n) => deleteList.push({ inspectItemId: selectRowId.value, fileName: n.fileName }));
+
+      await apiMain.inspectItemFile.deleteBatchInspectItemFile(deleteList);
+      MessagePlugin.success('文件删除成功');
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// end 文件上传
 </script>
 
 <style lang="less" scoped>

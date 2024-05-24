@@ -1006,8 +1006,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -5356,13 +5356,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
   isState?: boolean;
   stateName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5576,15 +5576,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   isState?: boolean;
   stateName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -6545,6 +6545,65 @@ export interface ResultPagingDataInspectItemInEquipmentVO {
   data?: PagingDataInspectItemInEquipmentVO;
 }
 
+/** 设备点检项目文件表 */
+export interface InspectItemFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectItemId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+/** 上传控件文件VO */
+export type AddFileTypeVO = {
+  serialNumber?: string;
+  fullFileName?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+  id?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListAddFileTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AddFileTypeVO[] | null;
+}
+
 /** 设备点检项目表 */
 export interface InspectItemVO {
   id?: string;
@@ -6821,20 +6880,6 @@ export interface ImportSettingRule {
   /** 数据转换配置 */
   datatransferJson?: string;
 }
-
-/** 上传控件文件VO */
-export type AddFileTypeVO = {
-  serialNumber?: string;
-  fullFileName?: string;
-  fileName?: string;
-  fileType?: string;
-  fileSizeShow?: string;
-  fileSize?: number;
-  timeUpload?: string;
-  signedUrl?: string;
-  percent?: number;
-  id?: string;
-} | null;
 
 /** 通用响应类 */
 export interface ResultAddFileTypeVO {
@@ -10476,12 +10521,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -15981,6 +16026,67 @@ export const api = {
      */
     batchDeleteItem: (data: InspectItemInEquipmentSearch) =>
       http.request<ResultBoolean['data']>(`/api/main/inspectItemInEquipment/batchDeleteItem`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectItemFile: {
+    /**
+     * No description
+     *
+     * @tags 设备点检项目文件表
+     * @name DeleteInspectItemFile
+     * @summary 删除文件
+     * @request POST:/inspectItemFile/deleteInspectItemFile
+     * @secure
+     */
+    deleteInspectItemFile: (data: InspectItemFileVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemFile/deleteInspectItemFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目文件表
+     * @name DeleteBatchInspectItemFile
+     * @summary 批量删除文件
+     * @request POST:/inspectItemFile/deleteBatchInspectItemFile
+     * @secure
+     */
+    deleteBatchInspectItemFile: (data: InspectItemFileVO[]) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemFile/deleteBatchInspectItemFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目文件表
+     * @name AddInspectItemFile
+     * @summary 新增文件
+     * @request POST:/inspectItemFile/addInspectItemFile
+     * @secure
+     */
+    addInspectItemFile: (data: InspectItemFileVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemFile/addInspectItemFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目文件表
+     * @name GetInspectItemFileList
+     * @summary 根据ID获取文件信息
+     * @request POST:/inspectItemFile/GetInspectItemFileList
+     * @secure
+     */
+    getInspectItemFileList: (data: string) =>
+      http.request<ResultListAddFileTypeVO['data']>(`/api/main/inspectItemFile/GetInspectItemFileList`, {
         method: 'POST',
         body: data as any,
       }),
