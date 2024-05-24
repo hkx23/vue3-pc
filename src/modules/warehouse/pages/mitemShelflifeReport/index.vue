@@ -204,6 +204,7 @@ const supplierId = ref('');
 const lotNo = ref('');
 const datetimeStockin = ref();
 const onEditRow = async (row: any) => {
+  pageUITwo.value.page = 1;
   detailRow.value = row;
   formVisible.value = true;
   onhandId.value = row.onhandId;
