@@ -1,0 +1,47 @@
+{
+  "title": "点检项目：",
+  "placeholder": "请选择点检项目",
+  "url": "/api/daily/inspectItem/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "点检项目代码",
+      "key": "inspectItemCode",
+      "align": "left"
+    },
+    {
+      "title": "点检项目名称",
+      "key": "inspectItemName",
+      "align": "left"
+    },
+    {
+      "title": "点检标准",
+      "key": "inspectItemStandard",
+      "align": "left"
+    },
+    {
+      "title": "点检方式",
+      "key": "inspectMethodName",
+      "align": "left"
+    },
+    {
+      "title": "点检类型",
+      "key": "inspectItemTypeName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "inspectItemName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "inspectItemName",
+    "codeField": "inspectItemCode"
+  },
+  "name": "点检项目",
+  "componentType": "list"
+}

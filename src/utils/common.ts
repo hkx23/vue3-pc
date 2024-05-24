@@ -57,8 +57,8 @@ export default {
       }
     });
   },
-  // 显示LOADING页面,默认至少显示1秒
-  loadingPluginFullScreen(isLoading, loadingWaiting = 500) {
+  // 显示LOADING页面,默认至少显示0.5秒
+  loadingPluginFullScreen(isLoading, loadingWaiting = 50) {
     const instance = LoadingPlugin({
       fullscreen: true,
       attach: 'body', // 挂载元素，默认挂载到组件本身所在的位置
@@ -70,11 +70,15 @@ export default {
       loadingStart = Date.now(); // 存储开始加载的时间戳
     } else {
       const elapsed = Date.now() - loadingStart; // 计算已经过的时间
-      if (elapsed < loadingWaiting) {
-        setTimeout(() => {
-          instance.hide();
-        }, loadingWaiting - elapsed); // 等待足够的时间
-      } else {
+      // console.log(`间隔时间：${elapsed}`);
+      if (elapsed < loadingWaiting && elapsed > 0 && loadingWaiting - elapsed > 0) {
+        const timer = setTimeout(() => {
+          if (instance) {
+            instance.hide();
+          }
+          clearTimeout(timer);
+        }, loadingWaiting - elapsed);
+      } else if (instance) {
         instance.hide();
       }
     }

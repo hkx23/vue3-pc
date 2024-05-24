@@ -31,7 +31,6 @@
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData">新增</t-button>
-            <!-- <t-button theme="default">导入</t-button> -->
             <bcmp-import-auto-button
               theme="default"
               button-text="导入"
@@ -62,7 +61,7 @@
     >
       <!-- 第 1️⃣ 行数据 -->
       <t-form-item label="资产品牌编码" name="brandCode">
-        <t-input v-model="assetBrandTabData.list.brandCode" :disabled="isDisabled"></t-input>
+        <t-input v-model="assetBrandTabData.list.brandCode"></t-input>
       </t-form-item>
       <!-- 第 2️⃣ 行数据 -->
       <t-form-item label="资产品牌名称" name="brandName">
@@ -78,8 +77,7 @@
           v-model="assetBrandTabData.list.assetTypeId"
           label=""
           type="assetType"
-          :clearable="true"
-          :disabled="isDisabled"
+          clearable
         ></bcmp-select-business>
       </t-form-item>
     </t-form>
@@ -101,7 +99,6 @@ import { usePage } from '@/hooks/modules/page';
 import { useLang } from './lang';
 
 const { t } = useLang();
-const isDisabled = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
@@ -201,7 +198,6 @@ const onGetAnomalyTypeData = async () => {
 // 添加按钮点击事件
 const onAddTypeData = () => {
   formRef.value.reset({ type: 'empty' });
-  isDisabled.value = false;
   formVisible.value = true;
   assetBrandTabData.list.brandName = ''; // 资产品牌名称
   assetBrandTabData.list.brandCode = ''; // 资产品牌编码
@@ -253,10 +249,9 @@ const onSecondarySubmit = () => {
 };
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
-  isDisabled.value = true;
   assetBrandTabData.list.brandName = row.brandName; // 资产品牌名称
   assetBrandTabData.list.brandCode = row.brandCode; // 资产品牌编码
-  assetBrandTabData.list.brandCode = row.brandDesc; // 资产品牌描述
+  assetBrandTabData.list.brandDesc = row.brandDesc; // 资产品牌描述
   assetBrandTabData.list.assetTypeId = row.assetTypeId; // 资产类型
   incidentID.value = row.id; // 编辑回填 ID
   submitFalg.value = false;
