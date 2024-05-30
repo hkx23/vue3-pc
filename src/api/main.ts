@@ -3239,8 +3239,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4089,6 +4089,10 @@ export interface MsgDtlDTO {
    * @format int32
    */
   isRead?: number;
+  /** 标题 */
+  title?: string;
+  /** 内容 */
+  content?: string;
 }
 
 /** 通用响应类 */
@@ -5356,13 +5360,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isState?: boolean;
   stateName?: string;
+  isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isState?: boolean;
-  isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5576,13 +5580,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
   isInProcessName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isBatchName?: string;
   isProductName?: string;
+  isBatchName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
@@ -6234,8 +6238,8 @@ export interface Label {
   labelType?: string;
 }
 
-/** DemoJOB参数 */
-export interface DemoJobParam {
+/** emailSendJob参数 */
+export interface EmailSendJobParam {
   /** 集团编码 */
   epCode?: string;
   /** 组织编码 */
@@ -6245,8 +6249,8 @@ export interface DemoJobParam {
 export interface JobCommonDTO {
   /** 公共JOB参数 */
   jobCommonParams?: JobCommonParam[];
-  /** DemoJOB参数 */
-  demoJobParam?: DemoJobParam[];
+  /** emailSendJob参数 */
+  emailSendJobParam?: EmailSendJobParam[];
 }
 
 /** 公共JOB参数 */
@@ -6456,6 +6460,97 @@ export interface ResultPagingDataIntegratedConsoleVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIntegratedConsoleVO;
+}
+
+/** 设备点检计划表 */
+export interface InspectPlanVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetTypeId?: string;
+  equipmentId?: string;
+  /**
+   * 点检周期(天)
+   * @format int32
+   */
+  dayInspectPeriod?: number;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  datetimeEffect?: string;
+  /** 资产类型编码 */
+  assetTypeCode?: string;
+  /** 资产类型名称 */
+  assetTypeName?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+}
+
+export interface InspectPlanSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  assetTypeId?: string;
+  equipmentId?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataInspectPlanVO = {
+  list?: InspectPlanVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectPlanVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectPlanVO;
 }
 
 /** 设备与点检项目关系表 */
@@ -7463,6 +7558,9 @@ export type BarcodeDTO = {
   status?: string;
   statusName?: string;
   parentBarcode?: string;
+  /** @format int32 */
+  isHold?: number;
+  snList?: WipCompletionLabelDTO[];
 } | null;
 
 /** 通用响应类 */
@@ -7476,6 +7574,52 @@ export interface ResultListBarcodeDTO {
   message?: string;
   /** 响应数据 */
   data?: BarcodeDTO[] | null;
+}
+
+/** 完工入库标签实体 */
+export interface WipCompletionLabelDTO {
+  dtlBarcodeId?: string;
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 业务类型编码 */
+  businessCategoryCode?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  mitemCategoryId?: string;
+  warehouseId?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  moScheId?: string;
+  /** 工单编码 */
+  moCode?: string;
+  workshopId?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  onhandId?: string;
+  /** 包装条码里包装的产品条码 */
+  snList?: WipCompletionLabelDTO[];
 }
 
 export interface DeliveryCardSearch {
@@ -7837,8 +7981,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -9120,50 +9264,6 @@ export interface ResultPagingDataBarcodePkgVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodePkgVO;
-}
-
-/** 完工入库标签实体 */
-export interface WipCompletionLabelDTO {
-  dtlBarcodeId?: string;
-  billId?: string;
-  /** 单据号 */
-  billNo?: string;
-  /** 业务类型编码 */
-  businessCategoryCode?: string;
-  mitemId?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  mitemCategoryId?: string;
-  warehouseId?: string;
-  /** 仓库编码 */
-  warehouseCode?: string;
-  moScheId?: string;
-  /** 工单编码 */
-  moCode?: string;
-  workshopId?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  workcenterId?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 单位 */
-  uom?: string;
-  /** 扫描的条形码 */
-  scanBarcode?: string;
-  /** 条码类型 */
-  barcodeType?: string;
-  /** 状态 */
-  status?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  onhandId?: string;
 }
 
 /** 出勤模式 */
@@ -10528,10 +10628,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -15947,13 +16047,13 @@ export const api = {
      * No description
      *
      * @tags 公用JOB业务组件接口
-     * @name DemoJob
-     * @summary DemoJOB
-     * @request POST:/jobCommon/demoJob
+     * @name EmailSendJob
+     * @summary 邮件发送测试JOB
+     * @request POST:/jobCommon/emailSendJob
      * @secure
      */
-    demoJob: (data: JobCommonDTO) =>
-      http.request<ResultObject['data']>(`/api/main/jobCommon/demoJob`, {
+    emailSendJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/main/jobCommon/emailSendJob`, {
         method: 'POST',
         body: data as any,
       }),
@@ -15970,6 +16070,81 @@ export const api = {
      */
     getList: (data: IntegratedConsoleSearch) =>
       http.request<ResultPagingDataIntegratedConsoleVO['data']>(`/api/main/integratedConsole/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectPlan: {
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Update
+     * @summary 编辑点检项目
+     * @request POST:/inspectPlan/update
+     * @secure
+     */
+    update: (data: InspectPlanVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Search
+     * @request POST:/inspectPlan/items
+     * @secure
+     */
+    search: (data: InspectPlanSearch) =>
+      http.request<ResultPagingDataInspectPlanVO['data']>(`/api/main/inspectPlan/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Insert
+     * @summary 新增点检项目
+     * @request POST:/inspectPlan/insert
+     * @secure
+     */
+    insert: (data: InspectPlanVO[]) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/inspectPlan/getList
+     * @secure
+     */
+    getList: (data: InspectPlanSearch) =>
+      http.request<ResultPagingDataInspectPlanVO['data']>(`/api/main/inspectPlan/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name BatchUpdateState
+     * @summary 批量删除点检项目
+     * @request POST:/inspectPlan/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: InspectPlanSearch) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/batchUpdateState`, {
         method: 'POST',
         body: data as any,
       }),

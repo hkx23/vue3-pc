@@ -3385,8 +3385,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -4943,9 +4943,9 @@ export interface IqcInspectDtlFullVO {
   /** 项目分类 */
   itemCategoryName?: string;
   iqcInspectStdDtlId?: string;
-  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -6145,13 +6145,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  i?: string;
   iii?: string;
-  s3?: string;
-  s1?: string;
+  s4?: string;
   ii?: string;
+  s1?: string;
+  s3?: string;
   s2?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */

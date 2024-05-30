@@ -1313,12 +1313,12 @@ export interface ConferenceTemplateVO {
   conferenceCode?: string;
   /** 会议名称 */
   conferenceName?: string;
+  /** 模板维度名称转换 */
+  templateDimensionNames?: string;
   /** 有效值转换 */
   isState?: boolean;
   /** 模板维度转换 */
   templateDimensionList?: string[];
-  /** 模板维度名称转换 */
-  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1626,12 +1626,12 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
+  /** 维度名称转换 */
+  templateDimensionNames?: string;
   /** 有效值转换 */
   isState?: boolean;
   /** 维度转换 */
   templateDimensionList?: string[];
-  /** 维度名称转换 */
-  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1828,14 +1828,14 @@ export interface ConferenceOrgVO {
   orgName?: string;
   workCenterCode?: string;
   workCenterName?: string;
-  /** 转换后的组织编码 */
-  convertOrgName?: string;
-  convertOrgId?: string;
-  /** 转换后的组织编码 */
-  convertOrgCode?: string;
   typeName?: string;
   /** 类型 */
   type?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
+  /** 转换后的组织编码 */
+  convertOrgName?: string;
+  convertOrgId?: string;
 }
 
 /** 响应数据 */
@@ -2512,10 +2512,10 @@ export interface CheckBillHeadVO {
   executeFrequenceName?: string;
   /** 待取消的单据 */
   cancelBillNoList?: string[];
-  /** 状态名称 */
-  statusName?: string;
   /** 检验结果名称 */
   checkResultName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 export interface CheckBillSearch {
@@ -4726,6 +4726,22 @@ export const api = {
       http.request<ResultObject['data']>(`/api/daily/alertCfg/addAlertCfg`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  mailDemo: {
+    /**
+     * No description
+     *
+     * @tags 邮件发送Demo
+     * @name SendSimpleMail
+     * @summary 发送文本邮件
+     * @request GET:/mailDemo/sendSimpleMail
+     * @secure
+     */
+    sendSimpleMail: (query: { to: string; subject: string; content: string }) =>
+      http.request<ResultObject['data']>(`/api/daily/mailDemo/sendSimpleMail`, {
+        method: 'GET',
+        params: query,
       }),
   },
   incidentDealLog: {

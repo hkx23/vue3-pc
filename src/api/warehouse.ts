@@ -9,50 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-/** 完工入库标签实体 */
-export interface WipCompletionLabelDTO {
-  dtlBarcodeId?: string;
-  billId?: string;
-  /** 单据号 */
-  billNo?: string;
-  /** 业务类型编码 */
-  businessCategoryCode?: string;
-  mitemId?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  mitemCategoryId?: string;
-  warehouseId?: string;
-  /** 仓库编码 */
-  warehouseCode?: string;
-  moScheId?: string;
-  /** 工单编码 */
-  moCode?: string;
-  workshopId?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  workcenterId?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 单位 */
-  uom?: string;
-  /** 扫描的条形码 */
-  scanBarcode?: string;
-  /** 条码类型 */
-  barcodeType?: string;
-  /** 状态 */
-  status?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  onhandId?: string;
-}
-
 /** 通用响应类 */
 export interface ResultObject {
   /**
@@ -2835,10 +2791,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -3009,10 +2965,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3656,10 +3612,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 /** 库存转移头表 */
@@ -3927,10 +3883,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4389,25 +4345,25 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
+   * 待扫数量
    * @format double
    */
-  scanQty?: number;
+  waitingScanQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  bfpickQty?: number;
   tlpickQty?: number;
   flpickQty?: number;
-  bfpickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -5453,15 +5409,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量和已领用量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量和待领用量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量和已领用量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 export interface MaterialRequisitionVO {
@@ -5795,6 +5751,114 @@ export interface ResultListAlreadyRequisitionVO {
   message?: string;
   /** 响应数据 */
   data?: AlreadyRequisitionVO[] | null;
+}
+
+/** 货位与物料关系表 */
+export interface LocationInMitemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  warehouseId?: string;
+  locId?: string;
+  /** 项目分类 */
+  itemType?: string;
+  itemId?: string;
+  /** 最大容量 */
+  maxVolume?: number;
+  /**
+   * 最大存放最小包装数量
+   * @format int32
+   */
+  maxPackageVolume?: number;
+  /**
+   * 最大存放外箱数量
+   * @format int32
+   */
+  maxBoxVolume?: number;
+  /** 货位代码 */
+  locationCode?: string;
+  /** 货位名称 */
+  locationName?: string;
+  districtId?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 物料或物料分类 */
+  itemCode?: string;
+  /** 物料分类名称 */
+  itemName?: string;
+}
+
+export interface LocationInMitemSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  categoryId?: string;
+  mitemId?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataLocationInMitemVO = {
+  list?: LocationInMitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLocationInMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLocationInMitemVO;
 }
 
 /** 货位 */
@@ -7260,6 +7324,52 @@ export interface ResultPagingDataBillManagementVO {
   data?: PagingDataBillManagementVO;
 }
 
+/** 完工入库标签实体 */
+export interface WipCompletionLabelDTO {
+  dtlBarcodeId?: string;
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 业务类型编码 */
+  businessCategoryCode?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  mitemCategoryId?: string;
+  warehouseId?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  moScheId?: string;
+  /** 工单编码 */
+  moCode?: string;
+  workshopId?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  onhandId?: string;
+  /** 包装条码里包装的产品条码 */
+  snList?: WipCompletionLabelDTO[];
+}
+
 /** 通用响应类 */
 export interface ResultLong {
   /**
@@ -7328,8 +7438,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -7461,15 +7571,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 export interface GoodsSentOutVO {
@@ -8056,10 +8166,9 @@ export const api = {
      * @request PUT:/billInfo/submit/{id}
      * @secure
      */
-    submit: (id: string, data: WipCompletionLabelDTO[]) =>
+    submit: (id: string) =>
       http.request<ResultObject['data']>(`/api/warehouse/billInfo/submit/${id}`, {
         method: 'PUT',
-        body: data as any,
       }),
 
     /**
@@ -10723,6 +10832,81 @@ export const api = {
           params: query,
         },
       ),
+  },
+  locationInMitem: {
+    /**
+     * No description
+     *
+     * @tags 货位与物料关系表
+     * @name Update
+     * @summary 编辑维护关系
+     * @request POST:/locationInMitem/update
+     * @secure
+     */
+    update: (data: LocationInMitemVO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/locationInMitem/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位与物料关系表
+     * @name Search
+     * @request POST:/locationInMitem/items
+     * @secure
+     */
+    search: (data: LocationInMitemSearch) =>
+      http.request<ResultPagingDataLocationInMitemVO['data']>(`/api/warehouse/locationInMitem/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位与物料关系表
+     * @name Insert
+     * @summary 新增维护关系
+     * @request POST:/locationInMitem/insert
+     * @secure
+     */
+    insert: (data: LocationInMitemVO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/locationInMitem/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位与物料关系表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/locationInMitem/getList
+     * @secure
+     */
+    getList: (data: LocationInMitemSearch) =>
+      http.request<ResultPagingDataLocationInMitemVO['data']>(`/api/warehouse/locationInMitem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位与物料关系表
+     * @name BatchUpdateState
+     * @summary 批量删除维护关系
+     * @request POST:/locationInMitem/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: LocationInMitemSearch) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/locationInMitem/batchUpdateState`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   location: {
     /**
