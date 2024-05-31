@@ -9,14 +9,14 @@
             row-key="id"
             :table-column="columns"
             :fixed-height="true"
-            :table-data="locationInMitemData.list"
-            :total="locationInMitemTotal"
+            :table-data="districtInMitemData.list"
+            :total="districtInMitemTotal"
             :selected-row-keys="selectedRowKeys"
             @refresh="fetchTable"
             @select-change="rehandleSelectChange"
           >
             <template #title>
-              {{ '货位与物料列表' }}
+              {{ '货区与物料列表' }}
             </template>
             <template #actionSlot="{ row }">
               <t-space :size="8">
@@ -25,7 +25,7 @@
             </template>
             <template #state="{ row }">
               <t-popconfirm
-                :content="row.state == 0 ? t('locationInMitem.confirmEnable') : t('locationInMitem.confirmDisable')"
+                :content="row.state == 0 ? t('districtInMitem.confirmEnable') : t('districtInMitem.confirmDisable')"
                 @confirm="onRowStateChange(row)"
               >
                 <t-switch :custom-value="[1, 0]" :value="row.state" :default-value="row.state" size="large"></t-switch>
@@ -36,7 +36,7 @@
             <template #button>
               <t-space :size="8">
                 <t-button theme="primary" @click="onAddData">新增</t-button>
-                <bcmp-import-auto-button theme="default" button-text="导入" type="w_location_in_mitem" />
+                <bcmp-import-auto-button theme="default" button-text="导入" type="w_district_in_mitem" />
               </t-space>
             </template>
           </cmp-table>
@@ -59,7 +59,7 @@
         <t-descriptions-item>
           <t-form-item label="仓库" name="warehouseId" required-mark>
             <bcmp-select-business
-              v-model="locationInMitemTabData.list.warehouseId"
+              v-model="districtInMitemTabData.list.warehouseId"
               :show-title="false"
               type="warehouseAuth"
             />
@@ -68,58 +68,33 @@
         <t-descriptions-item>
           <t-form-item label="货区" name="districtId" required-mark>
             <bcmp-select-business
-              v-model="locationInMitemTabData.list.districtId"
-              :parent-id="locationInMitemTabData.list.warehouseId"
+              v-model="districtInMitemTabData.list.districtId"
+              :parent-id="districtInMitemTabData.list.warehouseId"
               :show-title="false"
               type="district"
             />
           </t-form-item>
         </t-descriptions-item>
         <t-descriptions-item>
-          <t-form-item label="货位" name="locId" required-mark>
-            <bcmp-select-business
-              v-model="locationInMitemTabData.list.locId"
-              :parent-id="locationInMitemTabData.list.districtId"
-              :show-title="false"
-              type="locationByDistrict"
-            />
-          </t-form-item>
-        </t-descriptions-item>
-        <t-descriptions-item>
           <t-form-item label="绑定类型" name="locId">
-            <t-select v-model="locationInMitemTabData.list.itemType" :options="itemTypeOption" @change="onItemType" />
+            <t-select v-model="districtInMitemTabData.list.itemType" :options="itemTypeOption" @change="onItemType" />
           </t-form-item>
         </t-descriptions-item>
         <t-descriptions-item>
           <t-form-item
-            v-if="locationInMitemTabData.list.categoryVisible"
+            v-if="districtInMitemTabData.list.categoryVisible"
             label="物料分类"
             name="categoryId"
             required-mark
           >
             <bcmp-select-business
-              v-model="locationInMitemTabData.list.categoryId"
+              v-model="districtInMitemTabData.list.categoryId"
               :show-title="false"
               type="mitemCategory"
             />
           </t-form-item>
-          <t-form-item v-if="locationInMitemTabData.list.mitemVisible" label="物料" name="mitemId" required-mark>
-            <bcmp-select-business v-model="locationInMitemTabData.list.mitemId" :show-title="false" type="mitem" />
-          </t-form-item>
-        </t-descriptions-item>
-        <t-descriptions-item>
-          <t-form-item label="最大容量" name="maxVolume" required-mark>
-            <t-input-number v-model="locationInMitemTabData.list.maxVolume" />
-          </t-form-item>
-        </t-descriptions-item>
-        <t-descriptions-item>
-          <t-form-item label="最小包装数量" name="maxPackageVolume" required-mark>
-            <t-input-number v-model="locationInMitemTabData.list.maxPackageVolume" />
-          </t-form-item>
-        </t-descriptions-item>
-        <t-descriptions-item>
-          <t-form-item label="最大外箱数量" name="maxBoxVolume" required-mark>
-            <t-input-number v-model="locationInMitemTabData.list.maxBoxVolume" />
+          <t-form-item v-if="districtInMitemTabData.list.mitemVisible" label="物料" name="mitemId" required-mark>
+            <bcmp-select-business v-model="districtInMitemTabData.list.mitemId" :show-title="false" type="mitem" />
           </t-form-item>
         </t-descriptions-item>
       </t-descriptions>
@@ -154,7 +129,6 @@ const formData = ref({
   itemType: '',
   warehouseId: '',
   districtId: '',
-  locId: '',
   categoryId: '',
   mitemId: '',
 });
@@ -164,24 +138,20 @@ const itemTypeOption = [
   { label: '物料分类', value: 'MITEM_CATEGORY' },
 ];
 // 表格数据总条数
-const locationInMitemTotal = ref(0);
+const districtInMitemTotal = ref(0);
 // 表格数据
-const locationInMitemData = reactive({ list: [] });
+const districtInMitemData = reactive({ list: [] });
 // dialog 弹框数据
-const locationInMitemTabData = reactive({
+const districtInMitemTabData = reactive({
   list: {
     id: '',
     itemType: '',
     warehouseId: '',
     districtId: '',
-    locId: '',
     categoryId: '',
     categoryVisible: false,
     mitemId: '',
     mitemVisible: false,
-    maxVolume: 0,
-    maxPackageVolume: 0,
-    maxBoxVolume: 0,
   },
 });
 // 表格列表数据
@@ -204,12 +174,6 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'locationName',
-    title: '货位',
-    align: 'center',
-    width: '110',
-  },
-  {
     colKey: 'itemTypeName',
     title: '项目类型',
     align: 'center',
@@ -224,24 +188,6 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'itemName',
     title: '项目名称',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'maxVolume',
-    title: '最大容量',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'maxPackageVolume',
-    title: '最小包装数量',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'maxBoxVolume',
-    title: '最大外箱数量',
     align: 'center',
     width: '100',
   },
@@ -287,16 +233,6 @@ const opts = computed(() => {
         },
       },
     },
-    locId: {
-      label: '货位',
-      comp: 'bcmp-select-business',
-      defaultVal: '',
-      bind: {
-        type: 'locationByDistrict',
-        parentId: formData.value.districtId,
-        showTitle: false,
-      },
-    },
     categoryId: {
       label: '物料分类',
       comp: 'bcmp-select-business',
@@ -324,82 +260,62 @@ const onInput = async (data: any) => {
   fetchTable();
 };
 const fetchTable = async () => {
-  const res = await apiWarehouse.locationInMitem.getList({
+  const res = await apiWarehouse.districtInMitem.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     warehouseId: formData.value.warehouseId,
     districtId: formData.value.districtId,
-    locId: formData.value.locId,
     categoryId: formData.value.categoryId,
     mitemId: formData.value.mitemId,
   });
 
-  locationInMitemData.list = res.list;
-  locationInMitemTotal.value = res.total;
+  districtInMitemData.list = res.list;
+  districtInMitemTotal.value = res.total;
   selectedRowKeys.value = [];
 };
 const onEditRow = (row: any) => {
-  locationInMitemTabData.list = { ...row };
-  if (locationInMitemTabData.list.itemType === 'MITEM') {
-    locationInMitemTabData.list.mitemVisible = true;
-    locationInMitemTabData.list.categoryVisible = false;
-    locationInMitemTabData.list.mitemId = row.itemId;
+  districtInMitemTabData.list = { ...row };
+  if (districtInMitemTabData.list.itemType === 'MITEM') {
+    districtInMitemTabData.list.mitemVisible = true;
+    districtInMitemTabData.list.categoryVisible = false;
+    districtInMitemTabData.list.mitemId = row.itemId;
   } else {
-    locationInMitemTabData.list.mitemVisible = false;
-    locationInMitemTabData.list.categoryVisible = true;
-    locationInMitemTabData.list.categoryId = row.itemId;
+    districtInMitemTabData.list.mitemVisible = false;
+    districtInMitemTabData.list.categoryVisible = true;
+    districtInMitemTabData.list.categoryId = row.itemId;
   }
   formVisible.value = true;
   diaLogTitle.value = '编辑货区与物料';
 };
 const onEditRequest = async () => {
   try {
-    if (_.isEmpty(locationInMitemTabData.list.warehouseId)) {
+    if (_.isEmpty(districtInMitemTabData.list.warehouseId)) {
       MessagePlugin.error('请选择仓库');
       return;
     }
-    if (_.isEmpty(locationInMitemTabData.list.districtId)) {
+    if (_.isEmpty(districtInMitemTabData.list.districtId)) {
       MessagePlugin.error('请选择货区');
       return;
     }
-    if (_.isEmpty(locationInMitemTabData.list.locId)) {
-      MessagePlugin.error('请选择货位');
-      return;
-    }
-    if (locationInMitemTabData.list.itemType === 'MITEM' && _.isEmpty(locationInMitemTabData.list.mitemId)) {
+    if (districtInMitemTabData.list.itemType === 'MITEM' && _.isEmpty(districtInMitemTabData.list.mitemId)) {
       MessagePlugin.error('请选择物料');
       return;
     }
     if (
-      locationInMitemTabData.list.itemType === 'MITEM_CATEGORY' &&
-      _.isEmpty(locationInMitemTabData.list.categoryId)
+      districtInMitemTabData.list.itemType === 'MITEM_CATEGORY' &&
+      _.isEmpty(districtInMitemTabData.list.categoryId)
     ) {
       MessagePlugin.error('请选择物料分类');
       return;
     }
-    if (locationInMitemTabData.list.maxVolume !== undefined && locationInMitemTabData.list.maxVolume < 0) {
-      MessagePlugin.error('请输入最大容量');
-      return;
-    }
-    if (
-      locationInMitemTabData.list.maxPackageVolume !== undefined &&
-      locationInMitemTabData.list.maxPackageVolume < 0
-    ) {
-      MessagePlugin.error('请输入最小包装数量');
-      return;
-    }
-    if (locationInMitemTabData.list.maxBoxVolume !== undefined && locationInMitemTabData.list.maxBoxVolume < 0) {
-      MessagePlugin.error('请输入最大外箱数量');
-      return;
-    }
 
     utils.loadingPluginFullScreen(true);
-    await apiWarehouse.locationInMitem.update({
-      ...locationInMitemTabData.list,
+    await apiWarehouse.districtInMitem.update({
+      ...districtInMitemTabData.list,
       itemId:
-        locationInMitemTabData.list.itemType === 'MITEM'
-          ? locationInMitemTabData.list.mitemId
-          : locationInMitemTabData.list.categoryId,
+        districtInMitemTabData.list.itemType === 'MITEM'
+          ? districtInMitemTabData.list.mitemId
+          : districtInMitemTabData.list.categoryId,
     });
     await fetchTable();
     formVisible.value = false;
@@ -409,61 +325,42 @@ const onEditRequest = async () => {
   }
 };
 const onAddData = () => {
-  utils.reset(locationInMitemTabData.list);
-  locationInMitemTabData.list.itemType = 'MITEM';
-  locationInMitemTabData.list.mitemVisible = true;
+  utils.reset(districtInMitemTabData.list);
+  districtInMitemTabData.list.itemType = 'MITEM';
+  districtInMitemTabData.list.mitemVisible = true;
 
   formVisible.value = true;
   diaLogTitle.value = '新增货区与物料';
 };
 const onAddRequest = async () => {
   try {
-    if (_.isEmpty(locationInMitemTabData.list.warehouseId)) {
+    if (_.isEmpty(districtInMitemTabData.list.warehouseId)) {
       MessagePlugin.error('请选择仓库');
       return;
     }
-    if (_.isEmpty(locationInMitemTabData.list.districtId)) {
+    if (_.isEmpty(districtInMitemTabData.list.districtId)) {
       MessagePlugin.error('请选择货区');
       return;
     }
-    if (_.isEmpty(locationInMitemTabData.list.locId)) {
-      MessagePlugin.error('请选择货位');
-      return;
-    }
-    if (locationInMitemTabData.list.itemType === 'MITEM' && _.isEmpty(locationInMitemTabData.list.mitemId)) {
+    if (districtInMitemTabData.list.itemType === 'MITEM' && _.isEmpty(districtInMitemTabData.list.mitemId)) {
       MessagePlugin.error('请选择物料');
       return;
     }
     if (
-      locationInMitemTabData.list.itemType === 'MITEM_CATEGORY' &&
-      _.isEmpty(locationInMitemTabData.list.categoryId)
+      districtInMitemTabData.list.itemType === 'MITEM_CATEGORY' &&
+      _.isEmpty(districtInMitemTabData.list.categoryId)
     ) {
       MessagePlugin.error('请选择物料分类');
       return;
     }
-    if (locationInMitemTabData.list.maxVolume !== undefined && locationInMitemTabData.list.maxVolume < 0) {
-      MessagePlugin.error('请输入最大容量');
-      return;
-    }
-    if (
-      locationInMitemTabData.list.maxPackageVolume !== undefined &&
-      locationInMitemTabData.list.maxPackageVolume < 0
-    ) {
-      MessagePlugin.error('请输入最小包装数量');
-      return;
-    }
-    if (locationInMitemTabData.list.maxBoxVolume !== undefined && locationInMitemTabData.list.maxBoxVolume < 0) {
-      MessagePlugin.error('请输入最大外箱数量');
-      return;
-    }
 
     utils.loadingPluginFullScreen(true);
-    await apiWarehouse.locationInMitem.insert({
-      ...locationInMitemTabData.list,
+    await apiWarehouse.districtInMitem.insert({
+      ...districtInMitemTabData.list,
       itemId:
-        locationInMitemTabData.list.itemType === 'MITEM'
-          ? locationInMitemTabData.list.mitemId
-          : locationInMitemTabData.list.categoryId,
+        districtInMitemTabData.list.itemType === 'MITEM'
+          ? districtInMitemTabData.list.mitemId
+          : districtInMitemTabData.list.categoryId,
     });
     await fetchTable();
     formVisible.value = false;
@@ -476,11 +373,11 @@ const rehandleSelectChange = async (value: any[]) => {
   selectedRowKeys.value = value;
 };
 const onSecondaryReset = () => {
-  utils.reset(locationInMitemTabData.list);
+  utils.reset(districtInMitemTabData.list);
   formVisible.value = false;
 };
 const onSecondarySubmit = async () => {
-  if (_.isEmpty(locationInMitemTabData.list.id)) {
+  if (_.isEmpty(districtInMitemTabData.list.id)) {
     await onAddRequest();
   } else {
     await onEditRequest();
@@ -492,13 +389,13 @@ const onRowStateChange = async (row: any) => {
   idsList.push(row.id);
   if (postRow.state === 1) {
     postRow.state = 0;
-    await apiWarehouse.locationInMitem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
+    await apiWarehouse.districtInMitem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
       MessagePlugin.success('禁用成功');
       row.state = postRow.state;
     });
   } else {
     postRow.state = 1;
-    await apiWarehouse.locationInMitem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
+    await apiWarehouse.districtInMitem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
       MessagePlugin.success('启用成功');
       row.state = postRow.state;
     });
@@ -506,11 +403,11 @@ const onRowStateChange = async (row: any) => {
 };
 const onItemType = async (value) => {
   if (value === 'MITEM') {
-    locationInMitemTabData.list.mitemVisible = true;
-    locationInMitemTabData.list.categoryVisible = false;
+    districtInMitemTabData.list.mitemVisible = true;
+    districtInMitemTabData.list.categoryVisible = false;
   } else {
-    locationInMitemTabData.list.mitemVisible = false;
-    locationInMitemTabData.list.categoryVisible = true;
+    districtInMitemTabData.list.mitemVisible = false;
+    districtInMitemTabData.list.categoryVisible = true;
   }
 };
 onMounted(async () => {

@@ -2263,10 +2263,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2791,10 +2791,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2965,10 +2965,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3612,10 +3612,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 /** 库存转移头表 */
@@ -3883,10 +3883,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4354,11 +4354,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
+  flpickQty?: number;
   bfpickQty?: number;
   tlpickQty?: number;
-  flpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 已扫描数量
    * @format double
@@ -6709,6 +6709,96 @@ export interface DynamicColumn {
   isRequired?: number;
   /** 默认值 */
   defaultValue?: string;
+}
+
+/** 货区与物料关系表 */
+export interface DistrictInMitemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  warehouseId?: string;
+  districtId?: string;
+  /** 项目分类 */
+  itemType?: string;
+  itemId?: string;
+  /** 货区代码 */
+  districtCode?: string;
+  /** 货区名称 */
+  districtName?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 物料或物料分类 */
+  itemCode?: string;
+  /** 物料分类名称 */
+  itemName?: string;
+}
+
+export interface DistrictInMitemSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  warehouseId?: string;
+  districtId?: string;
+  categoryId?: string;
+  mitemId?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataDistrictInMitemVO = {
+  list?: DistrictInMitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDistrictInMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDistrictInMitemVO;
 }
 
 export interface DeliveryCommandSearch {
@@ -11462,6 +11552,81 @@ export const api = {
      */
     batchUpdateData: (data: BatchDynamicUpdateDTO) =>
       http.request<ResultObject['data']>(`/api/warehouse/dynamicManage/batchUpdateData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  districtInMitem: {
+    /**
+     * No description
+     *
+     * @tags 货区与物料关系表
+     * @name Update
+     * @summary 编辑维护关系
+     * @request POST:/districtInMitem/update
+     * @secure
+     */
+    update: (data: DistrictInMitemVO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/districtInMitem/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区与物料关系表
+     * @name Search
+     * @request POST:/districtInMitem/items
+     * @secure
+     */
+    search: (data: DistrictInMitemSearch) =>
+      http.request<ResultPagingDataDistrictInMitemVO['data']>(`/api/warehouse/districtInMitem/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区与物料关系表
+     * @name Insert
+     * @summary 新增维护关系
+     * @request POST:/districtInMitem/insert
+     * @secure
+     */
+    insert: (data: DistrictInMitemVO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/districtInMitem/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区与物料关系表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/districtInMitem/getList
+     * @secure
+     */
+    getList: (data: DistrictInMitemSearch) =>
+      http.request<ResultPagingDataDistrictInMitemVO['data']>(`/api/warehouse/districtInMitem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区与物料关系表
+     * @name BatchUpdateState
+     * @summary 批量删除维护关系
+     * @request POST:/districtInMitem/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: DistrictInMitemSearch) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/districtInMitem/batchUpdateState`, {
         method: 'POST',
         body: data as any,
       }),
