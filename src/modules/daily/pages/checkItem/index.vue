@@ -39,7 +39,7 @@
                 <bcmp-import-auto-button
                   theme="default"
                   button-text="导入"
-                  type="a_incident_type"
+                  type="d_check_item"
                 ></bcmp-import-auto-button>
               </t-space>
             </template>

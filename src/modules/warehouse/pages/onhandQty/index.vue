@@ -4,7 +4,7 @@
     <cmp-card :span="12">
       <cmp-query ref="queryRef" :opts="opts" @submit="onInput">
         <template #warehouseId="{ param }">
-          <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"></bcmp-select-business>
+          <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"> </bcmp-select-business>
         </template>
         <template #districtId="{ param }">
           <bcmp-select-business
