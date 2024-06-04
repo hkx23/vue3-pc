@@ -9,50 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-/** 完工入库标签实体 */
-export interface WipCompletionLabelDTO {
-  dtlBarcodeId?: string;
-  billId?: string;
-  /** 单据号 */
-  billNo?: string;
-  /** 业务类型编码 */
-  businessCategoryCode?: string;
-  mitemId?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  mitemCategoryId?: string;
-  warehouseId?: string;
-  /** 仓库编码 */
-  warehouseCode?: string;
-  moScheId?: string;
-  /** 工单编码 */
-  moCode?: string;
-  workshopId?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  workcenterId?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 单位 */
-  uom?: string;
-  /** 扫描的条形码 */
-  scanBarcode?: string;
-  /** 条码类型 */
-  barcodeType?: string;
-  /** 状态 */
-  status?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  onhandId?: string;
-}
-
 /** 通用响应类 */
 export interface ResultObject {
   /**
@@ -2307,10 +2263,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2835,10 +2791,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -3009,10 +2965,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3656,10 +3612,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 /** 库存转移头表 */
@@ -3927,10 +3883,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4394,15 +4350,15 @@ export interface MoIssuanceDtlVO {
    */
   scanQty?: number;
   /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   tlpickQty?: number;
@@ -7260,6 +7216,52 @@ export interface ResultPagingDataBillManagementVO {
   data?: PagingDataBillManagementVO;
 }
 
+/** 完工入库标签实体 */
+export interface WipCompletionLabelDTO {
+  dtlBarcodeId?: string;
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 业务类型编码 */
+  businessCategoryCode?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  mitemCategoryId?: string;
+  warehouseId?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  moScheId?: string;
+  /** 工单编码 */
+  moCode?: string;
+  workshopId?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  onhandId?: string;
+  /** 包装条码里包装的产品条码 */
+  snList?: WipCompletionLabelDTO[];
+}
+
 /** 通用响应类 */
 export interface ResultLong {
   /**
@@ -8056,10 +8058,9 @@ export const api = {
      * @request PUT:/billInfo/submit/{id}
      * @secure
      */
-    submit: (id: string, data: WipCompletionLabelDTO[]) =>
+    submit: (id: string) =>
       http.request<ResultObject['data']>(`/api/warehouse/billInfo/submit/${id}`, {
         method: 'PUT',
-        body: data as any,
       }),
 
     /**

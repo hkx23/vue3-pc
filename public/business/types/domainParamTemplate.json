@@ -1,0 +1,42 @@
+{
+  "title": "领域参数模版：",
+  "placeholder": "请选择：",
+  "url": "/api/main/dynamicManage/dynamicQueryData",
+  "httptype": "POST",
+  "category": "",
+  "tableWidth": 800,
+  "columns": [
+    {
+      "title": "模版编码",
+      "key": "templateCode",
+      "align": "left"
+    },
+    {
+      "title": "模版名称",
+      "key": "templateName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "templateName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "templateName",
+    "codeField": "templateCode",
+    "descField": "templateName"
+  },
+  "name": "领域参数模版",
+  "componentType": "list",
+  "customConditions": [],
+  "dynamicTableName": "s_domain_param_template",
+  "dynamicBusinessDomain": "main",
+  "dynamicKeywordFields": [
+    "templateCode",
+    "templateName"
+  ],
+  "dynamicDefaultSortFiled": "timeCreate"
+}

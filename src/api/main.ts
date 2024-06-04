@@ -4089,6 +4089,10 @@ export interface MsgDtlDTO {
    * @format int32
    */
   isRead?: number;
+  /** 标题 */
+  title?: string;
+  /** 内容 */
+  content?: string;
 }
 
 /** 通用响应类 */
@@ -5356,10 +5360,10 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
+  stateName?: string;
   isState?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
@@ -5577,12 +5581,12 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isInProcessName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
   isBatchName?: string;
+  isInProcessName?: string;
+  isRawName?: string;
   isProductName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
@@ -6234,8 +6238,8 @@ export interface Label {
   labelType?: string;
 }
 
-/** DemoJOB参数 */
-export interface DemoJobParam {
+/** emailSendJob参数 */
+export interface EmailSendJobParam {
   /** 集团编码 */
   epCode?: string;
   /** 组织编码 */
@@ -6245,8 +6249,8 @@ export interface DemoJobParam {
 export interface JobCommonDTO {
   /** 公共JOB参数 */
   jobCommonParams?: JobCommonParam[];
-  /** DemoJOB参数 */
-  demoJobParam?: DemoJobParam[];
+  /** emailSendJob参数 */
+  emailSendJobParam?: EmailSendJobParam[];
 }
 
 /** 公共JOB参数 */
@@ -6456,6 +6460,97 @@ export interface ResultPagingDataIntegratedConsoleVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIntegratedConsoleVO;
+}
+
+/** 设备点检计划表 */
+export interface InspectPlanVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetTypeId?: string;
+  equipmentId?: string;
+  /**
+   * 点检周期(天)
+   * @format int32
+   */
+  dayInspectPeriod?: number;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  datetimeEffect?: string;
+  /** 资产类型编码 */
+  assetTypeCode?: string;
+  /** 资产类型名称 */
+  assetTypeName?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+}
+
+export interface InspectPlanSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  assetTypeId?: string;
+  equipmentId?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataInspectPlanVO = {
+  list?: InspectPlanVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectPlanVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectPlanVO;
 }
 
 /** 设备与点检项目关系表 */
@@ -7279,6 +7374,137 @@ export interface DynamicColumn {
   defaultValue?: string;
 }
 
+/** 领域参数分组表 */
+export interface DomainParamGroup {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 模板编码 */
+  paramGroupCode?: string;
+  /** 模板名称 */
+  paramGroupName?: string;
+  parentId?: string;
+}
+
+export interface DomainParamVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 领域分类 */
+  domainCategory?: string;
+  /** 领域参数编码 */
+  domainParamCode?: string;
+  /** 领域参数名称 */
+  domainParamName?: string;
+  /** 领域参数描述 */
+  domainParamDesc?: string;
+  /** 导入文件名称 */
+  importFileName?: string;
+  /** 导出文件名称 */
+  exportFileName?: string;
+  /** 导入前验证API */
+  validateApi?: string;
+  /**
+   * 导出限制行数
+   * @format int32
+   */
+  exportLimitCount?: number;
+  /** 自定义查询API */
+  queryApi?: string;
+  /** 操作列宽度 */
+  operateColumnWidth?: number;
+  /**
+   * 是否自定义SQL模式
+   * @format int32
+   */
+  isCustomerSql?: number;
+  /**
+   * 是否debug模式输出脚本
+   * @format int32
+   */
+  isDebug?: number;
+  /**
+   * 默认页码数
+   * @format int32
+   */
+  defaultPageCount?: number;
+  /** 序列号列宽度 */
+  seqColumnWidth?: number;
+  domainParamGroupId?: string;
+  domainParamTemplateId?: string;
+  /** 数据源分类 */
+  datasourceCategory?: string;
+  /** 数据源名称 */
+  datasourceName?: string;
+  /** SQL内容 */
+  sqlContent?: string;
+  /** JSON内容 */
+  jsonContent?: string;
+  templateName?: string;
+  templateUrl?: string;
+  templateCode?: string;
+  groupCode?: string;
+  groupName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDomainParamVO = {
+  list?: DomainParamVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDomainParamVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDomainParamVO;
+}
+
 /** 系统下载任务表 */
 export type DlTask = {
   id?: string;
@@ -7463,6 +7689,9 @@ export type BarcodeDTO = {
   status?: string;
   statusName?: string;
   parentBarcode?: string;
+  /** @format int32 */
+  isHold?: number;
+  snList?: WipCompletionLabelDTO[];
 } | null;
 
 /** 通用响应类 */
@@ -7476,6 +7705,52 @@ export interface ResultListBarcodeDTO {
   message?: string;
   /** 响应数据 */
   data?: BarcodeDTO[] | null;
+}
+
+/** 完工入库标签实体 */
+export interface WipCompletionLabelDTO {
+  dtlBarcodeId?: string;
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 业务类型编码 */
+  businessCategoryCode?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  mitemCategoryId?: string;
+  warehouseId?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  moScheId?: string;
+  /** 工单编码 */
+  moCode?: string;
+  workshopId?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  onhandId?: string;
+  /** 包装条码里包装的产品条码 */
+  snList?: WipCompletionLabelDTO[];
 }
 
 export interface DeliveryCardSearch {
@@ -9098,8 +9373,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -9120,50 +9395,6 @@ export interface ResultPagingDataBarcodePkgVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodePkgVO;
-}
-
-/** 完工入库标签实体 */
-export interface WipCompletionLabelDTO {
-  dtlBarcodeId?: string;
-  billId?: string;
-  /** 单据号 */
-  billNo?: string;
-  /** 业务类型编码 */
-  businessCategoryCode?: string;
-  mitemId?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  mitemCategoryId?: string;
-  warehouseId?: string;
-  /** 仓库编码 */
-  warehouseCode?: string;
-  moScheId?: string;
-  /** 工单编码 */
-  moCode?: string;
-  workshopId?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  workcenterId?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 单位 */
-  uom?: string;
-  /** 扫描的条形码 */
-  scanBarcode?: string;
-  /** 条码类型 */
-  barcodeType?: string;
-  /** 状态 */
-  status?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  onhandId?: string;
 }
 
 /** 出勤模式 */
@@ -10526,10 +10757,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -11033,6 +11264,37 @@ export interface ResultListFavorite {
   message?: string;
   /** 响应数据 */
   data?: Favorite[] | null;
+}
+
+/** 配置左侧树形实体 */
+export type DomainParamTreeVO = {
+  id?: string;
+  /** 分组或功能编码 */
+  nodeCode?: string;
+  /** 分组或功能名称 */
+  nodeName?: string;
+  /** 分组或功能编码 */
+  value?: string;
+  /** 分组或功能名称 */
+  label?: string;
+  parentNodeId?: string;
+  /** 类型-功能或分组 */
+  type?: string;
+  /** 子模块 */
+  children?: DomainParamTreeVO[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDomainParamTreeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DomainParamTreeVO[] | null;
 }
 
 /** 响应数据 */
@@ -15947,13 +16209,13 @@ export const api = {
      * No description
      *
      * @tags 公用JOB业务组件接口
-     * @name DemoJob
-     * @summary DemoJOB
-     * @request POST:/jobCommon/demoJob
+     * @name EmailSendJob
+     * @summary 邮件发送测试JOB
+     * @request POST:/jobCommon/emailSendJob
      * @secure
      */
-    demoJob: (data: JobCommonDTO) =>
-      http.request<ResultObject['data']>(`/api/main/jobCommon/demoJob`, {
+    emailSendJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/main/jobCommon/emailSendJob`, {
         method: 'POST',
         body: data as any,
       }),
@@ -15970,6 +16232,81 @@ export const api = {
      */
     getList: (data: IntegratedConsoleSearch) =>
       http.request<ResultPagingDataIntegratedConsoleVO['data']>(`/api/main/integratedConsole/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectPlan: {
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Update
+     * @summary 编辑点检项目
+     * @request POST:/inspectPlan/update
+     * @secure
+     */
+    update: (data: InspectPlanVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Search
+     * @request POST:/inspectPlan/items
+     * @secure
+     */
+    search: (data: InspectPlanSearch) =>
+      http.request<ResultPagingDataInspectPlanVO['data']>(`/api/main/inspectPlan/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Insert
+     * @summary 新增点检项目
+     * @request POST:/inspectPlan/insert
+     * @secure
+     */
+    insert: (data: InspectPlanVO[]) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/inspectPlan/getList
+     * @secure
+     */
+    getList: (data: InspectPlanSearch) =>
+      http.request<ResultPagingDataInspectPlanVO['data']>(`/api/main/inspectPlan/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name BatchUpdateState
+     * @summary 批量删除点检项目
+     * @request POST:/inspectPlan/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: InspectPlanSearch) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/batchUpdateState`, {
         method: 'POST',
         body: data as any,
       }),
@@ -16676,6 +17013,82 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  domainParamGroup: {
+    /**
+     * No description
+     *
+     * @tags 领域参数分组表
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/domainParamGroup/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/domainParamGroup/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数分组表
+     * @name UpdateItemByCode
+     * @summary 修改
+     * @request POST:/domainParamGroup/items/modify
+     * @secure
+     */
+    updateItemByCode: (data: DomainParamGroup) =>
+      http.request<ResultObject['data']>(`/api/main/domainParamGroup/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数分组表
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/domainParamGroup/items/add
+     * @secure
+     */
+    addItem: (data: DomainParamGroup) =>
+      http.request<ResultObject['data']>(`/api/main/domainParamGroup/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  domainParam: {
+    /**
+     * No description
+     *
+     * @tags 领域参数表
+     * @name Search
+     * @summary 获取功能列表
+     * @request POST:/domainParam/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataDomainParamVO['data']>(`/api/main/domainParam/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
+     * @name GetAllTree
+     * @summary 主界面树形区域
+     * @request GET:/domainParam/items/tree
+     * @secure
+     */
+    getAllTree: () =>
+      http.request<ResultListDomainParamTreeVO['data']>(`/api/main/domainParam/items/tree`, {
+        method: 'GET',
       }),
   },
   dlTask: {
