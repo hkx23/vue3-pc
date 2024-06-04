@@ -60,6 +60,7 @@ export default {
   // 显示LOADING页面,默认至少显示0.5秒
   loadingPluginFullScreen(isLoading, loadingWaiting = 50) {
     LoadingPlugin(isLoading);
+    // TODO LoadingPlugin的TdLoadingProps参数，并不是返回全局唯一的对象
     console.log(`等待加载:${loadingWaiting}`);
     // const instance = LoadingPlugin({
     //   fullscreen: true,

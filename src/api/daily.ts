@@ -1313,10 +1313,10 @@ export interface ConferenceTemplateVO {
   conferenceCode?: string;
   /** 会议名称 */
   conferenceName?: string;
-  /** 有效值转换 */
-  isState?: boolean;
   /** 模板维度转换 */
   templateDimensionList?: string[];
+  /** 有效值转换 */
+  isState?: boolean;
   /** 模板维度名称转换 */
   templateDimensionNames?: string;
 }
@@ -1626,10 +1626,10 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 有效值转换 */
-  isState?: boolean;
   /** 维度转换 */
   templateDimensionList?: string[];
+  /** 有效值转换 */
+  isState?: boolean;
   /** 维度名称转换 */
   templateDimensionNames?: string;
 }
@@ -1828,14 +1828,14 @@ export interface ConferenceOrgVO {
   orgName?: string;
   workCenterCode?: string;
   workCenterName?: string;
-  /** 转换后的组织编码 */
-  convertOrgName?: string;
-  convertOrgId?: string;
-  /** 转换后的组织编码 */
-  convertOrgCode?: string;
   typeName?: string;
   /** 类型 */
   type?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
+  convertOrgId?: string;
+  /** 转换后的组织编码 */
+  convertOrgName?: string;
 }
 
 /** 响应数据 */
@@ -4726,6 +4726,22 @@ export const api = {
       http.request<ResultObject['data']>(`/api/daily/alertCfg/addAlertCfg`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  mailDemo: {
+    /**
+     * No description
+     *
+     * @tags 邮件发送Demo
+     * @name SendSimpleMail
+     * @summary 发送文本邮件
+     * @request GET:/mailDemo/sendSimpleMail
+     * @secure
+     */
+    sendSimpleMail: (query: { to: string; subject: string; content: string }) =>
+      http.request<ResultObject['data']>(`/api/daily/mailDemo/sendSimpleMail`, {
+        method: 'GET',
+        params: query,
       }),
   },
   incidentDealLog: {
