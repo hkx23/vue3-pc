@@ -50,7 +50,6 @@ import { api as apimain } from '@/api/main';
 import { api as apiQuality, QcHoldVO } from '@/api/quality';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import detailed from './detailed.vue';
 import { useLang } from './lang';
@@ -82,7 +81,7 @@ const formData: FormQcHold = reactive({
 const detailedShow = ref(false); // 控制执行界面显示隐藏
 const detailFormRef = ref(null);
 const tableHoldRef = ref();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
 const holdInfoList = reactive({ list: [], total: 0 });
 // 原因类别下拉初始数据
@@ -267,13 +266,13 @@ const HoldColumns = ref([
 
 // 加载数据表格
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     getHoldList();
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 

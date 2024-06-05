@@ -60,8 +60,6 @@ import _ from 'lodash';
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
-import utils from '@/utils/common';
-
 import { useLang } from './lang';
 
 const { t } = useLang();
@@ -102,15 +100,11 @@ const onConfirmForm = async () => {
       }
     }
 
-    utils.loadingPluginFullScreen(true);
-
     Emit('parent-confirm-event', formData.measureList, isAllOK);
 
     formVisible.value = false;
   } catch (e) {
     console.log(e);
-  } finally {
-    utils.loadingPluginFullScreen(false);
   }
 };
 const reset = () => {

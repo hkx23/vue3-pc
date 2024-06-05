@@ -241,7 +241,6 @@ import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
-import utils from '@/utils/common';
 
 import formMeasure from './formMeasure.vue';
 import formNg from './formNg.vue';
@@ -283,7 +282,7 @@ const formData = reactive({
   inspectStdId: '',
 });
 
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 
 const tableSelectedRowKeys = ref([]);
 const tableData = ref([]);
@@ -367,7 +366,7 @@ const onConfirmForm = async () => {
       const { showForm } = formNgRef.value;
       showForm(false, formData, tableData);
     } else {
-      utils.loadingPluginFullScreen(true);
+      setLoading(true);
 
       await apiQuality.iqcInspect.submitIqcInspect({
         iqcBillNo: formData.iqcBillNo,
@@ -394,7 +393,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 const tabsChange = async (tabValue) => {

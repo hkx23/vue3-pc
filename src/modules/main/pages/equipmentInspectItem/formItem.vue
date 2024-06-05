@@ -85,8 +85,6 @@ const onConfirmForm = async () => {
       return;
     }
 
-    utils.loadingPluginFullScreen(true);
-
     if (isEdit.value) {
       await apiMain.inspectItemInEquipment.update({
         id: formData.id,
@@ -108,8 +106,6 @@ const onConfirmForm = async () => {
     formVisible.value = false;
   } catch (e) {
     console.log(e);
-  } finally {
-    utils.loadingPluginFullScreen(false);
   }
 };
 

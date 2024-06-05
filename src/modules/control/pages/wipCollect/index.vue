@@ -127,11 +127,13 @@ import { computed, nextTick, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
 import { useUserStore } from '@/store';
-import utils from '@/utils/common';
 
 import { scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
+
+const { setLoading } = useLoading();
 
 const userStore = useUserStore();
 const scanBarcodeInstance = ref(null);
@@ -256,7 +258,7 @@ const serialNumberEnter = async (value) => {
     const { serialNumber } = mainform.value;
     const { keypartCode } = mainform.value;
 
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     // 原子校验
     // TODO 校验成功
     await api.barcodeWipCollect
@@ -320,11 +322,11 @@ const serialNumberEnter = async (value) => {
             resetKeypartCode(isNeedClear);
           }
         }
-        utils.loadingPluginFullScreen(false);
+        setLoading(false);
       })
       .catch((message) => {
         console.log(message);
-        utils.loadingPluginFullScreen(false);
+        setLoading(false);
       });
 
     // TODO 校验失败，写日志到右侧表

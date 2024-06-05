@@ -53,14 +53,13 @@ import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import MitemForm from './form.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const keyword = ref('');
 const mitemCategoryKeyword = ref('');
 
@@ -134,7 +133,7 @@ const opts = computed(() => {
 const dataTotal = ref(0);
 
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     selectedMitemRowKeys.value = [];
     tableDataMitem.value = [];
@@ -154,7 +153,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 

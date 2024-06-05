@@ -76,7 +76,6 @@ import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import formreturnManagement from './formReturnManagement.vue';
 import { useLang } from './lang';
@@ -84,7 +83,7 @@ import { useLang } from './lang';
 const { t } = useLang();
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 
 // 查询组件值
 const optsValue = ref({});
@@ -211,7 +210,7 @@ const fetchTableRowClick = async (context) => {
 
 // 加载表格
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     const data = await apiWarehouse.returnManagement.getReturnManagementList({
       pageNum: pageUI.value.page,
@@ -224,12 +223,12 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 // 加载表格
 const fetchTableDtl = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     const data = await apiWarehouse.returnManagement.getReturnManagementDtlList({
       returnBillNo: rowBillNo.value,
@@ -238,7 +237,7 @@ const fetchTableDtl = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 // 批量作废
@@ -308,7 +307,7 @@ const onPrintClick = async () => {
   let isSuccess = true;
   printData.value = [];
   const promiseAll = [];
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     selectRowKeys.value.forEach((element) => {
       const billInfo = tableReturnManagementData.value.find((item) => item.billNo === element);
@@ -330,7 +329,7 @@ const onPrintClick = async () => {
     console.log(e);
     isSuccess = false;
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
   return isSuccess;
 };

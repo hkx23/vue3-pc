@@ -145,7 +145,6 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 import { openPage } from '@/router';
-import utils from '@/utils/common';
 
 import detailed from './detailed.vue';
 import { useLang } from './lang';
@@ -164,7 +163,7 @@ const moClassOption = ref([]);
 // 初始化系统字典工单类型
 const initMoClass = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const res = (await apimain.param.getListByGroupCode({
       parmGroupCode: 'C_MO_TYPE',
     })) as any;
@@ -172,7 +171,7 @@ const initMoClass = async () => {
   } catch (e) {
     console.log('cus', e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 const detailedShow = ref(false); // 控制执行界面显示隐藏
@@ -194,7 +193,7 @@ const selectMitemRowKeys = computed(() => {
   return tableMitemRef.value?.getSelectedRowKeys();
 });
 
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUIProduct } = usePage(); // 分页工具
 const { pageUI: pageUIWorkStation } = usePage(); // 分页工具
@@ -842,7 +841,7 @@ const switchTab = () => {
 };
 // 加载数据表格
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     switch (tagValue.value) {
       case 0: // 工单
@@ -863,7 +862,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 

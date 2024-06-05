@@ -166,13 +166,14 @@ import { computed, onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
+import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import formAdd from './formAdd.vue';
 import formTable from './formTable.vue';
 import { useLang } from './lang';
 
+const { setLoading } = useLoading();
 onMounted(async () => {
   queryCompnent.value.date = new Date().toISOString().substr(0, 7);
   onFetchData();
@@ -489,7 +490,7 @@ const onFetchData = async () => {
   currProcessId.value = '';
   dataList.value = [];
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const res = (await api.workCalenar.getWcInfo(queryCompnent.value)) as any;
     if (res) {
       total.value = res.total;
@@ -502,7 +503,7 @@ const onFetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 </script>

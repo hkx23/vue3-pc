@@ -193,9 +193,8 @@ import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUIUseInfo } = usePage(); // 分页工具
 const { pageUI: pageUIQualityInfo } = usePage(); // 分页工具
@@ -535,7 +534,7 @@ const switchTab = () => {
 };
 // 加载工单数据表格
 const fetchMoTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     if (queryCondition.value.searchType === 'mintemBatch') {
       if (queryCondition.value.mitemLotNo && !queryCondition.value.mitemId) {
@@ -602,7 +601,7 @@ const fetchMoTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 </script>

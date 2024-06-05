@@ -98,7 +98,6 @@ import { api as apiMain, ProcessVO } from '@/api/main';
 // import { api } from '@/api/control';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import dialogDefects from './dialogDefects.vue';
 import { useLang } from './lang';
@@ -159,7 +158,7 @@ const filterProcessList = computed(() => {
 });
 const deleteVisible = ref(false); // 删除窗口控制
 // const addVisible = ref(false); // 新增窗口控制
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const { t } = useLang();
 // const dialogShow = ref(1);
 // table定义
@@ -220,7 +219,7 @@ const onDragSort = async (params: any) => {
 const onFetchData = async () => {
   processRorKey.value = [];
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const res = await api.processInDefectCode.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -232,7 +231,7 @@ const onFetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 // 选中checkbox

@@ -52,11 +52,10 @@ import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import workPermission from './permission.vue';
 
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const selectedRowKeys = ref([]); // 全选控制存入字段
 const { pageUI } = usePage(); // 分页
 const total = ref(10); // 分页总数
@@ -189,7 +188,7 @@ const opts = computed(() => {
 // 请求
 const onfetchData = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const list = await api.workstationAuth.getList({
       workcenterWord: inputValue.value.workcenterWord,
       userWord: inputValue.value.userWord,
@@ -205,7 +204,7 @@ const onfetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
   // permissionData.value = _.cloneDeep(permissionData.value);
 };

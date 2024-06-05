@@ -75,12 +75,11 @@ import CmpQuery from '@/components/cmp-query/index.vue'; //* 查询组件
 import CmpTable from '@/components/cmp-table/index.vue'; //* 表格组件
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import LocationForm from './form.vue';
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const selectedWarehouseRowKeys = ref([]);
 const tableDataLocation = ref([]); //* 表格数据
 const formVisible = ref(false); //* 弹窗默认关闭
@@ -154,7 +153,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 
 //* 表格数据
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   selectedWarehouseRowKeys.value = [];
   tableDataLocation.value = [];
   const data = await api.location.getList({
@@ -166,7 +165,7 @@ const fetchTable = async () => {
   });
   tableDataLocation.value = data.list;
   dataTotal.value = data.total;
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
 };
 //* 表格刷新
 const tabRefresh = async () => {

@@ -11,6 +11,7 @@
           :fixed-height="true"
           :table-data="inspectItemData.list"
           :total="inspectItemTotal"
+          :loading="loading"
           :selected-row-keys="selectedRowKeys"
           @refresh="fetchTable"
           @row-click="onSelectChange"
@@ -174,11 +175,13 @@ import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import formItem from './formItem.vue';
 import { useLang } from './lang';
+
+const { loading, setLoading } = useLoading();
 
 const { t } = useLang();
 const isDisabled = ref(false);
@@ -394,7 +397,7 @@ const onInput = async (data: any) => {
 
 const fetchTable = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const res = await apiMain.inspectItem.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -412,7 +415,7 @@ const fetchTable = async () => {
     itemInCheckList.list = [];
     itemTotal.value = 0;
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 

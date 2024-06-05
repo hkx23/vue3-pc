@@ -76,12 +76,11 @@ import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import CmpQuery from '@/components/cmp-query/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
-import utils from '@/utils/common';
 
 import CmpTable from '../../../../components/cmp-table/index.vue';
 import { usePage } from '../../../../hooks/modules/page';
 
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const { pageUI } = usePage();
 
 import { api } from '@/api/main';
@@ -169,7 +168,7 @@ const defectHandlingData = ref([]);
 // 首次进入
 const onfetchData = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const res = await api.defectDealMethod.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -181,7 +180,7 @@ const onfetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 // 取消窗口

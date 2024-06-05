@@ -51,13 +51,12 @@ import { useRouter } from 'vue-router';
 import { api } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import ReceiptDetails from './receiptDetails.vue';
 
 const router = useRouter();
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const formTitle = ref('');
 const dataTotal = ref(0);
 const tabValue = ref('');
@@ -190,7 +189,7 @@ onMounted(async () => {
 
 //* 表格数据
 const fetchTable = async (transactionBillNo) => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   selectedReceiptRowKeys.value = [];
   tableDataReceipt.value = [];
   const data = await api.billManagement.getList({
@@ -200,7 +199,7 @@ const fetchTable = async (transactionBillNo) => {
   });
   tableDataReceipt.value = data.list;
   dataTotal.value = data.total;
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
 };
 
 //* 表格刷新

@@ -148,13 +148,14 @@ import { reactive, Ref, ref, watch } from 'vue';
 import { api as apiQuality } from '@/api/quality';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
-import utils from '@/utils/common';
+import { useLoading } from '@/hooks/modules/loading';
 
 import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import { useLang } from './lang';
 
 const Emit = defineEmits(['parent-refresh-event']);
 
+const { setLoading } = useLoading();
 const { t } = useLang();
 const isEdit = ref(false);
 const tabDisabled = ref(false);
@@ -276,7 +277,7 @@ const onConfirmForm = async () => {
         return;
       }
 
-      utils.loadingPluginFullScreen(true);
+      setLoading(true);
       await apiWarehouse.returnManagement.submitBillNoByIqc({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
@@ -302,7 +303,7 @@ const onConfirmForm = async () => {
         return;
       }
 
-      utils.loadingPluginFullScreen(true);
+      setLoading(true);
       await apiWarehouse.returnManagement.submitBillNoByPurchaseOrder({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
@@ -317,7 +318,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 const tabsChange = async (tabValue) => {

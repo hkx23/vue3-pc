@@ -66,12 +66,11 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import transactionDetails from './transaction-details.vue';
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const inventoryManagement = ref([]);
 const tableDataReckoning = ref([]); //* 表格数据1
 const eidtTransactionVisible = ref(false); //* 弹窗默认关闭
@@ -211,7 +210,7 @@ const defaultEndDateTime = getNextDayDateTime();
 
 //* 表格数据
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
   inventoryManagement.value = [];
   tableDataReckoning.value = [];
   const data = await apiMain.integratedConsole.getList({
@@ -223,7 +222,7 @@ const fetchTable = async () => {
     _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
   }));
   dataTotal.value = data.total;
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
 };
 
 const InterfaceOption = ref([]);
@@ -307,7 +306,7 @@ const documentStatusData = async () => {
 //* 查询
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   const {
     msgCategory, // 接口分类
     msgDomainCategory, // mes领域分类
@@ -336,7 +335,7 @@ const onInput = async (data: any) => {
     }));
     dataTotal.value = data.total;
   }
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
 };
 
 const rowData = ref({});

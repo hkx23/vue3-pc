@@ -36,12 +36,11 @@ import { api } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 // import SupplierForm from './form.vue';
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const dataTotal = ref(0);
 
 const tableDataSupplier = ref([]);
@@ -170,7 +169,7 @@ const onRefresh = () => {
 // };
 
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     queryCondition.value.pageNum = pageUI.value.page;
     queryCondition.value.pageSize = pageUI.value.rows;
@@ -191,7 +190,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 

@@ -44,7 +44,6 @@ import { useRouter } from 'vue-router';
 import { api as apiMain } from '@/api/main';
 import UserIcon from '@/assets/assets-empty.svg?component';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -72,7 +71,6 @@ const noticeData = ref([]);
 // 获取通告列表和通告总数信息
 const onFetchData = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
     // 获取通告列表信息
     pageUI.value.page = 1;
     pageUI.value.rows = 4;
@@ -84,8 +82,6 @@ const onFetchData = async () => {
     noticeData.value = res.list;
   } catch (e) {
     console.log(e);
-  } finally {
-    utils.loadingPluginFullScreen(false);
   }
 };
 

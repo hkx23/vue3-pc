@@ -335,7 +335,7 @@ const formInspectData = reactive({
   recheckReason: '',
 });
 
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 
 const tableSelectedRowKeys = ref([]);
 const tableData = ref([]);
@@ -441,7 +441,7 @@ const onConfirmForm = async () => {
       const { showForm } = formNgRef.value;
       showForm(false, formInspectData, tableData);
     } else {
-      utils.loadingPluginFullScreen(true);
+      setLoading(true);
 
       await apiQuality.iqcInspectRecheck.submitIqcInspectRecheck({
         iqcBillNo: formInspectData.iqcBillNo,
@@ -472,7 +472,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 const tabsChange = async (tabValue) => {
@@ -519,7 +519,7 @@ const loadTable = async () => {
 };
 const loadTableStd = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
       // iqcBillNo: formInspectData.iqcBillNo,
       mitemCategoryId: formInspectData.mitemCategoryId,
@@ -539,7 +539,7 @@ const loadTableStd = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 // const linkLoadTableStd = async () => {

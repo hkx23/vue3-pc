@@ -202,7 +202,6 @@ import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api, UserAuthDTO, UserRoleDTO } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
-import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -248,7 +247,7 @@ const tableData = ref([]);
 // 筛选表格结果数据
 const tableFilterData = ref([]);
 
-const { loading: tableloading } = useLoading();
+const { loading: tableloading, setLoading } = useLoading();
 
 const tabValue = ref(1);
 const filterPermissionName = ref('');
@@ -339,7 +338,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
 
 // 加载角色数据表格
 const fetchRoleTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     // 查询条件
     // const searchCondition = {
@@ -366,7 +365,7 @@ const fetchRoleTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 const roleChange = (values: any) => {
@@ -515,7 +514,7 @@ api.param.getListByGroupCode({ parmGroupCode: 'S_CLIENT_TYPE' }).then((data) => 
 // 加载角色数据表格
 const fetchPermissionData = async () => {
   loading.value = true;
-  // utils.loadingPluginFullScreen(true);
+  // setLoading(true);
   try {
     const data = (await api.permission.getTreePermissionsByUserId({ userId: props.id })) as any;
     originPermissionData.value = data;
@@ -527,7 +526,7 @@ const fetchPermissionData = async () => {
     console.log(e);
   } finally {
     loading.value = false;
-    // utils.loadingPluginFullScreen(false);
+    // setLoading(false);
   }
 };
 

@@ -91,13 +91,12 @@ import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
 // 使用多语言
 const { t } = useLang();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const tableDataInventory = ref([]);
 const { pageUI } = usePage();
 const dataTotal = ref(0);
@@ -227,7 +226,7 @@ const onInput = async (data: any) => {
   }
   pageUI.value.page = 1;
   if (!data.value) {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const { stockCheckType, warehouseId, districtId, locationId, mitemId } = data;
     const result = await api.stockCheckBill.getOnHand({
       pageNum: pageUI.value.page,
@@ -247,7 +246,7 @@ const onInput = async (data: any) => {
     newstockCheckType.value = stockCheckType;
     newWarehouseId.value = warehouseId;
   }
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
 };
 
 // 确定提交
@@ -291,7 +290,7 @@ const onConfirmAnother = async () => {
 // const fetchTable = async (data: any) => {
 //   const { districtId, locationId, mitemId } = data;
 //   try {
-//     utils.loadingPluginFullScreen(true);
+//     setLoading(true);
 //     // 使用存储在组件状态中的默认参数
 //     const data = await api.stockCheckBill.getOnHand({
 //       pageNum: pageUI.value.page,
@@ -305,7 +304,7 @@ const onConfirmAnother = async () => {
 //     // 更新表格数据
 //     tableDataInventory.value = data.list;
 //     dataTotal.value = data.total;
-//     utils.loadingPluginFullScreen(false);
+//     setLoading(false);
 //   } catch (error) {
 //     console.error('获取数据失败:', error);
 //   }

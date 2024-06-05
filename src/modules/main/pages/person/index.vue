@@ -125,7 +125,7 @@ import { usePage } from '@/hooks/modules/page';
 import { useLang } from './lang';
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const personCode = ref(''); // 查询
 const personState = ref(-1); //
 const adminOrgId = ref(-1); //
@@ -277,6 +277,7 @@ const onReset = () => {
 
 const fetchTable = async () => {
   try {
+    setLoading(true);
     const data = (await api.person.getlist({
       personcode: personCode.value,
       personname: '',
@@ -294,6 +295,8 @@ const fetchTable = async () => {
     dataTotal.value = data.total;
   } catch (e) {
     console.log(e);
+  } finally {
+    setLoading(false);
   }
 };
 

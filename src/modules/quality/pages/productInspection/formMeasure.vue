@@ -59,8 +59,6 @@ import _ from 'lodash';
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
-import utils from '@/utils/common';
-
 const Emit = defineEmits(['parent-confirm-event', 'form-close-event']);
 
 const isEdit = ref(true); // 是否可编辑
@@ -107,15 +105,11 @@ const onConfirmForm = async () => {
       }
     }
 
-    utils.loadingPluginFullScreen(true);
-
     Emit('parent-confirm-event', formData.measureList, isAllOK, formData.dtlId);
 
     formVisible.value = false;
   } catch (e) {
     console.log(e);
-  } finally {
-    utils.loadingPluginFullScreen(false);
   }
 };
 const reset = () => {
