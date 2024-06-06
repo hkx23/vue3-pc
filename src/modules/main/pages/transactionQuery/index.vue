@@ -46,10 +46,9 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const inventoryManagement = ref([]);
 const tableDataReckoning = ref([]); //* 表格数据
 const dataTotal = ref(0);
@@ -221,7 +220,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
 
 //* 表格数据
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
   inventoryManagement.value = [];
   tableDataReckoning.value = [];
   const data = await api.transactionDetail.getList({
@@ -235,7 +234,7 @@ const fetchTable = async () => {
   }));
   tableDataReckoning.value = dataWithTimestamps;
   dataTotal.value = data.total;
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
 };
 
 //* 初始渲染
@@ -277,7 +276,7 @@ const dateChange = (data: any) => {
 //* 查询
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   const {
     businessCategoryId, // 事务类型
     timeCreate, // 时间
@@ -319,7 +318,7 @@ const onInput = async (data: any) => {
     tableDataReckoning.value = [...data.list];
     dataTotal.value = data.total;
   }
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
 };
 
 //* 重置

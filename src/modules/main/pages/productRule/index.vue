@@ -152,7 +152,6 @@ import { api, ProductPackRuleDtlVO, ProductPackRuleMapDTO } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import formPackRule from './formPackRule.vue';
 import formPackRuleDtl from './formPackRuleDtl.vue';
@@ -162,7 +161,7 @@ import { useLang } from './lang';
 const { t } = useLang();
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const { pageUI: pageMitem } = usePage();
 const { loading: loadingMitem, setLoading: setLoadingMitem } = useLoading();
 const { loading: loadingPackDtl, setLoading: setLoadingPackDtl } = useLoading();
@@ -314,7 +313,7 @@ const conditionEnter = (data: any) => {
 
 // 加载包装规则表格
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     const data = (await api.productPackRule.list({
       packRuleCode: optsValue.value.packRule,
@@ -328,7 +327,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
     fetchPackDtlTable();
   }
 };

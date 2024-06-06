@@ -69,7 +69,6 @@ import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -78,7 +77,7 @@ onMounted(() => {
   featCustomer();
 });
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 // 控制
 const keyword = ref(''); // 控制模糊搜索
 const formVisible = ref(false); // 控制弹窗显示
@@ -111,7 +110,7 @@ const customerData = ref([]);
 const dataTotal = ref(0);
 const featCustomer = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const res = await api.customer.search({
       keyword: keyword.value,
       pageNum: pageUI.value.page,
@@ -124,7 +123,7 @@ const featCustomer = async () => {
   } catch (e) {
     console.log('cus', e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 // 查询组件

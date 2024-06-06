@@ -195,7 +195,7 @@ const fetchData = async () => {
   Object.assign(formData, props.wordCenterId);
   console.log(formData.state);
   try {
-    // utils.loadingPluginFullScreen(true);
+    // setLoading(true);
     // 子节点请求
     const res = await api.workcenter.getChildCenter({
       id: props.wordCenterId.id,
@@ -235,7 +235,7 @@ const fetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    // utils.loadingPluginFullScreen(false);
+    // setLoading(false);
   }
 };
 // 存在渲染数据数组

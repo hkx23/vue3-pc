@@ -129,7 +129,6 @@ import { api as apiDaily } from '@/api/daily';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import formItem from './formItem.vue';
 import { useLang } from './lang';
@@ -310,7 +309,6 @@ const onInput = async (data: any) => {
 
 const fetchTable = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
     const res = await apiDaily.checklist.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -326,7 +324,7 @@ const fetchTable = async () => {
     selectedRowKeys.value = [];
     delItemRowKeys.value = [];
   } finally {
-    utils.loadingPluginFullScreen(false);
+    console.log('');
   }
 };
 

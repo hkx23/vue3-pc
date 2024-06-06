@@ -84,8 +84,6 @@ const onConfirmForm = async () => {
       return;
     }
 
-    utils.loadingPluginFullScreen(true);
-
     if (isEdit.value) {
       await apiDaily.checklistItem.update({
         checklistId: formData.checklistId,
@@ -106,8 +104,6 @@ const onConfirmForm = async () => {
     formVisible.value = false;
   } catch (e) {
     console.log(e);
-  } finally {
-    utils.loadingPluginFullScreen(false);
   }
 };
 

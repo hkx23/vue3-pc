@@ -212,13 +212,14 @@ import { onMounted, ref } from 'vue';
 
 import { api, ProductReworkVO, WipKeyPartCollectVO } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
 import { useUserStore } from '@/store';
-import utils from '@/utils/common';
 
 import { messageModel, scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
 
 const userStore = useUserStore();
+const { setLoading } = useLoading();
 // 全局信息
 const scanInfoList = ref<ProductReworkVO[]>([]);
 const { t } = useLang();
@@ -343,7 +344,7 @@ const serialNumberEnter = async (value) => {
     if (!checkBarcodeRepeat(mainform.value.serialNumber)) {
       return;
     }
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     // 原子校验
     // TODO 校验成功
     await api.productRework
@@ -406,11 +407,11 @@ const serialNumberEnter = async (value) => {
           resetBarcode(isNeedClear);
           writeMessageListError(reData.scanMessage);
         }
-        utils.loadingPluginFullScreen(false);
+        setLoading(false);
       })
       .catch((message) => {
         console.log(message);
-        utils.loadingPluginFullScreen(false);
+        setLoading(false);
       });
 
     // TODO 校验失败，写日志到右侧表
@@ -593,7 +594,7 @@ const onRemove = (row) => {
 
 // 执行
 const onConfirm = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   // 原子校验
   // TODO 校验成功
   // const scanTime = dayjs().format('YYYY-MM-DD hh:mm:ss');
@@ -607,11 +608,11 @@ const onConfirm = async () => {
     .then(() => {
       resetHandle();
       writeMessageListSuccess(t('productRework.success'));
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     })
     .catch((message) => {
       console.log(message);
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
       writeMessageListError(message);
     });
 };

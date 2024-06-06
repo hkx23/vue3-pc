@@ -1,7 +1,7 @@
 // 通用方法
 import _ from 'lodash';
-import { LoadingPlugin } from 'tdesign-vue-next';
 
+// import { LoadingPlugin } from 'tdesign-vue-next';
 import { api as apiMain } from '@/api/main';
 
 // let loadingStart; // 用于存储loadingPluginFullScreen时候,调用时间戳的变量
@@ -59,7 +59,7 @@ export default {
   },
   // 显示LOADING页面,默认至少显示0.5秒
   loadingPluginFullScreen(isLoading, loadingWaiting = 50) {
-    LoadingPlugin(isLoading);
+    // LoadingPlugin(isLoading);
     // TODO LoadingPlugin的TdLoadingProps参数，并不是返回全局唯一的对象
     console.log(`等待加载:${loadingWaiting}`);
     // const instance = LoadingPlugin({

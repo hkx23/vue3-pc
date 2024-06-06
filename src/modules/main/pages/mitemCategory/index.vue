@@ -83,14 +83,13 @@ import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import MitemCategoryForm from './form.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const { pageUI: pageMitem } = usePage();
 const { loading: loadingMitem, setLoading: setLoadingMitem } = useLoading();
 
@@ -155,7 +154,7 @@ const onEditRowClick = (value: any) => {
 
 const fetchTable = async () => {
   tableRef.value.setSelectedRowKeys([]);
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     const data = (await api.mitemCategory.getlist({
       keyword: keyword.value,
@@ -167,7 +166,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
     selectCategoryID.value = '';
     fetchMitemTable();
   }

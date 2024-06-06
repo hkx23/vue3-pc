@@ -210,9 +210,8 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { api, StockCheckBillDtl } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 
 //* 表格标题--物料明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
@@ -457,7 +456,7 @@ const props = defineProps({
 
 // 获取物料明细
 const getMaterialDetails = async (billId) => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   newInventoryManagement1.value = [];
   tableDataInventory1.value = [];
   const data = await api.stockCheckBill.getDtlList({
@@ -467,7 +466,7 @@ const getMaterialDetails = async (billId) => {
   });
   tableDataInventory1.value = data.list;
   dataTotal.value = data.total;
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
 };
 
 // 获取标签明细

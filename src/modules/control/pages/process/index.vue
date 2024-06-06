@@ -44,12 +44,11 @@ import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import ProcessForm from './form.vue';
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const keyword = ref('');
 const selectedProcessRowKeys = ref([]);
 const tableDataProcess = ref([]);
@@ -122,7 +121,7 @@ const dataTotal = ref(0);
 const fetchTable = async () => {
   // await api.stressTest.selectAndInsertWipLog();
   // return;
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     selectedProcessRowKeys.value = [];
     tableDataProcess.value = [];
@@ -139,7 +138,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 

@@ -80,7 +80,7 @@ import ConferenceLayoutCom from '@/modules/daily/pages/conferenceLayout/componen
 
 import { useLang } from './lang';
 
-// const { loading } = useLoading();
+// const { loading, setLoading } = useLoading();
 const { t } = useLang();
 
 // 组件信息

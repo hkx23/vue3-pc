@@ -423,7 +423,6 @@ import { api as apiQuality, BarcodeVO, OqcInspectBillFullVO, OqcInspectStdFullVO
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
-import utils from '@/utils/common';
 
 import formMeasure from './formMeasure.vue';
 import formNg from './formNg.vue';
@@ -550,7 +549,7 @@ const businessCategoryOption = ref([
   { value: 'MO', label: '按工单' },
   { value: 'BARCODE', label: '按条码' },
 ]);
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const FORM_RULES = {
   inspectCategory: [
     { required: true, message: t('common.placeholder.input', [t('productInspection.inspectCategoryName')]) },
@@ -662,7 +661,7 @@ const checkFieldsRequired = async (isTempSave: boolean) => {
 const checkJyPreSubmit = async (isTempSave: boolean) => {
   let success = false;
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     success = await apiQuality.oqcInspect.checkJyPreSubmit({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -677,7 +676,7 @@ const checkJyPreSubmit = async (isTempSave: boolean) => {
     success = false;
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
   return success;
 };
@@ -685,7 +684,7 @@ const checkJyPreSubmit = async (isTempSave: boolean) => {
 // 报检-新增产品检验单据-暂存与提交
 const submitBJQqcInspect = async (isTempSave: boolean) => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     await apiQuality.oqcInspect.submitBjQqcInspect({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -706,14 +705,14 @@ const submitBJQqcInspect = async (isTempSave: boolean) => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 
 // 检验执行-暂存与提交
 const submitJYQqcInspect = async (isTempSave: boolean) => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     await apiQuality.oqcInspect.submitJyQqcInspect({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -735,7 +734,7 @@ const submitJYQqcInspect = async (isTempSave: boolean) => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 
@@ -940,7 +939,7 @@ const scanProductBarcode = async (value) => {
     if (!checkBarcodeRepeat(value)) {
       return;
     }
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     try {
       const list = (await apiQuality.oqcInspect.scanProductBarcode({
         oqcInspectId: formData.id,
@@ -960,7 +959,7 @@ const scanProductBarcode = async (value) => {
     } catch (error) {
       console.error(error.message);
     } finally {
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     }
   }
 };
@@ -968,7 +967,7 @@ const scanProductBarcode = async (value) => {
 // 检验扫码
 const scanYJProductBarcode = async (value) => {
   if (!isEmpty(value)) {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     try {
       const barcodeInfo = (await apiQuality.oqcInspect.scanYjProductBarcode({
         oqcInspectId: formData.id,
@@ -988,7 +987,7 @@ const scanYJProductBarcode = async (value) => {
     } catch (error) {
       console.error(error.message);
     } finally {
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     }
   }
 };
@@ -1127,7 +1126,7 @@ const loadDefaultTable = async () => {
 // 检验 - 加载条码检验项信息
 const loadBarcodeTable = async (rowBarcodeInfo: BarcodeVO) => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     const list = await apiQuality.oqcInspect.getStdDtlListByMitem({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -1145,7 +1144,7 @@ const loadBarcodeTable = async (rowBarcodeInfo: BarcodeVO) => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 

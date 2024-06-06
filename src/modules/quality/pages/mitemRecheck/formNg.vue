@@ -81,7 +81,6 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
-import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -165,7 +164,6 @@ const onConfirmForm = async () => {
       MessagePlugin.error(t('mitemRecheck.跟进人不能为空'));
       return;
     }
-    utils.loadingPluginFullScreen(true);
 
     // formNgData.isStartImprove = formNgData.isPdca ? 1 : 0;
     await apiQuality.iqcInspectRecheck.submitIqcInspectRecheck({
@@ -195,8 +193,6 @@ const onConfirmForm = async () => {
     formVisible.value = false;
   } catch (e) {
     console.log(e);
-  } finally {
-    utils.loadingPluginFullScreen(false);
   }
 };
 const reset = () => {

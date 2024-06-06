@@ -114,7 +114,6 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import edit from './edit.vue';
 import enable from './enable.vue';
@@ -125,7 +124,7 @@ import productRelation from './productRelation.vue';
 // 使用多语言
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 // #region 查询框
 const opts = computed(() => {
   return {
@@ -249,7 +248,7 @@ const craftRouteData = reactive({
   list: [],
 });
 const getRouting = () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   apiMain.routing
     .mainPage({
       pageNum: pageUI.value.page,
@@ -259,10 +258,10 @@ const getRouting = () => {
     .then((data) => {
       craftRouteData.list = data.list;
       craftRouteData.total = data.total;
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     })
     .then(() => {
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     });
 };
 const getRoutingType = (type: string) => {

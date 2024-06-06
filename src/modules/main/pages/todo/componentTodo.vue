@@ -70,7 +70,6 @@ import { api as apiMain } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 import { openPage } from '@/router';
-import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -91,7 +90,7 @@ const queryCondition = ref({
   datePlanRange: datePlanRangeDefault.value,
 });
 
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const { t } = useLang();
 const unProcessCount = ref(0);
 
@@ -115,7 +114,7 @@ const currTodoId = ref('UNPROCESS');
 // 获取待办列表和待办总数信息
 const onFetchData = async () => {
   try {
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     if (queryCondition.value.datePlanRange) {
       if (queryCondition.value.datePlanRange[0]) {
         queryCondition.value.datetimeStart = queryCondition.value.datePlanRange[0].toString();
@@ -145,7 +144,7 @@ const onFetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 

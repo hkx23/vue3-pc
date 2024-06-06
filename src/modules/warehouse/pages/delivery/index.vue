@@ -55,14 +55,13 @@ import { computed, nextTick, onMounted, ref } from 'vue';
 import { api as apiWarehouse, DeliveryDtlVO, DeliveryVO } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
 const { t } = useLang();
 
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 
 const { loading: loadingDeliveryDtl, setLoading: setLoadingDeliveryDtl } = useLoading();
 
@@ -148,7 +147,7 @@ const conditionEnter = (data: any) => {
 
 // 加载送货单表格
 const fetchTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     if (optsValue.value.datePlanRange) {
       if (optsValue.value.datePlanRange[0]) {
@@ -168,7 +167,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
     fetchDeliveryDtlTable();
   }
 };

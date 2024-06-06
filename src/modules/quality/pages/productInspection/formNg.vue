@@ -75,7 +75,6 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality, BarcodeVO, OqcInspectBillFullVO, OqcInspectStdFullVO } from '@/api/quality';
-import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -122,8 +121,6 @@ const onConfirmForm = async () => {
       return;
     }
 
-    utils.loadingPluginFullScreen(true);
-
     await apiQuality.oqcInspect.submitJyQqcInspect({
       oqcInspectId: formData.id,
       billNo: formData.billNo,
@@ -140,8 +137,6 @@ const onConfirmForm = async () => {
     formVisible.value = false;
   } catch (e) {
     console.log(e);
-  } finally {
-    utils.loadingPluginFullScreen(false);
   }
 };
 const reset = () => {

@@ -78,7 +78,6 @@ import { api, OrgTreeVO } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { useUserStore } from '@/store';
-import utils from '@/utils/common';
 
 import { FormRef } from './constants';
 import OrgForm from './form.vue';
@@ -88,7 +87,7 @@ const { t } = useLang();
 const userStore = useUserStore();
 
 const formVisible = ref(false);
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const filterByText = ref();
 const filterText = ref();
 
@@ -177,10 +176,10 @@ const fetchEnterprise = async (tree) => {
 };
 
 const fetchData = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   const tree = await api.org.tree();
   data.value = tree;
-  utils.loadingPluginFullScreen(false);
+  setLoading(false);
   treeActiveKey.value = [];
   flatten(tree);
   await fetchEnterprise(tree);

@@ -74,14 +74,13 @@ import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 import AppInfo from './appInfo';
 import { useLang } from './lang';
 
 const { t } = useLang();
 const { pageUI } = usePage();
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 
 const opts = computed(() => {
   return {
@@ -150,7 +149,7 @@ const showForm = () => {
   formVisible.value = true;
 };
 const selectFile = (files: File[]) => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   const zip = new JSZip();
   zip
     .loadAsync(files[0])
@@ -166,10 +165,10 @@ const selectFile = (files: File[]) => {
       formData.appName = appInfo.getLabel();
       formData.appBuild = appInfo.getVersionCode();
       formData.appVersion = appInfo.getVersionName();
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     })
     .catch(() => {
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     });
 };
 const onConfirmForm = () => {
@@ -180,7 +179,7 @@ const onConfirmForm = () => {
   });
 };
 const getList = () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   api.appBase
     .getList({
       pageNum: pageUI.value.page,
@@ -189,16 +188,16 @@ const getList = () => {
       appType: queryData.value.appType,
     })
     .then((data) => {
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
       appData.data = data.list;
       appData.total = data.total;
     })
     .catch(() => {
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     });
 };
 const addApp = () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   api.appBase
     .add(
       {
@@ -218,10 +217,10 @@ const addApp = () => {
       formVisible.value = false;
       getList();
 
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     })
     .catch(() => {
-      utils.loadingPluginFullScreen(false);
+      setLoading(false);
     });
 };
 onMounted(() => {

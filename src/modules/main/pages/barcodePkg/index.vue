@@ -281,10 +281,9 @@ import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import utils from '@/utils/common';
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
-const { loading } = useLoading();
+const { loading, setLoading } = useLoading();
 const pageLoading = ref(false);
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUIBracode } = usePage(); // 分页工具
@@ -996,7 +995,7 @@ const onRightFetchData = async () => {
 
 // 加载工单数据表格
 const fetchMoTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     queryCondition.value.pageNum = pageUI.value.page;
     queryCondition.value.pageSize = pageUI.value.rows;
@@ -1008,13 +1007,13 @@ const fetchMoTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 
 // 加载条码管理数据表格
 const fetchBracodeManageTable = async () => {
-  utils.loadingPluginFullScreen(true);
+  setLoading(true);
   try {
     printMode.value.printTempId = '';
     manageQueryCondition.value.pageNum = pageUIMannage.value.page;
@@ -1032,7 +1031,7 @@ const fetchBracodeManageTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 // moCode: '',

@@ -12,6 +12,7 @@
             :table-data="locationInMitemData.list"
             :total="locationInMitemTotal"
             :selected-row-keys="selectedRowKeys"
+            :loading="loading"
             @refresh="fetchTable"
             @select-change="rehandleSelectChange"
           >
@@ -138,6 +139,7 @@ import { computed, onMounted, reactive, Ref, ref } from 'vue';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 import utils from '@/utils/common';
 
@@ -148,6 +150,7 @@ const { pageUI } = usePage();
 const formVisible = ref(false);
 const diaLogTitle = ref('');
 const selectedRowKeys: Ref<any[]> = ref([]);
+const { loading, setLoading } = useLoading();
 const formData = ref({
   itemCode: '',
   itemName: '',
@@ -393,7 +396,7 @@ const onEditRequest = async () => {
       return;
     }
 
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     await apiWarehouse.locationInMitem.update({
       ...locationInMitemTabData.list,
       itemId:
@@ -405,7 +408,7 @@ const onEditRequest = async () => {
     formVisible.value = false;
     MessagePlugin.success('编辑成功');
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 const onAddData = () => {
@@ -457,7 +460,7 @@ const onAddRequest = async () => {
       return;
     }
 
-    utils.loadingPluginFullScreen(true);
+    setLoading(true);
     await apiWarehouse.locationInMitem.insert({
       ...locationInMitemTabData.list,
       itemId:
@@ -469,7 +472,7 @@ const onAddRequest = async () => {
     formVisible.value = false;
     MessagePlugin.success('新增成功');
   } finally {
-    utils.loadingPluginFullScreen(false);
+    setLoading(false);
   }
 };
 const rehandleSelectChange = async (value: any[]) => {
