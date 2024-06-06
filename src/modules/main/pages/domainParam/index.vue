@@ -94,6 +94,18 @@
   >
     <group-form ref="formGroupRef" />
   </t-dialog>
+
+  <dialog-edit
+    :id="editId"
+    v-model="editDomainParamVisible"
+    :title="
+      isAdd
+        ? t('common.dialog.header.add', [t('domainParam.domainParam')])
+        : t('common.dialog.header.edit', [t('domainParam.domainParam')])
+    "
+    :is-copy="isCopy"
+    @submit="refreshData"
+  ></dialog-edit>
 </template>
 <script lang="ts">
 export default {
@@ -110,6 +122,7 @@ import { api } from '@/api/main';
 import { usePage } from '@/hooks/modules/page';
 
 import { FormGroupRef, TreeNode } from './constants';
+import dialogEdit from './dialogEdit.vue';
 import GroupForm from './formGroup.vue';
 import { useLang } from './lang';
 
@@ -126,11 +139,21 @@ const currentNodeData = ref<TreeNode>({
   parentNodeId: '',
   type: 'root',
 });
+const editId = ref();
+const editDomainParamVisible = ref(false);
+const isAdd = ref(true);
+const isCopy = ref(false);
 
 // #全局加载-页面初始化后加载树数据
 onMounted(async () => {
   await onGetTreeData();
+  await fetchData();
 });
+const refreshData = () => {
+  onGetTreeData();
+  // 刷新数据
+  fetchData();
+};
 
 // #分组区域-监控树组件高度
 const treeCard = ref(null);
@@ -347,6 +370,7 @@ const onAdd = () => {
   // formTitle.value = '新增';
   // formRef.value.init(clickNodeId);
   // formVisible.value = true;
+  addDomainParam();
 };
 
 // #表格区域-编辑表格数据-编辑功能
@@ -359,8 +383,28 @@ const onEditRowClick = (value: any) => {
   // formRef.value.formData.operateTpye = 'edit';
   // formRef.value.setCategoryLabel();
   // formVisible.value = true;
-  onGetTabData();
+  editDomainParam(value);
+  // onGetTabData();
 };
+
+const addDomainParam = () => {
+  isAdd.value = true;
+  editId.value = null;
+  isCopy.value = false;
+  editDomainParamVisible.value = true;
+};
+const editDomainParam = (id: string) => {
+  editId.value = id;
+  isAdd.value = false;
+  isCopy.value = false;
+  editDomainParamVisible.value = true;
+};
+// const copyDomainParam = (id: string) => {
+//   editId.value = id;
+//   isAdd.value = false;
+//   isCopy.value = true;
+//   editDomainParamVisible.value = true;
+// };
 </script>
 
 <style lang="less" scoped>

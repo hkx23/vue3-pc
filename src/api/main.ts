@@ -1006,8 +1006,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -5361,9 +5361,9 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  isState?: boolean;
-  isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
+  isState?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
@@ -5580,15 +5580,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isProductName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   stateName?: string;
   isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5731,8 +5731,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -9373,8 +9373,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -10757,12 +10757,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11207,6 +11207,12 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  /** 是否为空 */
+  nullable?: string;
+  /** KEY */
+  columnKey?: string;
+  /** 默认值 */
+  columnDefault?: string;
   default?: boolean;
 }
 
@@ -17081,6 +17087,21 @@ export const api = {
      * No description
      *
      * @tags 领域参数表
+     * @name SqlTables
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/domainParam/sqlTables
+     * @secure
+     */
+    sqlTables: (query: { businessCode: string }) =>
+      http.request<ResultListDataTableVO['data']>(`/api/main/domainParam/sqlTables`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
      * @name GetAllTree
      * @summary 主界面树形区域
      * @request GET:/domainParam/items/tree
@@ -17088,6 +17109,20 @@ export const api = {
      */
     getAllTree: () =>
       http.request<ResultListDomainParamTreeVO['data']>(`/api/main/domainParam/items/tree`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
+     * @name BusinessDomain
+     * @summary 业务领域
+     * @request GET:/domainParam/businessDomain
+     * @secure
+     */
+    businessDomain: () =>
+      http.request<ResultListDropdown['data']>(`/api/main/domainParam/businessDomain`, {
         method: 'GET',
       }),
   },
