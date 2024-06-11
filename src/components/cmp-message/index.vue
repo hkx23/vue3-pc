@@ -74,7 +74,7 @@ const props = defineProps<{
     time: string;
   }[];
   // 标题
-  title?: string;
+  title: String;
 }>();
 const showTitle = ref(props.title ?? '消息'); // 使用默认值
 const emit = defineEmits(['update:modelValue']);

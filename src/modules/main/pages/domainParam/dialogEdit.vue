@@ -10,10 +10,11 @@
         <div class="title-row">
           <div class="table-title">基础信息配置</div>
           <t-space>
-            <t-button :loading="loading" style="float: right" @click="save">{{
+            <!-- <t-button :loading="loading" style="float: right" @click="save">{{
               t('common.button.save')
-            }}</t-button></t-space
-          >
+            }}</t-button>
+             -->
+          </t-space>
         </div>
         <t-form
           ref="domainParamFromRef"
@@ -386,6 +387,9 @@ const changeTable = (value) => {
     canDelete: false,
     seq: seq++,
   }));
+  // const save = () => {
+  //   console.log('save');
+  // };
 
   // formData.importKeyCode = value;
   // tableDesc.value = context.option.name;
@@ -437,7 +441,7 @@ const changeTable = (value) => {
   // console.log(columnsData.value);
 };
 
-const loading = ref(false);
+// const loading = ref(false);
 
 const domainParamRules: FormRules<Data> = {
   domainParamCode: [{ required: true, message: t('common.validation.required'), type: 'error' }],
