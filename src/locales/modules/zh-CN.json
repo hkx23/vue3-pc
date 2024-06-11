@@ -33,7 +33,7 @@
       "more": "更多",
       "selectAll": "全选",
       "print": "打印",
-      "preView":"预览",
+      "preView": "预览",
       "cancellation": "作废"
     },
     "dialog": {
@@ -133,6 +133,7 @@
       "repairStatusName": "返修状态",
       "productCode": "产品编码",
       "productName": "产品名称",
+      "productDesc": "产品描述",
       "retentionTime": "滞留时间（分钟）",
       "defectName": "缺陷现象",
       "defectReason": "缺陷原因",
