@@ -127,6 +127,7 @@ const workstationChange = (val) => {
 const orgName = computed(() => {
   const { orgs } = userStore.userInfo;
   let name = userStore.userInfo.orgId;
+  if (!orgs) return name;
   for (const item of orgs) {
     if (item.id === name) {
       name = `${item.name}`;
