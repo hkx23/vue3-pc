@@ -1,5 +1,7 @@
 <template>
   <div id="pdfContainer" class="pdf-container">
+    <t-loading v-if="loading" class="center-loading" />
+
     <!--此处根据pdf的页数动态生成相应数量的canvas画布-->
     <!-- navigation
           :pagination="{ clickable: true }"
@@ -55,12 +57,17 @@ import * as pdfjsLib from 'pdfjs-dist';
 // import Swiper core and required modules
 import { A11y, Autoplay, Navigation, Pagination, Scrollbar, Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { nextTick, onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
+
+const props = defineProps<{
+  pdfUrl?: string;
+}>();
 
 const modules = [Navigation, Pagination, Scrollbar, A11y, Autoplay, Zoom];
 const onSwiper = (swiper) => {
   console.log(swiper);
 };
+const loading = ref(false);
 
 const delayOption = {
   delay: 10000,
@@ -82,48 +89,46 @@ const onSlideChange = () => {
 };
 let pdfDoc: any = ''; // 文档内容—必须使用非响应式存储
 const pdfPages = ref(0); // pdf文件的页数
-const pdfUrl = ref(''); // pdf文件的链接
+const pdfUrlValue = ref(''); // pdf文件的链接
 const pdfScale = ref(1.0); // 缩放比例
-// const currentFile = ref(null);
-// const scale = computed(() => `transform:scale(${pdfScale.value})`);
-
-// function pageZoomOut() {
-//   if (pdfScale.value < 2) {
-//     pdfScale.value += 0.1;
-//     nextTick(() => {
-//       renderPage(1);
-//     });
-//   }
-// }
-// function pageZoomIn() {
-//   if (pdfScale.value > 1) {
-//     pdfScale.value -= 0.1;
-//     nextTick(() => {
-//       renderPage(1);
-//     });
-//   }
-// }
-
 // 调用loadFile方法
 onMounted(() => {
-  pdfUrl.value =
-    'http://10.140.38.205:7001/scm/Common/%E5%B7%A5%E6%97%B6%E7%AE%A1%E7%90%86%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C_20240607140627.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20240607%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T060904Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=09b6d7f2a72d6b17ed7fb3deb74e807754028e004703986c8498e6ea2e1e9b06';
-  loadFile(pdfUrl.value);
+  pdfUrlValue.value = props.pdfUrl;
+  loadFile(pdfUrlValue.value);
 });
 // 获取pdf文档流与pdf文件的页数
 const loadFile = async (url) => {
+  loading.value = true;
   // 设置PDFJS使用worker
   pdfjsLib.GlobalWorkerOptions.workerSrc = '/libs/pdfjs/pdf.worker.min.js';
   const loadingTask = pdfjsLib.getDocument(url);
-  loadingTask.promise.then((pdf) => {
-    console.log(pdf);
-    pdfDoc = pdf;
-    pdfPages.value = pdf.numPages;
-    nextTick(() => {
-      renderPage(1);
+  loadingTask.promise
+    .then((pdf) => {
+      console.log(pdf);
+      pdfDoc = pdf;
+      pdfPages.value = pdf.numPages;
+      nextTick(() => {
+        renderPage(1);
+      });
+    })
+    .finally(() => {
+      loading.value = false;
     });
-  });
 };
+
+// 监控props.pdfUrl的变化,触发loadFile方法
+watch(
+  () => props.pdfUrl,
+  (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      pdfUrlValue.value = newValue;
+      loadFile(pdfUrlValue.value);
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 
 const viewParentRef = ref<HTMLElement>();
 // 渲染pdf文件
@@ -200,6 +205,8 @@ const renderPage = (numV: number) => {
     .file-info {
       flex: 1;
       display: flex;
+      text-align: center;
+      vertical-align: middle;
 
       .swiper-slide {
         padding: 36px;
@@ -259,5 +266,12 @@ const renderPage = (numV: number) => {
   stroke-dashoffset: calc(125.6px * (1 - var(--progress)));
   stroke-dasharray: 125.6;
   transform: rotate(-90deg);
+}
+
+.center-loading {
+  top: 50%;
+  left: 50%;
+  z-index: 999;
+  transform: translate(-50%, -50%);
 }
 </style>

@@ -21,23 +21,30 @@
           </t-descriptions>
         </cmp-card>
         <cmp-card ref="contentCard" :ghost="true" class="mo-file-area">
-          <cmp-pdf-preview :pdf-url="pdfURL" />
           <div class="float-menu-list">
-            <t-collapse :borderless="true">
-              <t-collapse-panel value="3" header="展开3个文件">
+            <t-collapse v-model="currentItem" :borderless="true">
+              <t-collapse-panel value="1" :header="expendHeader">
                 <t-list>
-                  <t-list-item>
-                    <t-link>链接1</t-link>
-                  </t-list-item>
-                  <t-list-item>
-                    <t-link class="select-file">链接2</t-link>
-                  </t-list-item>
-                  <t-list-item>
-                    <t-link>链接3</t-link>
+                  <t-list-item v-for="(item, index) in fileList" :key="index">
+                    <t-link
+                      :class="{ 'select-file': selectFileIndex == index }"
+                      @click="selectFileClickFn(item, index)"
+                      >{{ index + 1 + '.' + item.fileName }}</t-link
+                    >
                   </t-list-item>
                 </t-list>
               </t-collapse-panel>
             </t-collapse>
+          </div>
+          <!-- 显示PDF -->
+          <cmp-pdf-preview v-if="displayComponent === 'pdf'" :pdf-url="currentFileUrl" />
+          <!-- 显示视频 -->
+          <div v-if="displayComponent === 'video'" class="video-area">
+            <cmp-video autoplay :src="currentFileUrl" />
+          </div>
+          <!-- 显示图片 -->
+          <div v-if="displayComponent === 'image'" class="video-area">
+            <t-image :src="currentFileUrl" fit="contain" />
           </div>
         </cmp-card>
       </cmp-container>
@@ -54,19 +61,22 @@ export default {
 import { useFullscreen } from '@vueuse/core';
 import { FullscreenExitIcon, FullscreenIcon } from 'tdesign-icons-vue-next';
 import { NotifyPlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
+import { api } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 import CmpPdfPreview from '@/components/cmp-pdf-preview/index.vue';
+import CmpVideo from '@/components/cmp-video/index.vue';
 import { useUserStore } from '@/store';
 
 import { useLang } from './lang';
 
 const { t } = useLang();
 const userStore = useUserStore();
-const pdfURL =
-  'http://10.140.38.205:7001/scm/Common/%E5%B8%B8%E9%9D%92-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF_20240605.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20240606%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240606T073607Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6b3d4c9d52c1912d134dab1920ef867bccd72d81bc11f152c404ef39f62b8fa9';
+// const loading = ref(false);
 
+const currentItem = ref([]);
+const currentFileUrl = ref('');
 const mainform = ref({
   serialNumber: '', // 条码
   keypartCode: '', // 关键件
@@ -82,6 +92,13 @@ const mainform = ref({
   isCommit: false,
 });
 
+// expendHeader改成计算属性,如果为选择,则根据文件列表数量-显示文字为 展开X个文件
+const expendHeader = computed(() => {
+  if (currentItem.value.length === 0) {
+    return `展开${fileCount.value}个文件`;
+  }
+  return '收起';
+});
 // 切换工站
 const handleonChange = () => {
   Init();
@@ -112,6 +129,7 @@ const Init = async () => {
       closeBtn: true,
     });
   }
+  onGetFileList();
 };
 const refPreviewArea = ref<HTMLElement | null>(null);
 
@@ -123,6 +141,84 @@ function toggleFullScreen() {
     exit();
   }
 }
+const selectFileIndex = ref(0);
+const currentFileName = ref('');
+const selectFileClickFn = (item, index) => {
+  currentFileUrl.value = item.fileUrl;
+  currentFileName.value = item.fileName;
+  selectFileIndex.value = index;
+};
+
+const fileList = ref<any[]>([]);
+const fileCount = ref(0);
+// 获取作业指导书列表
+const onGetFileList = async () => {
+  const getFileCondition: any = {
+    pageNum: 1,
+    pageSize: 50,
+    filters: [
+      {
+        field: 'status',
+        operator: 'EQ',
+        value: 'EFFECTIVE',
+      },
+      {
+        field: 'sopCategory',
+        operator: 'EQ',
+        value: 'ZY',
+      },
+      {
+        field: 'mitemId',
+        operator: 'EQ',
+        value: '7',
+      },
+      {
+        field: 'processId',
+        operator: 'EQ',
+        value: '1738026010655346690',
+      },
+      {
+        field: 'workcenterId',
+        operator: 'EQ',
+        value: '1739886725355900930',
+      },
+    ],
+  };
+  const res = await api.sopFile.search(getFileCondition); // 获取第二节点的数据
+  fileList.value = res.list; // 表格数据赋值
+  fileCount.value = res.total;
+  if (fileList.value && fileList.value.length > 0) {
+    selectFileClickFn(fileList.value[0], 0);
+  }
+};
+
+onMounted(() => {
+  Init();
+});
+
+const getFileType = (url: string): string => {
+  const extension = url.split('.').pop()?.toLowerCase();
+  if (!extension) return '';
+  return ['pdf', 'mp4', 'jpg', 'jpeg', 'png', 'gif'].includes(extension) ? extension : 'unknown';
+};
+
+const displayComponent = computed(() => {
+  const fileType = getFileType(currentFileName.value);
+  switch (fileType) {
+    case 'pdf':
+      return 'pdf';
+    case 'mp4':
+      return 'video';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+      return 'image';
+    default:
+      // 处理未知类型的文件或提供一个默认组件
+      return 'unknown';
+  }
+});
 </script>
 
 <style lang="less" scoped>
@@ -207,5 +303,10 @@ function toggleFullScreen() {
       }
     }
   }
+}
+
+.video-area {
+  padding: 80px;
+  text-align: center;
 }
 </style>
