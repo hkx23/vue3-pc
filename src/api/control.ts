@@ -2932,11 +2932,10 @@ export interface ProductReworkVO {
   workshopName?: string;
   workshopCode?: string;
   workshopId?: string;
-  workshopCode?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3113,8 +3112,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3342,9 +3341,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3496,15 +3495,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  isState?: boolean;
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
   workshopCode?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  datetimeScheStr?: string;
   defectCodeStr?: string;
 }
 
@@ -5091,6 +5090,8 @@ export interface BarcodeWipCollectVO {
   /** 扫码类型(SCANTEXT,KEYPART) */
   uom?: string;
   uomName?: string;
+  barcodeUom?: string;
+  barcodeUomName?: string;
   scanType?: string;
   keypartCode?: string;
   /** 排产工单 */
@@ -5117,10 +5118,15 @@ export interface BarcodeWipCollectVO {
    */
   completedQty?: number;
   mitemId?: string;
-  /** 物料代码 */
+  /** 产品代码 */
   mitemCode?: string;
-  /** 物料名称 */
+  /** 产品名称 */
   mitemName?: string;
+  barcodeMitemId?: string;
+  /** 物料代码 */
+  barcodeMitemCode?: string;
+  /** 物料名称 */
+  barcodeMitemName?: string;
   /** 工序代码 */
   processCode?: string;
   /** 工序名称 */
@@ -5160,18 +5166,17 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
+  isState?: boolean;
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
   workshopCode?: string;
   workshopId?: string;
-  workshopCode?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 工序 */
@@ -5730,8 +5735,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8030,12 +8035,27 @@ export const api = {
      *
      * @tags 过站采集
      * @name ScanBarcodeWipCollect
-     * @summary 过站采集扫码
+     * @summary 过站采集条码扫码-pc端
      * @request POST:/barcodeWipCollect/scanBarcodeWipCollect
      * @secure
      */
     scanBarcodeWipCollect: (data: BarcodeWipCollectVO) =>
       http.request<ResultBarcodeWipCollectVO['data']>(`/api/control/barcodeWipCollect/scanBarcodeWipCollect`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 过站采集
+     * @name ScanBarcodeWipCollectM
+     * @summary 过站采集配送卡扫码--移动端
+     * @request POST:/barcodeWipCollect/scanBarcodeWipCollectM
+     * @secure
+     */
+    scanBarcodeWipCollectM: (data: BarcodeWipCollectVO) =>
+      http.request<ResultBarcodeWipCollectVO['data']>(`/api/control/barcodeWipCollect/scanBarcodeWipCollectM`, {
         method: 'POST',
         body: data as any,
       }),
