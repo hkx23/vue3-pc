@@ -6145,13 +6145,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s4?: string;
+  ii?: string;
+  s3?: string;
+  s1?: string;
   s2?: string;
   iii?: string;
-  s3?: string;
-  ii?: string;
-  s1?: string;
   i?: string;
-  s4?: string;
 } | null;
 
 /** 标签模板 */
@@ -6361,6 +6361,12 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  /** 是否为空 */
+  nullable?: string;
+  /** KEY */
+  columnKey?: string;
+  /** 默认值 */
+  columnDefault?: string;
   default?: boolean;
 }
 
@@ -8699,6 +8705,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/quality/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTables
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTables
+     * @secure
+     */
+    sqlTables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/quality/dynamicManage/sqlTables`, {
+        method: 'GET',
       }),
   },
   sampleCode: {

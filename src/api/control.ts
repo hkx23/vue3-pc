@@ -2927,12 +2927,12 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  workshopCode?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
 }
 
@@ -3339,9 +3339,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
+  defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3496,13 +3496,13 @@ export interface BarcodeWipVO {
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopCode?: string;
   defectCodeStr?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -5160,14 +5160,14 @@ export interface BarcodeWipCollectVO {
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  workshopCode?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
 }
 
 /** 工序 */
@@ -5938,6 +5938,12 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  /** 是否为空 */
+  nullable?: string;
+  /** KEY */
+  columnKey?: string;
+  /** 默认值 */
+  columnDefault?: string;
   default?: boolean;
 }
 
@@ -7983,6 +7989,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTables
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTables
+     * @secure
+     */
+    sqlTables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/control/dynamicManage/sqlTables`, {
+        method: 'GET',
       }),
   },
   barcodeWipCollect: {

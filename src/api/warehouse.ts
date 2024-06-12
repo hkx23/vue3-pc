@@ -2263,10 +2263,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -2791,10 +2791,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2965,10 +2965,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3612,10 +3612,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 /** 库存转移头表 */
@@ -3883,10 +3883,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4344,6 +4344,14 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  tlpickQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4354,16 +4362,8 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
-  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -5409,15 +5409,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量和待领用量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量和已领用量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量和待领用量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 export interface MaterialRequisitionVO {
@@ -5812,6 +5812,8 @@ export interface LocationInMitemVO {
   itemCode?: string;
   /** 物料分类名称 */
   itemName?: string;
+  /** 项目分类 */
+  itemTypeName?: string;
 }
 
 export interface LocationInMitemSearch {
@@ -6753,6 +6755,8 @@ export interface DistrictInMitemVO {
   itemCode?: string;
   /** 物料分类名称 */
   itemName?: string;
+  /** 项目分类 */
+  itemTypeName?: string;
 }
 
 export interface DistrictInMitemSearch {
@@ -7661,15 +7665,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 export interface GoodsSentOutVO {
@@ -8117,6 +8121,12 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  /** 是否为空 */
+  nullable?: string;
+  /** KEY */
+  columnKey?: string;
+  /** 默认值 */
+  columnDefault?: string;
   default?: boolean;
 }
 
@@ -11554,6 +11564,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTables
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTables
+     * @secure
+     */
+    sqlTables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/warehouse/dynamicManage/sqlTables`, {
+        method: 'GET',
       }),
   },
   districtInMitem: {

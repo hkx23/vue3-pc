@@ -1831,9 +1831,9 @@ export interface ConferenceOrgVO {
   typeName?: string;
   /** 类型 */
   type?: string;
+  convertOrgId?: string;
   /** 转换后的组织编码 */
   convertOrgCode?: string;
-  convertOrgId?: string;
   /** 转换后的组织编码 */
   convertOrgName?: string;
 }
@@ -3029,6 +3029,12 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  /** 是否为空 */
+  nullable?: string;
+  /** KEY */
+  columnKey?: string;
+  /** 默认值 */
+  columnDefault?: string;
   default?: boolean;
 }
 
@@ -3758,6 +3764,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/daily/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTables
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTables
+     * @secure
+     */
+    sqlTables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/daily/dynamicManage/sqlTables`, {
+        method: 'GET',
       }),
   },
   conferenceTemplate: {
