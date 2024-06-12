@@ -1,15 +1,13 @@
 <template>
-  <cmp-card :ghost="true">
-    <t-space :size="8">
-      <t-breadcrumb>
-        <t-breadcrumbItem>广州工厂</t-breadcrumbItem>
-        <t-breadcrumbItem>机加车间</t-breadcrumbItem>
-        <t-breadcrumbItem>机加一线</t-breadcrumbItem>
-        <t-breadcrumbItem>折弯机0001</t-breadcrumbItem>
-      </t-breadcrumb>
-      <t-link theme="primary" @click="formImportVisible = true">切换设备</t-link>
-    </t-space>
-  </cmp-card>
+  <t-space :size="8">
+    <t-breadcrumb>
+      <t-breadcrumbItem>广州工厂</t-breadcrumbItem>
+      <t-breadcrumbItem>机加车间</t-breadcrumbItem>
+      <t-breadcrumbItem>机加一线</t-breadcrumbItem>
+      <t-breadcrumbItem>折弯机0001</t-breadcrumbItem>
+    </t-breadcrumb>
+    <t-link theme="primary" @click="formImportVisible = true">切换设备</t-link>
+  </t-space>
 
   <t-dialog
     v-model:visible="formImportVisible"
