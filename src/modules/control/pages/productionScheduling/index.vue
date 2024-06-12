@@ -20,6 +20,7 @@
               </div>
             </div>
             <scheduling-gantt
+              v-show="showGantt"
               :tasks="tasks"
               :clear-all="clearAllTask"
               :start-date="(queryParams as any).datetimePlanStart"
@@ -276,6 +277,7 @@ const onInput = async (data) => {
   }
 };
 
+const showGantt = ref(false);
 const clearAllTask = ref(false);
 const onDragEnd = (task, parent) => {
   if (!parent) {
@@ -398,14 +400,18 @@ const formatGanttData = (data, watchId = '') => {
         }
       }
     }
-
-    nextTick(() => {
-      tasks.value.data = taskData;
-    });
   }
+
+  nextTick(() => {
+    tasks.value.data = taskData;
+  });
 };
 
 const fetchGanttData = async (params) => {
+  showGantt.value = false;
+  nextTick(() => {
+    showGantt.value = true;
+  });
   const data = await api.moSchedule.getMoScheduleGantt({
     ...params,
   });

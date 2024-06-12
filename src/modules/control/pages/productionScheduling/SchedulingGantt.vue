@@ -83,6 +83,9 @@ onMounted(() => {
       if (parent) emit('drag-end', task, parent);
     }),
     gantt.attachEvent('onBeforeTaskMove', (id, parent, _tindex) => {
+      const task = gantt.getTask(id);
+      const item = task.row as any;
+      if (item?.completedQty > 0 && item?.status === 'RUNNING') return false;
       return !!parent;
     }),
   );
