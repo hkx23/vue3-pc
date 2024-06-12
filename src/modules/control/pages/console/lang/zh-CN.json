@@ -8,6 +8,12 @@
     "uom": "单位",
     "setValue": "设定值",
     "maxValue": "最大值",
-    "minValue": "最小值"
+    "minValue": "最小值",
+    "moCode": "工单号",
+    "moScheNo": "排产单号",
+    "taskCount": "任务数量",
+    "complatedCountThisTime": "本次完工数量",
+    "ngCount": "不合格数量",
+    "complatedCount": "已完工数量"
   }
 }
