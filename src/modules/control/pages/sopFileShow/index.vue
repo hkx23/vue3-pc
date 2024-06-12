@@ -20,7 +20,26 @@
             <t-descriptions-item label="产品描述">M10单晶P型电池188 2mm*247MM</t-descriptions-item>
           </t-descriptions>
         </cmp-card>
-        <cmp-pdf-preview :pdf-url="pdfURL" />
+        <cmp-card ref="contentCard" :ghost="true" class="mo-file-area">
+          <cmp-pdf-preview :pdf-url="pdfURL" />
+          <div class="float-menu-list">
+            <t-collapse borderless="true">
+              <t-collapse-panel value="3" header="展开3个文件">
+                <t-list>
+                  <t-list-item>
+                    <t-link>链接1</t-link>
+                  </t-list-item>
+                  <t-list-item>
+                    <t-link class="select-file">链接2</t-link>
+                  </t-list-item>
+                  <t-list-item>
+                    <t-link>链接3</t-link>
+                  </t-list-item>
+                </t-list>
+              </t-collapse-panel>
+            </t-collapse>
+          </div>
+        </cmp-card>
       </cmp-container>
     </cmp-card>
   </cmp-container>
@@ -140,5 +159,53 @@ function toggleFullScreen() {
   display: block;
   z-index: 999;
   color: white;
+}
+
+.float-menu-list {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  padding: 0;
+  background: #3f5cedaa;
+  z-index: 999;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  color: white;
+
+  .t-collapse {
+    color: white;
+    border-bottom: 0;
+    background: transparent;
+
+    .t-collapse-panel__body {
+      /* background: var(--td-bg-color-container); */
+      background: transparent;
+    }
+  }
+
+  :deep(.t-collapse.t--border-less .t-collapse-panel__body) {
+    background: transparent;
+    border: none;
+
+    .t-collapse-panel__content {
+      padding: 4px 32px;
+
+      .t-list {
+        background: transparent;
+
+        .t-list-item {
+          padding: 4px;
+
+          .t-link--theme-default {
+            color: rgb(255 255 255 / 67.1%);
+          }
+
+          .select-file {
+            color: white;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

@@ -13,6 +13,11 @@
       <div class="file-info">
         <swiper
           :modules="modules"
+          :navigation="navigationEnable"
+          :pagination="paginationOption"
+          :centered-slides="true"
+          :zoom="zoomEnable"
+          :autoplay="delayOption"
           :slides-per-view="1"
           :space-between="50"
           @swiper="onSwiper"
@@ -50,12 +55,22 @@ import * as pdfjsLib from 'pdfjs-dist';
 // import Swiper core and required modules
 import { A11y, Autoplay, Navigation, Pagination, Scrollbar, Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 const modules = [Navigation, Pagination, Scrollbar, A11y, Autoplay, Zoom];
 const onSwiper = (swiper) => {
   console.log(swiper);
 };
+
+const delayOption = {
+  delay: 10000,
+  disableOnInteraction: false,
+} as any;
+const zoomEnable = true as any;
+const navigationEnable = true as any;
+const paginationOption = {
+  clickable: true,
+} as any;
 const progressCircle = ref(null);
 const progressContent = ref(null);
 const onAutoplayTimeLeft = (s, time, progress) => {
@@ -69,25 +84,25 @@ let pdfDoc: any = ''; // 文档内容—必须使用非响应式存储
 const pdfPages = ref(0); // pdf文件的页数
 const pdfUrl = ref(''); // pdf文件的链接
 const pdfScale = ref(1.0); // 缩放比例
-const currentFile = ref(null);
-const scale = computed(() => `transform:scale(${pdfScale.value})`);
+// const currentFile = ref(null);
+// const scale = computed(() => `transform:scale(${pdfScale.value})`);
 
-function pageZoomOut() {
-  if (pdfScale.value < 2) {
-    pdfScale.value += 0.1;
-    nextTick(() => {
-      renderPage(1);
-    });
-  }
-}
-function pageZoomIn() {
-  if (pdfScale.value > 1) {
-    pdfScale.value -= 0.1;
-    nextTick(() => {
-      renderPage(1);
-    });
-  }
-}
+// function pageZoomOut() {
+//   if (pdfScale.value < 2) {
+//     pdfScale.value += 0.1;
+//     nextTick(() => {
+//       renderPage(1);
+//     });
+//   }
+// }
+// function pageZoomIn() {
+//   if (pdfScale.value > 1) {
+//     pdfScale.value -= 0.1;
+//     nextTick(() => {
+//       renderPage(1);
+//     });
+//   }
+// }
 
 // 调用loadFile方法
 onMounted(() => {
