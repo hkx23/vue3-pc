@@ -1,0 +1,13 @@
+{
+  "console": {
+    "todayPlan": "当天计划",
+    "taskNumber": "任务号",
+    "planStartTime": "计划开始时间",
+    "productModel": "产品机型",
+    "progress": "进度",
+    "uom": "单位",
+    "setValue": "设定值",
+    "maxValue": "最大值",
+    "minValue": "最小值"
+  }
+}
