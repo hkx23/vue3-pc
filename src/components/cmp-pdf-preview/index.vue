@@ -50,7 +50,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 // import Swiper core and required modules
 import { A11y, Autoplay, Navigation, Pagination, Scrollbar, Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 const modules = [Navigation, Pagination, Scrollbar, A11y, Autoplay, Zoom];
 const onSwiper = (swiper) => {
@@ -69,25 +69,25 @@ let pdfDoc: any = ''; // 文档内容—必须使用非响应式存储
 const pdfPages = ref(0); // pdf文件的页数
 const pdfUrl = ref(''); // pdf文件的链接
 const pdfScale = ref(1.0); // 缩放比例
-const currentFile = ref(null);
-const scale = computed(() => `transform:scale(${pdfScale.value})`);
+// const currentFile = ref(null);
+// const scale = computed(() => `transform:scale(${pdfScale.value})`);
 
-function pageZoomOut() {
-  if (pdfScale.value < 2) {
-    pdfScale.value += 0.1;
-    nextTick(() => {
-      renderPage(1);
-    });
-  }
-}
-function pageZoomIn() {
-  if (pdfScale.value > 1) {
-    pdfScale.value -= 0.1;
-    nextTick(() => {
-      renderPage(1);
-    });
-  }
-}
+// function pageZoomOut() {
+//   if (pdfScale.value < 2) {
+//     pdfScale.value += 0.1;
+//     nextTick(() => {
+//       renderPage(1);
+//     });
+//   }
+// }
+// function pageZoomIn() {
+//   if (pdfScale.value > 1) {
+//     pdfScale.value -= 0.1;
+//     nextTick(() => {
+//       renderPage(1);
+//     });
+//   }
+// }
 
 // 调用loadFile方法
 onMounted(() => {
