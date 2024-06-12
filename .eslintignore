@@ -14,3 +14,4 @@ static/
 !.prettierrc.js
 web-core.js
 web-core.d.ts
+public/libs
