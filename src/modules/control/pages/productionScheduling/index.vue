@@ -15,7 +15,7 @@
               <div class="title">甘特图展示</div>
               <div class="btn-bar">
                 <t-button :disabled="!isUpdatedGanttData" @click="onRefresh">排产刷新</t-button>
-                <t-button :disabled="isUpdatedGanttData" theme="default" @click="onRefresh">确认下发</t-button>
+                <t-button :disabled="isUpdatedGanttData" theme="default" @click="onRelease">确认下发</t-button>
                 <t-button theme="default">下发历史</t-button>
               </div>
             </div>
@@ -314,6 +314,16 @@ const onRefresh = async () => {
     ...queryParams.value,
   });
   await fetchGanttData(queryParams.value);
+  loading.value = false;
+};
+
+const onRelease = async () => {
+  loading.value = true;
+  await api.moSchedule.confirmSend({
+    moList: Array.from(updateListMap.values()),
+    ...queryParams.value,
+  });
+  MessagePlugin.success('排产下发成功');
   loading.value = false;
 };
 

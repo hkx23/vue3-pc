@@ -1884,8 +1884,6 @@ export interface SopFileVO {
   sopProductId?: string;
   processId?: string;
   workcenterId?: string;
-  /** 文件全路径 */
-  fileUrl?: string;
 }
 
 /** 关键物料追溯（反向）-查询 */
@@ -2929,13 +2927,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3112,8 +3110,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3341,8 +3339,8 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3495,15 +3493,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
-  scanDatetimeStr?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -5166,17 +5164,17 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
-  isState?: boolean;
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 工序 */
@@ -5735,8 +5733,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6912,21 +6910,6 @@ export const api = {
      * No description
      *
      * @tags 工艺文件表
-     * @name Search
-     * @summary 获取作业指导书文件列表（筛选用）
-     * @request POST:/sopFile/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataSopFileVO['data']>(`/api/control/sopFile/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺文件表
      * @name GetList
      * @request POST:/sopFile/getList
      * @secure
@@ -7701,6 +7684,21 @@ export const api = {
      */
     getMoScheduleGantt: (data: MoScheduleDTO) =>
       http.request<ResultListMoVO['data']>(`/api/control/moSchedule/getMoScheduleGantt`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name ConfirmSend
+     * @summary 确认下发
+     * @request POST:/moSchedule/confirmSend
+     * @secure
+     */
+    confirmSend: (data: MoScheduleDTO) =>
+      http.request<ResultObject['data']>(`/api/control/moSchedule/confirmSend`, {
         method: 'POST',
         body: data as any,
       }),
