@@ -23,7 +23,7 @@
         <cmp-card ref="contentCard" :ghost="true" class="mo-file-area">
           <cmp-pdf-preview :pdf-url="pdfURL" />
           <div class="float-menu-list">
-            <t-collapse borderless="true">
+            <t-collapse :borderless="true">
               <t-collapse-panel value="3" header="展开3个文件">
                 <t-list>
                   <t-list-item>
