@@ -85,15 +85,15 @@
                 <cart-icon />
                 <div class="title">投料/退料</div>
               </div> -->
-              <div v-if="isStart" class="btn blue" @click="stop">
+              <div v-if="isStart" class="btn green" @click="stop">
                 <stop-circle-icon />
                 <div class="title">结束</div>
               </div>
-              <div v-else class="btn blue" @click="start">
+              <div v-else class="btn green" @click="start">
                 <play-circle-icon />
                 <div class="title">开始</div>
               </div>
-              <div class="btn green" @click="moSwitchVisible = true">
+              <div class="btn blue" @click="moSwitchVisible = true">
                 <task-icon />
                 <div class="title">切换任务</div>
               </div>
@@ -131,11 +131,9 @@
 <script setup lang="ts">
 import {
   AdjustmentIcon,
-  CartIcon,
   DeleteIcon,
   ErrorTriangleIcon,
   FilePdfIcon,
-  NotificationIcon,
   PlayCircleIcon,
   StopCircleIcon,
   SystemCodeIcon,
