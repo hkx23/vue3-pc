@@ -925,8 +925,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1884,6 +1884,8 @@ export interface SopFileVO {
   sopProductId?: string;
   processId?: string;
   workcenterId?: string;
+  /** 文件全路径 */
+  fileUrl?: string;
 }
 
 /** 关键物料追溯（反向）-查询 */
@@ -2021,8 +2023,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2925,15 +2927,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2976,10 +2978,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
-  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3339,8 +3341,8 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3493,16 +3495,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   defectCodeStr?: string;
+  isState?: boolean;
 }
 
 /** 缺陷代码 */
@@ -5164,17 +5166,17 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   stateName?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
   isState?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
 }
 
 /** 工序 */
@@ -6910,6 +6912,21 @@ export const api = {
      * No description
      *
      * @tags 工艺文件表
+     * @name Search
+     * @summary 获取作业指导书文件列表（筛选用）
+     * @request POST:/sopFile/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataSopFileVO['data']>(`/api/control/sopFile/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺文件表
      * @name GetList
      * @request POST:/sopFile/getList
      * @secure
@@ -7684,21 +7701,6 @@ export const api = {
      */
     getMoScheduleGantt: (data: MoScheduleDTO) =>
       http.request<ResultListMoVO['data']>(`/api/control/moSchedule/getMoScheduleGantt`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单排产表
-     * @name ConfirmSend
-     * @summary 确认下发
-     * @request POST:/moSchedule/confirmSend
-     * @secure
-     */
-    confirmSend: (data: MoScheduleDTO) =>
-      http.request<ResultObject['data']>(`/api/control/moSchedule/confirmSend`, {
         method: 'POST',
         body: data as any,
       }),
