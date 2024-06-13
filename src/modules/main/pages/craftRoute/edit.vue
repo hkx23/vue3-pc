@@ -480,7 +480,6 @@ onMounted(() => {
     edgeText.value = data.text.value;
     edgeVisible.value = true;
   });
-  lf.render();
 });
 const toolAction = (type: string) => {
   if (type === 'zoomIn') {
