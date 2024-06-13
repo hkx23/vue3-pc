@@ -36,7 +36,6 @@
                     "
                     v-model="state.form[opt.dataIndex]"
                     :size="size"
-                    :label="opt.label"
                     :placeholder="opt.placeholder || getPlaceholder(opt)"
                     @change="handleEvent(opt.event, state.form[opt.dataIndex])"
                     v-on="cEvent(opt)"

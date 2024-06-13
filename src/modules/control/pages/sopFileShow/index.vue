@@ -1,6 +1,5 @@
 <template>
   <cmp-container :full="true">
-    <!-- 扫描区 -->
     <cmp-card>
       <bcmp-workstation-info @change="handleonChange" />
     </cmp-card>
@@ -129,6 +128,12 @@ const Init = async () => {
       closeBtn: true,
     });
   }
+
+  // 根据工站查询当前工站工单列表
+
+  // 获取当前生产工单
+
+  // 获取当前生产工单对应的作业指导书列表
   onGetFileList();
 };
 const refPreviewArea = ref<HTMLElement | null>(null);
