@@ -2927,15 +2927,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopCode?: string;
-  workshopName?: string;
-  workshopId?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2978,10 +2978,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3495,16 +3495,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   stateName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
-  defectCodeStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -5166,17 +5166,17 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 工序 */
@@ -7701,6 +7701,21 @@ export const api = {
      */
     getMoScheduleGantt: (data: MoScheduleDTO) =>
       http.request<ResultListMoVO['data']>(`/api/control/moSchedule/getMoScheduleGantt`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name ConfirmSend
+     * @summary 确认下发
+     * @request POST:/moSchedule/confirmSend
+     * @secure
+     */
+    confirmSend: (data: MoScheduleDTO) =>
+      http.request<ResultObject['data']>(`/api/control/moSchedule/confirmSend`, {
         method: 'POST',
         body: data as any,
       }),
