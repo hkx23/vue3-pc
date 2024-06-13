@@ -181,7 +181,7 @@ const initFormSetting = async () => {
       objectId: props.objectId,
     })) as any;
     // 根据属性分类分组
-    itemGroupList.value = _.groupBy(res, 'categoryCode');
+    itemGroupList.value = _.groupBy(res, 'categoryName');
     // 获取分类列表并设置第一项为选中tab
     categoryList.value = Object.keys(itemGroupList.value);
     if (categoryList.value.length > 0) {

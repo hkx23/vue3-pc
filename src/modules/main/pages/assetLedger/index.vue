@@ -320,7 +320,7 @@
         </t-tab-panel>
         <t-tab-panel label="拓展属性" value="3" :destroy-on-hide="true">
           <cmp-card :span="12">
-            <t-button @click="getExtend"> 校验与获取数据 </t-button>
+            <!-- <t-button @click="getExtend"> 校验与获取数据 </t-button> -->
             <bcmp-extend ref="demoExtend" :object-id="objectId" object-code="equipment"></bcmp-extend>
           </cmp-card>
         </t-tab-panel>
@@ -360,19 +360,13 @@ const demoExtend = ref<any>(); // 扩展属性组件引用传递
 const objectId = ref(); // 扩展属性组件参数动态变量
 const propertyDataList = ref([]); // 扩展属性表单参数
 
-const getExtend = () => {
-  demoExtend.value.getComponentData().then((data) => {
-    MessagePlugin.info(
-      `校验结果:${data.success}   扩展属性类别code:${data.objectCategorycode}---   值变化:${JSON.stringify(data.data)}`,
-    );
-  });
-  // debugger;
-  // const extensionResult = demoExtend.value.getComponentData();
-  // if (extensionResult.success) {
-  //   debugger;
-  //   MessagePlugin.info(`值变化:${extensionResult.data}`);
-  // }
-};
+// const getExtend = () => {
+//   demoExtend.value.getComponentData().then((data) => {
+//     MessagePlugin.info(
+//       `校验结果:${data.success}   扩展属性类别code:${data.objectCategorycode}---   值变化:${JSON.stringify(data.data)}`,
+//     );
+//   });
+// };
 
 // 表格数据总条数
 const anomalyTotal = ref(0);
