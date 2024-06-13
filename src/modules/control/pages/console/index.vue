@@ -6,10 +6,10 @@
         <t-space>
           <t-tag theme="primary" size="large">当班产量:180</t-tag>
           <t-tag theme="primary" size="large">
-            <span style="padding-right: var(--td-comp-paddingLR-m)">未匹配产量:144</span>
+            <span style="padding-right: var(--td-comp-paddingLR-m)">未匹配产量:{{ matchNumber }}</span>
             <t-button variant="outline" theme="primary" size="small">匹配</t-button>
           </t-tag>
-          <t-button variant="outline" theme="primary">清除匹配数</t-button>
+          <t-button variant="outline" theme="primary" :disabled="isStart" @click="clearMatch">清除匹配数</t-button>
         </t-space>
         <t-space>
           <t-button variant="outline" theme="primary">成品下线</t-button>
@@ -81,27 +81,31 @@
                 <error-triangle-icon />
                 <div class="title">不良品采集</div>
               </div>
-              <div class="btn green">
+              <!-- <div class="btn green">
                 <cart-icon />
                 <div class="title">投料/退料</div>
+              </div> -->
+              <div v-if="isStart" class="btn blue" @click="stop">
+                <stop-circle-icon />
+                <div class="title">结束</div>
               </div>
-              <div class="btn blue">
-                <play-circle-stroke-icon />
+              <div v-else class="btn blue" @click="start">
+                <play-circle-icon />
                 <div class="title">开始</div>
               </div>
-              <div class="btn green">
+              <div class="btn green" @click="moSwitchVisible = true">
                 <task-icon />
                 <div class="title">切换任务</div>
               </div>
-              <div class="btn blue">
+              <!-- <div class="btn blue">
                 <notification-icon />
                 <div class="title">Andon</div>
-              </div>
-              <div class="btn green">
+              </div> -->
+              <div class="btn green" @click="mouldVisible = true">
                 <system-code-icon />
                 <div class="title">模具上下机</div>
               </div>
-              <div class="btn deep_blue">
+              <div class="btn deep_blue" @click="equipStatusVisible = true">
                 <system-setting-icon />
                 <div class="title">设备状态</div>
               </div>
@@ -117,75 +121,10 @@
         </cmp-container>
       </cmp-card>
     </cmp-row>
-    <t-dialog v-model:visible="reportVisible" header="报工&调整" width="80%" :footer="false" prevent-scroll-through>
-      <cmp-table
-        row-key="index"
-        size="small"
-        :table-column="reportColumn"
-        :table-data="reportList"
-        :loading="reportLoading"
-        :show-pagination="false"
-      >
-        <template #complatedCountThisTime="{ row }">
-          <t-input-number v-model="row.complatedCountThisTime" size="small" />
-        </template>
-      </cmp-table>
-      <div class="report-footer">
-        <t-button theme="default" @click="reportVisible = false">取消</t-button>
-        <t-button theme="primary">确认</t-button>
-      </div>
-      <t-tabs v-model="reportSelected">
-        <t-tab-panel :value="1" label="配送卡打印">
-          <t-descriptions :column="3" colon>
-            <t-descriptions-item label="排产单号">M0001</t-descriptions-item>
-            <t-descriptions-item label="排产数量">3000</t-descriptions-item>
-            <t-descriptions-item label="完工数量">1000</t-descriptions-item>
-            <t-descriptions-item label="已生成数量">800</t-descriptions-item>
-            <t-descriptions-item label="本次打印数量">
-              <t-input type="number" />
-            </t-descriptions-item>
-            <t-descriptions-item label="最小包装规格">
-              <t-input type="number" />
-            </t-descriptions-item>
-            <t-descriptions-item label="打印模板">
-              <t-select>
-                <t-option label="配送卡打印模板" value="1" />
-              </t-select>
-            </t-descriptions-item>
-            <t-descriptions-item :span="2">
-              <div style="text-align: right">
-                <t-button>打印</t-button>
-              </div>
-            </t-descriptions-item>
-          </t-descriptions>
-        </t-tab-panel>
-        <t-tab-panel :value="2" label="周转容器綁定">
-          <t-descriptions :column="3" colon>
-            <t-descriptions-item label="排产单号">M0001</t-descriptions-item>
-            <t-descriptions-item label="排产数量">3000</t-descriptions-item>
-            <t-descriptions-item label="完工数量">1000</t-descriptions-item>
-            <t-descriptions-item label="已生成数量">800</t-descriptions-item>
-            <t-descriptions-item label="本次打印数量">
-              <t-input type="number" />
-            </t-descriptions-item>
-            <t-descriptions-item label="容器规格">
-              <t-input type="number" />
-            </t-descriptions-item>
-            <t-descriptions-item label="容器编码" :span="2">
-              <t-input />
-            </t-descriptions-item>
-            <t-descriptions-item label="容器数量">
-              <t-input type="number" />
-            </t-descriptions-item>
-            <t-descriptions-item>
-              <div style="text-align: right">
-                <t-button>绑定</t-button>
-              </div>
-            </t-descriptions-item>
-          </t-descriptions>
-        </t-tab-panel>
-      </t-tabs>
-    </t-dialog>
+    <report-dialog v-model="reportVisible"></report-dialog>
+    <mo-switch-dialog v-model="moSwitchVisible"></mo-switch-dialog>
+    <mould-dialog v-model="mouldVisible"></mould-dialog>
+    <equip-status-dialog v-model="equipStatusVisible"></equip-status-dialog>
   </cmp-container>
 </template>
 
@@ -197,7 +136,8 @@ import {
   ErrorTriangleIcon,
   FilePdfIcon,
   NotificationIcon,
-  PlayCircleStrokeIcon,
+  PlayCircleIcon,
+  StopCircleIcon,
   SystemCodeIcon,
   SystemSettingIcon,
   TaskIcon,
@@ -206,12 +146,20 @@ import { onMounted, ref } from 'vue';
 
 import BcmpEquipmentInfo from '@/components/bcmp-equipment-info/index.vue';
 
+import equipStatusDialog from './equipStatusDialog.vue';
 import { useLang } from './lang';
+import moSwitchDialog from './moSwitchDialog.vue';
+import mouldDialog from './mouldDialog.vue';
 import ProcessCard from './processCard.vue';
+import ReportDialog from './reportDialog.vue';
 
 // 使用多语言
 const { t } = useLang();
 
+const matchNumber = ref(144);
+const clearMatch = () => {
+  matchNumber.value = 0;
+};
 const planLoading = ref(false);
 const planColumn = [
   { colKey: 'serial-number', title: t('business.main.serialNumber'), width: 60, align: 'center' },
@@ -315,48 +263,24 @@ const msgList = ref<
 
 // 报工&调整
 const reportVisible = ref(false);
-const reportSelected = ref(1);
-const reportLoading = ref(false);
-const reportColumn = [
-  { colKey: 'serial-number', title: t('business.main.serialNumber'), width: 60, align: 'center' },
-  { colKey: 'moCode', title: t('console.moCode'), width: 100, align: 'center' },
-  { colKey: 'moScheNo', title: t('console.moScheNo'), width: 100, align: 'center' },
-  { colKey: 'mitemCode', title: t('business.main.mitemCode'), width: 100, align: 'center' },
-  { colKey: 'mitemName', title: t('business.main.mitemName'), width: 100, align: 'center' },
-  { colKey: 'taskCount', title: t('console.taskCount'), width: 100, align: 'center' },
-  { colKey: 'complatedCountThisTime', title: t('console.complatedCountThisTime'), width: 120, align: 'center' },
-  { colKey: 'ngCount', title: t('console.ngCount'), width: 100, align: 'center' },
-  { colKey: 'complatedCount', title: t('console.complatedCount'), width: 100, align: 'center' },
-];
-const reportList = ref([]);
-const getReportList = () => {
-  // 获取当天计划，静态数据
-  reportList.value.push({
-    moCode: 'BCPJJ-001',
-    moScheNo: 'BCPJJ-001-01',
-    mitemCode: '5B2CHSR_AP31.11011.3',
-    mitemName: '半成品检具',
-    taskCount: 3000,
-    complatedCountThisTime: 500,
-    ngCount: 0,
-    complatedCount: 200,
-  });
-  reportList.value.push({
-    moCode: 'BCPJJ-002',
-    moScheNo: 'BCPJJ-002-01',
-    mitemCode: '5B2CHQR_F011104111',
-    mitemName: '半成品检具',
-    taskCount: 0,
-    complatedCountThisTime: 0,
-    ngCount: 0,
-    complatedCount: 200,
-  });
+// 开始/结束
+const isStart = ref(false);
+const start = () => {
+  isStart.value = true;
 };
+const stop = () => {
+  isStart.value = false;
+};
+// 工单切换
+const moSwitchVisible = ref(false);
+// 模具上下机
+const mouldVisible = ref(false);
+// 设备状态
+const equipStatusVisible = ref(false);
 
 onMounted(() => {
   getTodayPlan();
   getProcessCardGroup();
-  getReportList();
 });
 </script>
 
@@ -402,11 +326,5 @@ onMounted(() => {
       background-color: #4dba85;
     }
   }
-}
-
-.report-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px;
 }
 </style>
