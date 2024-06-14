@@ -180,6 +180,8 @@ export interface IncidentTypeVO {
   children?: IncidentTypeVO[];
   /** 前端按钮样式 */
   themeButton?: string;
+  /** 异常模块短名称 */
+  incidentModuleShortName?: string;
 }
 
 /** 响应数据 */
@@ -1313,10 +1315,10 @@ export interface ConferenceTemplateVO {
   conferenceCode?: string;
   /** 会议名称 */
   conferenceName?: string;
-  /** 模板维度转换 */
-  templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
+  /** 模板维度转换 */
+  templateDimensionList?: string[];
   /** 模板维度名称转换 */
   templateDimensionNames?: string;
 }
@@ -1626,10 +1628,10 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 维度转换 */
-  templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
+  /** 维度转换 */
+  templateDimensionList?: string[];
   /** 维度名称转换 */
   templateDimensionNames?: string;
 }
