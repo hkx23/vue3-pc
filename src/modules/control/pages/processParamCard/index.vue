@@ -14,7 +14,7 @@
           @row-click="selectParam"
         >
           <template #title>
-            <div>工艺参数列表</div>
+            <div>工艺卡列表</div>
           </template>
           <template #button>
             <t-button @click="addParam">{{ t('common.button.add') }}</t-button>
@@ -24,18 +24,6 @@
               <t-switch :custom-value="[1, 0]" :value="row.state" />
             </t-popconfirm>
             <t-switch v-else :custom-value="[1, 0]" :value="row.state" @change="statusChange($event, row)" />
-          </template>
-          <template #isParamAndon="{ row }">
-            <t-popconfirm v-if="row.isParamAndon === 1" content="请确认是否更新工艺预警" @confirm="disable(row.id)">
-              <t-switch :custom-value="[1, 0]" :value="row.isParamAndon" />
-            </t-popconfirm>
-            <t-switch v-else :custom-value="[1, 0]" :value="row.isParamAndon" @change="statusChange($event, row)" />
-          </template>
-          <template #isEquipmentParam="{ row }">
-            <t-popconfirm v-if="row.isEquipmentParam === 1" content="请确认是否更新机器参数" @confirm="disable(row.id)">
-              <t-switch :custom-value="[1, 0]" :value="row.isEquipmentParam" />
-            </t-popconfirm>
-            <t-switch v-else :custom-value="[1, 0]" :value="row.isEquipmentParam" @change="statusChange($event, row)" />
           </template>
           <template #op="{ row }">
             <t-space size="small">
@@ -47,6 +35,7 @@
               }}</t-link>
               <t-link theme="primary" size="small" @click="editParam(row.id)">{{ t('common.button.edit') }}</t-link>
               <t-link theme="primary" size="small" @click="deleteParam(row.id)">删除</t-link>
+              <t-link theme="primary" size="small">复制</t-link>
             </t-space>
           </template>
         </cmp-table>
@@ -141,15 +130,9 @@ const { loading, setLoading } = useLoading();
 const opts = computed(() => {
   return {
     paramCode: {
-      label: '工艺卡编码/名称',
+      label: '工艺卡名称',
       comp: 't-input',
       event: 'paramCode',
-      defaultVal: '',
-    },
-    paramType: {
-      label: '参数类型',
-      comp: 't-input',
-      event: 'paramType',
       defaultVal: '',
     },
     equipmentCode: {
@@ -158,10 +141,18 @@ const opts = computed(() => {
       event: 'equipmentCode',
       defaultVal: '',
     },
+
     equipmentType: {
       label: '设备类型编码/名称',
       comp: 't-input',
       event: 'equipmentCode',
+      defaultVal: '',
+    },
+
+    userCraete: {
+      label: '创建人',
+      comp: 't-input',
+      event: 'userCraete',
       defaultVal: '',
     },
     state: {
@@ -196,19 +187,19 @@ const isCopy = ref(false);
 const paramColumn = [
   {
     colKey: 'paramName',
-    title: '工艺参数名称',
+    title: '工艺卡名称',
     width: 120,
     align: 'center',
   },
   {
     colKey: 'paramCode',
-    title: '工艺参数编码',
+    title: '工艺卡编码',
     width: 120,
     align: 'center',
   },
   {
     colKey: 'paramDesc',
-    title: '工艺参数描述',
+    title: '工艺卡描述',
     width: 120,
     align: 'center',
   },
@@ -218,27 +209,10 @@ const paramColumn = [
     width: 120,
     align: 'center',
   },
-  {
-    colKey: 'isLink',
-    title: '是否联机',
-    width: 120,
-    align: 'center',
-  },
+
   {
     colKey: 'state',
     title: '状态',
-    width: 120,
-    align: 'center',
-  },
-  {
-    colKey: 'isEquipmentParam',
-    title: '机器参数',
-    width: 120,
-    align: 'center',
-  },
-  {
-    colKey: 'isParamAndon',
-    title: '工艺预警',
     width: 120,
     align: 'center',
   },
@@ -281,33 +255,85 @@ const paramData = reactive({
   list: [],
 });
 // 模拟数据
-const mainTableData = Array.from({ length: 10 }, (_, index) => ({
-  id: index + 1,
-  paramName: `参数名称${index + 1}`,
-  paramCode: `PCODE${index + 1}`,
-  paramDesc: `这是参数${index + 1}的描述`,
-  paramType: `类型${Math.floor(Math.random() * 3) + 1}`,
-  isLink: [1, 0][Math.floor(Math.random() * 2)], // 随机选择状态
-  state: [1, 0][Math.floor(Math.random() * 2)], // 随机选择状态
-  isEquipmentParam: [1, 0][Math.floor(Math.random() * 2)], // 随机选择状态
-  isParamAndon: [1, 0][Math.floor(Math.random() * 2)], // 随机选择状态
-  userCreate: `创建者${Math.floor(Math.random() * 5) + 1}`,
-  datetimeCreate: new Date().toLocaleDateString(),
-  userModified: `修改者${Math.floor(Math.random() * 5) + 1}`,
-  datetimeModified: new Date().toLocaleDateString(),
-}));
-const detailTableData = Array.from({ length: 50 }, (_, index) => ({
-  id: index + 1,
-  paramName: `工艺卡参数名称${index + 1}`,
-  paramCode: mainTableData[Math.floor(Math.random() * mainTableData.length)].paramCode,
-  paramDesc: `这是工艺卡参数${index + 1}的描述`,
-  equipmentName: `设备${Math.floor(Math.random() * 10) + 1}`,
-  equipmentCode: `EQUIPMENT${Math.floor(Math.random() * 10) + 1}`,
-  equipmentTypeCode: `ETYPE${Math.floor(Math.random() * 5) + 1}`,
-  equipmentTypeName: `设备类型${Math.floor(Math.random() * 5) + 1}`,
-  userCreate: `创建人${Math.floor(Math.random() * 5) + 1}`,
-  timeCreate: new Date().toLocaleDateString(),
-}));
+const mainTableData = [
+  {
+    id: 1,
+    paramName: '折弯机ST',
+    paramCode: 'ZHEWAN011',
+    paramDesc: '折弯机ST',
+    paramType: '工艺卡',
+    state: 1,
+    userCreate: `张三`,
+    datetimeCreate: '2024-01-07',
+    userModified: `张三`,
+    datetimeModified: '2024-01-08',
+  },
+  {
+    id: 2,
+    paramName: '冲压机ST',
+    paramCode: 'CHONGYA001',
+    paramDesc: '冲压机ST',
+    paramType: '属性页',
+    state: 1,
+    userCreate: `李四`,
+    datetimeCreate: '2024-01-07',
+    userModified: `李四`,
+    datetimeModified: '2024-01-08',
+  },
+  {
+    id: 3,
+    paramName: '焊接机',
+    paramCode: 'HANJIE001',
+    paramDesc: '焊接机',
+    paramType: '参数',
+    state: 1,
+    userCreate: `王五`,
+    datetimeCreate: '2024-01-07',
+    userModified: `王五`,
+    datetimeModified: '2024-01-08',
+  },
+];
+// const mainTableData = Array.from({ length: 10 }, (_, index) => ({
+//   id: index + 1,
+//   paramName: `参数名称${index + 1}`,
+//   paramCode: `PCODE${index + 1}`,
+//   paramDesc: `这是参数${index + 1}的描述`,
+//   paramType: `类型${Math.floor(Math.random() * 3) + 1}`,
+//   isLink: [1, 0][Math.floor(Math.random() * 2)], // 随机选择状态
+//   state: [1, 0][Math.floor(Math.random() * 2)], // 随机选择状态
+//   isEquipmentParam: [1, 0][Math.floor(Math.random() * 2)], // 随机选择状态
+//   isParamAndon: [1, 0][Math.floor(Math.random() * 2)], // 随机选择状态
+//   userCreate: `创建者${Math.floor(Math.random() * 5) + 1}`,
+//   datetimeCreate: new Date().toLocaleDateString(),
+//   userModified: `修改者${Math.floor(Math.random() * 5) + 1}`,
+//   datetimeModified: new Date().toLocaleDateString(),
+// }));
+const detailTableData = [
+  {
+    id: 1,
+    paramName: '焊接机',
+    paramCode: 'HANJIE001',
+    paramDesc: '焊接机',
+    equipmentName: `焊接机`,
+    equipmentCode: 'HANJIE001',
+    equipmentTypeCode: 'CONTROL',
+    equipmentTypeName: `生产设备`,
+    userCreate: `张三`,
+    timeCreate: '2024-01-08',
+  },
+];
+// const detailTableData = Array.from({ length: 10 }, (_, index) => ({
+//   id: index + 1,
+//   paramName: ['温度', '湿度','速率'][Math.floor(Math.random() * 3)],
+//   paramCode: mainTableData[Math.floor(Math.random() * mainTableData.length)].paramCode,
+//   paramDesc: `这是工艺卡参数${index + 1}的描述`,
+//   equipmentName: `设备${Math.floor(Math.random() * 10) + 1}`,
+//   equipmentCode: `EQUIPMENT${Math.floor(Math.random() * 10) + 1}`,
+//   equipmentTypeCode: `ETYPE${Math.floor(Math.random() * 5) + 1}`,
+//   equipmentTypeName: `设备类型${Math.floor(Math.random() * 5) + 1}`,
+//   userCreate: `创建人${Math.floor(Math.random() * 5) + 1}`,
+//   timeCreate: new Date().toLocaleDateString(),
+// }));
 
 const getParamData = () => {
   setLoading(true);
