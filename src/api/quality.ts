@@ -164,8 +164,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface SamplingStdDtlDTO {
@@ -6145,13 +6145,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  ii?: string;
-  s3?: string;
   s1?: string;
-  s2?: string;
+  ii?: string;
+  s4?: string;
   iii?: string;
+  s3?: string;
   i?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */

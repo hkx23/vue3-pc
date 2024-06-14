@@ -65,7 +65,7 @@
           </cmp-card>
           <cmp-card :full="false" style="min-height: auto">
             <t-space class="footer">
-              <div class="btn deep_blue">
+              <div class="btn deep_blue" @click="openEsop">
                 <file-pdf-icon />
                 <div class="title">ESOP</div>
               </div>
@@ -73,11 +73,11 @@
                 <adjustment-icon />
                 <div class="title">报工调整</div>
               </div>
-              <div class="btn green">
+              <div class="btn green" @click="openMoScrap">
                 <delete-icon />
                 <div class="title">工单报废</div>
               </div>
-              <div class="btn blue">
+              <div class="btn blue" @click="openNg">
                 <error-triangle-icon />
                 <div class="title">不良品采集</div>
               </div>
@@ -143,6 +143,7 @@ import {
 import { onMounted, ref } from 'vue';
 
 import BcmpEquipmentInfo from '@/components/bcmp-equipment-info/index.vue';
+import { openPage } from '@/router';
 
 import equipStatusDialog from './equipStatusDialog.vue';
 import { useLang } from './lang';
@@ -259,8 +260,23 @@ const msgList = ref<
   }[]
 >([]);
 
+// ESOP
+const openEsop = () => {
+  openPage('/control#/sopFileShow', {
+    modId: null,
+    stationId: null,
+  });
+};
 // 报工&调整
 const reportVisible = ref(false);
+// 工单报废
+const openMoScrap = () => {
+  openPage('/control#/moScrap');
+};
+// 不良品采集
+const openNg = () => {
+  openPage('/control#/processInspectionByMo');
+};
 // 开始/结束
 const isStart = ref(false);
 const start = () => {

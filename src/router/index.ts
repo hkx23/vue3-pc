@@ -87,13 +87,19 @@ const router = createRouter({
 });
 
 let isLoadDynamicRoutes = false;
-export const openPage = (modulePath: string) => {
+export const openPage = (modulePath: string, query?: any) => {
   const routers = router.getRoutes();
   const route = routers.find((t) => t.meta.sourcePath === modulePath || t.meta.id === modulePath);
   if (route) {
-    router.push(route.path);
+    router.push({
+      path: route.path,
+      query,
+    });
   } else if (isLoadDynamicRoutes) {
-    router.push(`/dynamic${modulePath}`);
+    router.push({
+      path: `/dynamic${modulePath}`,
+      query,
+    });
   } else {
     dynamicParamRoutes.then((dynamicRoutes) => {
       const dynamicRoute = router.options.routes.find((route) => route.name === 'dynamic');
@@ -102,7 +108,10 @@ export const openPage = (modulePath: string) => {
         router.addRoute(dynamicRoute);
         isLoadDynamicRoutes = true;
       }
-      router.push(`/dynamic${modulePath}`);
+      router.push({
+        path: `/dynamic${modulePath}`,
+        query,
+      });
     });
   }
 };
