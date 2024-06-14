@@ -614,10 +614,10 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
     });
   }
   if (queryComponent.value) {
-    state.headQueryData = queryComponent.value.getFromData();
+    state.headQueryData = { ...queryComponent.value.getFromData() };
   }
   if (queryComponentFooter.value) {
-    state.footerQueryData = queryComponentFooter.value.getFromData();
+    state.footerQueryData = { ...queryComponentFooter.value.getFromData() };
   }
   // 将 state.headQueryData 和 state.footerQueryData 整理成filter格式，添加到finalFilterList中
   if (state.headQueryData && Object.keys(state.headQueryData).length > 0) {

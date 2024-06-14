@@ -611,7 +611,18 @@ const getFromValue = (fromKey) => {
   return state.form[fromKey];
 };
 const getFromData = () => {
-  return state.form;
+  const filteredObject = excludeUndefined(state.form);
+
+  return filteredObject;
+};
+
+const excludeUndefined = (obj) => {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    if (value !== undefined) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
 };
 // 暴露方法出去
 defineExpose({ state, props, setFromValue, getFromValue, getFromData, search, resetSearch });

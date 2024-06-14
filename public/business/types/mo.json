@@ -4,7 +4,7 @@
   "url": "/api/main/mo/items",
   "httptype": "POST",
   "category": "",
-  "tableWidth": 750,
+  "tableWidth": 850,
   "columns": [
     {
       "title": "工单代码",
@@ -29,6 +29,18 @@
       "key": "datetimePlanEnd",
       "align": "left",
       "width": "160"
+    },
+    {
+      "title": "车间",
+      "key": "workshopName",
+      "width": "160",
+      "align": "left"
+    },
+    {
+      "title": "工作中心",
+      "key": "workcenterName",
+      "width": "160",
+      "align": "left"
     }
   ],
   "rowKey": "id",
@@ -38,6 +50,26 @@
   },
   "querySetting": {
     "options": {
+      "workshopId": {
+        "label": "车间",
+        "comp": "bcmp-select-business",
+        "bind": {
+          "type": "workshop",
+          "showTitle": false
+        },
+        "defaultVal": "",
+        "operator": "eq"
+      },
+      "workcenterId": {
+        "label": "工作中心",
+        "comp": "bcmp-select-business",
+        "bind": {
+          "type": "workcenter",
+          "showTitle": false
+        },
+        "defaultVal": "",
+        "operator": "eq"
+      },
       "dateArea": {
         "label": "日期范围",
         "comp": "t-radio-button-group",
