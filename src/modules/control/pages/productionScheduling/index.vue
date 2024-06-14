@@ -429,6 +429,9 @@ const fetchGanttData = async (params) => {
   isUpdatedGanttData.value = false;
   updateListMap.clear();
   ganttDataList = data;
+  if (!(data && data.length > 0)) {
+    MessagePlugin.warning('没有待排产的工单');
+  }
   formatGanttData(data);
 };
 
