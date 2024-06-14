@@ -14,6 +14,7 @@
     "taskCount": "任务数量",
     "complatedCountThisTime": "本次完工数量",
     "ngCount": "不合格数量",
-    "complatedCount": "已完工数量"
+    "complatedCount": "已完工数量",
+    "op": "操作"
   }
 }
