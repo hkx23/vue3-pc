@@ -62,7 +62,7 @@
         </template>
         <template #button>
           <t-button :disabled="!isSelectParam" @click="productVisible = true">关联工艺卡</t-button>
-          <t-button :disabled="!isSelectParam" theme="default">{{ t('common.button.import') }}</t-button>
+          <!-- <t-button :disabled="!isSelectParam" theme="default">{{ t('common.button.import') }}</t-button> -->
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="deleteProductRelationBatch">
             <t-button :disabled="!isSelectParam || ParamMapKeys.length === 0" theme="default">{{
               t('common.button.batchDelete')
