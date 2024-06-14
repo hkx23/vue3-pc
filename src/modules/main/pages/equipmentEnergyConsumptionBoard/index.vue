@@ -4,7 +4,7 @@
       <div class="flex flex-row flex-wrap">
         <div v-for="(item, index) in defaultData" :key="index" class="w-[200px] text-center m-2">
           <div class="border border-solid border-blue-800 p-2">
-            <img :src="'/src/modules/main/pages/equipmentEnergyConsumptionBoard/' + item.src" class="w-[60%]" />
+            <img :src="item.src" class="w-[60%]" />
             <div class="mb-1">{{ item.line }}</div>
             <div class="mb-1">{{ item.equipment }}</div>
             <div class="mb-1 text-green-400">{{ item.min }}</div>
@@ -50,35 +50,184 @@ const total = ref(0);
 const fetchTable = async () => {
   const res = {
     list: [
-      { equipment: 'A3T201', src: 'img/091430.jpg', line: 'A3线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A3T202', src: 'img/091430.jpg', line: 'A3线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A3T203', src: 'img/091430.jpg', line: 'A3线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A3T204', src: 'img/091430.jpg', line: 'A3线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A3T301', src: 'img/091430.jpg', line: 'A3线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A3T302', src: 'img/091430.jpg', line: 'A3线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A3T303', src: 'img/091430.jpg', line: 'A3线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A4T401', src: 'img/091430.jpg', line: 'A4线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A5T501', src: 'img/091431.jpg', line: 'A5线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A5T502', src: 'img/091431.jpg', line: 'A5线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A5T503', src: 'img/091431.jpg', line: 'A5线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A5T504', src: 'img/091431.jpg', line: 'A5线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A5T505', src: 'img/091431.jpg', line: 'A5线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A5T506', src: 'img/091431.jpg', line: 'A5线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A5T507', src: 'img/091431.jpg', line: 'A5线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A5T508', src: 'img/091431.jpg', line: 'A5线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A6T501', src: 'img/091432.jpg', line: 'A6线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A6T502', src: 'img/091432.jpg', line: 'A6线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A6T503', src: 'img/091432.jpg', line: 'A6线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A6T504', src: 'img/091432.jpg', line: 'A6线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A6T505', src: 'img/091432.jpg', line: 'A6线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A6T506', src: 'img/091432.jpg', line: 'A6线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A6T507', src: 'img/091432.jpg', line: 'A6线', min: getRandomDecimal(), max: getRandomDecimal() },
-      { equipment: 'A6T508', src: 'img/091432.jpg', line: 'A6线', min: getRandomDecimal(), max: getRandomDecimal() },
+      {
+        equipment: 'A3T201',
+        src: getImgSrc('091430.jpg'),
+        line: 'A3线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A3T202',
+        src: getImgSrc('091430.jpg'),
+        line: 'A3线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A3T203',
+        src: getImgSrc('091430.jpg'),
+        line: 'A3线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A3T204',
+        src: getImgSrc('091430.jpg'),
+        line: 'A3线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A3T301',
+        src: getImgSrc('091430.jpg'),
+        line: 'A3线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A3T302',
+        src: getImgSrc('091430.jpg'),
+        line: 'A3线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A3T303',
+        src: getImgSrc('091430.jpg'),
+        line: 'A3线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A4T401',
+        src: getImgSrc('091430.jpg'),
+        line: 'A4线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A5T501',
+        src: getImgSrc('091431.jpg'),
+        line: 'A5线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A5T502',
+        src: getImgSrc('091431.jpg'),
+        line: 'A5线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A5T503',
+        src: getImgSrc('091431.jpg'),
+        line: 'A5线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A5T504',
+        src: getImgSrc('091431.jpg'),
+        line: 'A5线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A5T505',
+        src: getImgSrc('091431.jpg'),
+        line: 'A5线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A5T506',
+        src: getImgSrc('091431.jpg'),
+        line: 'A5线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A5T507',
+        src: getImgSrc('091431.jpg'),
+        line: 'A5线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A5T508',
+        src: getImgSrc('091431.jpg'),
+        line: 'A5线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A6T501',
+        src: getImgSrc('091432.jpg'),
+        line: 'A6线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A6T502',
+        src: getImgSrc('091432.jpg'),
+        line: 'A6线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A6T503',
+        src: getImgSrc('091432.jpg'),
+        line: 'A6线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A6T504',
+        src: getImgSrc('091432.jpg'),
+        line: 'A6线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A6T505',
+        src: getImgSrc('091432.jpg'),
+        line: 'A6线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A6T506',
+        src: getImgSrc('091432.jpg'),
+        line: 'A6线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A6T507',
+        src: getImgSrc('091432.jpg'),
+        line: 'A6线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
+      {
+        equipment: 'A6T508',
+        src: getImgSrc('091432.jpg'),
+        line: 'A6线',
+        min: getRandomDecimal(),
+        max: getRandomDecimal(),
+      },
     ],
     total: 2,
   };
   defaultData.value = res.list;
   total.value = res.total;
+};
+
+const getImgSrc = (name) => {
+  const path = new URL(`./img/${name}`, import.meta.url).href;
+  return path;
 };
 
 const { pause, resume } = useIntervalFn(() => {
