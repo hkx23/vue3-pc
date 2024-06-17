@@ -2528,8 +2528,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SparePartVO {
@@ -3239,8 +3239,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -5360,13 +5360,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   stateName?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5580,15 +5580,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
   isProductName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
+  isRawName?: string;
   isBatchName?: string;
+  isInProcessName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -8112,8 +8112,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -9373,8 +9373,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -10757,10 +10757,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -15531,6 +15531,37 @@ export const api = {
       http.request<ResultPagingDataMoVO['data']>(`/api/main/mo/getmolist`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单表
+     * @name GetmolistParam
+     * @summary 获取工单管理列表
+     * @request GET:/mo/getmolistParam
+     * @secure
+     */
+    getmolistParam: (query: {
+      keyword: string;
+      /** @format int32 */
+      pagenum: number;
+      /** @format int32 */
+      pagesize: number;
+      moCode: string;
+      moClass: string;
+      status: string;
+      datetimePlanStart: string;
+      datetimePlanEnd: string;
+      workshopCode: string;
+      workCenterCode: string;
+      rootingCode: string;
+      categoryCode: string;
+      mitemCode: string;
+    }) =>
+      http.request<ResultPagingDataMoVO['data']>(`/api/main/mo/getmolistParam`, {
+        method: 'GET',
+        params: query,
       }),
   },
   mitemUom: {
