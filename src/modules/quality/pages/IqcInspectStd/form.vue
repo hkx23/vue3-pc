@@ -70,7 +70,7 @@ export default {
         MessagePlugin.warning('请选择物料或物料类别！');
         return false;
       }
-      if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdCode)) {
+      if (formData.value.type === 'add' && isEmpty(formData.value.iqcInspectStdId)) {
         MessagePlugin.warning('请选择检验标准');
         return false;
       }

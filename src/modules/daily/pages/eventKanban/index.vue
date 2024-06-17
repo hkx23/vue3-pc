@@ -299,6 +299,7 @@
 </template>
 <script setup lang="ts">
 import dayjs from 'dayjs';
+import { debounce } from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, ref } from 'vue';
 import { Vue3SeamlessScroll } from 'vue3-seamless-scroll';
@@ -347,7 +348,7 @@ const overdueList = ref<any[]>([]);
 const workingList = ref<any[]>([]);
 const table1Height = ref(357);
 const table1MaxHeight = ref(357);
-const fetchTable = async () => {
+const fetchTable = debounce(async () => {
   try {
     if (formData.deptResponsibilityId === '' && formData.conferenceResponsibilityId === '') {
       MessagePlugin.warning(t('eventKanban.plsSelectNeed'));
@@ -400,7 +401,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   }
-};
+}, 1000);
 
 const allowScroll = ref(true);
 const stopScroll = () => {

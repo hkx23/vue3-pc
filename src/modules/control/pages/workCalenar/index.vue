@@ -32,7 +32,7 @@
             :class="{ 'is-selected': currProcessId == item.workcenterId }"
             @click="onClickLeft(item)"
           >
-            <span style="width: 50%">{{ item.wcCode }}</span>
+            <span style="width: 50%">{{ item.wcName }}</span>
             <span style="width: 50%">{{ item.houseCount }} (H)</span>
           </t-list-item>
         </t-list>

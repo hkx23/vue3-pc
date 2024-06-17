@@ -35,7 +35,7 @@
       </t-col>
       <t-col :span="4">
         <t-form-item label="抽样方案类型" name="samplingStandardType">
-          <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
+          <t-radio-group v-model="dtlData.samplingStandardType" default-value="GB">
             <t-radio value="GB">国标</t-radio>
             <t-radio value="QB">企标</t-radio>
           </t-radio-group>
@@ -220,7 +220,7 @@ const codesOption = ref([]);
 
 const fetchSampingStdCodes = async () => {
   try {
-    if (dtlData.value.samplingStandardType === '2') {
+    if (dtlData.value.samplingStandardType === 'QB') {
       const data = (await apiQuality.samplingStd.getSampingStdCode()) as any;
       codesOption.value = data.map((item: { sampingStdCode: any; id: any }) => ({
         label: item.sampingStdCode,
@@ -238,7 +238,7 @@ const fetchSampingStdCodes = async () => {
   }
 };
 const querySelectChange = async (event) => {
-  if (dtlData.value.samplingStandardType === '2') {
+  if (dtlData.value.samplingStandardType === 'QB') {
     const res = (await apiQuality.samplingStd.getSampingStdCode({ key: event.length >= 2 ? event : '' })) as any;
     codesOption.value = res.map((item: { sampingStdCode: any; id: any }) => ({
       label: item.sampingStdCode,

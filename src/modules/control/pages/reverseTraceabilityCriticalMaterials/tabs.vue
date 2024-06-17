@@ -1051,7 +1051,7 @@ const onGetProductBasicInformation = async () => {
 const workOrderData = reactive({ list: [] });
 const onGetWorkOrder = async () => {
   const res = (await api.reversetraceability.getMoBaseInfo(commonParametersList.value)) as any;
-  [workOrderData.list] = res.list;
+  [workOrderData.list] = res.data.list;
 };
 // 获取 物料信息 3️⃣3️⃣3️⃣3️⃣3️⃣3️⃣  数据
 const WipKeypartReportVOForm = ref<WipKeypartReportVO[]>([]);
