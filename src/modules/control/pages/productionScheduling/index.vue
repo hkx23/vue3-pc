@@ -16,7 +16,7 @@
               <div class="btn-bar">
                 <t-button :disabled="!isUpdatedGanttData" @click="onRefresh">排产刷新</t-button>
                 <t-button :disabled="isUpdatedGanttData" theme="default" @click="onRelease">确认下发</t-button>
-                <t-button theme="default">下发历史</t-button>
+                <t-button theme="default" @click="onHistory">下发历史</t-button>
               </div>
             </div>
             <scheduling-gantt
@@ -70,6 +70,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { api, MoVO } from '@/api/control';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
+import { openPage } from '@/router';
 
 import SchedulingGantt from './SchedulingGantt.vue';
 
@@ -317,6 +318,10 @@ const onRefresh = async () => {
   loading.value = false;
 };
 
+const onHistory = async () => {
+  openPage('/main#/moRelease');
+};
+
 const onRelease = async () => {
   loading.value = true;
   await api.moSchedule.confirmSend({
@@ -429,6 +434,9 @@ const fetchGanttData = async (params) => {
   isUpdatedGanttData.value = false;
   updateListMap.clear();
   ganttDataList = data;
+  if (!(data && data.length > 0)) {
+    MessagePlugin.warning('没有待排产的工单');
+  }
   formatGanttData(data);
 };
 

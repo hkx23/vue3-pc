@@ -6,6 +6,7 @@
     <cmp-card>
       <cmp-table
         v-model:pagination="paging"
+        class="custom-table"
         row-key="id"
         :table-column="tableColumns"
         :table-data="tableData"
@@ -14,10 +15,13 @@
         :resizable="true"
         @refresh="fetchData"
       >
+        <template #promiseDate="{ row }">
+          <t-date-picker v-model="row.promiseDate" style="width: 150px"></t-date-picker>
+        </template>
         <template #button>
           <t-button>引入插单</t-button>
           <t-button theme="default"> 插单问询</t-button>
-          <t-button theme="default"> 承认日期确认</t-button>
+          <t-button theme="default"> 承诺日期确认</t-button>
         </template>
       </cmp-table>
     </cmp-card>
@@ -106,8 +110,8 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '订单类型', colKey: 'moType' },
   { title: '订单状态', colKey: 'moStatus' },
   { title: '订单数量', colKey: 'moQty' },
-  { title: '需求日期', colKey: 'requirementDate' },
-  { title: '承诺日期', colKey: 'promiseDate' },
+  { title: '需求日期', colKey: 'requirementDate', width: 120 },
+  { title: '承诺日期', colKey: 'promiseDate', width: 180, className: 'light-column' },
   { title: '需求说明', colKey: 'requirementDesc' },
   { title: '销售业务员', colKey: 'salesName' },
   { title: '客户代码', colKey: 'customerCode' },
@@ -175,4 +179,10 @@ const fetchData = async () => {
   dataTotal.value = data.total;
 };
 </script>
-<style scoped></style>
+<style scoped lang="less">
+.custom-table {
+  :deep(.light-column) {
+    background-color: var(--td-warning-color-light);
+  }
+}
+</style>

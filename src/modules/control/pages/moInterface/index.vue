@@ -212,4 +212,4 @@ const fetchData = async () => {
   dataTotal.value = data.total;
 };
 </script>
-<style scoped></style>
+<style scoped lang="less"></style>

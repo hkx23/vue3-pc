@@ -218,6 +218,10 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     title: '关联设备',
   },
   {
+    colKey: 'wcStartRate',
+    title: '开动率',
+  },
+  {
     colKey: 'wcSeq',
     title: '顺序号',
   },
