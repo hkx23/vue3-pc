@@ -276,7 +276,7 @@ const save = () => {
   const json = hiprintTemplate.value.getJson();
   const args = {
     fileName: templateName.value,
-    fileContent: json,
+    fileContent: JSON.stringify(json),
   } as DesignerArgs;
 
   emit('save', args);
