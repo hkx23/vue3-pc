@@ -32,7 +32,7 @@
     </t-form-item>
 
     <t-form-item :label="t('printTemplate.templatePath')" name="tmplBodyPath">
-      <div v-if="formData.tmplType == 'mrt'">
+      <div v-if="formData.tmplType == 'mrt' || formData.tmplType == 'hi'">
         <t-button theme="default" @click="onClickDesigner">设计模板</t-button>
         <div v-if="formData.tmplBodyPath">
           {{ formData.tmplBodyPath?.split('/').pop() }}
@@ -50,14 +50,26 @@
       ></t-upload>
     </t-form-item>
   </t-form>
-  <t-dialog v-model:visible="designerVisible" mode="full-screen" header="设计器">
-    <designer
-      v-if="designerVisible"
-      v-model:visible="designerVisible"
-      :file-name="formData.tmplBodyPath"
-      :file-content="formData.fileContent"
-      @save="onSaveDesigner"
-    ></designer>
+  <t-dialog v-model:visible="designerVisible" mode="full-screen" header="设计器" :footer="false">
+    <template v-if="formData.tmplType == 'hi'">
+      <hiPrint
+        v-if="designerVisible"
+        style="margin: -16px; background: var(--td-bg-color-page)"
+        :template-title="formData.tmplBodyPath"
+        :template-body="formData.fileContent"
+        @save="onSaveDesigner"
+      ></hiPrint>
+    </template>
+
+    <template v-else>
+      <designer
+        v-if="designerVisible"
+        v-model:visible="designerVisible"
+        :file-name="formData.tmplBodyPath"
+        :file-content="formData.fileContent"
+        @save="onSaveDesigner"
+      ></designer>
+    </template>
   </t-dialog>
 </template>
 <script lang="ts">
@@ -73,7 +85,8 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 import { api, PrintTmplDTO } from '@/api/main';
 
 import { DesignerArgs, TEMPLATE_TYPE, TemplateFormRef } from './constants';
-import designer from './designer.vue';
+import hiPrint from './designer/hiPrint/index.vue';
+import designer from './designer/stimulsoft.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
@@ -111,6 +124,7 @@ const onClickRemoveFile = () => {
 const onSaveDesigner = (args: DesignerArgs) => {
   formData.tmplBodyPath = args.fileName;
   formData.fileContent = args.fileContent;
+  designerVisible.value = false;
 };
 
 const fetchDic = async () => {
@@ -176,6 +190,8 @@ const reset = (isEdit: boolean, data?: PrintTmplDTO) => {
     } else {
       Object.assign(formData, {
         id: '',
+        tmplBodyPath: '',
+        fileContent: '',
       });
     }
   }

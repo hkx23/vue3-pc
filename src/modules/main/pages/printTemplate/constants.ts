@@ -5,6 +5,7 @@ import { PrintTmplDTO, PrintTmplMapDTO } from '@/api/main';
 
 export const TEMPLATE_TYPE = [
   { value: 'mrt', label: 'REPORT' },
+  { value: 'hi', label: 'HiPrint' },
   { value: 'btw', label: 'BARTENDER' },
 ];
 

@@ -717,7 +717,7 @@ const onPrintManager = async () => {
       };
       printManagerData.value.push({
         variable: DataBase,
-        datasource: { DataBase },
+        dataSource: { DataBase },
       });
     });
 
@@ -1051,7 +1051,7 @@ const onPrint = async () => {
       };
       printData.value.push({
         variable: DataBase,
-        datasource: { DataBase },
+        dataSource: { DataBase },
       });
     });
 

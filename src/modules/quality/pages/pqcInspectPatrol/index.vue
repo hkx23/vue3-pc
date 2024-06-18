@@ -296,7 +296,7 @@ const onPrint = async () => {
       };
       printData.value.push({
         variable: DataBase,
-        datasource: { Body: DataBase },
+        dataSource: { Body: DataBase },
       });
     });
 

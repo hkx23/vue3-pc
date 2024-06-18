@@ -325,10 +325,10 @@ const onPrintClick = async () => {
         const promiseQuery = getPrintBillInfo(billInfo.billNo).then((billInfoData: any) => {
           if (billInfoData) {
             const billDtls = billInfoData.dtls;
-            // printData.value.push([{ datasource: billInfoData, datasource1: billDtls }]);
+            // printData.value.push([{ dataSource: billInfoData, dataSource1: billDtls }]);
             printData.value.push({
               variable: billInfoData,
-              datasource: { BillInfoList: billInfoData, BillDetailInfoList: billDtls },
+              dataSource: { BillInfoList: billInfoData, BillDetailInfoList: billDtls },
             });
           }
         });
