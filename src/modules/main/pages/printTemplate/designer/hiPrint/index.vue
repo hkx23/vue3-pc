@@ -69,6 +69,7 @@
   </cmp-container>
 </template>
 <script setup lang="ts">
+import { RequestMethodResponse, UploadFile } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { defaultElementTypeProvider, hiprint } from 'vue-plugin-hiprint';
 
@@ -229,7 +230,11 @@ const exportJson = () => {
   a.click();
 };
 
-const importJson = (file) => {
+const importJson = (uploadFile: UploadFile | UploadFile[]): Promise<RequestMethodResponse> => {
+  let file: UploadFile;
+  if (Array.isArray(uploadFile)) {
+    return Promise.reject(new Error('仅支持单个文件导入'));
+  }
   return new Promise((resolve, reject) => {
     templateName.value = file.name;
     file.raw
@@ -241,7 +246,7 @@ const importJson = (file) => {
         setTimeout(() => {
           rotatePaper();
         }, 500);
-        resolve({ status: 'success', response: { message: '导入成功' } });
+        resolve({ status: 'success', response: { files: [file] } });
       })
       .catch((error) => {
         console.error('Error reading file:', error);

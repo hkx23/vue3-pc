@@ -19,7 +19,7 @@ import { computed, ref, useAttrs } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 
-import { previewByHiPrint, printByHiPrint } from './hiprint';
+import { previewByHiPrint, printByHiPrint } from './hiPrint';
 import { previewByStimulsoft, printByStimulsoft } from './stimulsoft';
 
 export interface CmpPrintButtonProps extends Omit<ButtonProps, 'options'> {
