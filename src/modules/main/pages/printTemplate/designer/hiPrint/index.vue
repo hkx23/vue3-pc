@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-row style="height: 60px">
       <cmp-card :span="12">
-        <div class="template-title">{{ props.templateTitle ? props.templateTitle.split('/').pop() : '' }}</div>
+        <div class="template-title">{{ templateName ? templateName.split('/').pop() : '' }}</div>
         <t-space>
           <t-radio-group default-value="A4">
             <template v-for="(paper, type) in paperTypes" :key="type">
@@ -70,7 +70,7 @@
 </template>
 <script setup lang="ts">
 import { RequestMethodResponse, UploadFile } from 'tdesign-vue-next';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { defaultElementTypeProvider, hiprint } from 'vue-plugin-hiprint';
 
 import { DesignerArgs } from '../../constants';
@@ -109,13 +109,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['save']);
-
-watch(
-  () => props.templateTitle,
-  (newVal) => {
-    templateName.value = newVal;
-  },
-);
 
 const templateName = ref(props.templateTitle || '未命名模板');
 
@@ -230,12 +223,13 @@ const exportJson = () => {
   a.click();
 };
 
-const importJson = (uploadFile: UploadFile | UploadFile[]): Promise<RequestMethodResponse> => {
-  let file: UploadFile;
-  if (Array.isArray(uploadFile)) {
+const importJson = (uploadFiles: UploadFile | UploadFile[]): Promise<RequestMethodResponse> => {
+  const file = uploadFiles;
+  if (Array.isArray(file)) {
     return Promise.reject(new Error('仅支持单个文件导入'));
   }
   return new Promise((resolve, reject) => {
+    // 根据路径取文件名
     templateName.value = file.name;
     file.raw
       .text()
@@ -274,9 +268,12 @@ const preview = () => {
 
 const save = () => {
   const json = hiprintTemplate.value.getJson();
+  if (!templateName.value.endsWith('.hi')) {
+    templateName.value += '.hi';
+  }
   const args = {
     fileName: templateName.value,
-    fileContent: json,
+    fileContent: JSON.stringify(json),
   } as DesignerArgs;
 
   emit('save', args);

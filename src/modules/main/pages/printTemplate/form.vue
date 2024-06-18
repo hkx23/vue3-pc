@@ -55,7 +55,7 @@
       <hiPrint
         v-if="designerVisible"
         style="margin: -16px; background: var(--td-bg-color-page)"
-        :template-title="formData.tmplBodyPath"
+        :template-title="formData.tmplName"
         :template-body="formData.fileContent"
         @save="onSaveDesigner"
       ></hiPrint>
@@ -183,17 +183,13 @@ let isFormEditing = false;
 const reset = (isEdit: boolean, data?: PrintTmplDTO) => {
   formRef.value.reset({ type: 'initial' });
   isFormEditing = isEdit;
-  if (data) {
-    onClickRemoveFile();
-    if (isEdit) {
-      Object.assign(formData, data);
-    } else {
-      Object.assign(formData, {
-        id: '',
-        tmplBodyPath: '',
-        fileContent: '',
-      });
-    }
+  onClickRemoveFile();
+  if (isEdit) {
+    Object.assign(formData, data);
+  } else {
+    Object.assign(formData, {
+      id: '',
+    });
   }
 };
 
