@@ -13,15 +13,4 @@ export default [
       orderNo: 0,
     },
   },
-  {
-    path: '/printTemplateDesigner',
-    name: 'printTemplateDesigner',
-    component: () => import('../../pages/printTemplate/designer.vue'),
-    meta: {
-      title: {
-        'zh-CN': '打印模板设计器',
-        'en-US': 'Print Template Designer',
-      },
-    },
-  },
 ] as Array<RouteRecordRaw>;
