@@ -25,6 +25,9 @@
             </t-popup>
           </t-radio-group>
           <t-input-number v-model="scaleValue" :min="10" :max="300" :step="10" width="60px" @change="changeScale" />
+          <t-button variant="outline" @click="rotatePaper">旋转</t-button>
+          <t-button variant="outline" @click="preview">预览</t-button>
+          <t-button variant="outline" @click="print">打印</t-button>
         </t-space>
         <div style="float: right">
           <t-upload
@@ -38,9 +41,6 @@
             <t-button theme="default">导入</t-button>
           </t-upload>
           <t-button theme="default" @click="exportJson">导出</t-button>
-          <t-button theme="default" @click="rotatePaper">旋转</t-button>
-          <t-button theme="default" @click="preview">预览</t-button>
-          <t-button theme="default" @click="print">打印</t-button>
           <t-button theme="primary" @click="save">保存</t-button>
         </div>
       </cmp-card>
