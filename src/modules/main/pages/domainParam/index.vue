@@ -67,8 +67,13 @@
               @refresh="fetchData"
             >
               <template #title> 功能列表 </template>
-              <template #op="slotProps">
-                <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
+              <template #op="{ row }">
+                <t-space :size="8">
+                  <t-link theme="primary" @click="onEditRowClick(row)">{{ t('common.button.edit') }}</t-link>
+                  <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
+                    <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+                  </t-popconfirm>
+                </t-space>
                 <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
                   <icon name="edit-1" class="black-icon" />
                 </t-button> -->
@@ -97,14 +102,10 @@
 
   <dialog-edit
     :id="editId"
+    ref="businessParamDialogRef"
     v-model="editDomainParamVisible"
-    :title="
-      isAdd
-        ? t('common.dialog.header.add', [t('domainParam.domainParam')])
-        : t('common.dialog.header.edit', [t('domainParam.domainParam')])
-    "
     :is-copy="isCopy"
-    @submit="refreshData"
+    @success="refreshData"
   ></dialog-edit>
 </template>
 <script lang="ts">
@@ -141,7 +142,7 @@ const currentNodeData = ref<TreeNode>({
 });
 const editId = ref();
 const editDomainParamVisible = ref(false);
-const isAdd = ref(true);
+// const isAdd = ref(true);
 const isCopy = ref(false);
 
 // #全局加载-页面初始化后加载树数据
@@ -322,6 +323,7 @@ const fetchData = () => {
 
 // #表格区域-获取表格数据
 const queryData = ref({});
+const selectParamGroupId = ref();
 const onGetTabData = async () => {
   const finalFilterList = [];
   // 条件一: 当前树选择的分组节点-全部或分组或功能,功能取对应功能的分组
@@ -331,12 +333,14 @@ const onGetTabData = async () => {
       value: currentNodeData.value.parentNodeId,
       operator: 'EQ',
     });
+    selectParamGroupId.value = currentNodeData.value.parentNodeId;
   } else if (currentNodeData.value.type === 'group') {
     finalFilterList.push({
       field: 'domainParamGroupId',
       value: currentNodeData.value.id,
       operator: 'EQ',
     });
+    selectParamGroupId.value = currentNodeData.value.id;
   }
   // 条件二: 查询组件对应的查询条件
   if (queryComponent.value) {
@@ -364,6 +368,7 @@ const onGetTabData = async () => {
   moduleData.value = res.list; // 表格数据赋值
   tabTotal.value = res.total;
 };
+const businessParamDialogRef = ref();
 
 // #表格区域-新增表格数据-新增功能
 const onAdd = () => {
@@ -374,31 +379,34 @@ const onAdd = () => {
 };
 
 // #表格区域-编辑表格数据-编辑功能
-const onEditRowClick = (value: any) => {
-  // formTitle.value = '编辑';
-  // formRef.value.formData = JSON.parse(JSON.stringify(value.row));
-  // formRef.value.formData.id = value.row.id;
-  // formRef.value.formData.valueType = value.row.valueType;
-  // formRef.value.formData.isState = value.row.state === 1;
-  // formRef.value.formData.operateTpye = 'edit';
-  // formRef.value.setCategoryLabel();
-  // formVisible.value = true;
-  editDomainParam(value);
-  // onGetTabData();
+const onEditRowClick = (row: any) => {
+  // 根据行ID获取明细数据
+  const { id } = row;
+  api.domainParam.getItemById({ id }).then((res) => {
+    const editModel = res;
+    businessParamDialogRef.value.initEditData(editModel);
+    editDomainParamVisible.value = true;
+  });
 };
 
 const addDomainParam = () => {
-  isAdd.value = true;
-  editId.value = null;
-  isCopy.value = false;
+  businessParamDialogRef.value.initAddData(selectParamGroupId.value);
   editDomainParamVisible.value = true;
 };
-const editDomainParam = (id: string) => {
-  editId.value = id;
-  isAdd.value = false;
-  isCopy.value = false;
-  editDomainParamVisible.value = true;
+
+// 行删除按钮按下，删除对应行信息
+
+const onDelete = async (row: any) => {
+  await api.domainParam.delete({ id: row.id });
+  MessagePlugin.success(t('common.message.deleteSuccess'));
+  onConditionEnter(null);
 };
+// const editDomainParam = (id: string) => {
+//   editId.value = id;
+//   isAdd.value = false;
+//   isCopy.value = false;
+//   editDomainParamVisible.value = true;
+// };
 // const copyDomainParam = (id: string) => {
 //   editId.value = id;
 //   isAdd.value = false;

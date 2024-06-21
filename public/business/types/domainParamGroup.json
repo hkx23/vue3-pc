@@ -1,0 +1,42 @@
+{
+  "title": "领域参数分组：",
+  "placeholder": "请选择：",
+  "url": "/api/main/dynamicManage/dynamicQueryData",
+  "httptype": "POST",
+  "category": "",
+  "tableWidth": 800,
+  "columns": [
+    {
+      "title": "分组编码",
+      "key": "paramGroupCode",
+      "align": "left"
+    },
+    {
+      "title": "分组名称",
+      "key": "paramGroupName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "paramGroupName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "paramGroupName",
+    "codeField": "paramGroupCode",
+    "descField": "paramGroupName"
+  },
+  "name": "领域参数分组",
+  "componentType": "list",
+  "customConditions": [],
+  "dynamicTableName": "s_domain_param_group",
+  "dynamicBusinessDomain": "main",
+  "dynamicKeywordFields": [
+    "paramGroupCode",
+    "paramGroupName"
+  ],
+  "dynamicDefaultSortFiled": "timeCreate"
+}

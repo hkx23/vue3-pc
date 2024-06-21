@@ -5361,12 +5361,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
+  isState?: boolean;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5581,14 +5581,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
+  isState?: boolean;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isState?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -5731,8 +5731,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7405,6 +7405,72 @@ export interface DomainParamGroup {
   parentId?: string;
 }
 
+export interface DomainParamComponentSource {
+  sourceType?: string;
+  customDict?: DomainParamComponentSourceCustomDict;
+  dataTable?: DomainParamComponentSourceDatatable;
+}
+
+export interface DomainParamComponentSourceCustomDict {
+  dicData?: Record<string, object>[];
+}
+
+export interface DomainParamComponentSourceDatatable {
+  mapBusinessDomain?: string;
+  mapTable?: string;
+  conditionData?: Filter[];
+  valueField?: string;
+  showField?: string;
+}
+
+export interface DomainParamSearchSetting {
+  /** @format int32 */
+  seq?: number;
+  field?: string;
+  label?: string;
+  component?: string;
+  componentParam?: string;
+  defaultValue?: string;
+  fieldType?: string;
+  componentSource?: DomainParamComponentSource;
+  visible?: boolean;
+  mutiple?: boolean;
+}
+
+export interface DomainParamSetting {
+  tableSetting?: DomainParamTableSetting;
+  searchSetting?: DomainParamSearchSetting[];
+}
+
+export interface DomainParamTableColumn {
+  columnDefault?: string;
+  columnDesc?: string;
+  columnKey?: string;
+  columnName?: string;
+  columnType?: string;
+  nullable?: string;
+  tableName?: string;
+  /** @format int32 */
+  columnWidth?: number;
+  align?: string;
+  canDelete?: boolean;
+  /** @format int32 */
+  seq?: number;
+  fixed?: boolean;
+  visible?: boolean;
+  databaseField?: boolean;
+  dataDefault?: boolean;
+  autoWidth?: boolean;
+}
+
+export interface DomainParamTableSetting {
+  tableTitle?: string;
+  usePage?: boolean;
+  sortField?: string;
+  sortType?: string;
+  columnSetting?: DomainParamTableColumn[];
+}
+
 export interface DomainParamVO {
   id?: string;
   /**
@@ -7483,6 +7549,7 @@ export interface DomainParamVO {
   templateCode?: string;
   groupCode?: string;
   groupName?: string;
+  domainParmSetting?: DomainParamSetting;
 }
 
 /** 响应数据 */
@@ -9373,8 +9440,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -10757,10 +10824,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -11301,6 +11368,18 @@ export interface ResultListDomainParamTreeVO {
   message?: string;
   /** 响应数据 */
   data?: DomainParamTreeVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultDomainParamVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: DomainParamVO;
 }
 
 /** 响应数据 */
@@ -17118,6 +17197,36 @@ export const api = {
      * No description
      *
      * @tags 领域参数表
+     * @name Edit
+     * @summary 编辑导入配置信息
+     * @request POST:/domainParam/edit
+     * @secure
+     */
+    edit: (data: DomainParamVO) =>
+      http.request<ResultObject['data']>(`/api/main/domainParam/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
+     * @name Add
+     * @summary 新增导入配置信息
+     * @request POST:/domainParam/add
+     * @secure
+     */
+    add: (data: DomainParamVO) =>
+      http.request<ResultObject['data']>(`/api/main/domainParam/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
      * @name SqlTables
      * @summary 根据领域获取数据表列表-SQL方式
      * @request GET:/domainParam/sqlTables
@@ -17147,6 +17256,36 @@ export const api = {
      * No description
      *
      * @tags 领域参数表
+     * @name GetItemById
+     * @summary 根据id获取导入配置信息
+     * @request GET:/domainParam/itemById
+     * @secure
+     */
+    getItemById: (query: { id: string }) =>
+      http.request<ResultDomainParamVO['data']>(`/api/main/domainParam/itemById`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
+     * @name GetItemByCode
+     * @summary 根据key获取导入配置信息
+     * @request GET:/domainParam/itemByCode
+     * @secure
+     */
+    getItemByCode: (query: { code: string }) =>
+      http.request<ResultDomainParamVO['data']>(`/api/main/domainParam/itemByCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
      * @name BusinessDomain
      * @summary 业务领域
      * @request GET:/domainParam/businessDomain
@@ -17155,6 +17294,21 @@ export const api = {
     businessDomain: () =>
       http.request<ResultListDropdown['data']>(`/api/main/domainParam/businessDomain`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
+     * @name Delete
+     * @summary 删除导入配置，包括子表
+     * @request DELETE:/domainParam/delete
+     * @secure
+     */
+    delete: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/main/domainParam/delete`, {
+        method: 'DELETE',
+        params: query,
       }),
   },
   dlTask: {

@@ -1,0 +1,298 @@
+[
+  {
+    "value": "adminOrg",
+    "name": "部门"
+  },
+  {
+    "value": "admin_org",
+    "name": "责任部门"
+  },
+  {
+    "value": "assetBrand",
+    "name": "资产品牌"
+  },
+  {
+    "value": "assetModel",
+    "name": "资产型号"
+  },
+  {
+    "value": "assetType",
+    "name": "资产类型"
+  },
+  {
+    "value": "attendanceMode",
+    "name": "出勤模式"
+  },
+  {
+    "value": "attendanceModeTable",
+    "name": "出勤模式"
+  },
+  {
+    "value": "billInfo",
+    "name": "null"
+  },
+  {
+    "value": "businessCategory",
+    "name": "业务类型"
+  },
+  {
+    "value": "checkItem",
+    "name": "点检项目"
+  },
+  {
+    "value": "checklist",
+    "name": "点检清单"
+  },
+  {
+    "value": "conference",
+    "name": "会议"
+  },
+  {
+    "value": "conferenceAuth",
+    "name": "会议"
+  },
+  {
+    "value": "conferenceLayout",
+    "name": "会议布局"
+  },
+  {
+    "value": "conferenceOrg",
+    "name": "会议组织"
+  },
+  {
+    "value": "conferenceTemplate",
+    "name": "会议模板"
+  },
+  {
+    "value": "customer",
+    "name": "客户"
+  },
+  {
+    "value": "defectCode",
+    "name": "缺陷代码"
+  },
+  {
+    "value": "deliveryReceipted",
+    "name": "null"
+  },
+  {
+    "value": "district",
+    "name": "货区"
+  },
+  {
+    "value": "domainParamTemplate",
+    "name": "领域参数模版"
+  },
+  {
+    "value": "dynamicQueryDemo",
+    "name": "计量单位"
+  },
+  {
+    "value": "enterprise",
+    "name": "企业"
+  },
+  {
+    "value": "equipment",
+    "name": "设备"
+  },
+  {
+    "value": "fileType",
+    "name": "文件类型"
+  },
+  {
+    "value": "incidentType",
+    "name": "异常类型"
+  },
+  {
+    "value": "inspectItem",
+    "name": "点检项目"
+  },
+  {
+    "value": "inspectStd",
+    "name": "检验标准"
+  },
+  {
+    "value": "iqcBillInfo",
+    "name": "null"
+  },
+  {
+    "value": "line",
+    "name": "产线"
+  },
+  {
+    "value": "lineWarehouse",
+    "name": "线边仓"
+  },
+  {
+    "value": "location",
+    "name": "货位"
+  },
+  {
+    "value": "locationByDistrict",
+    "name": "货位"
+  },
+  {
+    "value": "mitem",
+    "name": "物料"
+  },
+  {
+    "value": "mitemCategory",
+    "name": "物料分类"
+  },
+  {
+    "value": "mitemInSupplier",
+    "name": "null"
+  },
+  {
+    "value": "mitemPurchaseOrder",
+    "name": "物料"
+  },
+  {
+    "value": "mo",
+    "name": "null"
+  },
+  {
+    "value": "moSchedule",
+    "name": "null"
+  },
+  {
+    "value": "objectPropertyCategory",
+    "name": "扩展属性分类"
+  },
+  {
+    "value": "OqcBillInfo",
+    "name": "null"
+  },
+  {
+    "value": "oqcInspectStd",
+    "name": "检验标准"
+  },
+  {
+    "value": "org",
+    "name": "组织"
+  },
+  {
+    "value": "param",
+    "name": "状态"
+  },
+  {
+    "value": "person",
+    "name": "人员"
+  },
+  {
+    "value": "plant",
+    "name": "工厂"
+  },
+  {
+    "value": "plantProfile",
+    "name": "工厂"
+  },
+  {
+    "value": "post",
+    "name": "岗位"
+  },
+  {
+    "value": "process",
+    "name": "工序"
+  },
+  {
+    "value": "processReturn",
+    "name": "工序"
+  },
+  {
+    "value": "purchaseOrder",
+    "name": "null"
+  },
+  {
+    "value": "reCheckBill",
+    "name": "null"
+  },
+  {
+    "value": "reworkmo",
+    "name": "null"
+  },
+  {
+    "value": "reworkMoSchedule",
+    "name": "null"
+  },
+  {
+    "value": "role",
+    "name": "角色"
+  },
+  {
+    "value": "routing",
+    "name": "null"
+  },
+  {
+    "value": "routingProcess",
+    "name": "工艺路线工序"
+  },
+  {
+    "value": "saleOrder",
+    "name": "null"
+  },
+  {
+    "value": "SamplingStd",
+    "name": "null"
+  },
+  {
+    "value": "supplier",
+    "name": "供应商"
+  },
+  {
+    "value": "supportGroup",
+    "name": "处理组"
+  },
+  {
+    "value": "uom",
+    "name": "计量单位"
+  },
+  {
+    "value": "user",
+    "name": "用户"
+  },
+  {
+    "value": "userPerson",
+    "name": "用户"
+  },
+  {
+    "value": "warehouse",
+    "name": "仓库"
+  },
+  {
+    "value": "warehouseAuth",
+    "name": "仓库"
+  },
+  {
+    "value": "warehouseAuthByOrg",
+    "name": "仓库"
+  },
+  {
+    "value": "warehousePurchaseOrder",
+    "name": "仓库"
+  },
+  {
+    "value": "warehouseSalesDelivery",
+    "name": "仓库"
+  },
+  {
+    "value": "workcenter",
+    "name": "工作中心"
+  },
+  {
+    "value": "workgroup",
+    "name": "班组"
+  },
+  {
+    "value": "workshop",
+    "name": "车间"
+  },
+  {
+    "value": "workstation",
+    "name": "工站"
+  },
+  {
+    "value": "workstationAuth",
+    "name": "工站"
+  }
+]
