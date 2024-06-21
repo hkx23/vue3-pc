@@ -14,7 +14,7 @@ import { StiDesigner, Stimulsoft } from 'stimulsoft-reports-js/Scripts/stimulsof
 import { CloseIcon } from 'tdesign-icons-vue-next';
 import { onMounted } from 'vue';
 
-import { DesignerArgs } from './constants';
+import { DesignerArgs } from '../constants';
 
 Stimulsoft.Base.StiLicense.Key =
   '6vJhGtLLLz2GNviWmUTrhSqnOItdDwjBylQzQcAOiHkrLyWoNKqkTY1XgUpo2eVfPZDTuBkdCQBJ7ewY23s24RzWm3' +
@@ -95,3 +95,4 @@ const onClickExit = () => {
   top: 0;
 }
 </style>
+../constants
