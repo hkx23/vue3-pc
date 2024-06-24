@@ -1,6 +1,15 @@
 import { Stimulsoft, StiOptions } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
 
 StiOptions.Engine.barcodeQRCodeAllowUnicodeBOM = true;
+Stimulsoft.Base.StiLicense.Key =
+  '6vJhGtLLLz2GNviWmUTrhSqnOItdDwjBylQzQcAOiHkrLyWoNKqkTY1XgUpo2eVfPZDTuBkdCQBJ7ewY23s24RzWm3' +
+  'Kqvz1M0Ic8q/gLB8OtHfyeGIFVvS/CcdBtJkURBywzrcEqWttjvuHIqql+oxdA21Mjw4uOPnFo+ocQ/1bmqGQbEdlB' +
+  'ArJdu3YQSNFiCMsPzlIOqgYlMy8sQ42PJkhkgZnfovFlWBww9HYqjz9wEwCkwAVIPhQ9ojlx88EY3Sopl/MiHRWcgS' +
+  'RDF5bxvzxN91Mk3W6/cFLU1rmM+T8eJwjSO4XARHnoVoC/RwTx8x34ILCZBVRbKSVJpdI+Beafwy+PE0LTBJaxyPx8' +
+  'BZ8koPGOv6lhmqHTQJX1h6kbc9Dhbo3QMFum3LxNn2bYw7MVcEZMyuqSgLdVQJkOQYi8vW/Q5Ooig8QIBkLBErIpbX' +
+  'Kgy7ESnRuuaDV2cLJ6ODyI2wv+ugM6QbpgyeDrcn0+a/lCx6ilfWqTu77SX5tYyHRQC+hqk0l/XY/FQOORSxbmRlOG' +
+  'mPov3Gg5rL3RYD2a11iO6Q5/ow9+clGQ+58bLNcqUNIvdDBLohP3qUS5xcu1ytqsocwPLYHGyMkmOu5HnIqGLgM5DJ' +
+  'DlqFlHCj5itkIo3nCSrWwRCu26aKzxCXGnn9WRYab6bBM61+PFWyY=';
 
 /**
  * 预览报表
