@@ -139,6 +139,8 @@ const loadSetting = () => {
     tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
     // 获取查询信息，配置
     opts.value = genOpts(res.domainParmSetting.searchSetting);
+
+    conditionEnter(null);
   });
 };
 const genOpts = (searchSetting) => {
@@ -164,7 +166,6 @@ const generateComponentConfig = (setting) => {
     case 'bcmp-select-business':
       optItem.bind = {
         type: setting.componentParam,
-        showTitle: false,
         multiple: setting.isMutiple,
       };
       break;
