@@ -1,7 +1,7 @@
 <template>
   <cmp-container :full="true">
     <cmp-row>
-      <cmp-card ref="treeCard" flex="350px">
+      <cmp-card ref="treeCard" flex="270px">
         <!-- <t-input
             v-model="treeKey"
             style="width: 230px"
@@ -30,9 +30,13 @@
           </template>
           <template #operations="{ node }">
             <div v-if="node.actived && node.data.type !== 'param'" class="tdesign-demo-block-row">
-              <t-button size="small" variant="base" @click="appendGroup(node)">添加子分组</t-button>
+              <t-button size="small" theme="primary" @click="appendGroup(node)">
+                <template #icon><icon name="add" style="color: white" /></template>
+              </t-button>
               <t-popconfirm theme="default" content="确认删除吗" @confirm="removeGroup(node)">
-                <t-button size="small" variant="base" theme="danger">删除分组</t-button>
+                <t-button size="small" variant="base" theme="danger">
+                  <template #icon><icon name="minus" style="color: white" /></template>
+                </t-button>
               </t-popconfirm>
             </div>
           </template>
@@ -69,6 +73,7 @@
               <template #title> 功能列表 </template>
               <template #op="{ row }">
                 <t-space :size="8">
+                  <t-link theme="primary" @click="onPreviewRowClick(row)">预览</t-link>
                   <t-link theme="primary" @click="onEditRowClick(row)">{{ t('common.button.edit') }}</t-link>
                   <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
                     <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
@@ -121,6 +126,7 @@ import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/main';
 import { usePage } from '@/hooks/modules/page';
+import { openPage } from '@/router';
 
 import { FormGroupRef, TreeNode } from './constants';
 import dialogEdit from './dialogEdit.vue';
@@ -389,6 +395,15 @@ const onEditRowClick = (row: any) => {
   });
 };
 
+// #表格区域-编辑表格数据-预览功能
+const onPreviewRowClick = (row: any) => {
+  // 根据行ID获取明细数据
+  const { id, templateUrl } = row;
+  openPage(templateUrl, {
+    domainParamId: id,
+  });
+};
+
 const addDomainParam = () => {
   businessParamDialogRef.value.initAddData(selectParamGroupId.value);
   editDomainParamVisible.value = true;
@@ -417,8 +432,8 @@ const onDelete = async (row: any) => {
 
 <style lang="less" scoped>
 .tdesign-demo-block-row {
+  padding-left: 8px;
   display: flex;
-  column-gap: 2px;
   align-items: center;
 }
 

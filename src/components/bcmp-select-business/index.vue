@@ -133,6 +133,16 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  // 标题2
+  label: {
+    type: String,
+    default: '',
+  },
+  // 加载
+  loading: {
+    type: Boolean,
+    default: false,
+  },
   // 名称（用于列表展示）
   name: {
     type: String,

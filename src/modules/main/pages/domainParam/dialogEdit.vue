@@ -121,6 +121,86 @@
         <cmp-container :full="true">
           <cmp-card ref="refSettingCard" :ghost="true" class="full-tab">
             <t-tabs v-model="currSettingTab" class="padding-tab">
+              <!-- #region 关联数据源配置 -->
+              <t-tab-panel value="SOURCE" label="关联数据源" :destroy-on-hide="false">
+                <cmp-container :full="true">
+                  <cmp-card :span="12" :ghost="true">
+                    <t-space direction="vertical" size="4px">
+                      <div class="table-box_header">
+                        <div class="table-title">关联数据源</div>
+                        <t-space align="end" style="float: right">
+                          <t-button @click="onAddRelateSource">添加关联数据源</t-button>
+                        </t-space>
+                      </div>
+
+                      <t-table
+                        ref="relateSourceRef"
+                        :columns="resouceColumns"
+                        :data="relateSourceData"
+                        bordered
+                        resizable
+                        lazy-load
+                        row-key="seq"
+                        drag-sort="row-handler"
+                        @drag-sort="onSourceDragSort"
+                      >
+                        <template #datasourceType="{ row }">
+                          <t-select v-model="row.datasourceType">
+                            <t-option key="dataTable" label="数据表" value="dataTable" />
+                            <!-- <t-option key="sysParam" label="系统字典" value="sysParam" /> -->
+                          </t-select>
+                        </template>
+
+                        <template #datasourceName="{ row }">
+                          <t-select
+                            v-model="row.datasourceName"
+                            :clearable="true"
+                            filterable
+                            :placeholder="t('common.placeholder.select', [t('domainParam.datasourceName')])"
+                            @change="changeRelateTable(row)"
+                          >
+                            <t-option
+                              v-for="item in tableList"
+                              :key="item.tableName"
+                              :label="item.tableDescription + ' (' + item.tableName + ')'"
+                              :name="item.tableDescription"
+                              :value="item.tableName"
+                            />
+                          </t-select>
+                        </template>
+                        <template #relatedType="{ row }">
+                          <t-select v-model="row.relatedType">
+                            <t-option key="LEFT" label="左关联" value="LEFT" />
+                            <t-option key="RIGHT" label="右关联" value="RIGHT" />
+                            <t-option key="INNER" label="内关联" value="INNER" />
+                            <!-- <t-option key="sysParam" label="系统字典" value="sysParam" /> -->
+                          </t-select>
+                        </template>
+                        <template #aliasName="{ row }">
+                          <t-input v-model="row.aliasName"></t-input>
+                        </template>
+
+                        <template #op="row">
+                          <t-space :size="4">
+                            <t-link theme="primary" @click="setReleteCondition(row)"> 关联条件 </t-link>
+                            <t-link theme="primary" @click="deleteRelateSourceData(row)">{{
+                              t('common.button.delete')
+                            }}</t-link>
+                          </t-space>
+                        </template>
+
+                        <!-- <template #button>
+                          <t-space direction="vertical">
+                            <t-button theme="primary" @click="onAddRelateSource()">新增关联数据源</t-button>
+                          </t-space>
+                        </template> -->
+                      </t-table>
+                    </t-space>
+                  </cmp-card>
+                </cmp-container>
+              </t-tab-panel>
+              <!-- #endregion 关联数据源配置 -->
+
               <!-- #region 查询表格配置 -->
               <t-tab-panel value="TABLE" label="表格" :destroy-on-hide="false">
                 <cmp-container :full="true">
@@ -182,16 +262,18 @@
                     > -->
                     <t-space direction="vertical" size="4px">
                       <div class="table-box_header">
-                        <div class="table-title">
-                          表格列配置
-                          <slot name="title"></slot>
-                        </div>
+                        <div class="table-title">表格列配置</div>
+                        <t-space align="end" style="float: right">
+                          <t-button @click="addColumnData">添加列</t-button>
+                        </t-space>
                       </div>
+
                       <t-table
                         ref="tableColumnsRef"
                         :columns="columnColumns"
                         :data="columnsData"
                         bordered
+                        resizable
                         lazy-load
                         row-key="seq"
                         drag-sort="row-handler"
@@ -201,6 +283,36 @@
                           <t-checkbox v-model="row.isDatabaseField" :disabled="row.isDatabaseField"></t-checkbox>
                         </template>
 
+                        <template #tableName="{ row }">
+                          <t-select v-if="row.isHandAdd" v-model="row.tableName" @change="columnHandTableChange(row)">
+                            <t-option
+                              v-for="item in columnAliasNameList"
+                              :key="item.value"
+                              :name="item.label"
+                              :value="item.value"
+                              :label="item.label"
+                            />
+                          </t-select>
+                          <span v-else>{{ row.tableName }}</span>
+                        </template>
+                        <template #columnName="{ row }">
+                          <t-select
+                            v-if="row.isHandAdd && row.tableName != 'noTable'"
+                            v-model="row.columnName"
+                            @change="columnHandColumnChange(row)"
+                          >
+                            <t-option
+                              v-for="item in row.columnAliasColumnList"
+                              :key="item.columnName"
+                              :label="item.columnDesc + ' (' + item.columnName + ')'"
+                              :value="item.columnName"
+                              :name="item.columnDesc"
+                            />
+                          </t-select>
+                          <t-input v-else-if="row.isHandAdd && row.tableName == 'noTable'" v-model="row.columnName" />
+
+                          <span v-else>{{ row.columnName }}</span>
+                        </template>
                         <template #columnDesc="{ row }">
                           <t-input v-model="row.columnDesc"></t-input>
                         </template>
@@ -230,11 +342,11 @@
                           </t-select>
                         </template>
 
-                        <!-- <template #op="slotProps">
-                          <t-link theme="primary" @click="onColumnEditRowClick(slotProps)">{{
-                            t('common.button.edit')
+                        <template #op="row">
+                          <t-link v-if="row.row.isHandAdd" theme="primary" @click="onColumnDeleteClick(row)">{{
+                            t('common.button.delete')
                           }}</t-link>
-                        </template> -->
+                        </template>
 
                         <template #button>
                           <!-- <t-space direction="vertical">
@@ -274,6 +386,7 @@
                         :columns="searchColumns"
                         :data="searchData"
                         bordered
+                        resizable
                         lazy-load
                         row-key="seq"
                         drag-sort="row-handler"
@@ -382,11 +495,11 @@
                           <t-switch v-model="row.isVisible"></t-switch>
                         </template>
 
-                        <!-- <template #op="slotProps">
-                          <t-link theme="primary" @click="onColumnEditRowClick(slotProps)">{{
-                            t('common.button.edit')
+                        <template #op="slotProps">
+                          <t-link theme="primary" @click="deleteSearchData(slotProps)">{{
+                            t('common.button.delete')
                           }}</t-link>
-                        </template> -->
+                        </template>
 
                         <template #button>
                           <!-- <t-space direction="vertical">
@@ -488,7 +601,15 @@
                 <!-- <t-button @click="setLowerHeight">lower height</t-button> -->
                 <!-- <t-button @click="setHigherHeight">higher height</t-button> -->
               </t-space>
-              <t-table ref="tableDict" :columns="columnsDic" :data="dicData" bordered lazy-load row-key="value">
+              <t-table
+                ref="tableDict"
+                resizable
+                lazy-load
+                :columns="columnsDic"
+                :data="dicData"
+                bordered
+                row-key="value"
+              >
                 <template #value="{ row }">
                   <t-input v-model="row.value"></t-input>
                 </template>
@@ -555,6 +676,7 @@
                 :columns="tableDatasourceTableColumns"
                 :data="conditionData"
                 bordered
+                resizable
                 lazy-load
               >
                 <template #field="{ row }">
@@ -610,13 +732,104 @@
       </t-form>
     </t-drawer>
     <!-- #endregion 数据转换设置弹窗 -->
+
+    <!-- #region 关联条件设置弹窗-->
+    <t-drawer
+      v-model:visible="relateSourceConditionVisible"
+      class="component-resource-drawer"
+      :z-index="3000"
+      size="90%"
+      placement="right"
+      header="关联条件"
+      :on-confirm="onRelateConditionConfirm"
+      :close-btn="true"
+    >
+      <!-- 1.选择转换类型
+    1.1 系统参数
+    1.2 数据表
+    1.3 自定义字典 -->
+      <t-form>
+        <t-space direction="vertical" :size="8">
+          <t-space align="center" style="float: right">
+            <t-button @click="addrelateConditionData">添加关联条件</t-button>
+            <!-- <t-button @click="setLowerHeight">lower height</t-button> -->
+            <!-- <t-button @click="setHigherHeight">higher height</t-button> -->
+          </t-space>
+          <t-table
+            ref="refRelateContition"
+            :columns="relateConditionColumns"
+            :data="relateConditionData"
+            bordered
+            resizable
+            lazy-load
+          >
+            <template #fieldName="{ row }">
+              <t-select v-model="row.fieldName" :clearable="true" filterable>
+                <t-option
+                  v-for="item in selectRelateTableColumns"
+                  :key="item.columnName"
+                  :name="item.columnDesc"
+                  :value="item.columnName"
+                  :label="item.columnDesc + ' (' + item.columnName + ')'"
+                />
+              </t-select>
+            </template>
+            <template #operator="{ row }">
+              <t-select v-model="row.operator" filterable :options="operators"> </t-select>
+            </template>
+
+            <template #relateType="{ row }">
+              <t-select v-model="row.relateType">
+                <t-option key="field" label="数据字段" value="field" />
+                <t-option key="value" label="值" value="value" />
+              </t-select>
+            </template>
+
+            <template #relateValue="{ row }">
+              <t-input v-if="row.relateType === 'value'" v-model="row.relateValue" />
+              <span v-else>-</span>
+            </template>
+            <template #aliasName="{ row }">
+              <t-select v-if="row.relateType === 'field'" v-model="row.aliasName" @change="getRelateAliasColumnList">
+                <t-option
+                  v-for="item in relateAliasNameList"
+                  :key="item.value"
+                  :name="item.label"
+                  :value="item.value"
+                  :label="item.label"
+                />
+              </t-select>
+              <span v-else>-</span>
+            </template>
+            <template #relateFieldName="{ row }">
+              <t-select v-if="row.relateType === 'field'" v-model="row.relateFieldName">
+                <t-option
+                  v-for="item in relateAliasColumnList"
+                  :key="item.columnName"
+                  :name="item.columnDesc"
+                  :value="item.columnName"
+                  :label="item.columnDesc + ' (' + item.columnName + ')'"
+                />
+              </t-select>
+              <span v-else>-</span>
+            </template>
+            <template #op="row">
+              <t-space :size="8">
+                <t-link theme="primary" @click="deleterelateConditionData(row)">删除</t-link>
+              </t-space>
+            </template>
+          </t-table>
+        </t-space>
+      </t-form>
+    </t-drawer>
+    <!-- #endregion 关联条件设置弹窗 -->
   </t-dialog>
 </template>
 
 <script setup lang="tsx">
 // #region import
 
-// import dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { forEach } from 'lodash';
 import { MoveIcon } from 'tdesign-icons-vue-next';
 import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableProps, TableRowData } from 'tdesign-vue-next';
@@ -838,6 +1051,7 @@ const changeTable = (value) => {
     isVisible: true,
     isFixed: false,
     canDelete: false,
+    isHandAdd: false,
     seq: seq++,
   }));
   // 识别字段是否默认字段，是否存在于defaultFields，如果匹配，则设置字段为isDataDefault 为 true
@@ -892,6 +1106,278 @@ const changeTable = (value) => {
 const currSettingTab = ref('TABLE');
 // #endregion
 
+// #region 关联数据源配置相关
+
+// #关联数据源-表格拖拽排序
+const relateSourceData = ref([]);
+const onSourceDragSort: TableProps['onDragSort'] = (params) => {
+  console.log('表格列交换行', params);
+  let seq = 1;
+  forEach(params.newData, (item) => {
+    item.seq = seq++;
+  });
+  relateSourceData.value = params.newData;
+};
+
+// #表格列配置
+const resouceColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'drag',
+    // 列拖拽排序必要参数
+    title: '排序',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cell: (_h) => (
+      <span>
+        <MoveIcon />
+      </span>
+    ),
+    width: 46,
+  },
+  {
+    colKey: 'datasourceType',
+    title: '数据源类型',
+    align: 'center',
+    width: '90',
+  },
+  {
+    colKey: 'datasourceName',
+    title: '数据源(表名/字典组)',
+    align: 'center',
+    width: '90',
+  },
+  {
+    colKey: 'relatedType',
+    title: '关联类型',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'aliasName',
+    title: '数据源别名',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    width: '100',
+  },
+];
+
+// #关联数据源-数据表选择触发事件
+const changeRelateTable = (row) => {
+  console.log(row);
+  // 更新同一行的aliasName
+  row.aliasName = `${row.datasourceName}_${dayjs().format('YYYYMMDDHHmmss')}`;
+};
+
+// #关联数据源-添加行
+const onAddRelateSource = () => {
+  // 添加时，seq设置为已存在数据中最大seq再加1
+  // 如果没有数据，则设置为1
+  let seq = 1;
+  if (relateSourceData.value && relateSourceData.value.length > 0) {
+    seq = relateSourceData.value[relateSourceData.value.length - 1].seq + 1;
+  } else {
+    relateSourceData.value = [];
+  }
+  relateSourceData.value.push({
+    seq,
+    datasourceType: 'dataTable',
+    datasourceName: '',
+    relatedType: 'LEFT',
+    aliasName: '',
+    conditionData: [],
+  });
+};
+// #关联数据源-删除行
+const deleteRelateSourceData = ({ rowIndex }) => {
+  relateSourceData.value.splice(rowIndex, 1);
+};
+const currentRelateSourceRow = ref(null);
+// #数据源关联条件弹窗显示
+const relateSourceConditionVisible = ref(false);
+// #数据源关联条件-表格数据
+const relateConditionData = ref([]);
+// #数据源关联条件-添加关联条件
+const addrelateConditionData = () => {
+  relateConditionData.value.push({
+    fieldName: '',
+    operator: 'EQ',
+    relateType: 'field',
+    relateValue: '',
+    aliasName: '',
+    relateFieldName: '',
+  });
+};
+
+// 关联数据源-关联条件表格设置
+const relateConditionColumns: any = computed(() => [
+  {
+    title: '关联表字段',
+    colKey: 'fieldName',
+  },
+  {
+    title: '条件',
+    colKey: 'operator',
+  },
+  {
+    title: '关联类型',
+    colKey: 'relateType',
+  },
+  {
+    title: '关联值',
+    colKey: 'relateValue',
+  },
+  {
+    title: '目标数据源',
+    colKey: 'aliasName',
+  },
+  {
+    title: '目标字段',
+    colKey: 'relateFieldName',
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '70',
+  },
+]);
+// #数据源关联-条件设置-选择行
+const selectRelateTableColumns = ref([]);
+// #数据源关联-条件设置
+const setReleteCondition = ({ row }) => {
+  // console.log(row);
+  currentRelateSourceRow.value = row;
+  initRelateSourceCondition();
+  relateSourceConditionVisible.value = true;
+};
+// #数据源关联-目标数据源别名列表
+const relateAliasNameList = ref([]);
+//  #数据源关联-加载当前行的条件配置
+const initRelateSourceCondition = () => {
+  console.log(currentRelateSourceRow.value);
+  // 根据当前行的数据源表格，加载对应的列
+  if (currentRelateSourceRow.value.datasourceType === 'dataTable') {
+    const { datasourceName } = currentRelateSourceRow.value;
+    selectRelateTableColumns.value = tableList.value.find((item) => item.tableName === datasourceName)?.columns;
+
+    relateAliasNameList.value = [];
+    // relateAliasNameList的列表，第一个是基础信息的数据源，
+    relateAliasNameList.value.push({
+      value: formData.datasourceName,
+      label: formData.datasourceName,
+    });
+    // 其余的为当前行前面行的别名
+    const headRows = relateSourceData.value.filter((item) => item.seq < currentRelateSourceRow.value.seq);
+
+    forEach(headRows, (item) => {
+      relateAliasNameList.value.push({
+        value: item.aliasName,
+        label: item.aliasName,
+      });
+    });
+  }
+
+  if (currentRelateSourceRow.value.conditionData && currentRelateSourceRow.value.conditionData.length > 0) {
+    // // 如果没设置过数据源的，给设置默认值
+    const { conditionData } = currentRelateSourceRow.value;
+    // // 如果有设置过关联的，根据JSON读取后设置窗口里对应值
+    relateConditionData.value = conditionData;
+
+    // switch (selectedSourceType.value) {
+    //   case 'customDict':
+    //     dicData.value = sourceData.customDict.dicData;
+    //     break;
+    //   case 'dataTable':
+    //     mapBusinessDomain.value = sourceData.dataTable.mapBusinessDomain;
+    //     changeMapDomain().then(() => {
+    //       mapTable.value = sourceData.dataTable.mapTable;
+    //       changeTableMatch(mapTable.value);
+    //     });
+    //     conditionData.value = sourceData.dataTable.conditionData;
+    //     tableQueryField.value = sourceData.dataTable.valueField;
+    //     tableShowField.value = sourceData.dataTable.showField;
+    //     break;
+    //   default:
+    //     break;
+    // }
+  } else {
+    relateConditionData.value = [];
+  }
+};
+const relateAliasColumnList = ref([]);
+const getRelateAliasColumnList = (aliasName) => {
+  // 先判断aliasName是否等于主数据的formData.datasourceName
+  // 如果是，直接使用数据表列 列表
+  if (aliasName === formData.datasourceName) {
+    relateAliasColumnList.value = tableList.value.find((item) => item.tableName === aliasName)?.columns;
+  } else {
+    // 如果不是，通过aliasName查找表名，再加载列
+    const tableName = relateSourceData.value.find((item) => item.aliasName === aliasName).datasourceName;
+    relateAliasColumnList.value = tableList.value.find((item) => item.tableName === tableName)?.columns;
+  }
+};
+
+//  #数据源关联-删除关联条件
+const deleterelateConditionData = ({ rowIndex }) => {
+  relateConditionData.value.splice(rowIndex, 1);
+};
+
+// # 数据源关联条件提交
+const onRelateConditionConfirm = () => {
+  // 先做校验
+  let checkResult = true;
+  // 如果选择了数据表匹配
+  // mapTable不可为空
+  // conditionData至少大于一行
+  if (selectedSourceType.value === 'dataTable') {
+    if (relateConditionData.value.length < 1) {
+      MessagePlugin.warning('数据表匹配时，条件数据不可为空');
+      checkResult = false;
+    }
+    // if (!tableQueryField.value) {
+    //   MessagePlugin.warning('数据表匹配时，value字段不可为空');
+    //   checkResult = false;
+    // }
+    // if (!tableShowField.value) {
+    //   MessagePlugin.warning('数据表匹配时，label字段不可为空');
+    //   checkResult = false;
+    // }
+    // conditionData.value.forEach((item) => {
+    //   if (!item.operator) {
+    //     MessagePlugin.warning('数据表匹配时，查询条件列【条件】不可为空');
+    //     checkResult = false;
+    //   }
+    //   if (!item.field) {
+    //     MessagePlugin.warning('数据表匹配时，查询条件列【字段】不可为空');
+    //     checkResult = false;
+    //   }
+    //   if (!item.value) {
+    //     MessagePlugin.warning('数据表匹配时，查询条件列【值】不可为空');
+    //     checkResult = false;
+    //   }
+    // });
+  }
+  if (!checkResult) return;
+
+  MessagePlugin.info('数据保存中...', 1000);
+
+  // 根据currentSearchSelectRow的index 查询columnsDataWithoutDefault中匹配的行，使用find或者filter方法，将sourceData赋值到对应行的componentSource字段
+  // searchData.value[
+  //   searchData.value.findIndex((item) => item.seq === currentSearchSelectRow.value.seq)
+  // ].componentSourceJson = JSON.stringify(sourceData);
+  relateSourceData.value[
+    relateSourceData.value.findIndex((item) => item.seq === currentRelateSourceRow.value.seq)
+  ].conditionData = relateConditionData.value;
+
+  relateSourceConditionVisible.value = false;
+  MessagePlugin.info('数据保存成功!');
+};
+
 // #region 表格配置相关
 // #系统默认字段列表
 const defaultFields = ['id', 'time_create', 'creator', 'time_modified', 'modifier', 'state', 'eid', 'oid'];
@@ -933,6 +1419,12 @@ const columnColumns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
+    colKey: 'tableName',
+    title: '数据源',
+    align: 'center',
+    width: '90',
+  },
+  {
     colKey: 'columnName',
     title: '列字段',
     align: 'center',
@@ -950,12 +1442,12 @@ const columnColumns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '100',
   },
-  {
-    colKey: 'isDatabaseField',
-    title: '是否表字段',
-    align: 'center',
-    width: '100',
-  },
+  // {
+  //   colKey: 'isDatabaseField',
+  //   title: '是否表字段',
+  //   align: 'center',
+  //   width: '100',
+  // },
   {
     colKey: 'isVisible',
     title: '是否显示',
@@ -987,14 +1479,83 @@ const columnColumns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '100',
   },
-  // {
-  //   colKey: 'op',
-  //   title: '操作',
-  //   align: 'center',
-  //   fixed: 'right',
-  //   width: '130',
-  // },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '130',
+  },
 ];
+
+// #表格列数据源-计算属性，根据关联数据源加载
+const columnAliasNameList = computed(() => {
+  // 如果没有关联数据源，则返回默认选项
+  if (relateSourceData.value.length === 0) {
+    return [
+      {
+        label: '无数据源',
+        value: 'noTable',
+      },
+    ];
+  }
+  // 如果没有关联数据源，除了默认选项，还要加载关联数据源的aliasName
+  return [
+    {
+      label: '无数据源',
+      value: 'noTable',
+    },
+    ...relateSourceData.value.map((item) => {
+      return {
+        label: item.aliasName,
+        value: item.aliasName,
+      };
+    }),
+  ];
+});
+
+// 表格列配置-数据源选择变化
+const columnHandTableChange = (row) => {
+  // 加载当前行的数据源所对应的列的下拉列数据源
+  const tableName = relateSourceData.value.find((item) => item.aliasName === row.tableName).datasourceName;
+
+  row.columnAliasColumnList = tableList.value.find((item) => item.tableName === tableName)?.columns;
+};
+// #表格列配置-删除行
+const onColumnDeleteClick = ({ rowIndex }) => {
+  columnsData.value.splice(rowIndex, 1);
+};
+// 表格列配置-数据列选择变化
+const columnHandColumnChange = (row) => {
+  row.columnDesc = row.columnAliasColumnList.find((item) => item.columnName === row.columnName)?.columnDesc;
+  row.columnType = row.columnAliasColumnList.find((item) => item.columnName === row.columnName)?.columnType;
+};
+// #表格列配置-添加行
+const addColumnData = () => {
+  // 添加时，seq设置为已存在数据中最大seq再加1
+  // 如果没有数据，则设置为1
+  let seq = 1;
+  // 这里的seq要取最小的seq-1
+  if (columnsData.value.length > 0) {
+    seq = Math.min(...columnsData.value.map((item) => item.seq)) - 1;
+  }
+  // 这里是插入到第一个
+  columnsData.value.unshift({
+    seq,
+    tableName: '',
+    columnName: '',
+    columnDesc: '',
+    columnType: '',
+    isDatabaseField: '',
+    isVisible: true,
+    isAutoWidth: true,
+    columnWidth: 100,
+    align: 'center',
+    isFixed: false,
+    isHandAdd: true,
+  });
+};
+
 // #endregion
 
 // #region 查询条件配置相关
@@ -1201,13 +1762,13 @@ const searchColumns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '100',
   },
-  // {
-  //   colKey: 'op',
-  //   title: '操作',
-  //   align: 'center',
-  //   fixed: 'right',
-  //   width: '130',
-  // },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '130',
+  },
 ];
 // #查询条件表格-数据
 const searchData = ref([]);
@@ -1239,6 +1800,11 @@ const addSearchData = () => {
     defaultValue: '',
     isVisible: true,
   });
+};
+
+// #查询条件表格-删除行
+const deleteSearchData = ({ rowIndex }) => {
+  searchData.value.splice(rowIndex, 1);
 };
 
 // #查询条件表格-列-列选择事件-根据选择字段执行一些自动操作
@@ -1488,6 +2054,7 @@ const getInsetModel = () => {
         columnSetting: columnsData.value,
       },
       searchSetting: searchData.value,
+      datasourceSetting: relateSourceData.value,
     },
   };
   console.log(JSON.stringify(insetModel));
@@ -1553,6 +2120,9 @@ const initEditData = (insetModel) => {
 
   // 更新searchData
   searchData.value = insetModel.domainParmSetting.searchSetting;
+
+  // 更新relateSourceData
+  relateSourceData.value = insetModel.domainParmSetting.datasourceSetting;
 
   domainParamFromRef.value.clearValidate();
   // 根据需要，可以添加对columnsData和searchData更细致的处理，

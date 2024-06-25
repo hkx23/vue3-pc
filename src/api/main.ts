@@ -521,6 +521,25 @@ export interface CommonSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: string[];
+  datasourceSetting?: DatasourceSetting[];
+}
+
+export interface DatasourceSetting {
+  datasourceType?: string;
+  datasourceName?: string;
+  aliasName?: string;
+  relatedType?: string;
+  conditionData?: DatasourceSettingCondition[];
+}
+
+export interface DatasourceSettingCondition {
+  fieldName?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  relateType?: string;
+  aliasName?: string;
+  relateFieldName?: string;
+  relateValue?: string;
 }
 
 /** 响应数据 */
@@ -5173,6 +5192,8 @@ export interface MoSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: string[];
+  datasourceSetting?: DatasourceSetting[];
   /** 工单编码 */
   moCode?: string;
   /** 工单类型 */
@@ -5299,6 +5320,8 @@ export interface MitemInSupplierSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: string[];
+  datasourceSetting?: DatasourceSetting[];
   mitemKeyword?: string;
   supplierKeyword?: string;
 }
@@ -5362,9 +5385,9 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
 }
@@ -5582,13 +5605,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
   isRawName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
   isProductName?: string;
+  isInProcessName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5731,8 +5754,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6528,6 +6551,8 @@ export interface InspectPlanSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: string[];
+  datasourceSetting?: DatasourceSetting[];
   assetTypeId?: string;
   equipmentId?: string;
   ids?: string[];
@@ -6616,6 +6641,8 @@ export interface InspectItemInEquipmentSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: string[];
+  datasourceSetting?: DatasourceSetting[];
   ids?: string[];
   inspectItemId?: string;
 }
@@ -6774,6 +6801,8 @@ export interface InspectItemSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: string[];
+  datasourceSetting?: DatasourceSetting[];
   /** 点检项目名称 */
   inspectItemName?: string;
   assetTypeId?: string;
@@ -7418,9 +7447,15 @@ export interface DomainParamComponentSourceCustomDict {
 export interface DomainParamComponentSourceDatatable {
   mapBusinessDomain?: string;
   mapTable?: string;
-  conditionData?: Filter[];
+  conditionData?: DomainParamComponentSourceDatatableFilter[];
   valueField?: string;
   showField?: string;
+}
+
+export interface DomainParamComponentSourceDatatableFilter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  value?: string;
 }
 
 export interface DomainParamSearchSetting {
@@ -7433,11 +7468,12 @@ export interface DomainParamSearchSetting {
   defaultValue?: string;
   fieldType?: string;
   componentSource?: DomainParamComponentSource;
-  visible?: boolean;
-  mutiple?: boolean;
+  isVisible?: boolean;
+  isMutiple?: boolean;
 }
 
 export interface DomainParamSetting {
+  datasourceSetting?: DatasourceSetting[];
   tableSetting?: DomainParamTableSetting;
   searchSetting?: DomainParamSearchSetting[];
 }
@@ -7456,16 +7492,17 @@ export interface DomainParamTableColumn {
   canDelete?: boolean;
   /** @format int32 */
   seq?: number;
-  fixed?: boolean;
-  visible?: boolean;
-  databaseField?: boolean;
-  dataDefault?: boolean;
-  autoWidth?: boolean;
+  isDatabaseField?: boolean;
+  isAutoWidth?: boolean;
+  isVisible?: boolean;
+  isFixed?: boolean;
+  isDataDefault?: boolean;
 }
 
 export interface DomainParamTableSetting {
   tableTitle?: string;
   usePage?: boolean;
+  pageSize?: number;
   sortField?: string;
   sortType?: string;
   columnSetting?: DomainParamTableColumn[];
@@ -8087,6 +8124,8 @@ export interface DefectCodeSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: string[];
+  datasourceSetting?: DatasourceSetting[];
   id?: string;
   /** 多个ID */
   ids?: string[];
@@ -9440,8 +9479,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -10824,10 +10863,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -17120,6 +17159,21 @@ export const api = {
      * No description
      *
      * @tags 动态服务
+     * @name DynamicQueryDataSql
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryDataSql
+     * @secure
+     */
+    dynamicQueryDataSql: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicQueryDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
      * @name BatchUpdateData
      * @summary 根据领域进行动态表字段更新
      * @request POST:/dynamicManage/batchUpdateData
@@ -17129,6 +17183,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTables
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTables
+     * @secure
+     */
+    sqlTables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/main/dynamicManage/sqlTables`, {
+        method: 'GET',
       }),
   },
   domainParamGroup: {

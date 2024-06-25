@@ -96,11 +96,7 @@
                       !opt.comp.includes('t-radio-button-group') &&
                       !(opt.comp.includes('t-checkbox') && !opt.comp.includes('t-checkbox-group'))
                     "
-                    v-bind="
-                      typeof opt.bind == 'function'
-                        ? opt.bind(state.form)
-                        : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
-                    "
+                    v-bind="typeof opt.bind == 'function' ? opt.bind(state.form) : { ...$attrs, ...opt.bind }"
                     v-model="state.form[opt.dataIndex]"
                     :size="size"
                     :label="opt.label"
