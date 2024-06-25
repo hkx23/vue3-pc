@@ -490,6 +490,9 @@
                         <template #defaultValue="{ row }">
                           <t-input v-model="row.defaultValue" />
                         </template>
+                        <template #operator="{ row }">
+                          <t-select v-model="row.operator" filterable :options="operators"> </t-select>
+                        </template>
 
                         <template #isVisible="{ row }">
                           <t-switch v-model="row.isVisible"></t-switch>
@@ -1759,6 +1762,12 @@ const searchColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'isVisible',
     title: '是否显示(隐藏用于设置固定查询条件)',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'operator',
+    title: '运算符',
     align: 'center',
     width: '100',
   },

@@ -55,9 +55,9 @@ const conditionEnter = (data: any) => {
   for (const key in data) {
     if (data[key] != null && data[key] !== '') {
       const addFilter = {
-        tableName: 'm_asset_brand',
+        tableName: datasourceName.value,
         field: key,
-        operator: 'EQ',
+        operator: searchSettings.value.find((item: any) => item.field === key)?.operator || 'like',
         value: data[key],
       };
       filterList.value.push(addFilter);
@@ -99,6 +99,7 @@ const domainCategory = ref('MAIN');
 const datasourceCategory = ref('TABLE');
 const datasourceName = ref('');
 const selectedFields = ref([]);
+const searchSettings = ref([]);
 const usePager = ref(true);
 
 const loadSetting = () => {
@@ -138,6 +139,7 @@ const loadSetting = () => {
     // 过滤isShow为true的数据,作为表格的列配置
     tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
     // 获取查询信息，配置
+    searchSettings.value = res.domainParmSetting.searchSetting;
     opts.value = genOpts(res.domainParmSetting.searchSetting);
 
     conditionEnter(null);

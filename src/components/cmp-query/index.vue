@@ -96,7 +96,15 @@
                       !opt.comp.includes('t-radio-button-group') &&
                       !(opt.comp.includes('t-checkbox') && !opt.comp.includes('t-checkbox-group'))
                     "
-                    v-bind="typeof opt.bind == 'function' ? opt.bind(state.form) : { ...$attrs, ...opt.bind }"
+                    v-bind="
+                      typeof opt.bind == 'function'
+                        ? opt.bind(state.form)
+                        : getComponentAttributes(opt.comp, {
+                            clearable: true,
+                            ...$attrs,
+                            ...opt.bind,
+                          })
+                    "
                     v-model="state.form[opt.dataIndex]"
                     :size="size"
                     :label="opt.label"
@@ -619,6 +627,17 @@ const excludeUndefined = (obj) => {
     }
     return acc;
   }, {});
+};
+const getComponentAttributes = (compName, defaultAttrs) => {
+  // 假设支持 filterable 的组件有特定的名称模式或列表
+  const filterableComponents = ['t-select']; // 举例，列出支持 filterable 的组件名
+  const attrs = { ...defaultAttrs }; // 复制默认属性对象以避免直接修改原对象
+  // 如果组件名在支持的列表中，则添加 filterable 属性
+  if (filterableComponents.includes(compName)) {
+    attrs.filterable = true;
+  }
+
+  return attrs;
 };
 // 暴露方法出去
 defineExpose({ state, props, setFromValue, getFromValue, getFromData, search, resetSearch });
