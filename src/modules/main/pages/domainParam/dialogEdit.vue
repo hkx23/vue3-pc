@@ -516,7 +516,7 @@
               </t-tab-panel>
               <!-- #endregion 查询条件配置 -->
               <!-- #region 按钮&表单配置 -->
-              <!-- <t-tab-panel v-if="enableButton" value="BUTTON" label="按钮定义" :destroy-on-hide="false">
+              <!-- <t-tab-panel  value="BUTTON" label="按钮定义" :destroy-on-hide="false">
                 <cmp-container :full="true">
                   <cmp-row>
                     <cmp-card flex="280px">
