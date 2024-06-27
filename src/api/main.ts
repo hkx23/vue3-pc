@@ -347,6 +347,7 @@ export interface Org {
 
 /** 筛选字段 */
 export interface Filter {
+  tableName?: string;
   field?: string;
   operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
   value?: string;
@@ -521,11 +522,18 @@ export interface CommonSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
-  selectedFields?: string[];
+  selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
 }
 
+export interface DatasourceField {
+  tableName?: string;
+  fieldName?: string;
+}
+
 export interface DatasourceSetting {
+  /** @format int32 */
+  seq?: number;
   datasourceType?: string;
   datasourceName?: string;
   aliasName?: string;
@@ -534,6 +542,8 @@ export interface DatasourceSetting {
 }
 
 export interface DatasourceSettingCondition {
+  /** @format int32 */
+  seq?: number;
   fieldName?: string;
   operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
   relateType?: string;
@@ -1025,8 +1035,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -4108,6 +4118,11 @@ export interface MsgDtlDTO {
    * @format int32
    */
   isRead?: number;
+  /**
+   * APP应用ID
+   * @format int32
+   */
+  packageId?: number;
   /** 标题 */
   title?: string;
   /** 内容 */
@@ -5192,7 +5207,7 @@ export interface MoSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
-  selectedFields?: string[];
+  selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   /** 工单编码 */
   moCode?: string;
@@ -5320,7 +5335,7 @@ export interface MitemInSupplierSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
-  selectedFields?: string[];
+  selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   mitemKeyword?: string;
   supplierKeyword?: string;
@@ -5384,10 +5399,10 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  isState?: boolean;
-  isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
+  isState?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
 }
@@ -5605,13 +5620,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isInProcessName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isProductName?: string;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -5754,8 +5769,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6551,7 +6566,7 @@ export interface InspectPlanSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
-  selectedFields?: string[];
+  selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   assetTypeId?: string;
   equipmentId?: string;
@@ -6641,7 +6656,7 @@ export interface InspectItemInEquipmentSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
-  selectedFields?: string[];
+  selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
   inspectItemId?: string;
@@ -6801,7 +6816,7 @@ export interface InspectItemSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
-  selectedFields?: string[];
+  selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   /** 点检项目名称 */
   inspectItemName?: string;
@@ -7021,6 +7036,49 @@ export interface ResultAddFileTypeVO {
   message?: string;
   /** 上传控件文件VO */
   data?: AddFileTypeVO;
+}
+
+/** 流程模板 */
+export interface ProcessTmpl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 流程名称 */
+  processName?: string;
+  /** 流程描述 */
+  processDesc?: string;
+  /** 流程模板内容（JSON） */
+  processTmplBody?: string;
+  /** 流程关联id */
+  processDefinitionId?: string;
+  /** 流程分组 */
+  processGroup?: string;
+  /** 图标 */
+  icon?: string;
+  /** 图标背景色 */
+  iconBg?: string;
+  /** 通知类型 */
+  notify?: string;
 }
 
 export interface FileVO {
@@ -7434,6 +7492,36 @@ export interface DomainParamGroup {
   parentId?: string;
 }
 
+export interface DomainParamButtonFormColumn {
+  /** @format int32 */
+  seq?: number;
+  field?: string;
+  label?: string;
+  component?: string;
+  componentParam?: string;
+  placeholder?: string;
+  defaultValue?: string;
+  fieldType?: string;
+  componentSource?: DomainParamComponentSource;
+  isVisible?: boolean;
+  isMutiple?: boolean;
+}
+
+export interface DomainParamButtonSetting {
+  /** @format int32 */
+  seq?: number;
+  buttonCode?: string;
+  buttonName?: string;
+  buttonPosition?: string;
+  buttonTheme?: string;
+  needCheckSelectRow?: boolean;
+  actionType?: string;
+  formColumnSetting?: DomainParamButtonFormColumn[];
+  deleteType?: string;
+  isEnabled?: boolean;
+  isCustomButton?: boolean;
+}
+
 export interface DomainParamComponentSource {
   sourceType?: string;
   customDict?: DomainParamComponentSourceCustomDict;
@@ -7465,6 +7553,7 @@ export interface DomainParamSearchSetting {
   label?: string;
   component?: string;
   componentParam?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
   defaultValue?: string;
   fieldType?: string;
   componentSource?: DomainParamComponentSource;
@@ -7476,9 +7565,12 @@ export interface DomainParamSetting {
   datasourceSetting?: DatasourceSetting[];
   tableSetting?: DomainParamTableSetting;
   searchSetting?: DomainParamSearchSetting[];
+  buttonSetting?: DomainParamButtonSetting[];
 }
 
 export interface DomainParamTableColumn {
+  /** @format int32 */
+  seq?: number;
   columnDefault?: string;
   columnDesc?: string;
   columnKey?: string;
@@ -7490,13 +7582,12 @@ export interface DomainParamTableColumn {
   columnWidth?: number;
   align?: string;
   canDelete?: boolean;
-  /** @format int32 */
-  seq?: number;
   isDatabaseField?: boolean;
   isAutoWidth?: boolean;
   isVisible?: boolean;
   isFixed?: boolean;
   isDataDefault?: boolean;
+  isHandAdd?: boolean;
 }
 
 export interface DomainParamTableSetting {
@@ -8124,7 +8215,7 @@ export interface DefectCodeSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
-  selectedFields?: string[];
+  selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   id?: string;
   /** 多个ID */
@@ -11246,6 +11337,99 @@ export interface ResultListObjectPropertyValueVO {
   data?: ObjectPropertyValueVO[] | null;
 }
 
+/** APP消息 */
+export type AppMsg = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  msgId?: string;
+  /** 消息推送类型 */
+  pushType?: string;
+  /** 消息推送目标 */
+  pushTarget?: string;
+  /**
+   * 预计发送时间
+   * @format date-time
+   */
+  datetimePushPlan?: string;
+  /**
+   * 最后推送时间
+   * @format date-time
+   */
+  datetimePushLast?: string;
+  /**
+   * 发送间隔周期
+   * @format int32
+   */
+  pushIntervalCycle?: number;
+  /**
+   * 计划发送次数
+   * @format int32
+   */
+  pushCount?: number;
+  /**
+   * 已发送次数
+   * @format int32
+   */
+  pushSendCount?: number;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  datetimePushDisable?: string;
+  personId?: string;
+  userId?: string;
+  /**
+   * 是否有效
+   * @format int32
+   */
+  isDisable?: number;
+  /**
+   * 是否已读
+   * @format int32
+   */
+  isRead?: number;
+  /**
+   * APP应用ID
+   * @format int32
+   */
+  packageId?: number;
+  title?: string;
+  content?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListAppMsg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AppMsg[] | null;
+}
+
 /** 响应数据 */
 export type PagingDataModule = {
   list?: Module[];
@@ -11363,6 +11547,120 @@ export interface ResultListDropdown {
   message?: string;
   /** 响应数据 */
   data?: Dropdown[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListProcessTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProcessTmpl[] | null;
+}
+
+export interface IdentityLinkInfo {
+  type?: string;
+  scopeId?: string;
+  groupId?: string;
+  taskId?: string;
+  userId?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultTask {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Task;
+}
+
+/** 响应数据 */
+export type Task = {
+  /** @format int32 */
+  priority?: number;
+  name?: string;
+  owner?: string;
+  suspended?: boolean;
+  description?: string;
+  tenantId?: string;
+  assignee?: string;
+  /** @format date-time */
+  dueDate?: string;
+  category?: string;
+  localizedDescription?: string;
+  localizedName?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
+  formKey?: string;
+  id?: string;
+  state?: string;
+  scopeId?: string;
+  /** @format date-time */
+  createTime?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  taskLocalVariables?: Record<string, object>;
+  inProgressStartedBy?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  processDefinitionId?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
+  caseVariables?: Record<string, object>;
+  /** @format date-time */
+  claimTime?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  claimedBy?: string;
+  propagatedStageInstanceId?: string;
+} | null;
+
+/** 响应数据 */
+export type IdentityLink = {
+  processDefinitionId?: string;
+  type?: string;
+  scopeId?: string;
+  groupId?: string;
+  taskId?: string;
+  userId?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListIdentityLink {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: IdentityLink[] | null;
 }
 
 /** 通用响应类 */
@@ -15121,6 +15419,39 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 消息主表
+     * @name SetAppMsgRead
+     * @summary APP消息已读设置
+     * @request GET:/msg/setAppMsgRead
+     * @secure
+     */
+    setAppMsgRead: (query: { packageId: string }) =>
+      http.request<ResultObject['data']>(`/api/main/msg/setAppMsgRead`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 消息主表
+     * @name AppSyncMsg
+     * @summary APP消息同步
+     * @request GET:/msg/appSyncMsg
+     * @secure
+     */
+    appSyncMsg: (query: {
+      /** @format date-time */
+      lastModifyTime: string;
+    }) =>
+      http.request<ResultListAppMsg['data']>(`/api/main/msg/appSyncMsg`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   module: {
     /**
@@ -16855,6 +17186,167 @@ export const api = {
     delete: (query: { id: string }) =>
       http.request<ResultObject['data']>(`/api/main/importManage/delete`, {
         method: 'DELETE',
+        params: query,
+      }),
+  },
+  flow: {
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name UpdateProcessTmpl
+     * @summary 更新流程模板
+     * @request POST:/flow/updateProcessTmpl
+     * @secure
+     */
+    updateProcessTmpl: (data: ProcessTmpl) =>
+      http.request<ResultString['data']>(`/api/main/flow/updateProcessTmpl`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name UpdateProcessTmplStatus
+     * @summary 根据流程模板ID更新流程模板状态
+     * @request POST:/flow/updateProcessTmplStatus
+     * @secure
+     */
+    updateProcessTmplStatus: (query: {
+      id: string;
+      /** @format int32 */
+      status: number;
+    }) =>
+      http.request<ResultString['data']>(`/api/main/flow/updateProcessTmplStatus`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name UpdateProcessTmplGroup
+     * @summary 根据流程模板ID更新分组
+     * @request POST:/flow/updateProcessTmplGroup
+     * @secure
+     */
+    updateProcessTmplGroup: (query: { id: string; group: string }) =>
+      http.request<ResultString['data']>(`/api/main/flow/updateProcessTmplGroup`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name StartProcess
+     * @summary 启动流程
+     * @request POST:/flow/startProcess
+     * @secure
+     */
+    startProcess: (
+      query: {
+        id: string;
+      },
+      data: Record<string, object>,
+    ) =>
+      http.request<ResultString['data']>(`/api/main/flow/startProcess`, {
+        method: 'POST',
+        params: query,
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name CompleteTask
+     * @summary 完成当前任务
+     * @request POST:/flow/completeTask
+     * @secure
+     */
+    completeTask: (query: { taskId: string }) =>
+      http.request<ResultObject['data']>(`/api/main/flow/completeTask`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name AddProcessTmpl
+     * @summary 新增流程模板
+     * @request POST:/flow/addProcessTmpl
+     * @secure
+     */
+    addProcessTmpl: (data: ProcessTmpl) =>
+      http.request<ResultString['data']>(`/api/main/flow/addProcessTmpl`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name Templates
+     * @summary 获取流程模板清单
+     * @request GET:/flow/templates
+     * @secure
+     */
+    templates: (query: { keyword: string }) =>
+      http.request<ResultListProcessTmpl['data']>(`/api/main/flow/templates`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name GetTaskInfo
+     * @summary 获取当前任务的信息
+     * @request GET:/flow/getTaskInfo
+     * @secure
+     */
+    getTaskInfo: (query: { taskId: string }) =>
+      http.request<ResultTask['data']>(`/api/main/flow/getTaskInfo`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name GetCurrentTask
+     * @summary 根据流程实例ID获取当前任务
+     * @request GET:/flow/getCurrentTask
+     * @secure
+     */
+    getCurrentTask: (query: { processInstanceId: string }) =>
+      http.request<ResultTask['data']>(`/api/main/flow/getCurrentTask`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作流服务
+     * @name GetCandidateInfo
+     * @summary 获取当前任务的候选人信息
+     * @request GET:/flow/getCandidateInfo
+     * @secure
+     */
+    getCandidateInfo: (query: { taskId: string }) =>
+      http.request<ResultListIdentityLink['data']>(`/api/main/flow/getCandidateInfo`, {
+        method: 'GET',
         params: query,
       }),
   },
