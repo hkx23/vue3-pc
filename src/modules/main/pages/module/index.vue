@@ -716,14 +716,14 @@ const rules: FormRules<Data> = {
 };
 
 function validateBehaviorPath(value: any): boolean | CustomValidateResolveType {
-  const pattern = /^(https?:\/\/.+|.+#\/[a-zA-Z]+)(\?[^?]*)$/;
-  if (!pattern.test(value)) {
-    return {
-      result: false,
-      message: '菜单地址必须以 http://, https://开头, 或使用 /main#/example 格式！',
-      type: 'error',
-    };
-  }
+  // const pattern = /^(https?:\/\/.+|.+#\/[a-zA-Z]+)$/;
+  // if (!pattern.test(value)) {
+  //   return {
+  //     result: false,
+  //     message: '菜单地址必须以 http://, https://开头, 或使用 /main#/example 格式！',
+  //     type: 'error',
+  //   };
+  // }
   return true;
 }
 
