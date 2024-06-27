@@ -16,7 +16,7 @@
             class="ant-input editable-title-input"
             :placeholder="defaultText"
             @blur="blurEvent()"
-            @focus="$event.currentTarget.select()"
+            @focus="($event.currentTarget as HTMLInputElement).select()"
           />
           <span v-else class="editable-title" @click="clickEvent()">{{ nodeConfig.nodeName }}</span>
           <i class="anticon anticon-close close" @click="delNode"></i>
@@ -51,7 +51,7 @@
                     type="text"
                     class="ant-input editable-title-input"
                     @blur="blurEvent(index)"
-                    @focus="$event.currentTarget.select()"
+                    @focus="($event.currentTarget as HTMLInputElement).select()"
                   />
                   <span v-else class="editable-title" @click="clickEvent(index)">{{ item.nodeName }}</span>
                   <span class="priority-title" @click="setPerson(item.priorityLevel)"
@@ -190,14 +190,14 @@ watch(conditionsConfig1, (condition) => {
   }
 });
 
-const clickEvent = (index) => {
+const clickEvent = (index?: number) => {
   if (index || index === 0) {
     isInputList.value[index] = true;
   } else {
     isInput.value = true;
   }
 };
-const blurEvent = (index) => {
+const blurEvent = (index?: number) => {
   if (index || index === 0) {
     isInputList.value[index] = false;
     // eslint-disable-next-line vue/no-mutating-props

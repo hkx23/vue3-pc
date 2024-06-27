@@ -25,16 +25,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps({
-  list: {
-    type: Array,
-    default: () => [],
-  },
-  visible: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = defineProps<{
+  list: { name: string; type: string }[];
+  visible: boolean;
+}>();
 const emits = defineEmits(['update:visible']);
 
 const visibleDialog = computed({
