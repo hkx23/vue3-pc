@@ -1,6 +1,6 @@
 <template>
   <cmp-flow
-    v-show="isShowFlow"
+    v-if="isShowFlow"
     :template-data="templateData"
     :group-list="groupList"
     @back="onClickBack"
@@ -72,7 +72,7 @@ watch(
   }, 500),
 );
 
-const templateData = ref<ProcessTmpl>({});
+const templateData = ref<ProcessTmpl>();
 const data = ref<{ name: string; items: ProcessTmpl[] }[]>([]);
 const fetchData = async () => {
   // api
@@ -97,7 +97,7 @@ const fetchData = async () => {
 const isShowMoveDialog = ref(false);
 const isShowFlow = ref(false);
 const isEdit = ref(false);
-const groupList = ref([]);
+const groupList = ref<string[]>([]);
 const targetGroup = ref('');
 const currentProcess = ref<ProcessTmpl>();
 const onClickSave = async (templateBody) => {

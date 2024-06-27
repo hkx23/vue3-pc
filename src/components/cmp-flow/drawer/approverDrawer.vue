@@ -121,7 +121,7 @@ const props = defineProps({
 const defaultApprover = ref('');
 const defaultApproverRole = ref('');
 
-const approverConfig = ref({});
+const approverConfig = ref<any>({});
 const store = useStore();
 const { setApproverConfig, setApprover } = store;
 const approverConfig1 = computed(() => store.approverConfig1);

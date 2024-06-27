@@ -148,8 +148,8 @@ import $func from '../utils/index';
 const conditionsConfig = ref({
   conditionNodes: [],
 });
-const conditionConfig = ref({});
-const PriorityLevel = ref('');
+const conditionConfig = ref<any>({});
+const PriorityLevel = ref(0);
 // const conditions = ref([]);
 // const conditionList = ref([]);
 // const checkedList = ref([]);

@@ -28,7 +28,7 @@ import $func from '../utils/index';
 
 const defaultCopyer = ref('');
 
-const copyerConfig = ref({});
+const copyerConfig = ref<any>({});
 const ccSelfSelectFlag = ref(true);
 const store = useStore();
 const { setCopyerConfig, setCopyer } = store;
