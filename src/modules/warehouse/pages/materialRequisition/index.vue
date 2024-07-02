@@ -273,10 +273,10 @@ const onBatchCompleteClick = async (row: any) => {
       const deleteModel: MaterialRequisitionDTO = {
         cancelledIds: ids,
       };
-      await apiWarehouse.materialRequisition.materialRequisitionCanceled(deleteModel);
+      await apiWarehouse.materialRequisition.materialRequisitionComplete(deleteModel);
       fetchTable();
       confirmDia.hide();
-      MessagePlugin.success(t('materialRequisition.deleteSuccess'));
+      MessagePlugin.success(t('common.message.saveSuccess'));
     },
     onClose: () => {
       confirmDia.hide();
