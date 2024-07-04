@@ -55,6 +55,7 @@ const createReportByStimulsoft = (templateBody: string, printData: any) => {
   }
 
   const reportPages = new Stimulsoft.Report.StiReport();
+  reportPages.load(templateBody);
   reportPages.render();
   reportPages.renderedPages.clear();
 
