@@ -33,8 +33,9 @@ import _ from 'lodash';
 import { FormInstanceFunctions } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
+
 import { AddFileType } from '../bcmp-upload-content/constants';
-import BcmpUploadContent from './bcmp-upload-content/index.vue';
 
 const isReadonly = ref(true); // 是否可编辑
 const formVisible = ref(false);

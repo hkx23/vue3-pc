@@ -195,8 +195,7 @@ import { ref } from 'vue';
 import { api } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
-
-import BcmpUploadContent from './bcmp-upload-content/index.vue';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 
 // 父方法
 const fileList = ref([]);

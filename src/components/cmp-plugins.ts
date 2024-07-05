@@ -8,7 +8,7 @@ import BcmpSelectList from './bcmp-select-list/index.vue';
 import BcmpSelectList2 from './bcmp-select-list2/index.vue';
 import BcmpSelectParam from './bcmp-select-param/index.vue';
 import BcmpSelectTable from './bcmp-select-table/index.vue';
-// import BcmpUploadContent from './bcmp-upload-content/index.vue';
+// import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import BCmpCustomer from './cmp-business/BCmpCustomer.vue';
 import BCmpMitem from './cmp-business/BCmpMitem.vue';
 import BCmpMitemCategory from './cmp-business/BCmpMitemCategory.vue';

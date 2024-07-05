@@ -127,9 +127,8 @@ import { api, PqcInspectPatrolVO } from '@/api/quality';
 import ngStamp from '@/assets/images/NG.png';
 import okStamp from '@/assets/images/OK.png';
 import underwayStamp from '@/assets/images/UNDERWAY.png';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import { usePage } from '@/hooks/modules/page';
-
-import BcmpUploadContent from './bcmp-upload-content/index.vue';
 
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false);

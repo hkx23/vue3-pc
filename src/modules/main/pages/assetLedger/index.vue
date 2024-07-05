@@ -338,9 +338,9 @@ import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api, EquipmentFile } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
-import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();

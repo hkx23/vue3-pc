@@ -159,10 +159,10 @@ import { Ref, ref } from 'vue';
 import { api } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
-import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import touchstoneForm from './touchstoneForm.vue';
 
 const { pageUI } = usePage(); // 分页工具

@@ -153,12 +153,12 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 import { useUserStore } from '@/store/modules/user';
 
-import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import { FormRef } from './constants';
 import EventForm from './form.vue';
 import { useLang } from './lang';

@@ -655,8 +655,8 @@ import { computed, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 
 import { api, ImportSetting, ImportSettingDTO } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 
-import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();

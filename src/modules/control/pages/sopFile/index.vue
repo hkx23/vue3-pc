@@ -167,10 +167,10 @@ import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
-import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import ProfileForm from './form.vue';
 import formAdd from './formAdd.vue';
 
