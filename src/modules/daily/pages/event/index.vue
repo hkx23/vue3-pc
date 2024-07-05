@@ -158,6 +158,7 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 import { useUserStore } from '@/store/modules/user';
 
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import { FormRef } from './constants';
 import EventForm from './form.vue';
 import { useLang } from './lang';

@@ -340,6 +340,7 @@ import { api, EquipmentFile } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import { usePage } from '@/hooks/modules/page';
 
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();

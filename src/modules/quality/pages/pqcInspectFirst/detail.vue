@@ -184,6 +184,8 @@ import okStamp from '@/assets/images/OK.png';
 import underwayStamp from '@/assets/images/UNDERWAY.png';
 import { usePage } from '@/hooks/modules/page';
 
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
+
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false);
 const dataTotal = ref(0);

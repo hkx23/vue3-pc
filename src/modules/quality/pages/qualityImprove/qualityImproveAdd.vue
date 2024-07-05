@@ -1406,6 +1406,7 @@ import { api as apiQuality } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import { usePage } from '@/hooks/modules/page';
 
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import { useLang } from './lang';
 
 const emit = defineEmits(['update:visible', 'permissionShow']);

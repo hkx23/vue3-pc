@@ -163,6 +163,7 @@ import { api, EventDTO } from '@/api/daily';
 import { useUserStore } from '@/store/modules/user';
 import commmon from '@/utils/common';
 
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
 // import { useUserStore } from '@/store';
 import { FormRef } from './constants';
 import { useLang } from './lang';

@@ -12,6 +12,8 @@
 import { MessagePlugin } from 'tdesign-vue-next';
 
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
+
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
 // const emits = defineEmits(['fileChange', 'uploadSuccess', 'uploadfail', 'deleteSuccess', 'batchDeleteSuccess']);
 const uploadSuccess = (file: AddFileType) => {
   MessagePlugin.info(

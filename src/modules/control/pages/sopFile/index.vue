@@ -170,6 +170,7 @@ import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import ProfileForm from './form.vue';
 import formAdd from './formAdd.vue';
 

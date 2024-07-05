@@ -11,7 +11,7 @@
         <span>{{ title }}</span>
       </t-space>
     </template>
-    <cmp-container :full="true">
+    <cmp-container :full="true" class="root">
       <!-- #region 基础信息配置模块代码 -->
       <cmp-card :span="12" :ghost="true">
         <div class="title-row">
@@ -516,47 +516,146 @@
               </t-tab-panel>
               <!-- #endregion 查询条件配置 -->
               <!-- #region 按钮&表单配置 -->
-              <!-- <t-tab-panel  value="BUTTON" label="按钮定义" :destroy-on-hide="false">
+              <t-tab-panel value="BUTTON" label="按钮定义" :destroy-on-hide="false">
                 <cmp-container :full="true">
                   <cmp-row>
-                    <cmp-card flex="280px">
-                      <t-tabs v-model="currButtonTab">
+                    <cmp-card flex="280px" bordered>
+                      <t-tabs v-model="currButtonTab" class="buttonTab" :addable="true" @add="onClickAddTab">
                         <t-tab-panel value="button" label="按钮">
-                          <t-list size="small" split>
+                          <t-list size="small" split class="buttonList">
                             <t-list-item
                               v-for="item in buttonList"
-                              :key="item.name"
-                              :class="currButtonName == item.name ? 'activeButton' : ''"
-                              @click="onClickBotton(item.name)"
+                              :key="item.buttonCode"
+                              :class="currButtonName == item.buttonName ? 'activeButton' : ''"
+                              @click="onClickButton(item)"
                             >
                               <div>
                                 <location-icon />
-                                <span style="margin-left: var(--td-comp-margin-s)">{{ item.processName }}</span>
+                                <span style="margin-left: var(--td-comp-margin-s)">{{ item.buttonName }}</span>
                               </div>
-                              <template #action> </template>
+                              <template #action>
+                                <check-circle-filled-icon
+                                  v-if="item.isEnabled"
+                                  style="color: var(--td-success-color)"
+                                />
+                              </template>
                             </t-list-item>
                           </t-list>
                         </t-tab-panel>
                       </t-tabs>
                     </cmp-card>
                     <cmp-card :span="12" :ghost="true" flex="auto">
-                      <cmp-table
-                        ref="buttonTableRef"
-                        :show-pagination="false"
-                        row-key="columnName"
-                        :table-column="columnColumns"
-                        :table-data="columnsData"
-                        :fixed-height="true"
-                        :total="columnTotal"
-                        @refresh="fetchColumnData"
-                      >
-                        <template #title> 按钮定义配置 </template>
-                        <template #button> </template>
-                      </cmp-table>
+                      <cmp-container :full="true">
+                        <cmp-card :span="12" :ghost="true">
+                          <div class="title-row">
+                            <div class="table-title">按钮基础信息</div>
+                          </div>
+                          <t-form
+                            ref="domainButtonFromRef"
+                            class="card"
+                            :data="currentSelectButton"
+                            :rules="buttonFormRules"
+                            label-width="120px"
+                            layout="inline"
+                          >
+                            <t-form-item label="按钮编码" name="buttonCode">
+                              <t-input
+                                v-model="currentSelectButton.buttonCode"
+                                :disabled="!currentSelectButton.isCustomButton"
+                                :placeholder="t('common.placeholder.input', ['按钮编码'])"
+                              ></t-input>
+                            </t-form-item>
+                            <t-form-item label="按钮名称" name="buttonName">
+                              <t-input
+                                v-model="currentSelectButton.buttonName"
+                                :placeholder="t('common.placeholder.input', ['按钮名称'])"
+                              ></t-input>
+                            </t-form-item>
+                            <t-form-item label="按钮位置" name="buttonPosition">
+                              <t-select
+                                v-model="currentSelectButton.buttonPosition"
+                                :disabled="
+                                  !currentSelectButton.isCustomButton && currentSelectButton.buttonCode !== 'delete'
+                                "
+                                filterable
+                                :placeholder="t('common.placeholder.select', ['按钮位置'])"
+                              >
+                                <t-option
+                                  v-if="currentSelectButton.buttonCode == 'delete'"
+                                  key="both"
+                                  label="表格行内与按钮区"
+                                  value="both"
+                                  name="表格行内与按钮区"
+                                />
+                                <t-option key="row" label="表格行内" value="row" name="表格行内" />
+                                <t-option key="tableHeader" label="表格按钮区" value="tableHeader" name="表格按钮区" />
+                              </t-select>
+                            </t-form-item>
+                            <t-form-item label="按钮样式" name="buttonPosition">
+                              <t-select
+                                v-model="currentSelectButton.buttonTheme"
+                                filterable
+                                :placeholder="t('common.placeholder.select', ['按钮样式'])"
+                              >
+                                <t-option key="primary" label="primary" value="primary" />
+                                <t-option key="success" label="success" value="success" />
+                                <t-option key="default" label="default" value="default" />
+                                <t-option key="danger" label="danger" value="danger" />
+                                <t-option key="warning" label="warning" value="warning" />
+                              </t-select>
+                            </t-form-item>
+                            <t-form-item label="是否启用" name="isEnabled">
+                              <t-switch v-model="currentSelectButton.isEnabled" />
+                            </t-form-item>
+                            <t-form-item label="按钮操作" name="actionType">
+                              <t-select
+                                v-model="currentSelectButton.actionType"
+                                :disabled="!currentSelectButton.isCustomButton"
+                                filterable
+                                :placeholder="t('common.placeholder.select', ['按钮操作'])"
+                              >
+                                <t-option key="form-add" label="添加表单" value="form-add" />
+                                <t-option key="form-edit" label="编辑表单" value="form-edit" />
+                                <t-option key="delete" label="删除数据" value="delete" />
+                                <t-option key="link" label="打开新页面" value="link" />
+                                <t-option key="import" label="导入" value="import" />
+                                <t-option key="form-custom" label="自定义表单-更新操作" value="form-custom" />
+                              </t-select>
+                            </t-form-item>
+                            <t-form-item
+                              v-if="currentSelectButton.actionType === 'delete'"
+                              label="删除类型"
+                              name="deleteType"
+                            >
+                              <t-select
+                                v-model="currentSelectButton.deleteType"
+                                filterable
+                                :placeholder="t('common.placeholder.select', ['删除类型'])"
+                              >
+                                <t-option key="logical" label="逻辑删除" value="logical" />
+                                <t-option key="physical" label="物理删除" value="physical" />
+                              </t-select>
+                            </t-form-item>
+                          </t-form>
+                        </cmp-card>
+                        <cmp-table
+                          v-show="currentSelectButton.actionType.includes('form')"
+                          ref="buttonTableRef"
+                          :show-pagination="false"
+                          row-key="columnName"
+                          :table-column="buttonFormColumns"
+                          :table-data="currentSelectButton.formColumnSetting"
+                          :fixed-height="true"
+                          :total="columnTotal"
+                        >
+                          <template #title>表单配置 </template>
+                          <template #button> </template>
+                        </cmp-table>
+                      </cmp-container>
                     </cmp-card>
                   </cmp-row>
                 </cmp-container>
-              </t-tab-panel> -->
+              </t-tab-panel>
               <!-- #endregion 按钮&表单配置 -->
             </t-tabs>
           </cmp-card>
@@ -762,6 +861,7 @@
             ref="refRelateContition"
             :columns="relateConditionColumns"
             :data="relateConditionData"
+            row-key="fieldName"
             bordered
             resizable
             lazy-load
@@ -834,7 +934,7 @@
 
 import dayjs from 'dayjs';
 import { forEach } from 'lodash';
-import { MoveIcon } from 'tdesign-icons-vue-next';
+import { CheckCircleFilledIcon, LocationIcon, MoveIcon } from 'tdesign-icons-vue-next';
 import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableProps, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
@@ -1980,19 +2080,220 @@ const deleteConditionData = ({ rowIndex }) => {
 
 // #region 按钮按钮配置
 // :todo 后续补充按钮配置
-// const columnTotal = ref(0);
-// const currButtonTab = ref('button');
+const columnTotal = ref(0);
+const currButtonTab = ref('button');
+// 先不加
 // const enableButton = ref(false);
-// const buttonList = ref([]);
-// const currButtonName = ref('button');
-// const onClickBotton = (value: any) => {
-//   console.log(value);
-// };
+
+// #按钮表单列配置
+const buttonFormColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'drag',
+    // 列拖拽排序必要参数
+    title: '排序',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cell: (_h) => (
+      <span>
+        <MoveIcon />
+      </span>
+    ),
+    width: 46,
+  },
+  {
+    colKey: 'field',
+    title: '字段',
+    align: 'center',
+    width: '90',
+  },
+  {
+    colKey: 'label',
+    title: '标题',
+    align: 'center',
+    width: '90',
+  },
+  {
+    colKey: 'isKeyField',
+    title: '是否唯一键',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isRequired',
+    title: '是否必填',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'component',
+    title: '控件',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'componentParam',
+    title: '控件关键参数',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'componentSource',
+    title: '控件数据源',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isMultiple',
+    title: '是否多选（下拉相关控件）',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'defaultValue',
+    title: '默认值',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isVisible',
+    title: '是否显示(设置默认值隐藏)',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isDisabled',
+    title: '是否可编辑(设置默认值隐藏)',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'verifyExp',
+    title: '验证正则',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '130',
+  },
+];
+
+const buttonList = ref([
+  {
+    seq: 1,
+    buttonCode: 'add',
+    buttonName: '添加',
+    isEnabled: true,
+    isCustomButton: false,
+    buttonPosition: 'tableHeader',
+    buttonTheme: 'primary',
+    needCheckSelectRow: false,
+    actionType: 'form-add',
+    formColumnSetting: [
+      {
+        seq: 1,
+        field: 'username',
+        label: '用户名',
+        component: 'input',
+        componentParam: '{"type": "text"}',
+        placeholder: '请输入用户名',
+        defaultValue: '',
+        isVisible: true,
+        isMutiple: false,
+        fieldType: 'string',
+      },
+      {
+        seq: 2,
+        field: 'email',
+        label: '邮箱地址',
+        component: 'input',
+        componentParam: '{"type": "email"}',
+        placeholder: '请输入邮箱地址',
+        defaultValue: '',
+        isVisible: true,
+        isMutiple: false,
+        fieldType: 'email',
+      },
+    ],
+    deleteType: 'logical',
+  },
+  {
+    seq: 2,
+    buttonCode: 'edit',
+    buttonName: '编辑',
+    isEnabled: true,
+    isCustomButton: false,
+    buttonPosition: 'row',
+    buttonTheme: 'success',
+    needCheckSelectRow: false,
+    actionType: 'form-edit',
+    formColumnSetting: [
+      /* 省略，与编辑按钮相同或部分不同，取决于具体需求 */
+    ],
+    deleteType: '',
+  },
+  {
+    seq: 3,
+    buttonCode: 'delete',
+    buttonName: '删除',
+    isEnabled: true,
+    isCustomButton: false,
+    buttonPosition: 'row', // 假设同时适用于行内和表头，实际根据业务调整
+    buttonTheme: 'danger',
+    needCheckSelectRow: true,
+    actionType: 'delete',
+    formColumnSetting: [],
+    deleteType: 'logical',
+  },
+  // :todo 导入的后续添加,导入的配置需要重新考虑下,是否继承在一起配置
+  // {
+  //   seq: 4,
+  //   buttonCode: 'import',
+  //   buttonName: '导入',
+  //   isEnabled: true,
+  //   isCustomButton: false,
+  //   buttonPosition: 'tableHeader',
+  //   buttonTheme: 'primary',
+  //   needCheckSelectRow: false,
+  //   actionType: 'import',
+  //   formColumnSetting: [],
+  //   deleteType: '',
+  // },
+]);
+const currButtonName = ref('button');
+const currentSelectButton = ref({
+  seq: 1,
+  buttonCode: '',
+  buttonName: '',
+  isEnabled: true,
+  isCustomButton: true,
+  buttonPosition: 'line',
+  buttonTheme: 'primary',
+  actionType: 'form-custom',
+  deleteType: '',
+  formColumnSetting: [],
+});
+const onClickButton = (value: any) => {
+  currButtonName.value = value.buttonName;
+  currentSelectButton.value = value;
+};
+
+// #基础信息表单验证规则
+const buttonFormRules: FormRules<Data> = {
+  // domainParamCode: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+  // domainParamName: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+};
+
 // #endregion
 
 // #region 按钮按钮配置
 const loading = ref(false);
 const domainParamFromRef = ref();
+const onClickAddTab = () => {
+  // 添加按钮
+};
 const save = () => {
   loading.value = true;
   // 先校验再提交
@@ -2205,5 +2506,37 @@ defineExpose({ initEditData, initAddData });
 
 .padding-tab :deep(.t-tabs__content) {
   padding: 12px;
+}
+
+.buttonTab :deep(.t-tabs__content) {
+  padding: 0;
+}
+
+.root {
+  :deep(.t-list-item) {
+    cursor: pointer;
+
+    .t-list-item__meta-title {
+      font-size: 14px;
+    }
+
+    .t-list-item__meta-description {
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+    }
+
+    &:not(.activeButton):hover {
+      background-color: var(--td-bg-color-container-hover);
+      font-weight: 700;
+    }
+  }
+}
+
+.buttonList {
+  .activeButton {
+    background-color: var(--td-brand-color-light);
+    color: var(--td-brand-color);
+    font-weight: 700;
+  }
 }
 </style>

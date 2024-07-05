@@ -161,6 +161,7 @@ import { api } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import { usePage } from '@/hooks/modules/page';
 
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import touchstoneForm from './touchstoneForm.vue';
 
 const { pageUI } = usePage(); // 分页工具
