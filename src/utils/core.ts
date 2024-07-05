@@ -8,7 +8,7 @@ import { useTabsRouterStore } from '@/store';
 import { TRouterInfo } from '@/types/interface';
 
 // 所有页面设置请求基础路径
-fw.config.baseUrl = import.meta.env.VITE_API_URL;
+fw.config.baseUrl = localStorage.getItem('baseUrl') || import.meta.env.VITE_API_URL;
 if (typeof window !== 'undefined' && window.top !== window) {
   fw.ipc.addTarget('portal', window.top);
 
@@ -19,6 +19,17 @@ if (typeof window !== 'undefined' && window.top !== window) {
 (() => {
   // portal 页面
   if (window.top === window) {
+    // 加载第三方配置，并设置基础路径
+    fetch(`/config.json?_t=${new Date().getTime()}`).then((res) => {
+      res.json().then((config) => {
+        const localBaseUrl = localStorage.getItem('baseUrl');
+        if (config?.baseUrl && localBaseUrl !== config.baseUrl) {
+          fw.config.baseUrl = config.baseUrl;
+          localStorage.setItem('baseUrl', config.baseUrl);
+        }
+      });
+    });
+
     // 添加路由事件
     fw.ipc.on('appendTabRouterList', async (newRoute: TRouterInfo) => {
       const tabsRouterStore = useTabsRouterStore();
