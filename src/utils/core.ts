@@ -19,6 +19,7 @@ if (typeof window !== 'undefined' && window.top !== window) {
 (() => {
   // portal 页面
   if (window.top === window) {
+    // 加载第三方配置，并设置基础路径
     fetch(`/config.json?_t=${new Date().getTime()}`).then((res) => {
       res.json().then((config) => {
         const localBaseUrl = localStorage.getItem('baseUrl');
