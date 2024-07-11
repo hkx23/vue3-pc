@@ -1035,8 +1035,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2557,8 +2557,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface SparePartVO {
@@ -4010,6 +4010,31 @@ export interface NoticeDTO {
   noticePurpose: string;
 }
 
+/** APP消息 */
+export interface AppMsgDTO {
+  /** 对应的APP标识 */
+  packageId?: string;
+  /** 消息标题 */
+  title?: string;
+  /** 消息内容 */
+  content?: string;
+  /** 消息推送目标 */
+  pushTarget?: string;
+  msgId?: string;
+  /**
+   * 是否已读
+   * @format int32
+   */
+  isRead?: number;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+}
+
 /** 信息推送主表 */
 export interface MsgDTO {
   id?: string;
@@ -4118,11 +4143,8 @@ export interface MsgDtlDTO {
    * @format int32
    */
   isRead?: number;
-  /**
-   * APP应用ID
-   * @format int32
-   */
-  packageId?: number;
+  /** APP应用ID */
+  packageId?: string;
   /** 标题 */
   title?: string;
   /** 内容 */
@@ -5399,12 +5421,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   isState?: boolean;
-  stateName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5619,14 +5641,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isState?: boolean;
-  stateName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
   isInProcessName?: string;
   isRawName?: string;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7410,16 +7432,6 @@ export interface ResultPagingDataEnterpriseVO {
   data?: PagingDataEnterpriseVO;
 }
 
-export interface InsertOrUpdateModel {
-  tableName?: string;
-  fieldValues?: Record<string, object>;
-}
-
-export interface DeleteModel {
-  tableName?: string;
-  ids?: number[];
-}
-
 export interface BatchDynamicUpdateDTO {
   /** 表唯一主键 */
   primaryKey?: string;
@@ -7599,8 +7611,7 @@ export interface DomainParamTableColumn {
   isDatabaseField?: boolean;
   isAutoWidth?: boolean;
   isVisible?: boolean;
-  isLeftFixed?: boolean;
-  isRightFixed?: boolean;
+  isFixed?: boolean;
   isDataDefault?: boolean;
   isHandAdd?: boolean;
 }
@@ -9585,8 +9596,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -10969,12 +10980,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11352,88 +11363,23 @@ export interface ResultListObjectPropertyValueVO {
   data?: ObjectPropertyValueVO[] | null;
 }
 
-/** APP消息 */
-export type AppMsg = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  msgId?: string;
-  /** 消息推送类型 */
-  pushType?: string;
-  /** 消息推送目标 */
-  pushTarget?: string;
-  /**
-   * 预计发送时间
-   * @format date-time
-   */
-  datetimePushPlan?: string;
-  /**
-   * 最后推送时间
-   * @format date-time
-   */
-  datetimePushLast?: string;
-  /**
-   * 发送间隔周期
-   * @format int32
-   */
-  pushIntervalCycle?: number;
-  /**
-   * 计划发送次数
-   * @format int32
-   */
-  pushCount?: number;
-  /**
-   * 已发送次数
-   * @format int32
-   */
-  pushSendCount?: number;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  datetimePushDisable?: string;
-  personId?: string;
-  userId?: string;
-  /**
-   * 是否有效
-   * @format int32
-   */
-  isDisable?: number;
-  /**
-   * 是否已读
-   * @format int32
-   */
-  isRead?: number;
-  /**
-   * APP应用ID
-   * @format int32
-   */
-  packageId?: number;
-  title?: string;
-  content?: string;
+/** 响应数据 */
+export type MqttConfig = {
+  host?: string;
+  /** @format int32 */
+  port?: number;
+  username?: string;
+  password?: string;
+  /** @format int32 */
+  timeout?: number;
+  /** @format int32 */
+  keepAlive?: number;
+  /** @format int32 */
+  qos?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultListAppMsg {
+export interface ResultMqttConfig {
   /**
    * 响应代码
    * @format int32
@@ -11442,7 +11388,20 @@ export interface ResultListAppMsg {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: AppMsg[] | null;
+  data?: MqttConfig;
+}
+
+/** 通用响应类 */
+export interface ResultListAppMsgDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AppMsgDTO[] | null;
 }
 
 /** 响应数据 */
@@ -11580,13 +11539,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
+  subScopeId?: string;
+  scopeType?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
 }
 
 /** 通用响应类 */
@@ -11604,51 +11563,51 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
-  suspended?: boolean;
   /** @format int32 */
   priority?: number;
   name?: string;
   owner?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
+  localizedDescription?: string;
+  formKey?: string;
+  suspended?: boolean;
   description?: string;
+  category?: string;
   tenantId?: string;
-  assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  category?: string;
-  formKey?: string;
-  localizedDescription?: string;
+  assignee?: string;
   localizedName?: string;
-  parentTaskId?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  processDefinitionId?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  /** @format date-time */
-  createTime?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
   subScopeId?: string;
   scopeType?: string;
-  scopeDefinitionId?: string;
   processInstanceId?: string;
-  propagatedStageInstanceId?: string;
-  taskDefinitionId?: string;
+  scopeDefinitionId?: string;
+  processDefinitionId?: string;
   taskDefinitionKey?: string;
+  taskDefinitionId?: string;
+  caseVariables?: Record<string, object>;
+  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  claimedBy?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  claimTime?: string;
+  taskLocalVariables?: Record<string, object>;
+  inProgressStartedBy?: string;
   /** @format date-time */
   inProgressStartTime?: string;
-  inProgressStartedBy?: string;
-  taskLocalVariables?: Record<string, object>;
   /** @format date-time */
   inProgressStartDueDate?: string;
   processVariables?: Record<string, object>;
+  identityLinks?: IdentityLinkInfo[];
+  executionId?: string;
   /** @format date-time */
-  claimTime?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  caseVariables?: Record<string, object>;
-  claimedBy?: string;
-  suspendedBy?: string;
+  createTime?: string;
 } | null;
 
 /** 响应数据 */
@@ -11656,13 +11615,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
+  subScopeId?: string;
+  scopeType?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -15409,6 +15368,21 @@ export const api = {
      * No description
      *
      * @tags 消息主表
+     * @name SendAppMsg
+     * @summary 发送APP消息
+     * @request POST:/msg/sendAppMsg
+     * @secure
+     */
+    sendAppMsg: (data: AppMsgDTO) =>
+      http.request<ResultObject['data']>(`/api/main/msg/sendAppMsg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 消息主表
      * @name GetLastSendBySource
      * @summary 查询安灯报障的消息推送
      * @request POST:/msg/getLastSendBySource
@@ -15454,16 +15428,27 @@ export const api = {
      * No description
      *
      * @tags 消息主表
+     * @name GetMqttConfig
+     * @summary 获取MQTT配置
+     * @request GET:/msg/getMqttConfig
+     * @secure
+     */
+    getMqttConfig: () =>
+      http.request<ResultMqttConfig['data']>(`/api/main/msg/getMqttConfig`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 消息主表
      * @name AppSyncMsg
      * @summary APP消息同步
      * @request GET:/msg/appSyncMsg
      * @secure
      */
-    appSyncMsg: (query: {
-      /** @format date-time */
-      lastModifyTime: string;
-    }) =>
-      http.request<ResultListAppMsg['data']>(`/api/main/msg/appSyncMsg`, {
+    appSyncMsg: (query: { lastModifyTime: string }) =>
+      http.request<ResultListAppMsgDTO['data']>(`/api/main/msg/appSyncMsg`, {
         method: 'GET',
         params: query,
       }),
@@ -17651,21 +17636,6 @@ export const api = {
      * No description
      *
      * @tags 动态服务
-     * @name DynamicUpdateDataSql
-     * @summary 动态更新数据-SQL方式-免实体类
-     * @request POST:/dynamicManage/dynamicUpdateDataSql
-     * @secure
-     */
-    dynamicUpdateDataSql: (data: InsertOrUpdateModel) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicUpdateDataSql`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 动态服务
      * @name DynamicQueryData
      * @summary 根据领域进行动态表字段查询
      * @request POST:/dynamicManage/dynamicQueryData
@@ -17688,51 +17658,6 @@ export const api = {
      */
     dynamicQueryDataSql: (data: CommonSearch) =>
       http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicQueryDataSql`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 动态服务
-     * @name DynamicLogicDeleteDataSql
-     * @summary 逻辑删除数据-SQL方式-免实体类
-     * @request POST:/dynamicManage/dynamicLogicDeleteDataSql
-     * @secure
-     */
-    dynamicLogicDeleteDataSql: (data: DeleteModel) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicLogicDeleteDataSql`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 动态服务
-     * @name DynamicInsertDataSql
-     * @summary 动态插入数据-SQL方式-免实体类
-     * @request POST:/dynamicManage/dynamicInsertDataSql
-     * @secure
-     */
-    dynamicInsertDataSql: (data: InsertOrUpdateModel) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicInsertDataSql`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 动态服务
-     * @name DynamicDeleteDataSql
-     * @summary 物理删除数据-SQL方式-免实体类
-     * @request POST:/dynamicManage/dynamicDeleteDataSql
-     * @secure
-     */
-    dynamicDeleteDataSql: (data: DeleteModel) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicDeleteDataSql`, {
         method: 'POST',
         body: data as any,
       }),
