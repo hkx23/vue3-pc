@@ -32,3 +32,4 @@ version.json
 /locales
 
 *storybook.log
+.vscode/settings.json

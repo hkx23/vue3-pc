@@ -15,7 +15,7 @@
         :show-pagination="usePager"
         :total="dataTotal"
         :fixed-height="true"
-        @refresh="conditionEnter"
+        @refresh="fetchTable"
       >
       </cmp-table>
     </cmp-card>
@@ -132,7 +132,7 @@ const loadSetting = () => {
       title: column.columnDesc || column.columnName, // 列显示的标题，默认使用columnDesc，不存在则使用columnName
       align: column.align, // 对齐方式
       width: column.isAutoWidth ? 'auto' : column.columnWidth, // 列宽
-      fixed: column.isFixed, // 是否固定列
+      fixed: determineFixed(column.isLeftFixed, column.isRightFixed), // 是否固定列
       showOverflowTooltip: !column.isAutoWidth, // 是否开启文本溢出 tooltip，如果autoWidth为true，则可能不需要此配置
       isShow: column.isVisible, // 是否显示该列
     }));
@@ -144,6 +144,11 @@ const loadSetting = () => {
 
     conditionEnter(null);
   });
+};
+const determineFixed = (isLeftFixed, isRightFixed) => {
+  if (isLeftFixed) return 'left';
+  if (isRightFixed) return 'right';
+  return '';
 };
 const genOpts = (searchSetting) => {
   const optSetting = {};

@@ -319,8 +319,11 @@
                         <template #isVisible="{ row }">
                           <t-switch v-model="row.isVisible"></t-switch>
                         </template>
-                        <template #isFixed="{ row }">
-                          <t-switch v-model="row.isFixed"></t-switch>
+                        <template #isLeftFixed="{ row }">
+                          <t-switch v-model="row.isLeftFixed"></t-switch>
+                        </template>
+                        <template #isRightFixed="{ row }">
+                          <t-switch v-model="row.isRightFixed"></t-switch>
                         </template>
                         <template #isAutoWidth="{ row }">
                           <t-switch v-model="row.isAutoWidth"></t-switch>
@@ -519,12 +522,12 @@
               <t-tab-panel value="BUTTON" label="按钮定义" :destroy-on-hide="false">
                 <cmp-container :full="true">
                   <cmp-row>
-                    <cmp-card flex="280px" bordered>
+                    <cmp-card flex="180px" bordered>
                       <t-tabs v-model="currButtonTab" class="buttonTab" :addable="true" @add="onClickAddTab">
                         <t-tab-panel value="button" label="按钮">
                           <t-list size="small" split class="buttonList">
                             <t-list-item
-                              v-for="item in buttonList"
+                              v-for="item in buttonSourceData"
                               :key="item.buttonCode"
                               :class="currButtonName == item.buttonName ? 'activeButton' : ''"
                               @click="onClickButton(item)"
@@ -545,7 +548,7 @@
                       </t-tabs>
                     </cmp-card>
                     <cmp-card :span="12" :ghost="true" flex="auto">
-                      <cmp-container :full="true">
+                      <cmp-container v-show="currButtonName !== 'notSelect'" :full="true">
                         <cmp-card :span="12" :ghost="true">
                           <div class="title-row">
                             <div class="table-title">按钮基础信息</div>
@@ -638,19 +641,136 @@
                             </t-form-item>
                           </t-form>
                         </cmp-card>
-                        <cmp-table
-                          v-show="currentSelectButton.actionType.includes('form')"
-                          ref="buttonTableRef"
-                          :show-pagination="false"
-                          row-key="columnName"
-                          :table-column="buttonFormColumns"
-                          :table-data="currentSelectButton.formColumnSetting"
-                          :fixed-height="true"
-                          :total="columnTotal"
-                        >
-                          <template #title>表单配置 </template>
-                          <template #button> </template>
-                        </cmp-table>
+                        <cmp-card :span="12" :ghost="true">
+                          <t-space direction="vertical" size="4px">
+                            <div class="table-box_header">
+                              <div class="table-title">表单配置</div>
+                              <t-space align="end" style="float: right">
+                                <!-- <t-button @click="addSearchData">添加查询条件</t-button> -->
+                              </t-space>
+                            </div>
+                            <t-table
+                              v-show="currentSelectButton.actionType.includes('form')"
+                              ref="buttonTableRef"
+                              :columns="buttonFormColumns"
+                              :data="currentSelectButton.formColumnSetting"
+                              bordered
+                              resizable
+                              lazy-load
+                              row-key="seq"
+                              drag-sort="row-handler"
+                              @drag-sort="onButtonDragSort"
+                            >
+                              <template #label="{ row }">
+                                <t-input v-model="row.label" />
+                              </template>
+
+                              <template #component="{ row }">
+                                <t-select
+                                  v-model="row.component"
+                                  :clearable="true"
+                                  filterable
+                                  :placeholder="t('common.placeholder.select', [t('domainParam.controlType')])"
+                                >
+                                  <t-option
+                                    v-for="item in systemComponents.filter(
+                                      (item) => item.useType === 'both' || item.useType === 'form',
+                                    )"
+                                    :key="item.value"
+                                    :label="item.label + ' (' + item.value + ')'"
+                                    :value="item.value"
+                                    :name="item.label"
+                                  />
+                                </t-select>
+                              </template>
+
+                              <template #componentParam="{ row }">
+                                <!-- 如果选择的是业务参数，把业务参数列表列出，下拉选择 -->
+                                <t-select
+                                  v-if="row.component.indexOf('bcmp-select-business') > -1"
+                                  v-model="row.componentParam"
+                                  placeholder="选择业务参数"
+                                  filterable
+                                >
+                                  <t-option
+                                    v-for="item in businessTypes"
+                                    :key="item.value"
+                                    :label="item.name + ' (' + item.value + ')'"
+                                    :value="item.value"
+                                    :name="item.name"
+                                  />
+                                </t-select>
+
+                                <!-- 如果选择的是数据字典控件，把数据字典列表列出，下拉选择 -->
+
+                                <t-cascader
+                                  v-else-if="row.component.indexOf('bcmp-select-param') > -1"
+                                  v-model="row.componentParam"
+                                  :options="systemParamGroups"
+                                  placeholder="选择系统参数组"
+                                  :show-all-levels="false"
+                                  filterable
+                                />
+                                <!-- 如果是其他，则显示-，不需要设置 -->
+                                <span v-else>-</span>
+                              </template>
+
+                              <template #componentSource="{ row }">
+                                <t-link
+                                  v-if="
+                                    row.component.indexOf('t-select') > -1 ||
+                                    row.component.indexOf('t-checkbox-group') > -1 ||
+                                    row.component.indexOf('t-radio-group') > -1
+                                  "
+                                  theme="primary"
+                                  @click="onClickButtonRelate(row)"
+                                  >数据源配置</t-link
+                                >
+                                <span v-else>-</span>
+                              </template>
+                              <template #isMultiple="{ row }">
+                                <t-switch
+                                  v-if="
+                                    row.component.indexOf('t-select') > -1 ||
+                                    row.component.indexOf('bcmp-select-business') > -1
+                                  "
+                                  v-model="row.isMultiple"
+                                ></t-switch>
+
+                                <span v-else>-</span>
+                              </template>
+
+                              <template #defaultValue="{ row }">
+                                <t-input v-model="row.defaultValue" />
+                              </template>
+                              <template #operator="{ row }">
+                                <t-select v-model="row.operator" filterable :options="operators"> </t-select>
+                              </template>
+
+                              <template #isVisible="{ row }">
+                                <t-switch v-model="row.isVisible"></t-switch>
+                              </template>
+                              <template #isKeyField="{ row }">
+                                <t-switch v-model="row.isKeyField"></t-switch>
+                              </template>
+                              <template #isRequired="{ row }">
+                                <t-switch v-model="row.isRequired"></t-switch>
+                              </template>
+                              <template #isDisabled="{ row }">
+                                <t-switch v-model="row.isDisabled"></t-switch>
+                              </template>
+                              <template #verifyExp="{ row }">
+                                <t-input v-model="row.verifyExp"></t-input>
+                              </template>
+
+                              <template #op="slotProps">
+                                <t-link theme="primary" @click="deleteButtonRowData(slotProps)">{{
+                                  t('common.button.delete')
+                                }}</t-link>
+                              </template>
+                            </t-table>
+                          </t-space>
+                        </cmp-card>
                       </cmp-container>
                     </cmp-card>
                   </cmp-row>
@@ -933,7 +1053,7 @@
 // #region import
 
 import dayjs from 'dayjs';
-import { forEach } from 'lodash';
+import { cloneDeep, forEach } from 'lodash';
 import { CheckCircleFilledIcon, LocationIcon, MoveIcon } from 'tdesign-icons-vue-next';
 import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableProps, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
@@ -1022,40 +1142,56 @@ const systemComponents = ref([
   {
     label: '文本框',
     value: 't-input',
+    useType: 'both',
+  },
+  {
+    label: '开关',
+    value: 't-switch',
+    useType: 'both',
   },
   {
     label: '业务选择器',
     value: 'bcmp-select-business',
+    useType: 'both',
   },
   {
     label: '系统字典选择器',
     value: 'bcmp-select-param',
+    useType: 'both',
   },
   {
     label: '下拉框',
     value: 't-select',
+    useType: 'both',
   },
   {
     label: '日期',
     value: 't-date-picker',
+    useType: 'both',
   },
   {
     label: '日期区间-日期',
     value: 't-date-range-picker',
+    useType: 'search',
   },
   {
     label: '日期区间-日期时间',
     value: 't-date-range-picker-time',
+    useType: 'search',
   },
   {
     label: '复选框',
     value: 't-checkbox-group',
+    useType: 'both',
   },
   {
     label: '单选框',
     value: 't-radio-group',
+    useType: 'both',
   },
 ]);
+
+const sourceRelateType = ref('search');
 
 // #关闭窗口钩子
 const close = () => {
@@ -1152,9 +1288,21 @@ const changeTable = (value) => {
     columnWidth: 100,
     align: 'center',
     isVisible: true,
-    isFixed: false,
+    isLeftFixed: false,
+    isRightFixed: false,
     canDelete: false,
     isHandAdd: false,
+    field: item.columnName,
+    label: item.columnDesc,
+    component: 't-input',
+    componentParam: '',
+    componentSource: '',
+    isMultiple: false,
+    defaultValue: '',
+    isKeyField: false,
+    isRequired: false,
+    isDisabled: false,
+    verifyExp: '',
     seq: seq++,
   }));
   // 识别字段是否默认字段，是否存在于defaultFields，如果匹配，则设置字段为isDataDefault 为 true
@@ -1184,6 +1332,19 @@ const changeTable = (value) => {
 
   columnsData.value = tempColumns;
   // #endregion 初始化数据源
+
+  // #region 设置默认按钮配置
+  const currentButtonSetting = cloneDeep(defaultButtonSourceData);
+  currentButtonSetting.find((item) => {
+    return item.buttonCode === 'add';
+  }).formColumnSetting = cloneDeep(tempColumns);
+
+  currentButtonSetting.find((item) => {
+    return item.buttonCode === 'edit';
+  }).formColumnSetting = cloneDeep(tempColumns);
+  buttonSourceData.value = currentButtonSetting;
+
+  // #endregion
 
   // #region 设置默认值
   // 1.如果参数编码与参数名称为空，设置成表名与表描述
@@ -1577,8 +1738,14 @@ const columnColumns: PrimaryTableCol<TableRowData>[] = [
   },
 
   {
-    colKey: 'isFixed',
-    title: '是否固定列',
+    colKey: 'isLeftFixed',
+    title: '是否左固定列',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isRightFixed',
+    title: '是否右固定列',
     align: 'center',
     width: '100',
   },
@@ -1654,7 +1821,8 @@ const addColumnData = () => {
     isAutoWidth: true,
     columnWidth: 100,
     align: 'center',
-    isFixed: false,
+    isLeftFixed: false,
+    isRightFixed: false,
     isHandAdd: true,
   });
 };
@@ -1663,13 +1831,23 @@ const addColumnData = () => {
 
 // #region 查询条件配置相关
 
-//  #加载当前行的数据源配置
-const initSearchComponentSource = () => {
+//  #加载当前行的数据源配置-查询条件与按钮配置共用
+const initSearchComponentSource = (type) => {
   IsInitComponentResource.value = true;
   console.log(currentSearchSelectRow.value);
-  if (currentSearchSelectRow.value.componentSource) {
+  console.log(currentButtonSelectRow.value);
+  if (
+    (type === 'search' && currentSearchSelectRow.value.componentSource) ||
+    (type === 'button' && currentButtonSelectRow.value.componentSource)
+  ) {
     // // 如果没设置过数据源的，给设置默认值
-    const sourceData = currentSearchSelectRow.value.componentSource;
+    let sourceData = null;
+    if (type === 'search') {
+      sourceData = currentSearchSelectRow.value.componentSource;
+    } else {
+      sourceData = currentButtonSelectRow.value.componentSource;
+    }
+
     // // 如果有设置过关联的，根据JSON读取后设置窗口里对应值
 
     selectedSourceType.value = sourceData.sourceType;
@@ -1789,10 +1967,16 @@ const onCompontSourceConfirm = () => {
   // searchData.value[
   //   searchData.value.findIndex((item) => item.seq === currentSearchSelectRow.value.seq)
   // ].componentSourceJson = JSON.stringify(sourceData);
-  searchData.value[
-    searchData.value.findIndex((item) => item.seq === currentSearchSelectRow.value.seq)
-  ].componentSource = sourceData;
-
+  if (sourceRelateType.value === 'search') {
+    searchData.value[
+      searchData.value.findIndex((item) => item.seq === currentSearchSelectRow.value.seq)
+    ].componentSource = sourceData;
+  }
+  if (sourceRelateType.value === 'button') {
+    currentSelectButton.value.formColumnSetting[
+      currentSelectButton.value.formColumnSetting.findIndex((item) => item.seq === currentButtonSelectRow.value.seq)
+    ].componentSource = sourceData;
+  }
   componentResourceVisible.value = false;
   MessagePlugin.info('数据保存成功!');
 };
@@ -1932,11 +2116,12 @@ const onSearchFieldChange = (row: any) => {
   }
 };
 
-// 点击数据源按钮事件
+// 点击数据源按钮事件-查询条件
 const onClickRelate = (row) => {
+  sourceRelateType.value = 'search';
   // console.log(row);
   currentSearchSelectRow.value = row;
-  initSearchComponentSource();
+  initSearchComponentSource('search');
   componentResourceVisible.value = true;
 };
 // #endregion
@@ -2079,108 +2264,11 @@ const deleteConditionData = ({ rowIndex }) => {
 // #endregion
 
 // #region 按钮按钮配置
-// :todo 后续补充按钮配置
-const columnTotal = ref(0);
-const currButtonTab = ref('button');
-// 先不加
-// const enableButton = ref(false);
-
-// #按钮表单列配置
-const buttonFormColumns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'drag',
-    // 列拖拽排序必要参数
-    title: '排序',
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cell: (_h) => (
-      <span>
-        <MoveIcon />
-      </span>
-    ),
-    width: 46,
-  },
-  {
-    colKey: 'field',
-    title: '字段',
-    align: 'center',
-    width: '90',
-  },
-  {
-    colKey: 'label',
-    title: '标题',
-    align: 'center',
-    width: '90',
-  },
-  {
-    colKey: 'isKeyField',
-    title: '是否唯一键',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'isRequired',
-    title: '是否必填',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'component',
-    title: '控件',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'componentParam',
-    title: '控件关键参数',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'componentSource',
-    title: '控件数据源',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'isMultiple',
-    title: '是否多选（下拉相关控件）',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'defaultValue',
-    title: '默认值',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'isVisible',
-    title: '是否显示(设置默认值隐藏)',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'isDisabled',
-    title: '是否可编辑(设置默认值隐藏)',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'verifyExp',
-    title: '验证正则',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'op',
-    title: '操作',
-    align: 'center',
-    fixed: 'right',
-    width: '130',
-  },
-];
-
-const buttonList = ref([
+// #查询条件表格-删除行
+const deleteButtonRowData = ({ rowIndex }) => {
+  currentSelectButton.value.formColumnSetting.splice(rowIndex, 1);
+};
+const defaultButtonSourceData = [
   {
     seq: 1,
     buttonCode: 'add',
@@ -2191,32 +2279,7 @@ const buttonList = ref([
     buttonTheme: 'primary',
     needCheckSelectRow: false,
     actionType: 'form-add',
-    formColumnSetting: [
-      {
-        seq: 1,
-        field: 'username',
-        label: '用户名',
-        component: 'input',
-        componentParam: '{"type": "text"}',
-        placeholder: '请输入用户名',
-        defaultValue: '',
-        isVisible: true,
-        isMutiple: false,
-        fieldType: 'string',
-      },
-      {
-        seq: 2,
-        field: 'email',
-        label: '邮箱地址',
-        component: 'input',
-        componentParam: '{"type": "email"}',
-        placeholder: '请输入邮箱地址',
-        defaultValue: '',
-        isVisible: true,
-        isMutiple: false,
-        fieldType: 'email',
-      },
-    ],
+    formColumnSetting: [],
     deleteType: 'logical',
   },
   {
@@ -2226,7 +2289,7 @@ const buttonList = ref([
     isEnabled: true,
     isCustomButton: false,
     buttonPosition: 'row',
-    buttonTheme: 'success',
+    buttonTheme: 'primary',
     needCheckSelectRow: false,
     actionType: 'form-edit',
     formColumnSetting: [
@@ -2261,8 +2324,121 @@ const buttonList = ref([
   //   formColumnSetting: [],
   //   deleteType: '',
   // },
-]);
-const currButtonName = ref('button');
+];
+// const columnTotal = ref(0);
+const currButtonTab = ref('button');
+// 先不加
+// const enableButton = ref(false);
+
+// #按钮表单列配置
+const buttonFormColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'drag',
+    // 列拖拽排序必要参数
+    title: '排序',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cell: (_h) => (
+      <span>
+        <MoveIcon />
+      </span>
+    ),
+    width: 46,
+  },
+  {
+    colKey: 'field',
+    title: '字段',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'label',
+    title: '标题',
+    align: 'center',
+    width: '90',
+  },
+  {
+    colKey: 'isVisible',
+    title: '显示',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isDisabled',
+    title: '禁用',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isKeyField',
+    title: '唯一键',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isRequired',
+    title: '必填',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'defaultValue',
+    title: '默认值',
+    align: 'center',
+    width: '100',
+  },
+
+  {
+    colKey: 'component',
+    title: '控件',
+    align: 'center',
+    width: '150',
+  },
+  {
+    colKey: 'componentParam',
+    title: '控件参数',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'componentSource',
+    title: '数据源',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'isMultiple',
+    title: '是否多选',
+    align: 'center',
+    width: '100',
+  },
+
+  {
+    colKey: 'verifyExp',
+    title: '验证正则',
+    align: 'center',
+    width: '100',
+  },
+  // {
+  //   colKey: 'op',
+  //   title: '操作',
+  //   align: 'center',
+  //   fixed: 'right',
+  //   width: '130',
+  // },
+];
+const buttonSourceData = ref([]);
+
+const currentButtonSelectRow: any = ref({});
+// 点击数据源按钮事件-按钮事件
+const onClickButtonRelate = (row) => {
+  sourceRelateType.value = 'button';
+  // console.log(row);
+  currentButtonSelectRow.value = row;
+  initSearchComponentSource('button');
+  componentResourceVisible.value = true;
+};
+// #endregion
+const currButtonName = ref('notSelect');
 const currentSelectButton = ref({
   seq: 1,
   buttonCode: '',
@@ -2278,6 +2454,15 @@ const currentSelectButton = ref({
 const onClickButton = (value: any) => {
   currButtonName.value = value.buttonName;
   currentSelectButton.value = value;
+};
+// #查询条件表格-排序控制
+const onButtonDragSort: TableProps['onDragSort'] = (params) => {
+  // console.log('交换行', params);
+  let seq = 1;
+  forEach(params.newData, (item) => {
+    item.seq = seq++;
+  });
+  currentSelectButton.value.formColumnSetting = params.newData;
 };
 
 // #基础信息表单验证规则
@@ -2365,6 +2550,7 @@ const getInsetModel = () => {
       },
       searchSetting: searchData.value,
       datasourceSetting: relateSourceData.value,
+      buttonSetting: buttonSourceData.value,
     },
   };
   console.log(JSON.stringify(insetModel));
@@ -2434,6 +2620,9 @@ const initEditData = (insetModel) => {
   // 更新relateSourceData
   relateSourceData.value = insetModel.domainParmSetting.datasourceSetting;
 
+  // 更新buttonSourceData
+  buttonSourceData.value = insetModel.domainParmSetting.buttonSetting;
+
   domainParamFromRef.value.clearValidate();
   // 根据需要，可以添加对columnsData和searchData更细致的处理，
   // 特别是如果它们包含复杂结构或者需要深拷贝的情况。
@@ -2465,6 +2654,9 @@ const initAddData = (paramGroupId: string) => {
 
   // 更新searchData
   searchData.value = [];
+
+  // 更新buttonSourceData
+  buttonSourceData.value = [];
   domainParamFromRef.value.clearValidate();
 };
 

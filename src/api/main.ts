@@ -3268,8 +3268,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5398,13 +5398,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isState?: boolean;
   stateName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
-  isState?: boolean;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5618,15 +5618,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
-  isProductName?: string;
-  isRawName?: string;
   isInProcessName?: string;
+  isRawName?: string;
+  isProductName?: string;
   isBatchName?: string;
   isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7410,6 +7410,16 @@ export interface ResultPagingDataEnterpriseVO {
   data?: PagingDataEnterpriseVO;
 }
 
+export interface InsertOrUpdateModel {
+  tableName?: string;
+  fieldValues?: Record<string, object>;
+}
+
+export interface DeleteModel {
+  tableName?: string;
+  ids?: number[];
+}
+
 export interface BatchDynamicUpdateDTO {
   /** 表唯一主键 */
   primaryKey?: string;
@@ -7589,7 +7599,8 @@ export interface DomainParamTableColumn {
   isDatabaseField?: boolean;
   isAutoWidth?: boolean;
   isVisible?: boolean;
-  isFixed?: boolean;
+  isLeftFixed?: boolean;
+  isRightFixed?: boolean;
   isDataDefault?: boolean;
   isHandAdd?: boolean;
 }
@@ -8313,8 +8324,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -9574,8 +9585,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -11569,13 +11580,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
-  scopeType?: string;
   subScopeId?: string;
+  scopeType?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
 }
 
 /** 通用响应类 */
@@ -11593,51 +11604,51 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
-  /** @format date-time */
-  dueDate?: string;
   suspended?: boolean;
-  assignee?: string;
   /** @format int32 */
   priority?: number;
   name?: string;
   owner?: string;
   description?: string;
   tenantId?: string;
+  assignee?: string;
+  /** @format date-time */
+  dueDate?: string;
   category?: string;
   formKey?: string;
-  localizedName?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  parentTaskId?: string;
   localizedDescription?: string;
+  localizedName?: string;
+  parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  processDefinitionId?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   /** @format date-time */
   createTime?: string;
-  processDefinitionId?: string;
-  scopeType?: string;
-  subScopeId?: string;
   executionId?: string;
   identityLinks?: IdentityLinkInfo[];
-  taskDefinitionKey?: string;
+  subScopeId?: string;
+  scopeType?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
+  propagatedStageInstanceId?: string;
   taskDefinitionId?: string;
-  caseVariables?: Record<string, object>;
-  /** @format date-time */
-  suspendedTime?: string;
-  claimedBy?: string;
-  suspendedBy?: string;
-  /** @format date-time */
-  claimTime?: string;
-  inProgressStartedBy?: string;
-  taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
+  taskDefinitionKey?: string;
   /** @format date-time */
   inProgressStartTime?: string;
+  inProgressStartedBy?: string;
+  taskLocalVariables?: Record<string, object>;
   /** @format date-time */
   inProgressStartDueDate?: string;
-  propagatedStageInstanceId?: string;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  claimTime?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  caseVariables?: Record<string, object>;
+  claimedBy?: string;
+  suspendedBy?: string;
 } | null;
 
 /** 响应数据 */
@@ -11645,13 +11656,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
-  scopeType?: string;
   subScopeId?: string;
+  scopeType?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -17640,6 +17651,21 @@ export const api = {
      * No description
      *
      * @tags 动态服务
+     * @name DynamicUpdateDataSql
+     * @summary 动态更新数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicUpdateDataSql
+     * @secure
+     */
+    dynamicUpdateDataSql: (data: InsertOrUpdateModel) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicUpdateDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
      * @name DynamicQueryData
      * @summary 根据领域进行动态表字段查询
      * @request POST:/dynamicManage/dynamicQueryData
@@ -17662,6 +17688,51 @@ export const api = {
      */
     dynamicQueryDataSql: (data: CommonSearch) =>
       http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicQueryDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicLogicDeleteDataSql
+     * @summary 逻辑删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicLogicDeleteDataSql
+     * @secure
+     */
+    dynamicLogicDeleteDataSql: (data: DeleteModel) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicLogicDeleteDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicInsertDataSql
+     * @summary 动态插入数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicInsertDataSql
+     * @secure
+     */
+    dynamicInsertDataSql: (data: InsertOrUpdateModel) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicInsertDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicDeleteDataSql
+     * @summary 物理删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicDeleteDataSql
+     * @secure
+     */
+    dynamicDeleteDataSql: (data: DeleteModel) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicDeleteDataSql`, {
         method: 'POST',
         body: data as any,
       }),

@@ -73,8 +73,9 @@
               <template #title> 功能列表 </template>
               <template #op="{ row }">
                 <t-space :size="8">
-                  <t-link theme="primary" @click="onPreviewRowClick(row)">预览</t-link>
                   <t-link theme="primary" @click="onEditRowClick(row)">{{ t('common.button.edit') }}</t-link>
+                  <t-link theme="primary" @click="onPreviewRowClick(row)">预览</t-link>
+                  <t-link theme="primary" @click="onCopyLinkClick(row)">复制链接</t-link>
                   <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
                     <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
                   </t-popconfirm>
@@ -122,6 +123,7 @@ export default {
 import { Icon } from 'tdesign-icons-vue-next';
 import { MessagePlugin, PrimaryTableCol, TableRowData, TreeProps } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
+import useClipboard from 'vue-clipboard3';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/main';
@@ -318,7 +320,7 @@ const mainColumns: PrimaryTableCol<TableRowData>[] = [
     title: '操作',
     align: 'center',
     fixed: 'right',
-    width: '130',
+    width: '200',
   },
 ];
 
@@ -402,6 +404,20 @@ const onPreviewRowClick = (row: any) => {
   openPage(templateUrl, {
     domainParamId: id,
   });
+};
+
+// #表格区域-编辑表格数据-复制菜单链接
+
+const onCopyLinkClick = async (row: any) => {
+  try {
+    const { id, templateUrl } = row;
+    const resultUrl = `${templateUrl}?domainParamId=${id}`;
+    const { toClipboard } = useClipboard();
+    await toClipboard(resultUrl);
+    MessagePlugin.success('复制成功,可用于配置菜单');
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const addDomainParam = () => {
