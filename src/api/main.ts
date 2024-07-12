@@ -1035,8 +1035,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2557,8 +2557,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface SparePartVO {
@@ -3268,8 +3268,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5420,13 +5420,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  stateName?: string;
-  isState?: boolean;
+  isExemptionInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5640,15 +5640,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
+  isBatchName?: string;
   isProductName?: string;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8348,8 +8348,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -10991,14 +10991,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否可用 */
-  enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否可用 */
+  enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11550,15 +11550,15 @@ export interface ResultListProcessTmpl {
 }
 
 export interface IdentityLinkInfo {
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   type?: string;
   scopeId?: string;
-  groupId?: string;
   taskId?: string;
+  groupId?: string;
   userId?: string;
-  scopeType?: string;
-  subScopeId?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
 }
 
 /** 通用响应类 */
@@ -11576,22 +11576,38 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
+  localizedName?: string;
+  localizedDescription?: string;
+  formKey?: string;
   /** @format int32 */
   priority?: number;
   name?: string;
   owner?: string;
   suspended?: boolean;
-  assignee?: string;
   description?: string;
   tenantId?: string;
   /** @format date-time */
   dueDate?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
+  assignee?: string;
   parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
   category?: string;
-  localizedDescription?: string;
-  localizedName?: string;
-  formKey?: string;
+  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  inProgressStartedBy?: string;
+  taskLocalVariables?: Record<string, object>;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
   id?: string;
   state?: string;
   scopeId?: string;
@@ -11599,42 +11615,26 @@ export type Task = {
   createTime?: string;
   caseVariables?: Record<string, object>;
   /** @format date-time */
-  suspendedTime?: string;
-  claimedBy?: string;
-  /** @format date-time */
   claimTime?: string;
+  claimedBy?: string;
   suspendedBy?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
-  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  suspendedTime?: string;
   processDefinitionId?: string;
-  scopeType?: string;
-  subScopeId?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
-  taskLocalVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  inProgressStartedBy?: string;
-  processVariables?: Record<string, object>;
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
 } | null;
 
 /** 响应数据 */
 export type IdentityLink = {
   processDefinitionId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   type?: string;
   scopeId?: string;
-  groupId?: string;
   taskId?: string;
+  groupId?: string;
   userId?: string;
-  scopeType?: string;
-  subScopeId?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -17655,7 +17655,7 @@ export const api = {
      * @secure
      */
     dynamicUpdateDataSql: (data: InsertOrUpdateModel) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicUpdateDataSql`, {
+      http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicUpdateDataSql`, {
         method: 'POST',
         body: data as any,
       }),
@@ -17715,7 +17715,7 @@ export const api = {
      * @secure
      */
     dynamicLogicDeleteDataSql: (data: DeleteModel) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicLogicDeleteDataSql`, {
+      http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicLogicDeleteDataSql`, {
         method: 'POST',
         body: data as any,
       }),
@@ -17730,7 +17730,7 @@ export const api = {
      * @secure
      */
     dynamicInsertDataSql: (data: InsertOrUpdateModel) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicInsertDataSql`, {
+      http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicInsertDataSql`, {
         method: 'POST',
         body: data as any,
       }),
@@ -17745,7 +17745,7 @@ export const api = {
      * @secure
      */
     dynamicDeleteDataSql: (data: DeleteModel) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicDeleteDataSql`, {
+      http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicDeleteDataSql`, {
         method: 'POST',
         body: data as any,
       }),
