@@ -107,7 +107,7 @@ const loadSetting = () => {
   const route = useRoute();
   const { domainParamId } = route.query;
 
-  api.domainParam.getItemById({ id: domainParamId.toString() }).then((res) => {
+  api.domainParam.getItemById({ id: domainParamId.toString() }).then(async (res) => {
     settingObject.value = res;
     // 获取主要信息
     tableTitle.value = res.domainParamName;
@@ -140,7 +140,8 @@ const loadSetting = () => {
     tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
     // 获取查询信息，配置
     searchSettings.value = res.domainParmSetting.searchSetting;
-    opts.value = genOpts(res.domainParmSetting.searchSetting);
+    const genOptsResult = await genOpts(res.domainParmSetting.searchSetting);
+    opts.value = genOptsResult;
 
     conditionEnter(null);
   });
@@ -150,25 +151,46 @@ const determineFixed = (isLeftFixed, isRightFixed) => {
   if (isRightFixed) return 'right';
   return '';
 };
-const genOpts = (searchSetting) => {
+const genOpts = async (searchSetting) => {
   const optSetting = {};
+  const promises = []; // 用于存储所有generateComponentConfig的Promise
 
   searchSetting.forEach((settingConfig) => {
-    const optSettingItem = generateComponentConfig(settingConfig);
-    optSetting[settingConfig.field] = optSettingItem;
+    // 将每个异步调用放入promises数组中
+    promises.push(
+      generateComponentConfig(settingConfig).then((optSettingItem) => {
+        optSetting[settingConfig.field] = optSettingItem;
+      }),
+    );
   });
 
+  // 等待所有Promise完成
+  await Promise.all(promises);
   return optSetting;
 };
-
 // 假设state和一些辅助函数（如focus, blur等）已经定义好
-const generateComponentConfig = (setting) => {
+
+const generateComponentConfig = async (setting) => {
   const optItem: any = {
     label: setting.label,
     comp: setting.component,
     defaultVal: setting.defaultValue,
   };
   let optionsData = [];
+  if (setting.component === 't-select' && setting.componentSource.sourceType === 'dataTable') {
+    const postSetting = setting.componentSource.dataTable;
+    const { mapBusinessDomain } = setting.componentSource.dataTable;
+    const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
+    try {
+      const res = await http.post<any>(postUrl, postSetting);
+      const { list } = res;
+      optionsData = list;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // 可能需要处理错误情况，比如设置默认值或抛出错误
+    }
+  }
+
   switch (setting.component) {
     case 'bcmp-select-business':
       optItem.bind = {

@@ -87,8 +87,9 @@
               v-if="formItem.component === 't-select'"
               v-model="currentFormData[formItem.field]"
               :disabled="formItem.isDisabled"
+              :options="formItem.options"
+              :multiple="formItem.isMutiple"
             >
-              <t-option>sss</t-option>
             </t-select>
             <t-date-picker
               v-if="formItem.component === 't-date-picker'"
@@ -219,7 +220,7 @@ const loadSetting = () => {
   const route = useRoute();
   const { domainParamId } = route.query;
 
-  api.domainParam.getItemById({ id: domainParamId.toString() }).then((res) => {
+  api.domainParam.getItemById({ id: domainParamId.toString() }).then(async (res) => {
     settingObject.value = res;
     // 获取主要信息
     tableTitle.value = res.domainParamName;
@@ -272,8 +273,8 @@ const loadSetting = () => {
     tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
     // 获取查询信息，配置
     searchSettings.value = res.domainParmSetting.searchSetting;
-    opts.value = genOpts(res.domainParmSetting.searchSetting);
-
+    const genOptsResult = await genOpts(res.domainParmSetting.searchSetting);
+    opts.value = genOptsResult;
     conditionEnter(null);
   });
 };
@@ -282,25 +283,46 @@ const determineFixed = (isLeftFixed, isRightFixed) => {
   if (isRightFixed) return 'right';
   return '';
 };
-const genOpts = (searchSetting) => {
+const genOpts = async (searchSetting) => {
   const optSetting = {};
+  const promises = []; // 用于存储所有generateComponentConfig的Promise
 
   searchSetting.forEach((settingConfig) => {
-    const optSettingItem = generateComponentConfig(settingConfig);
-    optSetting[settingConfig.field] = optSettingItem;
+    // 将每个异步调用放入promises数组中
+    promises.push(
+      generateComponentConfig(settingConfig).then((optSettingItem) => {
+        optSetting[settingConfig.field] = optSettingItem;
+      }),
+    );
   });
 
+  // 等待所有Promise完成
+  await Promise.all(promises);
   return optSetting;
 };
 
 // 假设state和一些辅助函数（如focus, blur等）已经定义好
-const generateComponentConfig = (setting) => {
+const generateComponentConfig = async (setting) => {
   const optItem: any = {
     label: setting.label,
     comp: setting.component,
     defaultVal: setting.defaultValue,
   };
   let optionsData = [];
+  if (setting.component === 't-select' && setting.componentSource.sourceType === 'dataTable') {
+    const postSetting = setting.componentSource.dataTable;
+    const { mapBusinessDomain } = setting.componentSource.dataTable;
+    const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
+    try {
+      const res = await http.post<any>(postUrl, postSetting);
+      const { list } = res;
+      optionsData = list;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // 可能需要处理错误情况，比如设置默认值或抛出错误
+    }
+  }
+
   switch (setting.component) {
     case 'bcmp-select-business':
       optItem.bind = {
@@ -372,14 +394,26 @@ const onRowClick = async (rowValue, buttonSetting) => {
       // 加载当前按钮动作对应的表单配置,包含表单字段与校验规则
       currentFullFormSetting.value = buttonSetting.formColumnSetting;
       currentFormSetting.value = buttonSetting.formColumnSetting.filter((column) => column.isVisible);
-      // 循环表单设置,涉及数据源的先解析出数据源
-      currentFormSetting.value.forEach((column) => {
-        // :todo 如果数据源是自定义列表的话,直接取列表,组成控件的项目列表即可
-        // :todo 如果数据源是数据表,需要通过通用接口获取到数据源后,组成控件的项目列表
-        console.log(column);
-      });
+
       // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
-      currentFormSetting.value.forEach((column) => {
+      currentFormSetting.value.forEach(async (column) => {
+        let optionsData = [];
+        if (
+          (column.component === 't-select' || column.component === 't-checkbox-group') &&
+          column.componentSource.sourceType === 'dataTable'
+        ) {
+          const postSetting = column.componentSource.dataTable;
+          const { mapBusinessDomain } = column.componentSource.dataTable;
+          const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
+          try {
+            const res = await http.post<any>(postUrl, postSetting);
+            const { list } = res;
+            optionsData = list;
+          } catch (error) {
+            console.error('Error fetching data:', error);
+            // 可能需要处理错误情况，比如设置默认值或抛出错误
+          }
+        }
         switch (column.component) {
           case 't-input':
             formValue[column.field] = formValue[column.field] || '';
@@ -390,6 +424,19 @@ const onRowClick = async (rowValue, buttonSetting) => {
             } else {
               formValue[column.field] = formValue[column.field] || '';
             }
+
+            if (column.componentSource) {
+              switch (column.componentSource.sourceType) {
+                case 'customDict':
+                  optionsData = column.componentSource.customDict.dicData;
+                  break;
+
+                default:
+                  break;
+              }
+            }
+            column.options = optionsData;
+
             break;
           case 't-date-picker':
             formValue[column.field] = formValue[column.field] || '';
@@ -398,6 +445,18 @@ const onRowClick = async (rowValue, buttonSetting) => {
             // 要把字符串转成数组
             formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
             // formValue[column.field] = formValue[column.field] || '';
+
+            if (column.componentSource) {
+              switch (column.componentSource.sourceType) {
+                case 'customDict':
+                  optionsData = column.componentSource.customDict.dicData;
+                  break;
+
+                default:
+                  break;
+              }
+            }
+            column.options = optionsData;
             break;
           default:
             break;
@@ -461,14 +520,25 @@ const onHeaderClick = async (buttonSetting) => {
       // 加载当前按钮动作对应的表单配置,包含表单字段与校验规则
       currentFormSetting.value = buttonSetting.formColumnSetting.filter((column) => column.isVisible);
 
-      // 循环表单设置,涉及数据源的先解析出数据源
-      currentFormSetting.value.forEach((column) => {
-        // :todo 如果数据源是自定义列表的话,直接取列表,组成控件的项目列表即可
-        // :todo 如果数据源是数据表,需要通过通用接口获取到数据源后,组成控件的项目列表
-        console.log(column);
-      });
       // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
-      currentFormSetting.value.forEach((column) => {
+      currentFormSetting.value.forEach(async (column) => {
+        let optionsData = [];
+        if (
+          (column.component === 't-select' || column.component === 't-checkbox-group') &&
+          column.componentSource.sourceType === 'dataTable'
+        ) {
+          const postSetting = column.componentSource.dataTable;
+          const { mapBusinessDomain } = column.componentSource.dataTable;
+          const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
+          try {
+            const res = await http.post<any>(postUrl, postSetting);
+            const { list } = res;
+            optionsData = list;
+          } catch (error) {
+            console.error('Error fetching data:', error);
+            // 可能需要处理错误情况，比如设置默认值或抛出错误
+          }
+        }
         switch (column.component) {
           case 't-input':
             formValue[column.field] = formValue[column.field] || '';
@@ -479,6 +549,19 @@ const onHeaderClick = async (buttonSetting) => {
             } else {
               formValue[column.field] = formValue[column.field] || '';
             }
+
+            if (column.componentSource) {
+              switch (column.componentSource.sourceType) {
+                case 'customDict':
+                  optionsData = column.componentSource.customDict.dicData;
+                  break;
+
+                default:
+                  break;
+              }
+            }
+            column.options = optionsData;
+
             break;
           case 't-date-picker':
             formValue[column.field] = formValue[column.field] || '';
@@ -487,6 +570,18 @@ const onHeaderClick = async (buttonSetting) => {
             // 要把字符串转成数组
             formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
             // formValue[column.field] = formValue[column.field] || '';
+
+            if (column.componentSource) {
+              switch (column.componentSource.sourceType) {
+                case 'customDict':
+                  optionsData = column.componentSource.customDict.dicData;
+                  break;
+
+                default:
+                  break;
+              }
+            }
+            column.options = optionsData;
             break;
           default:
             break;

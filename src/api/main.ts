@@ -5422,11 +5422,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5641,14 +5641,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
   isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -5791,8 +5791,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7432,6 +7432,60 @@ export interface ResultPagingDataEnterpriseVO {
   data?: PagingDataEnterpriseVO;
 }
 
+export interface DomainParamButtonFormColumn {
+  /** @format int32 */
+  seq?: number;
+  field?: string;
+  label?: string;
+  component?: string;
+  componentParam?: string;
+  placeholder?: string;
+  defaultValue?: string;
+  fieldType?: string;
+  verifyExp?: string;
+  componentSource?: DomainParamComponentSource;
+  isVisible?: boolean;
+  isDisabled?: boolean;
+  isMutiple?: boolean;
+  isRequired?: boolean;
+  isKeyField?: boolean;
+}
+
+export interface DomainParamComponentSource {
+  sourceType?: string;
+  customDict?: DomainParamComponentSourceCustomDict;
+  dataTable?: DomainParamComponentSourceDatatable;
+}
+
+export interface DomainParamComponentSourceCustomDict {
+  dicData?: Record<string, object>[];
+}
+
+export interface DomainParamComponentSourceDatatable {
+  mapBusinessDomain?: string;
+  mapTable?: string;
+  conditionData?: DomainParamComponentSourceDatatableFilter[];
+  valueField?: string;
+  showField?: string;
+}
+
+export interface DomainParamComponentSourceDatatableFilter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  value?: string;
+}
+
+export interface InsertOrUpdateModel {
+  columnSetting?: DomainParamButtonFormColumn[];
+  tableName?: string;
+  fieldValues?: Record<string, object>;
+}
+
+export interface DeleteModel {
+  tableName?: string;
+  ids?: string[];
+}
+
 export interface BatchDynamicUpdateDTO {
   /** 表唯一主键 */
   primaryKey?: string;
@@ -7515,24 +7569,6 @@ export interface DomainParamGroup {
   parentId?: string;
 }
 
-export interface DomainParamButtonFormColumn {
-  /** @format int32 */
-  seq?: number;
-  field?: string;
-  label?: string;
-  component?: string;
-  componentParam?: string;
-  placeholder?: string;
-  defaultValue?: string;
-  fieldType?: string;
-  verifyExp?: string;
-  componentSource?: DomainParamComponentSource;
-  isVisible?: boolean;
-  isMutiple?: boolean;
-  isRequired?: boolean;
-  isKeyField?: boolean;
-}
-
 export interface DomainParamButtonSetting {
   /** @format int32 */
   seq?: number;
@@ -7546,30 +7582,6 @@ export interface DomainParamButtonSetting {
   deleteType?: string;
   isEnabled?: boolean;
   isCustomButton?: boolean;
-}
-
-export interface DomainParamComponentSource {
-  sourceType?: string;
-  customDict?: DomainParamComponentSourceCustomDict;
-  dataTable?: DomainParamComponentSourceDatatable;
-}
-
-export interface DomainParamComponentSourceCustomDict {
-  dicData?: Record<string, object>[];
-}
-
-export interface DomainParamComponentSourceDatatable {
-  mapBusinessDomain?: string;
-  mapTable?: string;
-  conditionData?: DomainParamComponentSourceDatatableFilter[];
-  valueField?: string;
-  showField?: string;
-}
-
-export interface DomainParamComponentSourceDatatableFilter {
-  field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
-  value?: string;
 }
 
 export interface DomainParamSearchSetting {
@@ -9597,8 +9609,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -11545,8 +11557,8 @@ export interface IdentityLinkInfo {
   userId?: string;
   subScopeId?: string;
   scopeType?: string;
-  processInstanceId?: string;
   scopeDefinitionId?: string;
+  processInstanceId?: string;
 }
 
 /** 通用响应类 */
@@ -11564,51 +11576,51 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
-  suspended?: boolean;
+  /** @format date-time */
+  dueDate?: string;
   /** @format int32 */
   priority?: number;
   name?: string;
   owner?: string;
+  suspended?: boolean;
   description?: string;
   tenantId?: string;
-  /** @format date-time */
-  dueDate?: string;
   assignee?: string;
   category?: string;
-  localizedName?: string;
-  parentTaskId?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
   formKey?: string;
+  localizedName?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
   localizedDescription?: string;
   id?: string;
   state?: string;
   scopeId?: string;
   /** @format date-time */
   createTime?: string;
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
   processDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
   executionId?: string;
   identityLinks?: IdentityLinkInfo[];
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   caseVariables?: Record<string, object>;
-  claimedBy?: string;
   /** @format date-time */
   claimTime?: string;
+  suspendedBy?: string;
   /** @format date-time */
   suspendedTime?: string;
-  suspendedBy?: string;
+  claimedBy?: string;
   propagatedStageInstanceId?: string;
-  inProgressStartedBy?: string;
-  processVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  taskLocalVariables?: Record<string, object>;
   /** @format date-time */
   inProgressStartDueDate?: string;
+  inProgressStartedBy?: string;
+  taskLocalVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  processVariables?: Record<string, object>;
 } | null;
 
 /** 响应数据 */
@@ -11621,8 +11633,8 @@ export type IdentityLink = {
   userId?: string;
   subScopeId?: string;
   scopeType?: string;
-  processInstanceId?: string;
   scopeDefinitionId?: string;
+  processInstanceId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -17637,6 +17649,36 @@ export const api = {
      * No description
      *
      * @tags 动态服务
+     * @name DynamicUpdateDataSql
+     * @summary 动态更新数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicUpdateDataSql
+     * @secure
+     */
+    dynamicUpdateDataSql: (data: InsertOrUpdateModel) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicUpdateDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryDropdownListSql
+     * @summary 通用查询下拉列表-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicQueryDropdownListSql
+     * @secure
+     */
+    dynamicQueryDropdownListSql: (data: DomainParamComponentSourceDatatable) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicQueryDropdownListSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
      * @name DynamicQueryData
      * @summary 根据领域进行动态表字段查询
      * @request POST:/dynamicManage/dynamicQueryData
@@ -17659,6 +17701,51 @@ export const api = {
      */
     dynamicQueryDataSql: (data: CommonSearch) =>
       http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicQueryDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicLogicDeleteDataSql
+     * @summary 逻辑删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicLogicDeleteDataSql
+     * @secure
+     */
+    dynamicLogicDeleteDataSql: (data: DeleteModel) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicLogicDeleteDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicInsertDataSql
+     * @summary 动态插入数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicInsertDataSql
+     * @secure
+     */
+    dynamicInsertDataSql: (data: InsertOrUpdateModel) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicInsertDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicDeleteDataSql
+     * @summary 物理删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicDeleteDataSql
+     * @secure
+     */
+    dynamicDeleteDataSql: (data: DeleteModel) =>
+      http.request<void['data']>(`/api/main/dynamicManage/dynamicDeleteDataSql`, {
         method: 'POST',
         body: data as any,
       }),

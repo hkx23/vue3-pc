@@ -2228,7 +2228,7 @@ const changeMapDomain = async () => {
 // #加载对应领域的表格列表
 const loadMapTableList = async () => {
   const params = { businessCode: mapBusinessDomain.value };
-  const res = await api.importManage.tables(params);
+  const res = await api.domainParam.sqlTables(params);
   mapTableList.value = res;
 };
 // #选中表格变化
