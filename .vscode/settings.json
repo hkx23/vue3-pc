@@ -53,5 +53,6 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     }
-  }
+  },
+  "stockCode": "sh000001,sz002241"
 }
