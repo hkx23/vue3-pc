@@ -3268,8 +3268,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5420,13 +5420,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
   isState?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  stateName?: string;
+  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5640,14 +5640,14 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
+  stateName?: string;
   isInProcessChecked?: boolean;
-  isRawChecked?: boolean;
-  isProductName?: string;
+  isProductChecked?: boolean;
   isInProcessName?: string;
+  isRawChecked?: boolean;
   isBatchName?: string;
+  isProductName?: string;
   isRawName?: string;
 }
 
@@ -8348,8 +8348,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -9609,8 +9609,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -10993,12 +10993,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11555,10 +11555,10 @@ export interface IdentityLinkInfo {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  scopeDefinitionId?: string;
   processInstanceId?: string;
+  scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
 }
 
 /** 通用响应类 */
@@ -11576,8 +11576,6 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
-  /** @format date-time */
-  dueDate?: string;
   /** @format int32 */
   priority?: number;
   name?: string;
@@ -11585,8 +11583,10 @@ export type Task = {
   suspended?: boolean;
   description?: string;
   tenantId?: string;
-  assignee?: string;
   category?: string;
+  /** @format date-time */
+  dueDate?: string;
+  assignee?: string;
   formKey?: string;
   localizedName?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
@@ -11597,23 +11597,23 @@ export type Task = {
   scopeId?: string;
   /** @format date-time */
   createTime?: string;
-  processDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  scopeDefinitionId?: string;
   processInstanceId?: string;
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
-  caseVariables?: Record<string, object>;
+  scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  processDefinitionId?: string;
   /** @format date-time */
   claimTime?: string;
-  suspendedBy?: string;
+  caseVariables?: Record<string, object>;
   /** @format date-time */
   suspendedTime?: string;
   claimedBy?: string;
+  suspendedBy?: string;
   propagatedStageInstanceId?: string;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
   /** @format date-time */
   inProgressStartDueDate?: string;
   inProgressStartedBy?: string;
@@ -11631,10 +11631,10 @@ export type IdentityLink = {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  scopeDefinitionId?: string;
   processInstanceId?: string;
+  scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -17670,7 +17670,7 @@ export const api = {
      * @secure
      */
     dynamicQueryDropdownListSql: (data: DomainParamComponentSourceDatatable) =>
-      http.request<void['data']>(`/api/main/dynamicManage/dynamicQueryDropdownListSql`, {
+      http.request<ResultObject['data']>(`/api/main/dynamicManage/dynamicQueryDropdownListSql`, {
         method: 'POST',
         body: data as any,
       }),
