@@ -397,7 +397,7 @@ const fetchTable = debounce(async () => {
       table1Height.value = height;
     }
 
-    MessagePlugin.success(t('eventKanban.querySuccess'));
+    // MessagePlugin.success(t('eventKanban.querySuccess'));
   } catch (e) {
     console.log(e);
   }

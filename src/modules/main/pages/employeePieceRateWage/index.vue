@@ -65,7 +65,7 @@
 </template>
 <script setup lang="ts">
 import _ from 'lodash';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -229,7 +229,7 @@ const onInput = async (data: any) => {
   pageUI.value.page = 1;
   formData.value = { ...data };
   fetchTable();
-  MessagePlugin.success('查询成功。');
+  // MessagePlugin.success('查询成功。');
 };
 
 const fetchTable = async () => {

@@ -219,7 +219,9 @@ const loadSetting = () => {
   // 渲染表格列配置
   const route = useRoute();
   const { domainParamId } = route.query;
-
+  if (!domainParamId) {
+    return;
+  }
   api.domainParam.getItemById({ id: domainParamId.toString() }).then(async (res) => {
     settingObject.value = res;
     // 获取主要信息
