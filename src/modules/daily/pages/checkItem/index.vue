@@ -80,6 +80,13 @@
           param-group="Q_ITEM_TYPE"
         ></bcmp-select-param>
       </t-form-item>
+      <t-form-item label="校验类型" name="itemValidateType">
+        <bcmp-select-param
+          v-model="checkItemTabData.list.itemValidateType"
+          placeholder="请选择校验类型"
+          param-group="Q_ITEM_VALIDATE_TYPE"
+        ></bcmp-select-param>
+      </t-form-item>
     </t-form>
     <template #footer>
       <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
@@ -127,6 +134,7 @@ const checkItemTabData = reactive({
     itemName: '', // 点检项目名称
     itemDesc: '', // 点检项目描述
     itemType: '', // 项目类型
+    itemValidateType: 'COMMON_VALI',
   },
 });
 
@@ -162,6 +170,12 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
+    colKey: 'itemValidateTypeName',
+    title: '校验类型',
+    align: 'center',
+    width: '100',
+  },
+  {
     colKey: 'state',
     title: '项目状态',
     align: 'center',
@@ -181,6 +195,7 @@ const rules: FormRules = {
   itemCode: [{ required: true, message: '点检项目编码不能为空', trigger: 'blur' }],
   itemName: [{ required: true, message: '点检项目名称不能为空', trigger: 'blur' }],
   itemType: [{ required: true, message: '项目类型不能为空', trigger: 'change' }],
+  itemValidateType: [{ required: true, message: '校验类型不能为空', trigger: 'change' }],
 };
 onMounted(async () => {
   await fetchTable(); // 获取 表格 数据
@@ -194,6 +209,7 @@ const onAddTypeData = () => {
   checkItemTabData.list.itemCode = ''; // 点检项目编码
   checkItemTabData.list.itemDesc = ''; // 点检项目描述
   checkItemTabData.list.itemType = '';
+  checkItemTabData.list.itemValidateType = 'COMMON_VALI';
   submitFalg.value = true;
   diaLogTitle.value = '新增点检项目';
 };
@@ -261,6 +277,7 @@ const onEditRow = (row: any) => {
   checkItemTabData.list.itemCode = row.itemCode; // 点检项目编码
   checkItemTabData.list.itemDesc = row.itemDesc; // 点检项目描述
   checkItemTabData.list.itemType = row.itemType; // 项目类型
+  checkItemTabData.list.itemValidateType = row.itemValidateType; // 项目类型
   incidentID.value = row.id; // 编辑回填 ID
   submitFalg.value = false;
   formVisible.value = true;

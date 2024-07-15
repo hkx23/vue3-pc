@@ -119,9 +119,38 @@ export interface CommonSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+}
+
+export interface DatasourceField {
+  tableName?: string;
+  fieldName?: string;
+}
+
+export interface DatasourceSetting {
+  /** @format int32 */
+  seq?: number;
+  datasourceType?: string;
+  datasourceName?: string;
+  aliasName?: string;
+  relatedType?: string;
+  conditionData?: DatasourceSettingCondition[];
+}
+
+export interface DatasourceSettingCondition {
+  /** @format int32 */
+  seq?: number;
+  fieldName?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  relateType?: string;
+  aliasName?: string;
+  relateFieldName?: string;
+  relateValue?: string;
 }
 
 export interface Filter {
+  tableName?: string;
   field?: string;
   operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
   value?: string;
@@ -1188,6 +1217,60 @@ export interface ResultListEventFile {
   data?: EventFile[] | null;
 }
 
+export interface DomainParamButtonFormColumn {
+  /** @format int32 */
+  seq?: number;
+  field?: string;
+  label?: string;
+  component?: string;
+  componentParam?: string;
+  placeholder?: string;
+  defaultValue?: string;
+  fieldType?: string;
+  verifyExp?: string;
+  componentSource?: DomainParamComponentSource;
+  isVisible?: boolean;
+  isDisabled?: boolean;
+  isMutiple?: boolean;
+  isRequired?: boolean;
+  isKeyField?: boolean;
+}
+
+export interface DomainParamComponentSource {
+  sourceType?: string;
+  customDict?: DomainParamComponentSourceCustomDict;
+  dataTable?: DomainParamComponentSourceDatatable;
+}
+
+export interface DomainParamComponentSourceCustomDict {
+  dicData?: Record<string, object>[];
+}
+
+export interface DomainParamComponentSourceDatatable {
+  mapBusinessDomain?: string;
+  mapTable?: string;
+  conditionData?: DomainParamComponentSourceDatatableFilter[];
+  valueField?: string;
+  showField?: string;
+}
+
+export interface DomainParamComponentSourceDatatableFilter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  value?: string;
+}
+
+export interface InsertOrUpdateModel {
+  columnSetting?: DomainParamButtonFormColumn[];
+  tableName?: string;
+  fieldValues?: Record<string, object>;
+}
+
+export interface DeleteModel {
+  tableName?: string;
+  ids?: string[];
+}
+
 export interface BatchDynamicUpdateDTO {
   /** 表唯一主键 */
   primaryKey?: string;
@@ -1835,9 +1918,9 @@ export interface ConferenceOrgVO {
   type?: string;
   convertOrgId?: string;
   /** 转换后的组织编码 */
-  convertOrgCode?: string;
-  /** 转换后的组织编码 */
   convertOrgName?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
 }
 
 /** 响应数据 */
@@ -1976,6 +2059,8 @@ export interface ChecklistOrgSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   checklistCode?: string;
   checklistName?: string;
   checklistCategory?: string;
@@ -2144,6 +2229,8 @@ export interface ChecklistItemSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   ids?: string[];
   checklistId?: string;
 }
@@ -2233,6 +2320,8 @@ export interface ChecklistSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   checklistCode?: string;
   checklistName?: string;
   checklistCategory?: string;
@@ -2316,6 +2405,8 @@ export interface CheckItemSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   itemCode?: string;
   itemName?: string;
   itemType?: string;
@@ -2539,6 +2630,8 @@ export interface CheckBillSearch {
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
   dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   checkBillHeadId?: string;
   /** 单号 */
   billNo?: string;
@@ -3742,6 +3835,36 @@ export const api = {
      * No description
      *
      * @tags 动态服务
+     * @name DynamicUpdateDataSql
+     * @summary 动态更新数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicUpdateDataSql
+     * @secure
+     */
+    dynamicUpdateDataSql: (data: InsertOrUpdateModel) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/dynamicUpdateDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryDropdownListSql
+     * @summary 通用查询下拉列表-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicQueryDropdownListSql
+     * @secure
+     */
+    dynamicQueryDropdownListSql: (data: DomainParamComponentSourceDatatable) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/dynamicQueryDropdownListSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
      * @name DynamicQueryData
      * @summary 根据领域进行动态表字段查询
      * @request POST:/dynamicManage/dynamicQueryData
@@ -3749,6 +3872,66 @@ export const api = {
      */
     dynamicQueryData: (data: CommonSearch) =>
       http.request<ResultObject['data']>(`/api/daily/dynamicManage/dynamicQueryData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryDataSql
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryDataSql
+     * @secure
+     */
+    dynamicQueryDataSql: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/dynamicQueryDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicLogicDeleteDataSql
+     * @summary 逻辑删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicLogicDeleteDataSql
+     * @secure
+     */
+    dynamicLogicDeleteDataSql: (data: DeleteModel) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/dynamicLogicDeleteDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicInsertDataSql
+     * @summary 动态插入数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicInsertDataSql
+     * @secure
+     */
+    dynamicInsertDataSql: (data: InsertOrUpdateModel) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/dynamicInsertDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicDeleteDataSql
+     * @summary 物理删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicDeleteDataSql
+     * @secure
+     */
+    dynamicDeleteDataSql: (data: DeleteModel) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/dynamicDeleteDataSql`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4748,22 +4931,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/daily/alertCfg/addAlertCfg`, {
         method: 'POST',
         body: data as any,
-      }),
-  },
-  mailDemo: {
-    /**
-     * No description
-     *
-     * @tags 邮件发送Demo
-     * @name SendSimpleMail
-     * @summary 发送文本邮件
-     * @request GET:/mailDemo/sendSimpleMail
-     * @secure
-     */
-    sendSimpleMail: (query: { to: string; subject: string; content: string }) =>
-      http.request<ResultObject['data']>(`/api/daily/mailDemo/sendSimpleMail`, {
-        method: 'GET',
-        params: query,
       }),
   },
   incidentDealLog: {
