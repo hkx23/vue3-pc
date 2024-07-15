@@ -105,10 +105,11 @@
       <t-form-item label="出勤班次" name="shiftCode">
         <bcmp-select-param v-model="checklistTabData.list.shiftCode" param-group="SHIFT_CODE"></bcmp-select-param>
       </t-form-item>
-      <t-form-item label="频率" name="executeFrequenceCode">
+      <t-form-item label="频率" name="executeFrequenceCodeList">
         <bcmp-select-param
-          v-model="checklistTabData.list.executeFrequenceCode"
+          v-model="checklistTabData.list.executeFrequenceCodeList"
           param-group="EXECUTE_FREQUENCE"
+          multiple
         ></bcmp-select-param>
       </t-form-item>
     </t-form>
@@ -150,6 +151,7 @@ const formData = ref({
   checklistCategory: '',
   shiftCode: '',
   executeFrequenceCode: '',
+  executeFrequenceCodeList: [],
 });
 // 表格数据总条数
 const checklistTotal = ref(0);
@@ -166,6 +168,7 @@ const checklistTabData = reactive({
     checklistCategory: '', // 清单类型
     shiftCode: '',
     executeFrequenceCode: '',
+    executeFrequenceCodeList: [],
   },
 });
 // 表格列表数据
@@ -232,7 +235,7 @@ const rules: FormRules = {
   checklistName: [{ required: true, message: '点检清单名称不能为空', trigger: 'blur' }],
   checklistCategory: [{ required: true, message: '清单类型不能为空', trigger: 'change' }],
   shiftCode: [{ required: true, message: '出勤班次不能为空', trigger: 'change' }],
-  executeFrequenceCode: [{ required: true, message: '频率不能为空', trigger: 'change' }],
+  executeFrequenceCodeList: [{ required: true, message: '频率不能为空', trigger: 'change' }],
 };
 
 onMounted(async () => {
@@ -248,7 +251,9 @@ const onAddData = () => {
   checklistTabData.list.checklistDesc = ''; // 点检清单描述
   checklistTabData.list.checklistCategory = '';
   checklistTabData.list.shiftCode = '';
-  checklistTabData.list.executeFrequenceCode = '';
+  checklistTabData.list.executeFrequenceCode = '131';
+  checklistTabData.list.executeFrequenceCodeList = ['1', '2', '4', '8', '16', '32', '64'];
+
   submitFalg.value = true;
   diaLogTitle.value = '新增点检清单';
 };
@@ -331,7 +336,19 @@ const fetchTable = async () => {
 const onSecondarySubmit = () => {
   formRef.value.submit();
 };
-
+const binaryPowerList = (num) => {
+  const result = [];
+  let index = 0;
+  while (num !== 0) {
+    const remainder = num % 2; // 使用取余运算代替按位与
+    if (remainder === 1) {
+      result.push((2 ** index).toString());
+    }
+    num = Math.floor(num / 2); // 使用除法代替右移位操作
+    index++;
+  }
+  return result.reverse(); // 如果需要从低阶到高阶的幂次，可以省略此行
+};
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
   isDisabled.value = true;
@@ -341,6 +358,14 @@ const onEditRow = (row: any) => {
   checklistTabData.list.checklistCategory = row.checklistCategory;
   checklistTabData.list.shiftCode = row.shiftCode;
   checklistTabData.list.executeFrequenceCode = row.executeFrequenceCode;
+  // row.executeFrequenceCode 值为二进制值 例如 5，代表1跟4，需要转换为数组
+  // Assuming row.executeFrequenceCode is the binary value you want to convert
+  const { executeFrequenceCode } = row;
+  const intExecuteFrequenceCode = parseInt(executeFrequenceCode, 10);
+  const executeFrequenceCodeList = binaryPowerList(intExecuteFrequenceCode);
+
+  // Now, checklistTabData.list.executeFrequenceCodeList will hold the indices of set bits
+  checklistTabData.list.executeFrequenceCodeList = executeFrequenceCodeList;
 
   incidentID.value = row.id; // 编辑回填 ID
   submitFalg.value = false;
@@ -366,6 +391,7 @@ const onSecondaryReset = () => {
   checklistTabData.list.checklistCategory = '';
   checklistTabData.list.shiftCode = '';
   checklistTabData.list.executeFrequenceCode = '';
+  checklistTabData.list.executeFrequenceCodeList = [];
 
   selectedRowKeys.value = [];
   delItemRowKeys.value = [];
@@ -375,6 +401,12 @@ const onSecondaryReset = () => {
 // 表单提交事件
 const onSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
+    // checklistTabData.list.executeFrequenceCode 赋值
+    checklistTabData.list.executeFrequenceCode = checklistTabData.list.executeFrequenceCodeList
+      .map(Number)
+      .reduce((acc, cur) => acc + cur)
+      .toString();
+
     if (submitFalg.value) {
       await onAddRequest(); // 新增请求
     } else {
