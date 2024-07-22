@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -47,6 +47,12 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+const datePlanRangeDefault = ref([
+  dayjs().subtract(7, 'day').format('YYYY-MM-DD 00:00:00'),
+  dayjs().add(1, 'day').format('YYYY-MM-DD 23:59:59'),
+]);
+// 查询组件值
+const optsValue = ref({ datePlanRange: datePlanRangeDefault.value }) as any;
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const inventoryManagement = ref([]);
@@ -70,18 +76,18 @@ const opts = computed(() => {
         multiple: true,
       },
     },
-    timeCreate: {
+    datePlanRange: {
       label: '创建时间',
       comp: 't-date-range-picker',
       // 设置默认值为前一周的日期和当天的日期
-      defaultVal: [dayjs().subtract(7, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+      defaultVal: datePlanRangeDefault,
       bind: {
         enableTimePicker: false,
         format: 'YYYY-MM-DD',
       },
-      eventHandle: {
-        blur: dateChange,
-      },
+      // eventHandle: {
+      //   blur: dateChange,
+      // },
     },
     billNo: {
       label: 'MES业务单号',
@@ -218,25 +224,6 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '送货单号', width: 130, colKey: 'deliveryNo' },
 ];
 
-//* 表格数据
-const fetchTable = async () => {
-  setLoading(false);
-  inventoryManagement.value = [];
-  tableDataReckoning.value = [];
-  const data = await api.transactionDetail.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-  });
-  // 响应数据在response.list中
-  const dataWithTimestamps = data.list.map((item) => ({
-    ...item,
-    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
-  }));
-  tableDataReckoning.value = dataWithTimestamps;
-  dataTotal.value = data.total;
-  setLoading(false);
-};
-
 //* 初始渲染
 onMounted(async () => {
   await fetchTable();
@@ -257,29 +244,39 @@ const tabRefresh = async () => {
   await fetchTable();
 };
 
-const dateChange = (data: any) => {
-  // 获取当前选择的日期范围
-  const selectedDateRange = data.value;
-  // 将日期字符串转换为dayjs对象
-  const startDate = dayjs(selectedDateRange[0]);
-  const endDate = dayjs(selectedDateRange[1]);
+// const dateChange = (data: any) => {
+//   // 获取当前选择的日期范围
+//   const selectedDateRange = data.value;
+//   // 将日期字符串转换为dayjs对象
+//   const startDate = dayjs(selectedDateRange[0]);
+//   const endDate = dayjs(selectedDateRange[1]);
 
-  // 计算日期范围的天数差异
-  const daysDifference = endDate.diff(startDate, 'day');
-  // 如果选择的天数超过31天，则调整日期范围
-  if (daysDifference > 31) {
-    // 将结束日期调整为开始日期的后31天
-    MessagePlugin.warning('日期跨度不得超过31天');
-  }
-};
+//   // 计算日期范围的天数差异
+//   const daysDifference = endDate.diff(startDate, 'day');
+//   // 如果选择的天数超过31天，则调整日期范围
+//   if (daysDifference > 31) {
+//     // 将结束日期调整为开始日期的后31天
+//     MessagePlugin.warning('日期跨度不得超过31天');
+//   }
+// };
 
 //* 查询
 const onInput = async (data: any) => {
+  // 点击查询按钮
   pageUI.value.page = 1;
-  setLoading(true);
+  optsValue.value = data;
+  fetchTable();
+};
+
+//* 重置
+const onReset = async () => {
+  await fetchTable();
+};
+
+//* 表格数据
+const fetchTable = async () => {
   const {
     businessCategoryId, // 事务类型
-    timeCreate, // 时间
     billNo, // MES业务单号
     erpLineNo, // ERP单据号
     moScheId, // 排产单号
@@ -291,39 +288,57 @@ const onInput = async (data: any) => {
     scanBarcode, // 标签
     warehouseId, // 源仓库
     toWarehouseId, // 目标仓库
-  } = data;
-  if (!data.value) {
+  } = optsValue.value;
+  if (optsValue.value) {
     let list = [];
     if (!_.isEmpty(businessCategoryId)) {
       list = _.split(businessCategoryId, ',');
     }
+    if (optsValue.value.datePlanRange) {
+      if (optsValue.value.datePlanRange[0]) {
+        optsValue.value.datetimePlanStart = optsValue.value.datePlanRange[0].toString();
+      }
+      if (optsValue.value.datePlanRange[1]) {
+        optsValue.value.datetimePlanEnd = optsValue.value.datePlanRange[1].toString();
+      }
+
+      const data = await api.transactionDetail.getList({
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+        businessCategoryId: list,
+        mitemId,
+        billNo,
+        moScheId,
+        dateStart: optsValue.value.datetimePlanStart,
+        dateEnd: optsValue.value.datetimePlanEnd,
+        erpLineNo,
+        creator,
+        transferId,
+        deliveryNo,
+        purchaseNo,
+        scanBarcode,
+        warehouseId,
+        toWarehouseId,
+      });
+      tableDataReckoning.value = [...data.list];
+      dataTotal.value = data.total;
+    }
+    setLoading(true);
+    inventoryManagement.value = [];
+    tableDataReckoning.value = [];
     const data = await api.transactionDetail.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      businessCategoryId: list,
-      mitemId,
-      billNo,
-      moScheId,
-      dateStart: timeCreate[0],
-      dateEnd: timeCreate[1],
-      erpLineNo,
-      creator,
-      transferId,
-      deliveryNo,
-      purchaseNo,
-      scanBarcode,
-      warehouseId,
-      toWarehouseId,
     });
-    tableDataReckoning.value = [...data.list];
+    // 响应数据在response.list中
+    const dataWithTimestamps = data.list.map((item) => ({
+      ...item,
+      _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+    }));
+    tableDataReckoning.value = dataWithTimestamps;
     dataTotal.value = data.total;
+    setLoading(false);
   }
-  setLoading(false);
-};
-
-//* 重置
-const onReset = async () => {
-  await fetchTable();
 };
 </script>
 
