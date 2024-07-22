@@ -17,6 +17,7 @@
         <div class="title-row">
           <div class="table-title">基础信息配置</div>
           <t-space>
+            <t-button v-if="formData.datasourceName" @click="refreshImportColumn">刷新表字段</t-button>
             <t-button :loading="loading" style="float: right" @click="save">{{ t('common.button.save') }}</t-button>
           </t-space>
         </div>
@@ -140,7 +141,7 @@
                         bordered
                         resizable
                         lazy-load
-                        row-key="seq"
+                        row-key="id"
                         drag-sort="row-handler"
                         @drag-sort="onSourceDragSort"
                       >
@@ -275,7 +276,7 @@
                         bordered
                         resizable
                         lazy-load
-                        row-key="seq"
+                        row-key="id"
                         drag-sort="row-handler"
                         @drag-sort="onDragSort"
                       >
@@ -391,7 +392,7 @@
                         bordered
                         resizable
                         lazy-load
-                        row-key="seq"
+                        row-key="id"
                         drag-sort="row-handler"
                         @drag-sort="onSearchDragSort"
                       >
@@ -646,20 +647,22 @@
                             <div class="table-box_header">
                               <div class="table-title">表单配置</div>
                               <t-space align="end" style="float: right">
-                                <!-- <t-button @click="addSearchData">添加查询条件</t-button> -->
+                                <t-button @click="syncButtonForm">同步表单配置</t-button>
                               </t-space>
                             </div>
                             <t-table
                               v-show="currentSelectButton.actionType.includes('form')"
                               ref="buttonTableRef"
                               :columns="buttonFormColumns"
+                              :selected-row-keys="buttonFormSelectedRowKeys"
                               :data="currentSelectButton.formColumnSetting"
                               bordered
                               resizable
                               lazy-load
-                              row-key="seq"
+                              row-key="id"
                               drag-sort="row-handler"
                               @drag-sort="onButtonDragSort"
+                              @select-change="onSelectButtonFormChange"
                             >
                               <template #label="{ row }">
                                 <t-input v-model="row.label" />
@@ -1046,6 +1049,29 @@
       </t-form>
     </t-drawer>
     <!-- #endregion 关联条件设置弹窗 -->
+
+    <!-- #region 选择按钮-->
+    <t-drawer
+      v-model:visible="syncButtonSelectDrawerVisible"
+      class="component-buttonForm-drawer"
+      :z-index="3000"
+      size="30%"
+      placement="right"
+      header="同步到按钮表单"
+      :on-confirm="onSyncButtonFormConfirm"
+      :close-btn="true"
+    >
+      <t-form>
+        <t-space direction="vertical" :size="8">
+          <t-space align="center" style="float: right">
+            <t-button @click="addrelateConditionData">添加关联条件</t-button>
+            <!-- <t-button @click="setLowerHeight">lower height</t-button> -->
+            <!-- <t-button @click="setHigherHeight">higher height</t-button> -->
+          </t-space>
+        </t-space>
+      </t-form>
+    </t-drawer>
+    <!-- #endregion 选择按钮 -->
   </t-dialog>
 </template>
 
@@ -1059,6 +1085,7 @@ import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableProps, TableRowDa
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
+import commmon from '@/utils/common';
 
 import { useLang } from './lang';
 // #endregion
@@ -1085,6 +1112,7 @@ const emit = defineEmits(['update:modelValue', 'close', 'success']);
 // 领域参数配置表单是否显示
 const formParamVisible = ref(props.modelValue);
 
+const tableColumnsRef = ref(null);
 // 监控 - 域参数配置表单是否显示
 watch(formParamVisible, (value: boolean) => {
   emit('update:modelValue', value);
@@ -1145,6 +1173,11 @@ const systemComponents = ref([
     useType: 'both',
   },
   {
+    label: '数字文本框',
+    value: 't-input-number',
+    useType: 'both',
+  },
+  {
     label: '开关',
     value: 't-switch',
     useType: 'both',
@@ -1167,6 +1200,11 @@ const systemComponents = ref([
   {
     label: '日期',
     value: 't-date-picker',
+    useType: 'both',
+  },
+  {
+    label: '日期时间',
+    value: 't-datetime-picker',
     useType: 'both',
   },
   {
@@ -1282,6 +1320,7 @@ const changeTable = (value) => {
 
   tempColumns = tempColumns.map((item) => ({
     ...item,
+    id: common.generateBigIntId().toString(),
     tableName: value,
     isDatabaseField: true,
     isAutoWidth: true,
@@ -1377,10 +1416,11 @@ const relateSourceData = ref([]);
 const onSourceDragSort: TableProps['onDragSort'] = (params) => {
   console.log('表格列交换行', params);
   let seq = 1;
-  forEach(params.newData, (item) => {
+  const currentNewData = cloneDeep(params.newData);
+  forEach(currentNewData, (item) => {
     item.seq = seq++;
   });
-  relateSourceData.value = params.newData;
+  relateSourceData.value = currentNewData;
 };
 
 // #表格列配置
@@ -1447,6 +1487,7 @@ const onAddRelateSource = () => {
     relateSourceData.value = [];
   }
   relateSourceData.value.push({
+    id: common.generateBigIntId().toString(),
     seq,
     datasourceType: 'dataTable',
     datasourceName: '',
@@ -1642,6 +1683,145 @@ const onRelateConditionConfirm = () => {
   MessagePlugin.info('数据保存成功!');
 };
 
+const handleButtonFormColumn = (tempColumns, type) => {
+  let seq = 0;
+  tempColumns = tempColumns.map((item) => ({
+    ...item,
+    tableName: formData.datasourceName,
+    isDatabaseField: true,
+    isAutoWidth: true,
+    columnWidth: 100,
+    align: 'center',
+    isVisible: true,
+    isLeftFixed: false,
+    isRightFixed: false,
+    canDelete: false,
+    isHandAdd: false,
+    field: item.columnName,
+    label: item.columnDesc,
+    component: 't-input',
+    componentParam: '',
+    componentSource: '',
+    isMultiple: false,
+    defaultValue: '',
+    isKeyField: false,
+    isRequired: false,
+    isDisabled: false,
+    verifyExp: '',
+    seq: seq++,
+  }));
+  const buttonSetting = cloneDeep(buttonSourceData.value);
+  const addButtonColumns = buttonSetting.find((item) => {
+    return item.buttonCode === type;
+  }).formColumnSetting;
+  const withoutDefaultMap = addButtonColumns.reduce((acc, item) => ({ ...acc, [item.field]: item }), {});
+
+  const defaultMap = tempColumns.reduce((acc, item) => ({ ...acc, [item.columnName]: item }), {});
+  // 找出需要添加的项
+  const itemsToAdd = Object.values(defaultMap).filter((item) => !withoutDefaultMap[item.columnName]);
+
+  // 找出需要删除的项（这里假设不能直接修改原数组，所以创建新的数组）
+  const itemsToRemove = addButtonColumns.filter((item) => !defaultMap[item.field]);
+
+  // 添加缺失的项
+  itemsToAdd.forEach((item) => {
+    // 确保新添加的项也有canDelete属性，这里假设默认为true
+    addButtonColumns.push(item);
+  });
+
+  // 从列表中移除多余的项
+  addButtonColumns.splice(
+    0,
+    addButtonColumns.length,
+    ...addButtonColumns.filter((item) => !itemsToRemove.includes(item)),
+  );
+
+  // 循环覆盖字段类型
+  addButtonColumns.forEach((item) => {
+    if (defaultMap[item.field]) {
+      item.columnType = defaultMap[item.field].columnType;
+    }
+  });
+  buttonSourceData.value.find((item) => {
+    return item.buttonCode === type;
+  }).formColumnSetting = cloneDeep(addButtonColumns);
+};
+
+// 重新加载字段,少的添加到列表,多的从列表删除
+const refreshImportColumn = () => {
+  // columnsData  是表格使用到的数据
+  // tempColumns 是原表格数据
+  // 需要比对columnsData列表中canDelete为false的数据与columnsData列表的是否一致
+  // 如果缺少,就加入到columnsData列表,如果columnsData列表有,但是tempColumns列表没有,需要删除columnsData列表中对应项
+  // 创建映射对象，用于快速查找
+  currentSelectTale.value = tableList.value.find((item) => item.tableName === formData.datasourceName);
+  const tempColumns = currentSelectTale.value?.columns;
+  // 刷新表格配置
+  handleTableColumn(tempColumns);
+  // 刷新编辑表单配置
+  handleButtonFormColumn(tempColumns, 'add');
+  // 刷新编辑新增配置
+  handleButtonFormColumn(tempColumns, 'edit');
+};
+
+const handleTableColumn = (tempColumns) => {
+  const withoutDefaultMap = columnsData.value
+    .filter((item) => !item.isHandAdd)
+    .reduce((acc, item) => ({ ...acc, [item.columnName]: item }), {});
+  const tableName = formData.datasourceName;
+
+  const defaultMap = tempColumns.reduce((acc, item) => ({ ...acc, [item.columnName]: item }), {});
+  // 找出需要添加的项
+  const itemsToAdd = Object.values(defaultMap).filter((item) => !withoutDefaultMap[item.columnName]);
+
+  // 找出需要删除的项（这里假设不能直接修改原数组，所以创建新的数组）
+  const itemsToRemove = columnsData.value.filter((item) => item.isDatabaseField && !defaultMap[item.columnName]);
+
+  // 添加缺失的项
+  itemsToAdd.forEach((item) => {
+    // 确保新添加的项也有canDelete属性，这里假设默认为true
+    columnsData.value.push({
+      ...item,
+      tableName,
+      isDatabaseField: true,
+      isAutoWidth: true,
+      columnWidth: 100,
+      align: 'center',
+      isVisible: true,
+      isLeftFixed: false,
+      isRightFixed: false,
+      canDelete: false,
+      isHandAdd: false,
+      field: item.columnName,
+      label: item.columnDesc,
+      component: 't-input',
+      componentParam: '',
+      componentSource: '',
+      isMultiple: false,
+      defaultValue: '',
+      isKeyField: false,
+      isRequired: false,
+      isDisabled: false,
+      verifyExp: '',
+      seq: columnsData.value.length + 1,
+    });
+  });
+
+  // 从列表中移除多余的项
+  columnsData.value.splice(
+    0,
+    columnsData.value.length,
+    ...columnsData.value.filter((item) => !itemsToRemove.includes(item)),
+  );
+
+  // 循环覆盖字段类型
+  columnsData.value.forEach((item) => {
+    if (defaultMap[item.columnName]) {
+      item.columnType = defaultMap[item.columnName].columnType;
+    }
+  });
+};
+
 // #region 表格配置相关
 // #系统默认字段列表
 const defaultFields = ['id', 'time_create', 'creator', 'time_modified', 'modifier', 'state', 'eid', 'oid'];
@@ -1661,11 +1841,21 @@ const domainParamTableRules: FormRules<Data> = {};
 // #表格拖拽排序
 const onDragSort: TableProps['onDragSort'] = (params) => {
   console.log('表格列交换行', params);
+
+  // 克隆数据以避免直接修改原数据
+  const currentNewData = cloneDeep(params.newData);
   let seq = 1;
-  forEach(params.newData, (item) => {
+  // 使用map来保证每次迭代都有唯一且连续的序号
+  forEach(currentNewData, (item) => {
     item.seq = seq++;
   });
-  columnsData.value = params.newData;
+
+  // 更新columnsData
+  columnsData.value = currentNewData;
+  // nextTick(() => {
+  //   // 更新表格列配置
+  //   tableColumnsRef.value.refreshTable();
+  // });
 };
 
 // #表格列配置
@@ -1811,6 +2001,7 @@ const addColumnData = () => {
   }
   // 这里是插入到第一个
   columnsData.value.unshift({
+    id: commmon.generateBigIntId().toString(),
     seq,
     tableName: '',
     columnName: '',
@@ -2073,7 +2264,7 @@ const onSearchDragSort: TableProps['onDragSort'] = (params) => {
   forEach(params.newData, (item) => {
     item.seq = seq++;
   });
-  searchData.value = params.newData;
+  searchData.value = cloneDeep(params.newData);
 };
 
 // #查询条件表格-添加行
@@ -2331,6 +2522,10 @@ const currButtonTab = ref('button');
 // const enableButton = ref(false);
 
 // #按钮表单列配置
+const buttonFormSelectedRowKeys = ref([]);
+const onSelectButtonFormChange = (value) => {
+  buttonFormSelectedRowKeys.value = value;
+};
 const buttonFormColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'drag',
@@ -2342,6 +2537,11 @@ const buttonFormColumns: PrimaryTableCol<TableRowData>[] = [
         <MoveIcon />
       </span>
     ),
+    width: 46,
+  },
+  {
+    colKey: 'row-select',
+    type: 'multiple',
     width: 46,
   },
   {
@@ -2462,7 +2662,7 @@ const onButtonDragSort: TableProps['onDragSort'] = (params) => {
   forEach(params.newData, (item) => {
     item.seq = seq++;
   });
-  currentSelectButton.value.formColumnSetting = params.newData;
+  currentSelectButton.value.formColumnSetting = cloneDeep(params.newData);
 };
 
 // #基础信息表单验证规则
@@ -2478,6 +2678,44 @@ const loading = ref(false);
 const domainParamFromRef = ref();
 const onClickAddTab = () => {
   // 添加按钮
+  MessagePlugin.warning('自定义按钮功能暂未开放');
+};
+const syncButtonSelectDrawerVisible = ref(false);
+const syncButtonForm = () => {
+  // 先判断当前表格有没有选中项目
+  if (buttonFormSelectedRowKeys.value.length < 1) {
+    MessagePlugin.error('请先选择需要同步配置的行');
+    return;
+  }
+  // todo: 后面添加逻辑,现版本 add复制到edit或者edit 复制到 add ,后续弹出窗口选择表单类型的按钮
+  // syncButtonSelectDrawerVisible.value = true;
+  const needCopyColumns = cloneDeep(
+    currentSelectButton.value.formColumnSetting.filter((item) => {
+      return buttonFormSelectedRowKeys.value.includes(item.id);
+    }),
+  );
+  const waitHandleColumns = buttonSourceData.value.find((item) => {
+    return item.buttonCode === (currentSelectButton.value.buttonCode === 'add' ? 'edit' : 'add');
+  }).formColumnSetting;
+
+  // 把选中的行,覆盖到add按钮表单配置中
+  waitHandleColumns.forEach((item, index) => {
+    const needCopyItem = needCopyColumns.find((needItem) => needItem.id === item.id);
+    if (needCopyItem) {
+      waitHandleColumns[index] = {
+        ...item,
+        ...cloneDeep(needCopyItem),
+      };
+    }
+  });
+  // 按seq重新排序
+  waitHandleColumns.sort((a, b) => a.seq - b.seq);
+  MessagePlugin.success('同步成功');
+};
+
+const onSyncButtonFormConfirm = () => {
+  syncButtonSelectDrawerVisible.value = false;
+  // 提交按钮
 };
 const save = () => {
   loading.value = true;

@@ -71,17 +71,29 @@
               v-model="currentFormData[formItem.field]"
               :disabled="formItem.isDisabled"
             />
+
+            <t-input-number
+              v-if="formItem.component === 't-input-number'"
+              v-model="currentFormData[formItem.field]"
+              :disabled="formItem.isDisabled"
+              theme="column"
+            />
+            <t-switch
+              v-if="formItem.component === 't-switch'"
+              v-model="currentFormData[formItem.field]"
+              :disabled="formItem.isDisabled"
+            />
             <bcmp-select-business
               v-if="formItem.component === 'bcmp-select-business'"
               v-model="currentFormData[formItem.field]"
-              :type="currentFormData[formItem.componentParam]"
+              :type="formItem.componentParam"
               :show-title="false"
             ></bcmp-select-business>
             <bcmp-select-param
               v-if="formItem.component === 'bcmp-select-param'"
               v-model="currentFormData[formItem.field]"
               :disabled="formItem.isDisabled"
-              :param-group="currentFormData[formItem.componentParam]"
+              :param-group="formItem.componentParam"
             ></bcmp-select-param>
             <t-select
               v-if="formItem.component === 't-select'"
@@ -94,6 +106,18 @@
             <t-date-picker
               v-if="formItem.component === 't-date-picker'"
               v-model="currentFormData[formItem.field]"
+              allow-input
+              clearable
+              format="YYYY-MM-DD"
+              :disabled="formItem.isDisabled"
+            ></t-date-picker>
+            <t-date-picker
+              v-if="formItem.component === 't-datetime-picker'"
+              v-model="currentFormData[formItem.field]"
+              enable-time-picker
+              allow-input
+              clearable
+              format="YYYY-MM-DD HH:mm:ss"
               :disabled="formItem.isDisabled"
             ></t-date-picker>
 
@@ -101,15 +125,15 @@
               v-if="formItem.component === 't-checkbox-group'"
               v-model="currentFormData[formItem.field]"
               :disabled="formItem.isDisabled"
+              :options="formItem.options"
             >
-              <t-checkbox>未选悬停项</t-checkbox>
             </t-checkbox-group>
             <t-radio-group
               v-if="formItem.component === 't-radio-group'"
               v-model="currentFormData[formItem.field]"
               :disabled="formItem.isDisabled"
+              :options="formItem.options"
             >
-              <t-radio :checked="true"> 选中项 </t-radio>
             </t-radio-group>
           </t-form-item>
         </t-col>
@@ -311,7 +335,8 @@ const generateComponentConfig = async (setting) => {
     defaultVal: setting.defaultValue,
   };
   let optionsData = [];
-  if (setting.component === 't-select' && setting.componentSource.sourceType === 'dataTable') {
+  const sourceComponents = ['t-select', 't-radio-group', 't-checkbox-group'];
+  if (sourceComponents.includes(setting.component) && setting.componentSource.sourceType === 'dataTable') {
     const postSetting = setting.componentSource.dataTable;
     const { mapBusinessDomain } = setting.componentSource.dataTable;
     const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
@@ -339,6 +364,8 @@ const generateComponentConfig = async (setting) => {
       };
       break;
     case 't-select':
+    case 't-radio-group':
+    case 't-checkbox-group':
       if (setting.componentSource) {
         switch (setting.componentSource.sourceType) {
           case 'customDict':
@@ -396,7 +423,6 @@ const onRowClick = async (rowValue, buttonSetting) => {
       // 加载当前按钮动作对应的表单配置,包含表单字段与校验规则
       currentFullFormSetting.value = buttonSetting.formColumnSetting;
       currentFormSetting.value = buttonSetting.formColumnSetting.filter((column) => column.isVisible);
-
       // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
       currentFormSetting.value.forEach(async (column) => {
         let optionsData = [];
@@ -421,6 +447,8 @@ const onRowClick = async (rowValue, buttonSetting) => {
             formValue[column.field] = formValue[column.field] || '';
             break;
           case 't-select':
+          case 't-radio-group':
+          case 't-checkbox-group':
             if (column.isMutiple) {
               formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
             } else {
@@ -442,23 +470,6 @@ const onRowClick = async (rowValue, buttonSetting) => {
             break;
           case 't-date-picker':
             formValue[column.field] = formValue[column.field] || '';
-            break;
-          case 't-checkbox-group':
-            // 要把字符串转成数组
-            formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
-            // formValue[column.field] = formValue[column.field] || '';
-
-            if (column.componentSource) {
-              switch (column.componentSource.sourceType) {
-                case 'customDict':
-                  optionsData = column.componentSource.customDict.dicData;
-                  break;
-
-                default:
-                  break;
-              }
-            }
-            column.options = optionsData;
             break;
           default:
             break;
@@ -499,6 +510,8 @@ const onHeaderClick = async (buttonSetting) => {
     tableName: datasourceName.value,
     ids: [],
   };
+  const sourceComponents = ['t-select', 't-radio-group', 't-checkbox-group'];
+
   let formRulesObject: any = {};
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
@@ -525,10 +538,7 @@ const onHeaderClick = async (buttonSetting) => {
       // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
       currentFormSetting.value.forEach(async (column) => {
         let optionsData = [];
-        if (
-          (column.component === 't-select' || column.component === 't-checkbox-group') &&
-          column.componentSource.sourceType === 'dataTable'
-        ) {
+        if (sourceComponents.includes(column.component) && column.componentSource.sourceType === 'dataTable') {
           const postSetting = column.componentSource.dataTable;
           const { mapBusinessDomain } = column.componentSource.dataTable;
           const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
@@ -546,6 +556,8 @@ const onHeaderClick = async (buttonSetting) => {
             formValue[column.field] = formValue[column.field] || '';
             break;
           case 't-select':
+          case 't-radio-group':
+          case 't-checkbox-group':
             if (column.isMutiple) {
               formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
             } else {
@@ -567,23 +579,6 @@ const onHeaderClick = async (buttonSetting) => {
             break;
           case 't-date-picker':
             formValue[column.field] = formValue[column.field] || '';
-            break;
-          case 't-checkbox-group':
-            // 要把字符串转成数组
-            formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
-            // formValue[column.field] = formValue[column.field] || '';
-
-            if (column.componentSource) {
-              switch (column.componentSource.sourceType) {
-                case 'customDict':
-                  optionsData = column.componentSource.customDict.dicData;
-                  break;
-
-                default:
-                  break;
-              }
-            }
-            column.options = optionsData;
             break;
           default:
             break;
@@ -633,7 +628,7 @@ const calculateFormWidth = computed(() => {
   if (currentFormSetting.value.length >= 6 && currentFormSetting.value.length < 16) {
     return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
   }
-  return '100%';
+  return '90%';
 });
 
 const formSpan = computed(() => {
@@ -702,3 +697,12 @@ onMounted(() => {
   loadSetting();
 });
 </script>
+<style lang="less" scoped>
+:deep(.t-form__controls-content) {
+  .t-date-picker,
+  .t-input-number,
+  .t-color-picker__trigger {
+    width: 100%;
+  }
+}
+</style>

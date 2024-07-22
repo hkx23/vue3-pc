@@ -645,4 +645,15 @@ defineExpose({ state, props, setFromValue, getFromValue, getFromData, search, re
 
 <style lang="less" scoped>
 @import './common/index.less';
+
+.t-date-range-picker {
+  :deep(.t-range-input.t-range-input--suffix .t-range-input__suffix) {
+    flex: 1;
+    justify-content: right;
+  }
+
+  :deep(.t-input__wrap) {
+    width: auto !important;
+  }
+}
 </style>
