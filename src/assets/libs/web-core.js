@@ -29,9 +29,9 @@ function J(e) {
 function K(e) {
   return e != null && typeof e == "object";
 }
-var Wt = "[object Symbol]";
-function Bt(e) {
-  return typeof e == "symbol" || K(e) && J(e) == Wt;
+var Bt = "[object Symbol]";
+function Wt(e) {
+  return typeof e == "symbol" || K(e) && J(e) == Bt;
 }
 var Lt = Array.isArray;
 const Ye = Lt;
@@ -53,7 +53,7 @@ var je = 0 / 0, Ft = /^[-+]0x[0-9a-f]+$/i, Jt = /^0b[01]+$/i, qt = /^0o[0-7]+$/i
 function ke(e) {
   if (typeof e == "number")
     return e;
-  if (Bt(e))
+  if (Wt(e))
     return je;
   if (V(e)) {
     var o = typeof e.valueOf == "function" ? e.valueOf() : e;
@@ -138,11 +138,11 @@ const wr = yr;
 function vr() {
   return !1;
 }
-var nt = typeof exports == "object" && exports && !exports.nodeType && exports, We = nt && typeof module == "object" && module && !module.nodeType && module, br = We && We.exports === nt, Be = br ? N.Buffer : void 0, _r = Be ? Be.isBuffer : void 0, Sr = _r || vr;
+var nt = typeof exports == "object" && exports && !exports.nodeType && exports, Be = nt && typeof module == "object" && module && !module.nodeType && module, br = Be && Be.exports === nt, We = br ? N.Buffer : void 0, _r = We ? We.isBuffer : void 0, Sr = _r || vr;
 const Tr = Sr;
-var Ir = "[object Arguments]", Ar = "[object Array]", Cr = "[object Boolean]", Pr = "[object Date]", xr = "[object Error]", Er = "[object Function]", Or = "[object Map]", Mr = "[object Number]", jr = "[object Object]", kr = "[object RegExp]", Ur = "[object Set]", Rr = "[object String]", Wr = "[object WeakMap]", Br = "[object ArrayBuffer]", Lr = "[object DataView]", $r = "[object Float32Array]", Nr = "[object Float64Array]", Dr = "[object Int8Array]", Vr = "[object Int16Array]", Fr = "[object Int32Array]", Jr = "[object Uint8Array]", qr = "[object Uint8ClampedArray]", Hr = "[object Uint16Array]", Qr = "[object Uint32Array]", j = {};
+var Ir = "[object Arguments]", Ar = "[object Array]", Cr = "[object Boolean]", Pr = "[object Date]", xr = "[object Error]", Er = "[object Function]", Or = "[object Map]", Mr = "[object Number]", jr = "[object Object]", kr = "[object RegExp]", Ur = "[object Set]", Rr = "[object String]", Br = "[object WeakMap]", Wr = "[object ArrayBuffer]", Lr = "[object DataView]", $r = "[object Float32Array]", Nr = "[object Float64Array]", Dr = "[object Int8Array]", Vr = "[object Int16Array]", Fr = "[object Int32Array]", Jr = "[object Uint8Array]", qr = "[object Uint8ClampedArray]", Hr = "[object Uint16Array]", Qr = "[object Uint32Array]", j = {};
 j[$r] = j[Nr] = j[Dr] = j[Vr] = j[Fr] = j[Jr] = j[qr] = j[Hr] = j[Qr] = !0;
-j[Ir] = j[Ar] = j[Br] = j[Cr] = j[Lr] = j[Pr] = j[xr] = j[Er] = j[Or] = j[Mr] = j[jr] = j[kr] = j[Ur] = j[Rr] = j[Wr] = !1;
+j[Ir] = j[Ar] = j[Wr] = j[Cr] = j[Lr] = j[Pr] = j[xr] = j[Er] = j[Or] = j[Mr] = j[jr] = j[kr] = j[Ur] = j[Rr] = j[Br] = !1;
 function zr(e) {
   return K(e) && et(e.length) && !!j[J(e)];
 }
@@ -351,8 +351,8 @@ var at = { exports: {} };
         return c = c | 0 || 0, c < 0 ? Math.max(c + i, 0) : Math.min(c, i);
       }
       ArrayBuffer.prototype.slice = function(c, i) {
-        var n = this.byteLength, s = u(c, n), a = n, x, v, k, B;
-        return i !== r && (a = u(i, n)), s > a ? new ArrayBuffer(0) : (x = a - s, v = new ArrayBuffer(x), k = new Uint8Array(v), B = new Uint8Array(this, s, x), k.set(B), v);
+        var n = this.byteLength, s = u(c, n), a = n, x, v, k, W;
+        return i !== r && (a = u(i, n)), s > a ? new ArrayBuffer(0) : (x = a - s, v = new ArrayBuffer(x), k = new Uint8Array(v), W = new Uint8Array(this, s, x), k.set(W), v);
       };
     }();
     function _(u) {
@@ -527,8 +527,8 @@ function Un(e, o) {
     var x = g(a);
     if (x !== void 0)
       return x;
-    var v = r[w], k = v.type, B = v.index;
-    throw new TypeError("Unexpected ".concat(k, " at ").concat(B, ", expected ").concat(a));
+    var v = r[w], k = v.type, W = v.index;
+    throw new TypeError("Unexpected ".concat(k, " at ").concat(W, ", expected ").concat(a));
   }, A = function() {
     for (var a = "", x; x = g("CHAR") || g("ESCAPED_CHAR"); )
       a += x;
@@ -588,19 +588,19 @@ function Rn(e, o) {
     }), l = r.exec(e.source);
   return e;
 }
-function Wn(e, o, r) {
+function Bn(e, o, r) {
   var f = e.map(function(l) {
     return ct(l, o, r).source;
   });
   return new RegExp("(?:".concat(f.join("|"), ")"), st(r));
 }
-function Bn(e, o, r) {
+function Wn(e, o, r) {
   return Ln(Un(e, r), o, r);
 }
 function Ln(e, o, r) {
   r === void 0 && (r = {});
-  for (var f = r.strict, l = f === void 0 ? !1 : f, b = r.start, h = b === void 0 ? !0 : b, S = r.end, w = S === void 0 ? !0 : S, m = r.encode, g = m === void 0 ? function(B) {
-    return B;
+  for (var f = r.strict, l = f === void 0 ? !1 : f, b = r.start, h = b === void 0 ? !0 : b, S = r.end, w = S === void 0 ? !0 : S, m = r.encode, g = m === void 0 ? function(W) {
+    return W;
   } : m, _ = r.delimiter, A = _ === void 0 ? "/#?" : _, C = r.endsWith, I = C === void 0 ? "" : C, P = "[".concat(Q(I), "]|$"), d = "[".concat(Q(A), "]"), u = h ? "^" : "", c = 0, i = e; c < i.length; c++) {
     var n = i[c];
     if (typeof n == "string")
@@ -629,7 +629,7 @@ function Ln(e, o, r) {
   return new RegExp(u, st(r));
 }
 function ct(e, o, r) {
-  return e instanceof RegExp ? Rn(e, o) : Array.isArray(e) ? Wn(e, o, r) : Bn(e, o, r);
+  return e instanceof RegExp ? Rn(e, o) : Array.isArray(e) ? Bn(e, o, r) : Wn(e, o, r);
 }
 const ut = "_$mockHttp", ft = typeof window < "u", lt = ft ? window.top || window : {}, pt = () => lt[ut] || {
   isMock: !1,
@@ -1231,6 +1231,12 @@ const Gn = (e) => {
   });
 }), ho = (e) => {
   window._app.closeWithResult(e);
+}, mo = () => new Promise((e) => {
+  window._app.findBluetoothPrinters((o) => {
+    e(o);
+  });
+}), yo = (e) => {
+  window._app.bluetoothPrint(e);
 }, He = {
   logout: fo,
   openCamera: Gn,
@@ -1252,6 +1258,8 @@ const Gn = (e) => {
   unregisterBackPressedListener: po,
   openWebWindow: go,
   closeWithResult: ho,
+  findBluetoothPrinters: mo,
+  bluetoothPrint: yo,
   getUserId() {
     return window._app.getUserId();
   },
@@ -1390,7 +1398,7 @@ var ht = { exports: {} };
         }
         var U;
       }), s.invoke || (s.invoke = function(y, T, M) {
-        e.WeixinJSBridge && WeixinJSBridge.invoke(y, B(T), M);
+        e.WeixinJSBridge && WeixinJSBridge.invoke(y, W(T), M);
       }, s.on = function(y, T) {
         e.WeixinJSBridge && WeixinJSBridge.on(y, T);
       });
@@ -1937,7 +1945,7 @@ var ht = { exports: {} };
     !0
   ), o && (e.wx = e.jWeixin = s), s;
   function v(t, p, y) {
-    e.WeixinJSBridge ? WeixinJSBridge.invoke(t, B(p), function(T) {
+    e.WeixinJSBridge ? WeixinJSBridge.invoke(t, W(p), function(T) {
       Ee(t, T, y);
     }) : se(t, y);
   }
@@ -1946,7 +1954,7 @@ var ht = { exports: {} };
       y && y.trigger && y.trigger(T), Ee(t, T, p);
     }) : se(t, y || p);
   }
-  function B(t) {
+  function W(t) {
     return (t = t || {}).appId = d.appId, t.verifyAppId = d.appId, t.verifySignType = "sha1", t.verifyTimestamp = d.timestamp + "", t.verifyNonceStr = d.nonceStr, t.verifySignature = d.signature, t;
   }
   function xe(t) {
@@ -2010,8 +2018,8 @@ var ht = { exports: {} };
     m && (e.WeixinJSBridge ? t() : l.addEventListener && l.addEventListener("WeixinJSBridgeReady", t, !1));
   }
 });
-var mo = ht.exports;
-const Se = /* @__PURE__ */ Ie(mo), mt = () => {
+var wo = ht.exports;
+const Se = /* @__PURE__ */ Ie(wo), mt = () => {
   const e = localStorage.getItem("user");
   return e === null ? null : JSON.parse(e);
 }, le = () => {
@@ -2035,7 +2043,7 @@ const Se = /* @__PURE__ */ Ie(mo), mt = () => {
 }, he = () => {
   const e = Z();
   return e === null ? null : e.process;
-}, yo = (e) => {
+}, vo = (e) => {
   const r = { ...{
     quality: 70,
     // 默认图片质量为70
@@ -2067,7 +2075,7 @@ const Se = /* @__PURE__ */ Ie(mo), mt = () => {
       }
     });
   });
-}, wo = () => new Promise((e, o) => {
+}, bo = () => new Promise((e, o) => {
   Se.scanQRCode({
     needResult: 1,
     scanType: ["qrCode", "barCode"],
@@ -2078,9 +2086,9 @@ const Se = /* @__PURE__ */ Ie(mo), mt = () => {
       o(r);
     }
   });
-}), vo = {
-  openCamera: yo,
-  openScan: wo,
+}), _o = {
+  openCamera: vo,
+  openScan: bo,
   getUserId() {
     const e = le();
     return e ? e.id : null;
@@ -2232,7 +2240,7 @@ const H = {
     isEmpty: z,
     getQueryString: jn
   }
-}, W = H.platform == "APP" ? {
+}, B = H.platform == "APP" ? {
   ...H,
   ...He,
   pagePrevious: () => {
@@ -2247,7 +2255,7 @@ const H = {
   }
 } : H.platform == "wechat" ? {
   ...H,
-  ...vo
+  ..._o
 } : H;
 class Te extends Error {
   constructor(r, f, l, b = "") {
@@ -2257,16 +2265,16 @@ class Te extends Error {
     E(this, "status", "");
     E(this, "type", "");
     E(this, "description", "");
-    this.message = r, this.name = "CustomError", this.code = f, this.status = l, this.type = "error", this.description = b, (h = W.ipc.targets.get("_self")) == null || h.send("custom_error", this);
+    this.message = r, this.name = "CustomError", this.code = f, this.status = l, this.type = "error", this.description = b, (h = B.ipc.targets.get("_self")) == null || h.send("custom_error", this);
   }
 }
-class bo extends Te {
+class So extends Te {
   constructor(o, r, f, l = "") {
     super(o, r, f, l), this.name = "OperationError";
   }
 }
-const wt = typeof window < "u", _o = wt ? null : require("node:path"), So = wt ? null : require("node:fs");
-function Uo() {
+const wt = typeof window < "u", To = wt ? null : require("node:path"), Io = wt ? null : require("node:fs");
+function Bo() {
   return {
     name: "auto-check-updates",
     enforce: "pre",
@@ -2282,19 +2290,19 @@ function Uo() {
           second: "2-digit",
           hour12: !1
         })
-      }, o = _o.resolve(process.cwd(), "public", "version.json");
-      So.writeFileSync(o, JSON.stringify(e));
+      }, o = To.resolve(process.cwd(), "public", "version.json");
+      Io.writeFileSync(o, JSON.stringify(e));
     }
   };
 }
 let ie = "";
 const ze = 2;
 let te = 0;
-const To = function() {
-  te++, te >= ze && (console.error(`获取资源超过错误次数阈值[${ze}]，触发版本检查！`), te = -9999, Ao()), setTimeout(() => {
+const Ao = function() {
+  te++, te >= ze && (console.error(`获取资源超过错误次数阈值[${ze}]，触发版本检查！`), te = -9999, Po()), setTimeout(() => {
     te = 0;
   }, 1500);
-}, Io = () => {
+}, Co = () => {
   if (typeof window < "u") {
     if (window._version)
       return;
@@ -2304,22 +2312,22 @@ const To = function() {
       "error",
       function(o) {
         const r = o.target;
-        (r.tagName === "SCRIPT" || r.tagName === "LINK" || r.tagName === "IMG") && To();
+        (r.tagName === "SCRIPT" || r.tagName === "LINK" || r.tagName === "IMG") && Ao();
       },
       !0
     );
   }
-}, Ao = () => {
+}, Po = () => {
   typeof window < "u" && window._version && fetch("/version.json?_t=" + (/* @__PURE__ */ new Date()).getTime()).then((e) => e.json()).then((e) => {
     if (ie && ie !== e.version)
-      throw new bo(
+      throw new So(
         `[${e.version}] 有新的内容更新，请在保存页面数据后，刷新页面重新载入！`,
         404,
         404
       );
   });
-}, vt = typeof window < "u", Ge = vt ? null : require("node:path"), Co = vt ? null : require("swagger-typescript-api");
-function Ro(e) {
+}, vt = typeof window < "u", Ge = vt ? null : require("node:path"), xo = vt ? null : require("swagger-typescript-api");
+function Wo(e) {
   if (!e || !e.baseUrl || !e.inputs)
     return null;
   const o = e.inputs.split(",");
@@ -2330,7 +2338,7 @@ function Ro(e) {
     async buildStart() {
       for await (const r of o) {
         const f = `/api/${r}`;
-        await Co.generateApi({
+        await xo.generateApi({
           name: r,
           url: `${e.baseUrl}${f}/v3/api-docs`,
           output: Ge.resolve(process.cwd(), (e == null ? void 0 : e.output) || "./src/api"),
@@ -2349,10 +2357,10 @@ function Ro(e) {
     }
   };
 }
-const Po = "YYYY-MM-DD HH:mm:ss";
+const Eo = "YYYY-MM-DD HH:mm:ss";
 function bt(e) {
   for (const o in e) {
-    if (e[o] && e[o]._isAMomentObject && (e[o] = e[o].format(Po)), qe(o)) {
+    if (e[o] && e[o]._isAMomentObject && (e[o] = e[o].format(Eo)), qe(o)) {
       const r = e[o];
       if (r)
         try {
@@ -2364,10 +2372,10 @@ function bt(e) {
     V(e[o]) && bt(e[o]);
   }
 }
-const xo = async (e, o) => {
+const Oo = async (e, o) => {
   const r = e.requestOptions.body;
   r && Object.prototype.toString.call(r) === "[object Object]" && bt(r), await o();
-}, Eo = async (e, o) => {
+}, Mo = async (e, o) => {
   var b, h, S, w;
   const r = e.requestOptions, f = r.body;
   if (!(f instanceof FormData) && !(f instanceof URLSearchParams)) {
@@ -2379,10 +2387,10 @@ const xo = async (e, o) => {
     return;
   const l = ((h = e.response) == null ? void 0 : h.headers.get("Content-Type")) || "";
   (S = e.response) != null && S.ok && (l != null && l.startsWith("application/json")) && (e.result = await ((w = e.response) == null ? void 0 : w.json()));
-}, Oo = async (e, o) => {
+}, jo = async (e, o) => {
   var b, h, S, w;
-  const f = e.requestOptions.headers, l = W.getToken();
-  if (l && Pn(f.Authorization) && (f.Authorization = `Bearer ${l}`), f.eid = W.getEnterpriseId(), f.oid = W.getOrgId(), f["Accept-Language"] = W.getLanguage(), f["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await o(), !((b = e.response) != null && b.ok)) {
+  const f = e.requestOptions.headers, l = B.getToken();
+  if (l && Pn(f.Authorization) && (f.Authorization = `Bearer ${l}`), f.eid = B.getEnterpriseId(), f.oid = B.getOrgId(), f["Accept-Language"] = B.getLanguage(), f["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await o(), !((b = e.response) != null && b.ok)) {
     const m = new Error("An error occurred while fetching the data.");
     throw m.message = `${(h = e.response) == null ? void 0 : h.status}|${await ((S = e.response) == null ? void 0 : S.text()) || ""}`, m;
   }
@@ -2395,7 +2403,7 @@ const xo = async (e, o) => {
     else
       throw new Te(m.message || "unknown", m.code, e.response.status, JSON.stringify(m));
   }
-}, Mo = async (e, o) => {
+}, ko = async (e, o) => {
   if (e.url.lastIndexOf("_t=") <= 0) {
     const r = (/* @__PURE__ */ new Date()).getTime();
     e.url += `${e.url.lastIndexOf("?") > 0 ? "&" : "?"}_t=${r}`;
@@ -2403,21 +2411,21 @@ const xo = async (e, o) => {
   await o();
 }, Pe = new ne();
 Pe.baseURL = () => {
-  switch (W.platform) {
+  switch (B.platform) {
     case yt.Mobile:
       return window._app.getUrl();
     default:
-      return W.config.baseUrl || location.origin;
+      return B.config.baseUrl || location.origin;
   }
 };
-Pe.middlewares = () => [Oo, Eo, xo, Mo];
-const jo = new Fn(Pe);
-typeof window < "u" && (W.ipc = Ce.init(), W.ipc.addTarget("_self", window), window.http = jo, window.fw = W, Io());
+Pe.middlewares = () => [jo, Mo, Oo, ko];
+const Uo = new Fn(Pe);
+typeof window < "u" && (B.ipc = Ce.init(), B.ipc.addTarget("_self", window), window.http = Uo, window.fw = B, Co());
 export {
   Te as CustomError,
   Jn as Dictionary,
   Ce as EventBus,
   Fn as Http,
-  Uo as autoCheckUpdates,
-  Ro as swaggerApiGen
+  Bo as autoCheckUpdates,
+  Wo as swaggerApiGen
 };

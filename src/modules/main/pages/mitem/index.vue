@@ -79,9 +79,9 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.main.mitemCategoryCode'), width: 160, colKey: 'mitemCategoryCode' },
   { title: t('business.main.mitemCategoryName'), width: 160, colKey: 'mitemCategoryName' },
   { title: t('business.main.uom'), width: 160, colKey: 'uom' },
-  { title: t('business.main.product'), width: 160, colKey: 'isProductName' },
-  { title: t('business.main.inProduct'), width: 160, colKey: 'isInProcessName' },
   { title: t('business.main.raw'), width: 160, colKey: 'isRawName' },
+  { title: t('business.main.product'), width: 160, colKey: 'isInProcessName' },
+  { title: t('business.main.inProduct'), width: 160, colKey: 'isProductName' },
   { title: t('common.button.operation'), align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 // 查询按钮
