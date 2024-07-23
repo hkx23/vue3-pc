@@ -44,7 +44,8 @@ import _ from 'lodash';
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
-import { api as apiMain } from '@/api/main';
+import { api as apiEquimpent } from '@/api/equipment';
+// import { api as apiMain } from '@/api/main';
 import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
 import utils from '@/utils/common';
 
@@ -86,7 +87,7 @@ const onConfirmForm = async () => {
     }
 
     if (isEdit.value) {
-      await apiMain.inspectItemInEquipment.update({
+      await apiEquimpent.inspectItemInEquipment.update({
         id: formData.id,
         inspectItemId: formData.inspectItemId,
         assetTypeId: formData.assetTypeId,
@@ -94,7 +95,7 @@ const onConfirmForm = async () => {
         assetModelId: formData.assetModelId,
       });
     } else {
-      await apiMain.inspectItemInEquipment.insert({
+      await apiEquimpent.inspectItemInEquipment.insert({
         inspectItemId: formData.inspectItemId,
         assetTypeId: formData.assetTypeId,
         assetBrandId: formData.assetBrandId,

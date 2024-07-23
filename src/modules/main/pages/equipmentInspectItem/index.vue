@@ -170,7 +170,8 @@ import _ from 'lodash';
 import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api as apiMain } from '@/api/main';
+import { api as apiEquimpent } from '@/api/equipment';
+// import { api as apiMain } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -336,7 +337,7 @@ const onAddRequest = async () => {
       return false;
     }
 
-    await apiMain.inspectItem.insert(inspectItemTabData.list);
+    await apiEquimpent.inspectItem.insert(inspectItemTabData.list);
     await fetchTable();
     MessagePlugin.success('添加成功');
     return true;
@@ -398,7 +399,7 @@ const onInput = async (data: any) => {
 const fetchTable = async () => {
   try {
     setLoading(true);
-    const res = await apiMain.inspectItem.getList({
+    const res = await apiEquimpent.inspectItem.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       inspectItemName: formData.value.inspectItemName,
@@ -459,7 +460,7 @@ const onUpdateRequest = async () => {
       return false;
     }
 
-    await apiMain.inspectItem.update({ ...inspectItemTabData.list, id: inspectItemTabData.list.id });
+    await apiEquimpent.inspectItem.update({ ...inspectItemTabData.list, id: inspectItemTabData.list.id });
     await fetchTable();
     MessagePlugin.success('修改成功');
     return true;
@@ -509,13 +510,13 @@ const onRowStateChange = async (row: any) => {
   idsList.push(row.id);
   if (postRow.state === 1) {
     postRow.state = 0;
-    await apiMain.inspectItem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
+    await apiEquimpent.inspectItem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
       MessagePlugin.success('禁用成功');
       row.state = postRow.state;
     });
   } else {
     postRow.state = 1;
-    await apiMain.inspectItem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
+    await apiEquimpent.inspectItem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
       MessagePlugin.success('启用成功');
       row.state = postRow.state;
     });
@@ -536,7 +537,7 @@ const onFetchItemData = async () => {
   await getEquipmentInspectItemList();
 };
 const getEquipmentInspectItemList = async () => {
-  const res = await apiMain.inspectItemInEquipment.getList({
+  const res = await apiEquimpent.inspectItemInEquipment.getList({
     pageNum: 1,
     pageSize: 99999,
     inspectItemId: rowClick.value.id,
@@ -550,7 +551,7 @@ const onDelItemRow = () => {
 const onDelItemConfirm = async (row) => {
   const idsList = [];
   idsList.push(row.id);
-  const data = await apiMain.inspectItemInEquipment.batchDeleteItem({
+  const data = await apiEquimpent.inspectItemInEquipment.batchDeleteItem({
     ids: idsList,
   });
   if (data) {
@@ -626,7 +627,7 @@ const onItemDeleteBatches = async () => {
   }
   const idsList = [];
   idsList.push(...delItemRowKeys.value);
-  const data = await apiMain.inspectItemInEquipment.batchDeleteItem({
+  const data = await apiEquimpent.inspectItemInEquipment.batchDeleteItem({
     ids: idsList,
   });
   if (data) {
@@ -644,7 +645,7 @@ const showUplaodImg = async (rowData) => {
   selectRowId.value = rowData.row.id;
   try {
     if (!_.isEmpty(selectRowId.value)) {
-      const list = await apiMain.inspectItemFile.getInspectItemFileList(selectRowId.value);
+      const list = await apiEquimpent.inspectItemFile.getInspectItemFileList(selectRowId.value);
       rowData.row.fileList = list;
     }
     const { showForm } = formFilesRef.value;
@@ -656,7 +657,7 @@ const showUplaodImg = async (rowData) => {
 const uploadSuccess = async (file: AddFileType) => {
   try {
     if (!_.isEmpty(selectRowId.value)) {
-      await apiMain.inspectItemFile.addInspectItemFile({
+      await apiEquimpent.inspectItemFile.addInspectItemFile({
         inspectItemId: selectRowId.value,
         fileName: file.fileName,
       });
@@ -669,7 +670,7 @@ const uploadSuccess = async (file: AddFileType) => {
 const deleteSuccess = async (file: AddFileType) => {
   try {
     if (!_.isEmpty(selectRowId.value)) {
-      await apiMain.inspectItemFile.deleteInspectItemFile({
+      await apiEquimpent.inspectItemFile.deleteInspectItemFile({
         inspectItemId: selectRowId.value,
         fileName: file.fileName,
       });
@@ -685,7 +686,7 @@ const batchDeleteSuccess = async (files: AddFileType[]) => {
       const deleteList = [];
       files.forEach((n) => deleteList.push({ inspectItemId: selectRowId.value, fileName: n.fileName }));
 
-      await apiMain.inspectItemFile.deleteBatchInspectItemFile(deleteList);
+      await apiEquimpent.inspectItemFile.deleteBatchInspectItemFile(deleteList);
       MessagePlugin.success('文件删除成功');
     }
   } catch (e) {

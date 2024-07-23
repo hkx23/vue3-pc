@@ -336,6 +336,7 @@
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
+import { api as apiEquimpent } from '@/api/equipment';
 import { api, EquipmentFile } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
@@ -570,7 +571,7 @@ const tabChange = async (value: any) => {
     });
     fileList.value = filesData.list;
   } else if (value === '2' && diaLogTitle.value === '编辑资产台账') {
-    const res = await api.assetLedger.getMaintenanceList({
+    const res = await apiEquimpent.assetLedger.getMaintenanceList({
       pageNum: 1,
       pageSize: 99999,
       equipmentId: equipmentID.value,

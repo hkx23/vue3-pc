@@ -1711,14 +1711,14 @@ const handleButtonFormColumn = (tempColumns, type) => {
     seq: seq++,
   }));
   const buttonSetting = cloneDeep(buttonSourceData.value);
-  const addButtonColumns = buttonSetting.find((item) => {
+  const addButtonColumns = buttonSetting.find((item: any) => {
     return item.buttonCode === type;
   }).formColumnSetting;
   const withoutDefaultMap = addButtonColumns.reduce((acc, item) => ({ ...acc, [item.field]: item }), {});
 
   const defaultMap = tempColumns.reduce((acc, item) => ({ ...acc, [item.columnName]: item }), {});
   // 找出需要添加的项
-  const itemsToAdd = Object.values(defaultMap).filter((item) => !withoutDefaultMap[item.columnName]);
+  const itemsToAdd = Object.values(defaultMap).filter((item: any) => !withoutDefaultMap[item.columnName]);
 
   // 找出需要删除的项（这里假设不能直接修改原数组，所以创建新的数组）
   const itemsToRemove = addButtonColumns.filter((item) => !defaultMap[item.field]);
@@ -1772,13 +1772,13 @@ const handleTableColumn = (tempColumns) => {
 
   const defaultMap = tempColumns.reduce((acc, item) => ({ ...acc, [item.columnName]: item }), {});
   // 找出需要添加的项
-  const itemsToAdd = Object.values(defaultMap).filter((item) => !withoutDefaultMap[item.columnName]);
+  const itemsToAdd = Object.values(defaultMap).filter((item: any) => !withoutDefaultMap[item.columnName]);
 
   // 找出需要删除的项（这里假设不能直接修改原数组，所以创建新的数组）
-  const itemsToRemove = columnsData.value.filter((item) => item.isDatabaseField && !defaultMap[item.columnName]);
+  const itemsToRemove = columnsData.value.filter((item: any) => item.isDatabaseField && !defaultMap[item.columnName]);
 
   // 添加缺失的项
-  itemsToAdd.forEach((item) => {
+  itemsToAdd.forEach((item: any) => {
     // 确保新添加的项也有canDelete属性，这里假设默认为true
     columnsData.value.push({
       ...item,

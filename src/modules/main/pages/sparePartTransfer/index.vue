@@ -126,6 +126,7 @@ import dayjs from 'dayjs';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
+import { api as equipmentApi } from '@/api/equipment';
 import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -328,7 +329,7 @@ const onInput = async (data: any) => {
   pageUITop.value.page = 1;
   const { servicingTime, billNo, creatorId, billCategory } = data;
   const [dateStart, dateEnd] = servicingTime;
-  const res = await api.sparePartTransferHead.getList({
+  const res = await equipmentApi.sparePartTransferHead.getList({
     pageNum: pageUITop.value.page,
     pageSize: pageUITop.value.rows,
     dateStart,
@@ -366,7 +367,7 @@ const rehandleSelectChange = async (value: any, context: any) => {
 
 // 根据备品备件获得资产信息
 const getAssetInfo = async () => {
-  const res = await api.sparePartTransferDtl.getList({
+  const res = await equipmentApi.sparePartTransferDtl.getList({
     pageNum: pageUIDown.value.page,
     pageSize: pageUIDown.value.rows,
     transferHeadId: selectedRowKey.value,
