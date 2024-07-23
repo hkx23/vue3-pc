@@ -737,27 +737,25 @@ const loadTableList = async () => {
 };
 // #表格变化
 const tableDesc = ref('');
-const changeTable = (value: string, context: { option: { name: string } }) => {
+const changeTable = (value, context) => {
   formData.importKeyCode = value;
   tableDesc.value = context.option.name;
   formData.importDesc = `导入${context.option.name}`;
   selectedTable.value = tableList.value.find((item) => item.tableName === value);
   console.log(selectedTable.value);
   let seq = 0;
-  columnsData.value = selectedTable.value?.columns.map(
-    (item: { default: any; columnName: string; columnDesc: any }) => ({
-      ...item,
-      tableName: value,
-      isImport: !item.default,
-      isRequire: !item.default,
-      // 如果item.columnName的结尾不为id,isExcel设置成true
-      isExcel: !item.default && item.columnName.slice(-2) !== 'id',
-      value: item.columnName,
-      label: item.columnDesc,
-      canDelete: false,
-      seq: seq++,
-    }),
-  );
+  columnsData.value = selectedTable.value?.columns.map((item) => ({
+    ...item,
+    tableName: value,
+    isImport: !item.default,
+    isRequire: !item.default,
+    // 如果item.columnName的结尾不为id,isExcel设置成true
+    isExcel: !item.default && item.columnName.slice(-2) !== 'id',
+    value: item.columnName,
+    label: item.columnDesc,
+    canDelete: false,
+    seq: seq++,
+  }));
 
   columnsDataWithoutDefault.value = columnsData.value.filter((item) => item.isImport && item.value !== 'eid');
   columnsDataWithoutDefault.value.forEach((item) => {
