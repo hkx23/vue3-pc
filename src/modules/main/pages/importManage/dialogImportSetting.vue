@@ -922,7 +922,7 @@ const columns: any = computed(() => [
     // 列拖拽排序必要参数
     title: '排序',
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cell: (_h: any) => (
+    cell: (_h) => (
       <span>
         <MoveIcon />
       </span>
@@ -950,13 +950,13 @@ const columns: any = computed(() => [
         onBlur: () => {
           console.log('失去焦点', editContext);
         },
-        onEnter: (ctx: { e: { preventDefault: () => void } }) => {
+        onEnter: (ctx) => {
           ctx?.e?.preventDefault();
           console.log('onEnter', ctx);
         },
       }),
       // 编辑完成，退出编辑态后触发
-      onEdited: (context: { rowIndex: number; newRowData: TableRowData }) => {
+      onEdited: (context) => {
         console.log(context);
         const newData = [...columnsDataWithoutDefault.value];
         newData.splice(context.rowIndex, 1, context.newRowData);
@@ -989,13 +989,13 @@ const columns: any = computed(() => [
         onBlur: () => {
           console.log('失去焦点', editContext);
         },
-        onEnter: (ctx: { e: { preventDefault: () => void } }) => {
+        onEnter: (ctx: any) => {
           ctx?.e?.preventDefault();
           console.log('onEnter', ctx);
         },
       }),
       // 编辑完成，退出编辑态后触发
-      onEdited: (context: { rowIndex: number; newRowData: TableRowData }) => {
+      onEdited: (context: any) => {
         console.log(context);
         const newData = [...columnsDataWithoutDefault.value];
         newData.splice(context.rowIndex, 1, context.newRowData);
@@ -1040,7 +1040,7 @@ const columns: any = computed(() => [
     width: '110',
   },
 ]);
-const editableCellState = (cellParams: { row: any; col: any }) => {
+const editableCellState = (cellParams: any) => {
   const { row, col } = cellParams;
   return (row.tableName === 'excel模板读取' && col.colKey === 'columnName') || col.colKey === 'columnDesc';
 };
@@ -1191,7 +1191,7 @@ const onClickConfirm = () => {
   // }, 1000);
 };
 const currentRelateRow: any = ref({});
-const onClickRelate = (row: { tableName: string; row: any }) => {
+const onClickRelate = (row: any) => {
   console.log(row);
   if (row.tableName === 'excel模板读取') {
     MessagePlugin.warning('excel模板读取不可关联');
@@ -1257,13 +1257,13 @@ const initRelatedData = () => {
   }
 };
 
-const onClickDeleteColumn = (row: { rowIndex: number }) => {
+const onClickDeleteColumn = (row: any) => {
   columnsDataWithoutDefault.value.splice(row.rowIndex, 1);
 };
 const previewNextTemplate = () => {
   // form先校验后再跳转到到第二步
   // 执行结束后触发事件 validate
-  tableColumnsRef.value.validateTableData().then((params: { result: { [x: string]: any } }) => {
+  tableColumnsRef.value.validateTableData().then((params) => {
     const cellKeys = Object.keys(params.result);
     const firstError = params.result[cellKeys[0]];
     if (firstError) {
@@ -1399,7 +1399,7 @@ const loadMapTableList = async () => {
 const changeTableMatch = (value: string) => {
   selectMapTable.value = mapTableList.value.find((item) => item.tableName === value);
   console.log(selectMapTable.value);
-  selectMapColumns.value = selectMapTable.value?.columns.map((item: { columnName: any; columnDesc: any }) => ({
+  selectMapColumns.value = selectMapTable.value?.columns.map((item: any) => ({
     ...item,
     value: item.columnName,
     label: item.columnDesc,
@@ -1414,7 +1414,7 @@ const initEditColumns = (value: string) => {
     const editTable = tableList.value.find((item) => item.tableName === value);
 
     tableDesc.value = editTable?.tableDescription;
-    columnsData.value = editTable?.columns.map((item: { columnName: any; columnDesc: any }) => ({
+    columnsData.value = editTable?.columns.map((item: any) => ({
       ...item,
       value: item.columnName,
       label: item.columnDesc,
@@ -1482,7 +1482,7 @@ const validationColumns: any = computed(() => [
   },
 ]);
 const validationDatas = ref([]);
-const onClickDeleteValidation = (row: { rowIndex: number }) => {
+const onClickDeleteValidation = (row: any) => {
   validationDatas.value.splice(row.rowIndex, 1);
 };
 const uniqueTypes = [
@@ -1544,7 +1544,7 @@ const validationColumns2: any = computed(() => [
 ]);
 const validationDatas2 = ref([]);
 
-const onClickDeleteValidation2 = (row: { rowIndex: number }) => {
+const onClickDeleteValidation2 = (row: any) => {
   validationDatas2.value.splice(row.rowIndex, 1);
 };
 // const validateTypes2 = [
@@ -1569,7 +1569,7 @@ const addValidationData2 = () => {
     rangeDate: [],
   });
 };
-const handleUniqueTypesChange = (row: { uniqueColumns: any[] }) => {
+const handleUniqueTypesChange = (row: any) => {
   row.uniqueColumns = [];
 };
 const findTemplateColumnDescByColumnName = (columnName: any) => {
@@ -1755,7 +1755,7 @@ const templateFormRules = {
 };
 const confirmGenTemplate = () => {
   // 先验证导入模板文件名是否存在
-  templateForm.value.validate().then((result: boolean | { [s: string]: unknown } | ArrayLike<unknown>) => {
+  templateForm.value.validate().then((result) => {
     if (result !== true) {
       MessagePlugin.warning(Object.values(result)[0][0].message);
 
@@ -1917,39 +1917,26 @@ const initEditData = (insetModel: any) => {
   // 将columnList属性的值赋回columnsDataWithoutDefault
   const columnDataArray = [];
   let columnIndex = 0;
-  insetModel.columnList.forEach(
-    (item: {
-      seq: any;
-      fromTable: string;
-      columnDesc: any;
-      columnField: any;
-      columnDatetype: any;
-      isRequired: any;
-      isImport: any;
-      isTemplate: any;
-      defaultValue: any;
-      datatransferJson: string;
-    }) => {
-      const columnData = {
-        seq: item.seq,
-        tableName: item.fromTable,
-        columnDesc: item.columnDesc,
-        columnName: item.columnField,
-        columnType: item.columnDatetype,
-        isRequire: item.isRequired,
-        isImport: item.isImport,
-        isExcel: item.isTemplate,
-        defaultValue: item.defaultValue,
-        datatransferJson: item.datatransferJson,
-        datatransfer: item.datatransferJson === 'empty' ? item.datatransferJson : JSON.parse(item.datatransferJson),
-        canDelete: item.fromTable === 'excel模板读取',
-        isByHand: item.fromTable === 'excel模板读取',
-        // 注意：原始数据结构里可能需要 regularExpression 字段，这里假设它不存在于insetModel中
-        // 若要保持一致，请确保正确处理该字段
-      };
-      columnDataArray.push(columnData);
-    },
-  );
+  insetModel.columnList.forEach((item) => {
+    const columnData = {
+      seq: item.seq,
+      tableName: item.fromTable,
+      columnDesc: item.columnDesc,
+      columnName: item.columnField,
+      columnType: item.columnDatetype,
+      isRequire: item.isRequired,
+      isImport: item.isImport,
+      isExcel: item.isTemplate,
+      defaultValue: item.defaultValue,
+      datatransferJson: item.datatransferJson,
+      datatransfer: item.datatransferJson === 'empty' ? item.datatransferJson : JSON.parse(item.datatransferJson),
+      canDelete: item.fromTable === 'excel模板读取',
+      isByHand: item.fromTable === 'excel模板读取',
+      // 注意：原始数据结构里可能需要 regularExpression 字段，这里假设它不存在于insetModel中
+      // 若要保持一致，请确保正确处理该字段
+    };
+    columnDataArray.push(columnData);
+  });
   // 确保columnsDataWithoutDefault能被正确更新（假设它是可写的）
   columnsDataWithoutDefault.value = columnDataArray;
 
@@ -1957,39 +1944,37 @@ const initEditData = (insetModel: any) => {
   const validationDataArray = [];
   const validationDataColumnArray = [];
   columnIndex = 0;
-  insetModel.ruleList.forEach(
-    (item: { validateType: string; uniqueColumns: string; validateName: any; datatransferJson: string }) => {
-      let uniqueColumns = null;
-      if (item.validateType === 'UNIQUE') {
-        uniqueColumns = JSON.parse(item.uniqueColumns);
-        const validationData = {
-          index: columnIndex++,
-          validateType: item.validateType,
-          validateName: item.validateName,
-          uniqueColumns,
-          // 同样，假设datatransferJson在原始数据结构中也是存在的，这里根据实际需求填充
-          datatransferJson: item.datatransferJson || '',
-          datatransfer: item.datatransferJson === '' ? item.datatransferJson : JSON.parse(item.datatransferJson),
-        };
-        Object.assign(validationData, validationData.datatransfer);
-        validationDataArray.push(validationData);
-        // 更新validationDatas（同样假设它是可写的）
-      } else {
-        uniqueColumns = item.uniqueColumns;
-        const validationData = {
-          index: columnIndex++,
-          validateType: item.validateType,
-          validateName: item.validateName,
-          uniqueColumns,
-          // 同样，假设datatransferJson在原始数据结构中也是存在的，这里根据实际需求填充
-          datatransferJson: item.datatransferJson || '',
-          datatransfer: item.datatransferJson === 'empty' ? item.datatransferJson : JSON.parse(item.datatransferJson),
-        };
-        Object.assign(validationData, validationData.datatransfer);
-        validationDataColumnArray.push(validationData);
-      }
-    },
-  );
+  insetModel.ruleList.forEach((item: any) => {
+    let uniqueColumns = null;
+    if (item.validateType === 'UNIQUE') {
+      uniqueColumns = JSON.parse(item.uniqueColumns);
+      const validationData = {
+        index: columnIndex++,
+        validateType: item.validateType,
+        validateName: item.validateName,
+        uniqueColumns,
+        // 同样，假设datatransferJson在原始数据结构中也是存在的，这里根据实际需求填充
+        datatransferJson: item.datatransferJson || '',
+        datatransfer: item.datatransferJson === '' ? item.datatransferJson : JSON.parse(item.datatransferJson),
+      };
+      Object.assign(validationData, validationData.datatransfer);
+      validationDataArray.push(validationData);
+      // 更新validationDatas（同样假设它是可写的）
+    } else {
+      uniqueColumns = item.uniqueColumns;
+      const validationData = {
+        index: columnIndex++,
+        validateType: item.validateType,
+        validateName: item.validateName,
+        uniqueColumns,
+        // 同样，假设datatransferJson在原始数据结构中也是存在的，这里根据实际需求填充
+        datatransferJson: item.datatransferJson || '',
+        datatransfer: item.datatransferJson === 'empty' ? item.datatransferJson : JSON.parse(item.datatransferJson),
+      };
+      Object.assign(validationData, validationData.datatransfer);
+      validationDataColumnArray.push(validationData);
+    }
+  });
   validationDatas.value = validationDataArray;
   validationDatas2.value = validationDataColumnArray;
   // 添加文件列表
