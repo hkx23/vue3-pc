@@ -1583,20 +1583,20 @@ const findDbColumnDescByColumnName = (columnName: any) => {
   return columnsData.value.find((column) => column.columnName === columnName)?.columnDesc;
 };
 
-const handleUniqueTemplateChange = (row: { uniqueColumns: any[]; showMsg: string }) => {
+const handleUniqueTemplateChange = (row: any) => {
   const selectedColumnDescs = row.uniqueColumns
     .map((columnName: any) => findTemplateColumnDescByColumnName(columnName))
     .filter((desc: any) => desc !== undefined); // 确保移除未找到的columnDesc
   row.showMsg = `模板数据唯一校验失败：唯一校验字段为[${selectedColumnDescs.join(', ')}]`;
 };
 
-const handleUniqueDbChange = (row: { uniqueColumns: any[]; showMsg: string }) => {
+const handleUniqueDbChange = (row: any) => {
   const selectedColumnDescs = row.uniqueColumns
     .map((columnName: any) => findDbColumnDescByColumnName(columnName))
     .filter((desc: any) => desc !== undefined); // 确保移除未找到的columnDesc
   row.showMsg = `数据库唯一校验失败：唯一校验字段为[${selectedColumnDescs.join(', ')}]`;
 };
-const handleUniqueColumnsChange = (row: { uniqueColumns: any; columnType: any; validateType: string }) => {
+const handleUniqueColumnsChange = (row: any) => {
   if (row.uniqueColumns) {
     const columnItem = columnsDataWithoutDefault.value
       .filter((item) => item.columnName && item.columnDesc && item.isExcel && item.columnType !== 'Boolean')
@@ -1619,18 +1619,7 @@ const handleValidateTypeChange = (row: any) => {
   setColumnValidateMsg(row);
 };
 
-const setColumnValidateMsg = (row: {
-  uniqueColumns: any;
-  columnDesc: any;
-  showMsg: string;
-  validateType: string;
-  lengthLimit: any;
-  regularExpression: any;
-  columnType: string;
-  rangeDate: any[];
-  minNumber: any;
-  maxNumber: any;
-}) => {
+const setColumnValidateMsg = (row: any) => {
   // 长度校验信息： 列【列名】长度校验失败，字符长度请在【最小长度】和【最大长度】之间
   // 区间校验信息： 列【列名】值校验失败，值必须在【最小值】和【最大值】之间
   // 正则校验信息： 列【列名】值校验失败，值必须符合正则表达式【正则表达式】
@@ -1913,20 +1902,7 @@ const getInsetModel = () => {
 // #endregion
 
 // 编辑-加载编辑的数据
-const initEditData = (insetModel: {
-  settingModel: {
-    importKeyCode: string;
-    businessDomain: string;
-    tableName: string;
-    importDesc: string;
-    importTemplateUrl: string;
-    batchCount: number;
-    sourceType: string;
-    id: string;
-  };
-  columnList: any[];
-  ruleList: any[];
-}) => {
+const initEditData = (insetModel: any) => {
   isEdit.value = true;
   templateFormData.value.templateName = '';
   current.value = 0;

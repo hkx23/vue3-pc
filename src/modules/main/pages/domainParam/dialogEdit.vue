@@ -1085,7 +1085,7 @@ import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableProps, TableRowDa
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
-import commmon from '@/utils/common';
+import common from '@/utils/common';
 
 import { useLang } from './lang';
 // #endregion
@@ -2001,7 +2001,7 @@ const addColumnData = () => {
   }
   // 这里是插入到第一个
   columnsData.value.unshift({
-    id: commmon.generateBigIntId().toString(),
+    id: common.generateBigIntId().toString(),
     seq,
     tableName: '',
     columnName: '',
