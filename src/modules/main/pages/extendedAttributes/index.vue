@@ -75,7 +75,12 @@
                     ></t-switch>
                   </template>
                   <template #actionSlot="{ row }">
-                    <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+                    <t-space>
+                      <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+                      <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteRow(row.id)">
+                        <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+                      </t-popconfirm>
+                    </t-space>
                   </template>
                 </cmp-table>
               </cmp-container>
@@ -108,10 +113,12 @@
                     <t-checkbox v-model="row.needValidation"></t-checkbox>
                   </template>
                   <template #actionSlot="{ row }">
-                    <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
-                    <!-- <t-button size="small" variant="text" @click="onEditRow(row)">
-                      <icon name="edit-1" class="black-icon" />
-                    </t-button> -->
+                    <t-space>
+                      <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+                      <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteRow(row.id)">
+                        <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+                      </t-popconfirm>
+                    </t-space>
                   </template>
                   <template #disableSwitch="{ row }">
                     <t-switch
@@ -578,6 +585,13 @@ const onEditRow = (row: any) => {
   editID.value = row.id;
   formVisible.value = true;
   diaLogTitle.value = '编辑扩展属性';
+};
+
+// 右侧表格删除按钮
+const onDeleteRow = (id: any) => {
+  api.objectProperty.delete(id).then(() => {
+    onGetAllTabData();
+  });
 };
 
 // 左侧输入框回车事件
