@@ -470,9 +470,8 @@ const onSwitchChange = async (
   },
   _value: any,
 ) => {
-  const isValue = row ? 0 : 1;
   await api.objectPropertyCategory.editObjectCategory({
-    state: isValue,
+    state: _value,
     objectCode: row.objectCode,
     propertyValueType: row.propertyValueType,
     propertyCode: row.propertyCode,
