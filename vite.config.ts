@@ -101,9 +101,13 @@ export default ({ mode, command }: ConfigEnv): UserConfig => {
       rollupOptions: {
         input: isBuild ? inputs : null,
         output: {
-          // manualChunks: (id) => {
-          //   if (id.includes('echarts')) return 'echarts';
-          // },
+          manualChunks: {
+            vue: ['vue', 'vue-router'],
+            echarts: ['echarts'],
+            lodash: ['lodash'],
+            stimulsoft: ['stimulsoft-reports-js', 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor'],
+            hiprint: ['vue-plugin-hiprint'],
+          },
         },
         // plugins: [
         //   visualizer({
