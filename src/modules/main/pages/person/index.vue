@@ -3,7 +3,6 @@
     <cmp-row>
       <cmp-card flex="250px">
         <t-tree
-          ref="treeRef"
           :data="treeData"
           :keys="treeKeys"
           hover
@@ -21,7 +20,6 @@
           </cmp-card>
           <cmp-card>
             <cmp-table
-              ref="tableRef"
               v-model:pagination="pageUI"
               :table-data="dataTable"
               :table-column="columnsParam"
@@ -59,36 +57,41 @@
     header="编辑"
     mode="modal"
     draggable
+    destroy-on-close
     :close-on-overlay-click="false"
     width="40%"
     @confirm="onEditConfirm"
   >
-    <t-space direction="vertical" style="width: 98%">
-      <t-form :data="formData">
-        <t-form-item label="员工编码" required-mark>
-          <t-input v-model="formData.personcode" disabled />
-        </t-form-item>
-        <t-form-item label="姓名" required-mark>
-          <t-input v-model="formData.personname" placeholder="请输入内容" />
-        </t-form-item>
-        <t-form-item label="性别" required-mark>
-          <t-select v-model="formData.gender" placeholder="请选择性别">
-            <t-option v-for="(item, index) in userGenderList" :key="index" :value="item.value" :label="item.label">
-              {{ item.label }}
-            </t-option>
-          </t-select>
-        </t-form-item>
-        <t-form-item label="手机号">
-          <t-input v-model="formData.mobilePhone" placeholder="请输入内容" type="tel" />
-        </t-form-item>
-        <t-form-item label="邮箱">
-          <t-input v-model="formData.email" placeholder="请输入内容" />
-        </t-form-item>
-        <t-form-item label="启用">
-          <t-switch v-model="formData.state" />
-        </t-form-item>
-      </t-form>
-    </t-space>
+    <bcmp-extend ref="extend" :object-id="formData.id" object-code="person" default-value="customPanel">
+      <template #customPanel>
+        <t-tab-panel value="customPanel" label="基础属性">
+          <t-form :data="formData" style="margin-top: 10px">
+            <t-form-item label="员工编码" required-mark>
+              <t-input v-model="formData.personcode" disabled />
+            </t-form-item>
+            <t-form-item label="姓名" required-mark>
+              <t-input v-model="formData.personname" placeholder="请输入内容" />
+            </t-form-item>
+            <t-form-item label="性别" required-mark>
+              <t-select v-model="formData.gender" placeholder="请选择性别">
+                <t-option v-for="(item, index) in userGenderList" :key="index" :value="item.value" :label="item.label">
+                  {{ item.label }}
+                </t-option>
+              </t-select>
+            </t-form-item>
+            <t-form-item label="手机号">
+              <t-input v-model="formData.mobilePhone" placeholder="请输入内容" type="tel" />
+            </t-form-item>
+            <t-form-item label="邮箱">
+              <t-input v-model="formData.email" placeholder="请输入内容" />
+            </t-form-item>
+            <t-form-item label="启用">
+              <t-switch v-model="formData.state" />
+            </t-form-item>
+          </t-form>
+        </t-tab-panel>
+      </template>
+    </bcmp-extend>
   </t-dialog>
   <t-dialog
     v-model:visible="onShowImportVisible"
@@ -115,7 +118,7 @@ export default {
 <script setup lang="ts">
 import { isEmpty } from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -127,8 +130,8 @@ import { useLang } from './lang';
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const personCode = ref(''); // 查询
-const personState = ref(-1); //
-const adminOrgId = ref(-1); //
+const personState = ref(); //
+const adminOrgId = ref(''); //
 const { t } = useLang();
 // #region  页面初始化
 const userGenderList = ref([
@@ -137,7 +140,8 @@ const userGenderList = ref([
 ]);
 
 // 编辑的form
-const formData = ref({
+const extend = ref();
+const formData = reactive({
   id: '',
   personcode: '',
   personname: '',
@@ -151,7 +155,6 @@ const formData = ref({
 const dataTable = ref([]);
 const dataTotal = ref(0);
 const treeKeys = { value: 'orgCode', label: 'orgName', key: 'id' };
-const treeRef = ref();
 const treeData = ref([]);
 
 const filterByText = ref();
@@ -160,21 +163,30 @@ const dataLoading = ref(false); // 是否显示数据加载图标
 const onShowEditVisible = ref(false); // 是否显示编辑窗口
 const onShowImportVisible = ref(false); // 是否显示导入窗口
 // 表格列设置
-const columnsParam: PrimaryTableCol<TableRowData>[] = [
-  { title: '人员编码', colKey: 'personCode' },
-  { title: '姓名', colKey: 'personName' },
-  { title: '性别', colKey: 'genderName' },
-  { title: '手机号', colKey: 'mobilePhone' },
-  { title: '邮箱', colKey: 'email' },
-  {
-    colKey: 'state',
-    title: '状态',
-    align: 'center',
-    width: '100',
-    cell: 'stateSwitch',
-  },
-  { title: '操作', align: 'left', fixed: 'right', colKey: 'op', width: 120 },
-];
+const columnsParam = computed(() => {
+  const cols: PrimaryTableCol<TableRowData>[] = [
+    { title: '人员编码', colKey: 'personCode' },
+    { title: '姓名', colKey: 'personName' },
+    { title: '性别', colKey: 'genderName' },
+    { title: '手机号', colKey: 'mobilePhone' },
+    { title: '邮箱', colKey: 'email' },
+    {
+      colKey: 'state',
+      title: '状态',
+      align: 'center',
+      width: 100,
+      cell: 'stateSwitch',
+    },
+  ];
+  personPropertyList.value.forEach((val) => {
+    cols.push({
+      title: val.displayName,
+      colKey: val.id,
+    });
+  });
+  cols.push({ title: '操作', align: 'left', fixed: 'right', colKey: 'op', width: 120 });
+  return cols;
+});
 
 // 下拉初始数据
 const stateOptions = [
@@ -220,19 +232,31 @@ const conditionEnter = (data: any) => {
 const onEditConfirm = async () => {
   dataLoading.value = true;
   try {
-    if (isEmpty(formData.value.personname)) {
+    if (isEmpty(formData.personname)) {
       MessagePlugin.error('请输入姓名');
       return false;
     }
-
-    const data = await api.person.edit({
-      id: formData.value.id.toString(),
-      personCode: formData.value.personcode,
-      personName: formData.value.personname,
-      gender: formData.value.gender,
-      mobilePhone: formData.value.mobilePhone,
-      email: formData.value.email,
-      state: formData.value.state ? 1 : 0,
+    const rlt = await extend.value.getComponentData();
+    if (!rlt.success) {
+      MessagePlugin.error('扩展属性校验不通过');
+      return false;
+    }
+    const properties = [];
+    for (const key in rlt.data) {
+      properties.push({
+        objectPropertyId: key,
+        propertyValue: rlt.data[key],
+      });
+    }
+    await api.person.edit({
+      id: formData.id,
+      personCode: formData.personcode,
+      personName: formData.personname,
+      gender: formData.gender,
+      mobilePhone: formData.mobilePhone,
+      email: formData.email,
+      state: formData.state ? 1 : 0,
+      properties,
     });
     MessagePlugin.success('编辑成功');
 
@@ -267,7 +291,7 @@ const onRefresh = () => {
 const onReset = () => {
   personCode.value = '';
   personState.value = -1;
-  adminOrgId.value = -1;
+  adminOrgId.value = '';
   fetchTable();
 };
 
@@ -278,21 +302,23 @@ const onReset = () => {
 const fetchTable = async () => {
   try {
     setLoading(true);
-    const data = (await api.person.getlist({
-      personcode: personCode.value,
-      personname: '',
-      state: personState.value == null ? -1 : personState.value,
-      adminorgid: adminOrgId.value,
-      sortfield: '',
-      sorttype: '',
-      filterfield: '',
-      filter: '',
-      pagenum: pageUI.value.page,
-      pagesize: pageUI.value.rows,
-    })) as any;
+    const data = await api.person.getList({
+      keyword: personCode.value,
+      state: personState.value,
+      adminOrgId: adminOrgId.value,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+    });
 
     dataTable.value = data.list;
     dataTotal.value = data.total;
+
+    // 扩展属性赋值
+    dataTable.value.forEach((val) => {
+      val.properties.forEach((property) => {
+        val[property.objectPropertyId] = property.propertyValue;
+      });
+    });
   } catch (e) {
     console.log(e);
   } finally {
@@ -302,13 +328,13 @@ const fetchTable = async () => {
 
 // 重置form
 const formInit = () => {
-  formData.value.id = '';
-  formData.value.email = '';
-  formData.value.gender = 0;
-  formData.value.mobilePhone = '';
-  formData.value.personcode = '';
-  formData.value.personname = '';
-  formData.value.state = false;
+  formData.id = '';
+  formData.email = '';
+  formData.gender = 0;
+  formData.mobilePhone = '';
+  formData.personcode = '';
+  formData.personname = '';
+  formData.state = false;
 };
 // #endregion
 
@@ -351,7 +377,7 @@ const fetchTree = async () => {
 //   deleteIdx.value = -1;
 // };
 
-// # Switch 状态获取
+// #region Switch 状态获取
 const onSwitchChange = async (row: any, value: any) => {
   row.state = value;
   await api.person
@@ -371,17 +397,29 @@ const rowKey = 'id';
 
 const handleClickDetail = (value: any) => {
   // router.push('/detail/base');
-  formData.value.id = value.row.id;
-  formData.value.email = value.row.email;
-  formData.value.gender = value.row.gender;
-  formData.value.mobilePhone = value.row.mobilePhone;
-  formData.value.personcode = value.row.personCode;
-  formData.value.personname = value.row.personName;
-  formData.value.state = value.row.isState;
+  formData.id = value.row.id;
+  formData.email = value.row.email;
+  formData.gender = value.row.gender;
+  formData.mobilePhone = value.row.mobilePhone;
+  formData.personcode = value.row.personCode;
+  formData.personname = value.row.personName;
+  formData.state = value.row.isState;
   onShowEditVisible.value = true;
 };
 
+const personPropertyList = ref([]);
+const getPersonPropertyCol = () => {
+  api.objectProperty
+    .getObjectPropertyList({
+      objectCode: 'person',
+    })
+    .then((data) => {
+      personPropertyList.value = data;
+    });
+};
+
 onMounted(() => {
+  getPersonPropertyCol();
   fetchTable();
   fetchTree();
 });

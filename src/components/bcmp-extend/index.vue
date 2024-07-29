@@ -1,6 +1,7 @@
 <template>
   <t-form ref="extendForm" :data="formModel" :rules="rules" @validate="onValidate">
     <t-tabs v-model="activeCategory" type="card">
+      <slot name="customPanel"></slot>
       <t-tab-panel
         v-for="(category, index) in categoryList"
         :key="index"
@@ -86,12 +87,16 @@ const props = defineProps({
   objectId: {
     type: String,
   },
+  defaultValue: {
+    type: String,
+    default: null,
+  },
 });
 const extendForm = ref(null);
 const itemGroupList = ref({});
 const categoryList = ref([]);
 const formModel = ref({});
-const activeCategory = ref(1);
+const activeCategory = ref();
 const rules = ref({});
 
 // 获取控件类型
@@ -184,7 +189,9 @@ const initFormSetting = async () => {
     itemGroupList.value = _.groupBy(res, 'categoryName');
     // 获取分类列表并设置第一项为选中tab
     categoryList.value = Object.keys(itemGroupList.value);
-    if (categoryList.value.length > 0) {
+    if (props.defaultValue) {
+      activeCategory.value = props.defaultValue;
+    } else if (categoryList.value.length > 0) {
       [activeCategory.value] = categoryList.value;
     }
     // 分组后itemGroupList对每一条数据进行处理

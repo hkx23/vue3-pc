@@ -2881,8 +2881,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3137,6 +3137,38 @@ export type PagingDataPersonVO = {
   total?: number;
 } | null;
 
+/** 员工扩展属性 */
+export interface PersonPropertyVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  personId?: string;
+  objectPropertyId?: string;
+  /** 属性值 */
+  propertyValue?: string;
+  objectPropertyName?: string;
+}
+
 /** 显示员工实体 */
 export interface PersonVO {
   id?: string;
@@ -3164,6 +3196,8 @@ export interface PersonVO {
   stateName?: string;
   /** 是否启用 */
   isState?: boolean;
+  /** 扩展属性 */
+  properties?: PersonPropertyVO[];
 }
 
 /** 通用响应类 */
@@ -5033,13 +5067,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  isState?: boolean;
-  dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
+  dateExemptionExpiredStr?: string;
   isExemptionInspectionChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5253,15 +5287,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
-  isInProcessName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
   isBatchName?: string;
-  isInProcessChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
+  isProductName?: string;
   isProductChecked?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -7705,8 +7739,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8966,8 +9000,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -10866,6 +10900,19 @@ export interface ResultListObjectPropertyValueVO {
   data?: ObjectPropertyValueVO[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultListObjectProperty {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ObjectProperty[] | null;
+}
+
 /** 响应数据 */
 export type MqttConfig = {
   host?: string;
@@ -11045,10 +11092,10 @@ export interface IdentityLinkInfo {
   userId?: string;
   groupId?: string;
   taskId?: string;
+  scopeType?: string;
+  subScopeId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
 }
 
 /** 通用响应类 */
@@ -11070,47 +11117,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
-  suspended?: boolean;
-  description?: string;
-  tenantId?: string;
-  assignee?: string;
+  localizedDescription?: string;
+  category?: string;
   /** @format date-time */
   dueDate?: string;
-  category?: string;
+  assignee?: string;
+  tenantId?: string;
+  description?: string;
   formKey?: string;
   localizedName?: string;
   parentTaskId?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
-  localizedDescription?: string;
+  suspended?: boolean;
   id?: string;
   state?: string;
   scopeId?: string;
+  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
   /** @format date-time */
   createTime?: string;
-  processDefinitionId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  subScopeId?: string;
   scopeType?: string;
-  identityLinks?: IdentityLinkInfo[];
+  subScopeId?: string;
+  /** @format date-time */
+  claimTime?: string;
+  claimedBy?: string;
+  suspendedBy?: string;
   executionId?: string;
   taskDefinitionId?: string;
   taskDefinitionKey?: string;
-  claimedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  suspendedBy?: string;
-  /** @format date-time */
-  claimTime?: string;
+  identityLinks?: IdentityLinkInfo[];
   caseVariables?: Record<string, object>;
-  propagatedStageInstanceId?: string;
-  taskLocalVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  processVariables?: Record<string, object>;
-  inProgressStartedBy?: string;
   /** @format date-time */
   inProgressStartTime?: string;
+  inProgressStartedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  taskLocalVariables?: Record<string, object>;
+  processVariables?: Record<string, object>;
+  processDefinitionId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
 } | null;
 
 /** 响应数据 */
@@ -11121,10 +11168,10 @@ export type IdentityLink = {
   userId?: string;
   groupId?: string;
   taskId?: string;
+  scopeType?: string;
+  subScopeId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
 } | null;
 
 /** 通用响应类 */
@@ -14242,28 +14289,22 @@ export const api = {
      * No description
      *
      * @tags 员工表
-     * @name Getlist
+     * @name GetList
      * @summary 获取员工信息
-     * @request GET:/person/getlist
+     * @request GET:/person/getList
      * @secure
      */
-    getlist: (query: {
-      personcode: string;
-      personname: string;
+    getList: (query: {
+      keyword: string;
       /** @format int32 */
       state: number;
+      adminOrgId: string;
       /** @format int32 */
-      adminorgid: number;
-      sortfield: string;
-      sorttype: string;
-      filterfield: string;
-      filter: string;
+      pageNum: number;
       /** @format int32 */
-      pagenum: number;
-      /** @format int32 */
-      pagesize: number;
+      pageSize: number;
     }) =>
-      http.request<ResultObject['data']>(`/api/main/person/getlist`, {
+      http.request<ResultPagingDataPersonVO['data']>(`/api/main/person/getList`, {
         method: 'GET',
         params: query,
       }),
@@ -19308,6 +19349,35 @@ export const api = {
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
         method: 'GET',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域扩展属性
+     * @name GetObjectPropertyList
+     * @summary 获取领域扩展属性列表
+     * @request GET:/objectProperty/getObjectPropertyList
+     * @secure
+     */
+    getObjectPropertyList: (query: { objectCode: string }) =>
+      http.request<ResultListObjectProperty['data']>(`/api/main/objectProperty/getObjectPropertyList`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域扩展属性
+     * @name Delete
+     * @summary 删除领域扩展属性
+     * @request DELETE:/objectProperty/delete/{id}
+     * @secure
+     */
+    delete: (id: string) =>
+      http.request<ResultObject['data']>(`/api/main/objectProperty/delete/${id}`, {
+        method: 'DELETE',
       }),
   },
   businessUnit: {
