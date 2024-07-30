@@ -16,7 +16,7 @@ import BCmpMitem from './cmp-business/BCmpMitem.vue';
 import BCmpMitemCategory from './cmp-business/BCmpMitemCategory.vue';
 import BCmpMo from './cmp-business/BCmpMo.vue';
 import BCmpMoSchedule from './cmp-business/BCmpMoSchedule.vue';
-import BCmpPerson from './cmp-business/BCmpPerson.vue';
+// import BCmpPerson from './cmp-business/BCmpPerson.vue';
 import BCmpRouting from './cmp-business/BCmpRouting.vue';
 import BCmpSupplier from './cmp-business/BCmpSupplier.vue';
 import BCmpUser from './cmp-business/BCmpUser.vue';
@@ -67,7 +67,7 @@ export default {
     // app.component('CmpPrintButton', CmpPrintButton);
     app.component('CmpWrapper', CmpWrapper);
 
-    app.component('BCmpPerson', BCmpPerson);
+    // app.component('BCmpPerson', BCmpPerson);
     app.component('BCmpUser', BCmpUser);
     app.component('BCmpSupplier', BCmpSupplier);
     app.component('BCmpCustomer', BCmpCustomer);

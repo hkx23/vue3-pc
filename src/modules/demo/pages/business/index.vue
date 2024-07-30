@@ -8,7 +8,7 @@
     </p>
 
     <t-space direction="vertical" style="width: 380px">
-      <BCmpPerson v-model:value="selectPersonValue" label="人员" :multiple="isMultiple"></BCmpPerson>
+      <!-- <BCmpPerson v-model:value="selectPersonValue" label="人员" :multiple="isMultiple"></BCmpPerson> -->
       <BCmpUser v-model:value="selectUserValue" label="用户" :multiple="isMultiple"></BCmpUser>
       <BCmpSupplier v-model:value="selectSupplierValue" label="供应商" :multiple="isMultiple"></BCmpSupplier>
       <BCmpCustomer v-model:value="selectCustomerValue" label="客户" :multiple="isMultiple"></BCmpCustomer>
@@ -29,7 +29,7 @@ import { ref } from 'vue';
 
 const isMultiple = ref(true);
 
-const selectPersonValue = ref();
+// const selectPersonValue = ref();
 const selectUserValue = ref();
 const selectSupplierValue = ref();
 const selectCustomerValue = ref();
