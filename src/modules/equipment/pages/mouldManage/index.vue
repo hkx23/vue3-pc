@@ -87,19 +87,18 @@ export default {
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, Ref, ref } from 'vue';
 
-import common from '@/utils/common';
-
-import { useLang } from './lang';
-
-const { t } = useLang();
 import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import common from '@/utils/common';
 
+import { useLang } from './lang';
 import mainAddFormJson from './setting/mainAddForm.json';
 import mainEditFormJson from './setting/mainEditForm.json';
 import mainSettingJson from './setting/mainSetting.json';
 import mitemSettingJson from './setting/mitemSetting.json';
+
+const { t } = useLang();
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
@@ -184,7 +183,7 @@ const fetchTable = async () => {
       pageSize: pageUI.value.rows,
       filters: filterList.value,
     };
-    const res = await api.mould.search(searchCondition);
+    const res: any = await api.mould.search(searchCondition);
     tableData.value = res.list; // 表格数据赋值
     dataTotal.value = res.total; // 总页数赋值
   } catch (e) {

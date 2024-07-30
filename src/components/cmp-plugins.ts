@@ -89,7 +89,7 @@ declare module '@vue/runtime-core' {
     CmpTable: typeof CmpTable;
     CmpWrapper: typeof CmpWrapper;
 
-    BCmpPerson: typeof BCmpPerson;
+    // BCmpPerson: typeof BCmpPerson;
     BCmpUser: typeof BCmpUser;
     BCmpSupplier: typeof BCmpSupplier;
     BCmpCustomer: typeof BCmpCustomer;
