@@ -2881,8 +2881,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3137,38 +3137,6 @@ export type PagingDataPersonVO = {
   total?: number;
 } | null;
 
-/** 员工扩展属性 */
-export interface PersonPropertyVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  personId?: string;
-  objectPropertyId?: string;
-  /** 属性值 */
-  propertyValue?: string;
-  objectPropertyName?: string;
-}
-
 /** 显示员工实体 */
 export interface PersonVO {
   id?: string;
@@ -3196,8 +3164,6 @@ export interface PersonVO {
   stateName?: string;
   /** 是否启用 */
   isState?: boolean;
-  /** 扩展属性 */
-  properties?: PersonPropertyVO[];
 }
 
 /** 通用响应类 */
@@ -3796,6 +3762,91 @@ export interface MsgDtlDTO {
   title?: string;
   /** 内容 */
   content?: string;
+}
+
+/** 模具表 */
+export interface Mould {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模具代码 */
+  mouldCode?: string;
+  /** 模具名称 */
+  mouldName?: string;
+  /** 模具描述 */
+  mouldDesc?: string;
+  /** 模具类型 */
+  mouldType?: string;
+  ownerOid?: string;
+  /**
+   * 模穴数/型腔数
+   * @format int32
+   */
+  cavityNumber?: number;
+  /**
+   * 是否一模多穴
+   * @format int32
+   */
+  isMulMode?: number;
+  /**
+   * 使用寿命
+   * @format int32
+   */
+  lifeTime?: number;
+  /** 存放地点 */
+  position?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  datetimeEffect?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  datetimeInvalid?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  /** 模具尺寸 */
+  mouldSize?: string;
+  /** 图纸编号 */
+  drawingNo?: string;
+  /** 成型周期 */
+  moldingCycle?: number;
+  /** 成型周期上偏差 */
+  moldingCycleMax?: number;
+  /** 成型周期下偏差 */
+  moldingCycleMin?: number;
+  mouldSupplierId?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  /** 状态 */
+  status?: string;
+  /** 源模具编码 */
+  sourceMouldCode?: string;
 }
 
 /** 通用响应类 */
@@ -5067,13 +5118,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
+  stateName?: string;
+  dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
-  isExemptionInspectionChecked?: boolean;
   isState?: boolean;
-  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5287,15 +5338,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawName?: string;
-  isBatchName?: string;
-  isState?: boolean;
   stateName?: string;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isState?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -7739,8 +7790,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -10519,10 +10570,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10900,19 +10951,6 @@ export interface ResultListObjectPropertyValueVO {
   data?: ObjectPropertyValueVO[] | null;
 }
 
-/** 通用响应类 */
-export interface ResultListObjectProperty {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: ObjectProperty[] | null;
-}
-
 /** 响应数据 */
 export type MqttConfig = {
   host?: string;
@@ -11089,13 +11127,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  userId?: string;
-  groupId?: string;
   taskId?: string;
-  scopeType?: string;
-  subScopeId?: string;
+  groupId?: string;
+  userId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
 }
 
 /** 通用响应类 */
@@ -11117,47 +11155,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
-  localizedDescription?: string;
-  category?: string;
+  suspended?: boolean;
   /** @format date-time */
   dueDate?: string;
-  assignee?: string;
-  tenantId?: string;
   description?: string;
-  formKey?: string;
+  tenantId?: string;
+  assignee?: string;
   localizedName?: string;
-  parentTaskId?: string;
+  category?: string;
+  localizedDescription?: string;
+  formKey?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
-  suspended?: boolean;
+  parentTaskId?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  propagatedStageInstanceId?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  /** @format date-time */
-  createTime?: string;
-  scopeType?: string;
-  subScopeId?: string;
-  /** @format date-time */
-  claimTime?: string;
-  claimedBy?: string;
-  suspendedBy?: string;
-  executionId?: string;
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
-  identityLinks?: IdentityLinkInfo[];
-  caseVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  inProgressStartedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
-  processDefinitionId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  /** @format date-time */
+  createTime?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  suspendedBy?: string;
+  caseVariables?: Record<string, object>;
+  claimedBy?: string;
+  /** @format date-time */
+  claimTime?: string;
+  processDefinitionId?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  inProgressStartedBy?: string;
+  processVariables?: Record<string, object>;
+  taskLocalVariables?: Record<string, object>;
+  subScopeId?: string;
+  scopeType?: string;
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
+  propagatedStageInstanceId?: string;
 } | null;
 
 /** 响应数据 */
@@ -11165,13 +11203,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  userId?: string;
-  groupId?: string;
   taskId?: string;
-  scopeType?: string;
-  subScopeId?: string;
+  groupId?: string;
+  userId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
 } | null;
 
 /** 通用响应类 */
@@ -14289,22 +14327,28 @@ export const api = {
      * No description
      *
      * @tags 员工表
-     * @name GetList
+     * @name Getlist
      * @summary 获取员工信息
-     * @request GET:/person/getList
+     * @request GET:/person/getlist
      * @secure
      */
-    getList: (query: {
-      keyword: string;
+    getlist: (query: {
+      personcode: string;
+      personname: string;
       /** @format int32 */
       state: number;
-      adminOrgId: string;
       /** @format int32 */
-      pageNum: number;
+      adminorgid: number;
+      sortfield: string;
+      sorttype: string;
+      filterfield: string;
+      filter: string;
       /** @format int32 */
-      pageSize: number;
+      pagenum: number;
+      /** @format int32 */
+      pagesize: number;
     }) =>
-      http.request<ResultPagingDataPersonVO['data']>(`/api/main/person/getList`, {
+      http.request<ResultObject['data']>(`/api/main/person/getlist`, {
         method: 'GET',
         params: query,
       }),
@@ -14902,6 +14946,66 @@ export const api = {
       http.request<ResultListAppMsgDTO['data']>(`/api/main/msg/appSyncMsg`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  mould: {
+    /**
+     * No description
+     *
+     * @tags 模具表
+     * @name Search
+     * @request POST:/mould/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/mould/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 模具表
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/mould/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/mould/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 模具表
+     * @name UpdateItemByCode
+     * @summary 修改
+     * @request POST:/mould/items/modify
+     * @secure
+     */
+    updateItemByCode: (data: Mould) =>
+      http.request<ResultObject['data']>(`/api/main/mould/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 模具表
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/mould/items/add
+     * @secure
+     */
+    addItem: (data: Mould) =>
+      http.request<ResultObject['data']>(`/api/main/mould/items/add`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   module: {
@@ -19349,35 +19453,6 @@ export const api = {
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
         method: 'GET',
         params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 领域扩展属性
-     * @name GetObjectPropertyList
-     * @summary 获取领域扩展属性列表
-     * @request GET:/objectProperty/getObjectPropertyList
-     * @secure
-     */
-    getObjectPropertyList: (query: { objectCode: string }) =>
-      http.request<ResultListObjectProperty['data']>(`/api/main/objectProperty/getObjectPropertyList`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 领域扩展属性
-     * @name Delete
-     * @summary 删除领域扩展属性
-     * @request DELETE:/objectProperty/delete/{id}
-     * @secure
-     */
-    delete: (id: string) =>
-      http.request<ResultObject['data']>(`/api/main/objectProperty/delete/${id}`, {
-        method: 'DELETE',
       }),
   },
   businessUnit: {

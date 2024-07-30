@@ -1,8 +1,10 @@
+import BcmpDynamicForm from './bcmp-dynamic-form/index.vue';
 import BcmpExtend from './bcmp-extend/index.vue';
 import BcmpImportAutoButton from './bcmp-import-auto-button/index.vue';
 import BcmpImportAutoDialog from './bcmp-import-auto-dialog/index.vue';
 import BcmpImportButton from './bcmp-import-button/index.vue';
 import BcmpImportDialog from './bcmp-import-dialog/index.vue';
+import BcmpPageSingle from './bcmp-page-single/index.vue';
 import BcmpSelectBusiness from './bcmp-select-business/index.vue';
 import BcmpSelectList from './bcmp-select-list/index.vue';
 import BcmpSelectList2 from './bcmp-select-list2/index.vue';
@@ -38,6 +40,8 @@ export default {
     app.component('BcmpSelectTable', BcmpSelectTable);
     app.component('BcmpSelectList', BcmpSelectList);
     app.component('BcmpSelectList2', BcmpSelectList2);
+    app.component('BcmpDynamicForm', BcmpDynamicForm);
+    app.component('BcmpPageSingle', BcmpPageSingle);
 
     app.component('BcmpImportButton', BcmpImportButton);
     app.component('BcmpImportDialog', BcmpImportDialog);

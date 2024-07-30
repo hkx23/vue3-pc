@@ -294,5 +294,9 @@
   {
     "value": "workstationAuth",
     "name": "工站"
+  },
+  {
+    "value": "mould",
+    "name": "模具"
   }
 ]

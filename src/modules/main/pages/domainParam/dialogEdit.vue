@@ -2463,7 +2463,7 @@ const defaultButtonSourceData = [
   {
     seq: 1,
     buttonCode: 'add',
-    buttonName: '添加',
+    buttonName: '新增',
     isEnabled: true,
     isCustomButton: false,
     buttonPosition: 'tableHeader',

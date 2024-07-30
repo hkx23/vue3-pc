@@ -57,6 +57,18 @@ export default {
       }
     });
   },
+  toLowerCamelCase(str) {
+    // 检查字符串是否以字母开头且紧接着是下划线
+    if (/^[a-zA-Z]_/.test(str)) {
+      // 移除第一个字符和下划线
+      str = str.substring(2);
+    }
+    return str
+      .split('_')
+      .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
+      .join('');
+  },
+
   // 显示LOADING页面,默认至少显示0.5秒
   loadingPluginFullScreen(isLoading, loadingWaiting = 50) {
     // LoadingPlugin(isLoading);

@@ -1,0 +1,38 @@
+{
+  "title": "模具：",
+  "placeholder": "请选择模具",
+  "url": "/api/main/mould/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "模具编码",
+      "key": "mouldCode",
+      "align": "left"
+    },
+    {
+      "title": "模具名称",
+      "key": "mouldName",
+      "align": "left"
+    },
+    {
+      "title": "模具描述",
+      "key": "mouldDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "mouldName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "mouldCode",
+    "codeField": "mouldName",
+    "descField": "mouldDesc",
+    "categoryField": "mouldType"
+  },
+  "name": "模具",
+  "componentType": "list"
+}
