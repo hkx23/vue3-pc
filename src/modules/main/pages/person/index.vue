@@ -59,7 +59,7 @@
     draggable
     destroy-on-close
     :close-on-overlay-click="false"
-    width="40%"
+    width="60%"
     @confirm="onEditConfirm"
   >
     <bcmp-extend ref="extend" :object-id="formData.id" object-code="person" default-value="customPanel">
@@ -92,6 +92,81 @@
         </t-tab-panel>
       </template>
     </bcmp-extend>
+    <t-tabs :default-value="1">
+      <t-tab-panel :value="1" label="许可证">
+        <t-space direction="vertical" size="small" align="center">
+          <t-table
+            ref="licenseTableRef"
+            row-key="key"
+            class="editable_table"
+            :data="licenseData"
+            :columns="licenseCols"
+            :show-header="false"
+            :editable-row-keys="editableLicense"
+            @row-edit="onLicenseRowEdit"
+          >
+            <template #attach="{ row }">
+              <t-space v-if="row.files.length === 0">
+                <t-upload
+                  v-model="row.files"
+                  theme="custom"
+                  :before-upload="beforeUpload"
+                  :request-method="requestMethod"
+                >
+                  <t-button shape="square" variant="text">
+                    <template #icon>
+                      <upload-icon />
+                    </template>
+                  </t-button>
+                </t-upload>
+              </t-space>
+              <t-space v-else>
+                <t-button shape="square" variant="text" :href="row.files[0].url">
+                  <template #icon>
+                    <attach-icon />
+                  </template>
+                </t-button>
+              </t-space>
+            </template>
+            <template #op="{ row }">
+              <t-space v-if="editableLicense.includes(row.key)">
+                <t-link theme="primary" @click="onLicenseSave(row.key)">保存</t-link>
+              </t-space>
+              <t-space v-else>
+                <t-link theme="primary" @click="onLicenseEdit(row.key)">编辑</t-link>
+                <t-link theme="primary" @click="onLicenseDel(row.key)">删除</t-link>
+              </t-space>
+            </template>
+          </t-table>
+          <t-button variant="outline" @click="addLicense">添加许可证</t-button>
+        </t-space>
+      </t-tab-panel>
+      <t-tab-panel :value="2" label="可操作设备">
+        <t-space direction="vertical" size="small" align="center">
+          <t-table
+            ref="deviceTableRef"
+            row-key="key"
+            class="editable_table"
+            :data="deviceRelationData"
+            :columns="deviceCols"
+            :show-header="false"
+            :editable-row-keys="editableDevice"
+            @row-edit="onDeviceRelationRowEdit"
+          >
+            <template #op="{ row }">
+              <t-space v-if="editableDevice.includes(row.key)">
+                <t-link theme="primary" @click="onDeviceRelationSave(row.key)">保存</t-link>
+              </t-space>
+              <t-space v-else>
+                <t-link theme="primary" @click="onDeviceRelationEdit(row.key)">编辑</t-link>
+                <t-link theme="primary" @click="onDeviceRelationDel(row.key)">删除</t-link>
+              </t-space>
+            </template>
+          </t-table>
+          <t-button variant="outline" @click="addDeviceRelation">关联设备</t-button>
+        </t-space>
+      </t-tab-panel>
+    </t-tabs>
   </t-dialog>
   <t-dialog
     v-model:visible="onShowImportVisible"
@@ -116,8 +191,19 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { isEmpty } from 'lodash';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import dayjs from 'dayjs';
+import { find, isEmpty } from 'lodash';
+import { AttachIcon, UploadIcon } from 'tdesign-icons-vue-next';
+import {
+  DatePicker,
+  Input,
+  MessagePlugin,
+  PrimaryTableCol,
+  RequestMethodResponse,
+  Select,
+  TableRowData,
+  UploadFile,
+} from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -190,7 +276,7 @@ const columnsParam = computed(() => {
 
 // 下拉初始数据
 const stateOptions = [
-  { label: '全部', value: -1 },
+  { label: '全部', value: null },
   { label: '启用', value: 1 },
   { label: '禁用', value: 0 },
 ];
@@ -207,7 +293,7 @@ const opts = computed(() => {
       label: '状态',
       comp: 't-select',
       placeholder: '请选择状态',
-      defaultVal: -1,
+      defaultVal: null,
       bind: {
         options: stateOptions,
       },
@@ -248,6 +334,22 @@ const onEditConfirm = async () => {
         propertyValue: rlt.data[key],
       });
     }
+    const certificates = [];
+    licenseData.value.forEach((val) => {
+      let attach = null;
+      if (val.attach) {
+        attach = val.attach;
+      } else if (val.files.length > 0) {
+        attach = `Certificate/${val.files[0].name}`;
+      }
+      certificates.push({
+        certificateParam: val.certificateParam,
+        certificateCode: val.certificateCode,
+        certificateLevel: val.certificateLevel,
+        certificateValidity: val.certificateValidity,
+        attach,
+      });
+    });
     await api.person.edit({
       id: formData.id,
       personCode: formData.personcode,
@@ -257,6 +359,8 @@ const onEditConfirm = async () => {
       email: formData.email,
       state: formData.state ? 1 : 0,
       properties,
+      certificates,
+      devices: deviceRelationData.value,
     });
     MessagePlugin.success('编辑成功');
 
@@ -290,7 +394,7 @@ const onRefresh = () => {
 // 重置按钮
 const onReset = () => {
   personCode.value = '';
-  personState.value = -1;
+  personState.value = null;
   adminOrgId.value = '';
   fetchTable();
 };
@@ -335,6 +439,8 @@ const formInit = () => {
   formData.personcode = '';
   formData.personname = '';
   formData.state = false;
+  licenseData.value = [];
+  deviceRelationData.value = [];
 };
 // #endregion
 
@@ -352,30 +458,6 @@ const fetchTree = async () => {
 };
 
 // #endregion
-
-// // #region 表格删除
-// const deleteIdx = ref(-1);
-
-// const onDeleteConfirm = async (e: any) => {
-//   dataLoading.value = true;
-//   try {
-//     const rowModel = dataTable.value[deleteIdx.value];
-//     const data = await api.person.delete({
-//       id: rowModel.id,
-//       state: rowModel.state === 0 ? 1 : 0,
-//     });
-
-//     onShowDeleteConfirmVisible.value = false;
-//     fetchTable();
-//   } catch (e) {
-//     // console.log(e);
-//   } finally {
-//     dataLoading.value = false;
-//   }
-// };
-// const onDeleteCancel = () => {
-//   deleteIdx.value = -1;
-// };
 
 // #region Switch 状态获取
 const onSwitchChange = async (row: any, value: any) => {
@@ -404,7 +486,33 @@ const handleClickDetail = (value: any) => {
   formData.personcode = value.row.personCode;
   formData.personname = value.row.personName;
   formData.state = value.row.isState;
+  getPersonDetail(value.row.id);
   onShowEditVisible.value = true;
+};
+
+const getPersonDetail = (id: any) => {
+  licenseData.value = [];
+  deviceRelationData.value = [];
+  api.person.getById(id).then((data) => {
+    data.certificates.forEach((val: any, index) => {
+      val.key = index;
+      val.certificateValidity = dayjs(val.certificateValidity).format('YYYY-MM-DD');
+      if (val.attachUrl) {
+        val.files = [
+          {
+            url: val.attachUrl,
+          },
+        ];
+      } else {
+        val.files = [];
+      }
+      licenseData.value.push(val);
+    });
+    data.devices.forEach((val: any, index) => {
+      val.key = index;
+      deviceRelationData.value.push(val);
+    });
+  });
 };
 
 const personPropertyList = ref([]);
@@ -418,7 +526,260 @@ const getPersonPropertyCol = () => {
     });
 };
 
+// 获取资格证 下拉框 数组
+const certificates = ref([]);
+const getCertificates = () => {
+  api.param.getListByGroupCode({ parmGroupCode: 'PERSON_CERTIFICATE' }).then((data) => {
+    certificates.value = data;
+  });
+};
+// 获取设备类型 下拉框 数组
+const assetTypes = ref([]);
+const getAssetTypes = () => {
+  assetTypes.value = [];
+  api.assetType.search({}).then((data) => {
+    data.list.forEach((val) => {
+      assetTypes.value.push({
+        label: val.typeName,
+        value: val.id,
+      });
+    });
+  });
+};
+
+const licenseTableRef = ref();
+const editableLicense = ref([]);
+const licenseCols = computed(() => {
+  return [
+    {
+      title: '许可证名称',
+      colKey: 'certificateParam',
+      cell: (_h: any, { row }) => certificates.value.find((t) => t.value === row.certificateParam)?.label,
+      edit: {
+        component: Select,
+        props: {
+          placeholder: '许可证名称',
+          options: certificates.value,
+        },
+        rules: [{ required: true, message: '不能为空' }],
+        showEditIcon: false,
+      },
+    },
+    {
+      title: '许可证编号',
+      colKey: 'certificateCode',
+      edit: {
+        component: Input,
+        props: {
+          placeholder: '许可证编号',
+        },
+        rules: [{ required: true, message: '不能为空' }],
+        showEditIcon: false,
+      },
+    },
+    {
+      title: '许可证级别',
+      colKey: 'certificateLevel',
+      edit: {
+        component: Input,
+        props: {
+          placeholder: '许可证级别',
+        },
+        rules: [{ required: true, message: '不能为空' }],
+        showEditIcon: false,
+      },
+    },
+    {
+      title: '许可证有效期',
+      colKey: 'certificateValidity',
+      edit: {
+        component: DatePicker,
+        props: {
+          allowInput: true,
+          placeholder: '许可证有效期',
+        },
+        rules: [{ required: true, message: '不能为空' }],
+        showEditIcon: false,
+      },
+    },
+    { title: '附件', colKey: 'attach', width: 50 },
+    { title: '操作', colKey: 'op', width: 100 },
+  ];
+});
+const licenseData = ref([]);
+const addLicense = () => {
+  const row = {
+    key: licenseData.value.length,
+    certificateParam: '',
+    certificateCode: '',
+    certificateLevel: '',
+    certificateValidity: '',
+    files: [],
+  };
+  licenseData.value.push(row);
+  editableLicense.value.push(row.key);
+};
+const editLicenseMap = reactive({});
+const onLicenseRowEdit = (params: any) => {
+  const { row, col, value } = params;
+  const oldRowData = editLicenseMap[row.key]?.editedRow || row;
+  const editedRow = { ...oldRowData, [col.colKey]: value };
+  editLicenseMap[row.key] = {
+    ...params,
+    editedRow,
+  };
+};
+const onLicenseSave = (key: any) => {
+  // 触发内部校验，而后也可在 onRowValidate 中接收异步校验结果
+  licenseTableRef.value.validateRowData(key).then((params: any) => {
+    if (params.result.length) {
+      const r = params.result[0];
+      MessagePlugin.error(`${r.col.title} ${r.errorList[0].message}`);
+      return;
+    }
+    // 如果是 table 的父组件主动触发校验
+    if (params.trigger === 'parent' && !params.result.length) {
+      const current = editLicenseMap[key];
+      if (current) {
+        // 获取附件
+        const row = find(licenseData.value, ['key', key]);
+        if (row) {
+          current.editedRow.files = row.files;
+        }
+        licenseData.value.splice(current.rowIndex, 1, current.editedRow);
+      }
+      const index = editableLicense.value.findIndex((t: any) => t === key);
+      editableLicense.value.splice(index, 1);
+    }
+  });
+};
+const onLicenseEdit = (key: any) => {
+  if (!editableLicense.value.includes(key)) {
+    editableLicense.value.push(key);
+  }
+};
+const onLicenseDel = (key: any) => {
+  const index = licenseData.value.findIndex((t: any) => t.key === key);
+  if (index > -1) {
+    licenseData.value.splice(index, 1);
+  }
+};
+// 上传前校验
+const beforeUpload = (file: UploadFile) => {
+  if (file.size / 1024 / 1024 > 20) {
+    MessagePlugin.error('只能上传小于20M的文件');
+    return false;
+  }
+  return true;
+};
+// 上传文件处理
+type RequestMethod = (files: UploadFile | UploadFile[]) => Promise<RequestMethodResponse>;
+const requestMethod: RequestMethod = async (file: UploadFile) => {
+  try {
+    const res = await api.file.uploadFile(
+      {
+        path: 'Certificate',
+      },
+      {
+        file: file.raw,
+      },
+    );
+    return { status: 'success', response: { url: res } };
+  } catch (error) {
+    MessagePlugin.error(error.message);
+    // 在这里可以根据错误类型返回失败状态
+    return { status: 'fail', response: {} };
+  }
+};
+const deviceTableRef = ref();
+const editableDevice = ref([]);
+const deviceCols = computed(() => {
+  return [
+    {
+      title: '许可证名称',
+      colKey: 'certificateParam',
+      cell: (_h: any, { row }) => certificates.value.find((t) => t.value === row.certificateParam)?.label,
+      edit: {
+        component: Select,
+        props: {
+          placeholder: '许可证名称',
+          options: certificates.value,
+        },
+        rules: [{ required: true, message: '不能为空' }],
+        showEditIcon: false,
+      },
+    },
+    {
+      title: '设备类型',
+      colKey: 'deviceTypeId',
+      cell: (_h: any, { row }) => assetTypes.value.find((t) => t.value === row.deviceTypeId)?.label,
+      edit: {
+        component: Select,
+        props: {
+          placeholder: '设备类型',
+          options: assetTypes.value,
+        },
+        rules: [{ required: true, message: '不能为空' }],
+        showEditIcon: false,
+      },
+    },
+    { title: '操作', colKey: 'op', width: 100 },
+  ];
+});
+const deviceRelationData = ref([]);
+const addDeviceRelation = () => {
+  const row = {
+    key: deviceRelationData.value.length,
+    certificateParam: '',
+    deviceTypeId: '',
+  };
+  deviceRelationData.value.push(row);
+  editableDevice.value.push(row.key);
+};
+const editDeviceRelationMap = reactive({});
+const onDeviceRelationRowEdit = (params: any) => {
+  const { row, col, value } = params;
+  const oldRowData = editDeviceRelationMap[row.key]?.editedRow || row;
+  const editedRow = { ...oldRowData, [col.colKey]: value };
+  editDeviceRelationMap[row.key] = {
+    ...params,
+    editedRow,
+  };
+};
+const onDeviceRelationSave = (key: any) => {
+  // 触发内部校验，而后也可在 onRowValidate 中接收异步校验结果
+  deviceTableRef.value.validateRowData(key).then((params: any) => {
+    if (params.result.length) {
+      const r = params.result[0];
+      MessagePlugin.error(`${r.col.title} ${r.errorList[0].message}`);
+      return;
+    }
+    // 如果是 table 的父组件主动触发校验
+    if (params.trigger === 'parent' && !params.result.length) {
+      const current = editDeviceRelationMap[key];
+      if (current) {
+        deviceRelationData.value.splice(current.rowIndex, 1, current.editedRow);
+      }
+      const index = editableDevice.value.findIndex((t: any) => t === key);
+      editableDevice.value.splice(index, 1);
+    }
+  });
+};
+const onDeviceRelationEdit = (key: any) => {
+  if (!editableDevice.value.includes(key)) {
+    editableDevice.value.push(key);
+  }
+};
+const onDeviceRelationDel = (key: any) => {
+  const index = deviceRelationData.value.findIndex((t: any) => t.key === key);
+  if (index > -1) {
+    deviceRelationData.value.splice(index, 1);
+  }
+};
+
 onMounted(() => {
+  getCertificates();
+  getAssetTypes();
   getPersonPropertyCol();
   fetchTable();
   fetchTree();
@@ -468,5 +829,11 @@ onMounted(() => {
 
 .form-container-row {
   margin-top: 20px;
+}
+
+.editable_table {
+  :deep(.t-date-picker) {
+    width: 120px;
+  }
 }
 </style>
