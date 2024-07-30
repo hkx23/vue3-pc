@@ -52,7 +52,11 @@
         :page-setting="mitemSetting"
         :ghost="true"
         :relate-condition="relateCondition"
-      ></bcmp-page-single>
+      >
+        <template #headerButton>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="m_mould_in_mitem"></bcmp-import-auto-button>
+        </template>
+      </bcmp-page-single>
     </cmp-card>
   </cmp-container>
 

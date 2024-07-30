@@ -29,6 +29,7 @@
             >
               {{ item.buttonName }}
             </t-button>
+            <slot name="headerButton"></slot>
           </t-space>
         </template>
 
