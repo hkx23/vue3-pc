@@ -61,21 +61,43 @@
   </cmp-container>
 
   <!-- 弹出层 -->
-  <t-dialog v-model:visible="editFormVisible" header="编辑" :on-confirm="onEditFormSubmit" :width="calculateFormWidth">
-    <bcmp-dynamic-form
-      ref="editFormRef"
-      :form-setting="mainEditFormJson"
-      :form-data="currentEditFormData"
-      action-type="edit"
-    />
-  </t-dialog>
-  <t-dialog v-model:visible="addFormVisible" header="新增" :on-confirm="onAddFormSubmit" :width="calculateFormWidth">
-    <bcmp-dynamic-form
-      ref="addFormRef"
-      :form-setting="mainAddFormJson"
-      :form-data="currentEditFormData"
-      action-type="edit"
-    />
+  <!-- <t-dialog v-model:visible="formVisible" header="编辑" :on-confirm="onEditFormSubmit" :width="calculateFormWidth">
+    <t-tabs :default-value="1">
+      <t-tab-panel :value="1" label="模具信息">
+        <bcmp-dynamic-form
+          ref="editFormRef"
+          :form-setting="mainEditFormJson"
+          :form-data="currentEditFormData"
+          action-type="edit"
+        />
+      </t-tab-panel>
+      <t-tab-panel :value="2" label="技术文件">
+        <p style="margin: 20px">技术文件</p>
+      </t-tab-panel>
+      <t-tab-panel :value="3" label="扩展属性">
+        <p style="margin: 20px">扩展属性</p>
+      </t-tab-panel>
+    </t-tabs>
+  </t-dialog> -->
+  <t-dialog v-model:visible="formVisible" :header="formTitle" :on-confirm="onFormSubmit" :width="calculateFormWidth">
+    <t-tabs :default-value="1">
+      <t-tab-panel :value="1" label="模具信息" :destroy-on-hide="false">
+        <bcmp-dynamic-form ref="formRef" :form-setting="formSetting" :form-data="currentFormData" action-type="add" />
+      </t-tab-panel>
+      <t-tab-panel :value="2" label="技术文件" :destroy-on-hide="false">
+        <bcmp-upload-content
+          ref="uploadContentRef"
+          :file-list="fileList"
+          :upload-path="uploadPath"
+          :is-hand-delete="false"
+          @delete-success="addDeleteSuccess"
+          @batch-delete-success="addBatchDeleteSuccess"
+        ></bcmp-upload-content>
+      </t-tab-panel>
+      <t-tab-panel :value="3" label="扩展属性" :destroy-on-hide="false">
+        <bcmp-extend ref="extendForm" :object-id="currentEditId" object-code="mould"> </bcmp-extend>
+      </t-tab-panel>
+    </t-tabs>
   </t-dialog>
 </template>
 <script lang="ts">
@@ -88,6 +110,7 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/main';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 import common from '@/utils/common';
@@ -98,11 +121,13 @@ import mainEditFormJson from './setting/mainEditForm.json';
 import mainSettingJson from './setting/mainSetting.json';
 import mitemSettingJson from './setting/mitemSetting.json';
 
+const uploadPath = ref('main/mould');
 const { t } = useLang();
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
-
+const uploadContentRef = ref();
+const formSetting: any = ref({});
 const mainSetting: any = {
   ...mainSettingJson,
 };
@@ -254,10 +279,9 @@ const determineFixed = (isLeftFixed, isRightFixed) => {
   return '';
 };
 
-const editFormVisible = ref(false);
-const addFormVisible = ref(false);
-const currentEditFormData = ref({});
-const currentAddFormData = ref({});
+const formVisible = ref(false);
+const currentFormData = ref({});
+const formAction = ref('add');
 
 // 计算窗口宽度
 const calculateFormWidth = computed(() => {
@@ -275,15 +299,32 @@ const calculateFormWidth = computed(() => {
   return '90%';
 });
 // 点击编辑按钮逻辑
-const onEditRow = (row: any) => {
-  currentEditFormData.value = row;
-  editFormVisible.value = true;
+const onEditRow = async (row: any) => {
+  formAction.value = 'edit';
+  formSetting.value = {
+    ...mainEditFormJson,
+  };
+  uploadPath.value = `main/mould/${row.id}`;
+  // 加载附件列表
+  currentEditId.value = row.id;
+  fileList.value = (await api.mouldFile.getFileListByItemId(row.id)) as any;
+  currentFormData.value = row;
+  formVisible.value = true;
 };
-
+const currentEditId = ref('');
 // 点击添加按钮逻辑
 const onAddClick = () => {
-  currentAddFormData.value = null;
-  addFormVisible.value = true;
+  formAction.value = 'add';
+  formSetting.value = {
+    ...mainAddFormJson,
+  };
+  fileList.value = [];
+  currentEditId.value = common.generateBigIntId().toString();
+  uploadPath.value = `main/mould/${currentEditId.value}`;
+  currentFormData.value = {
+    id: currentEditId.value,
+  };
+  formVisible.value = true;
 };
 
 // 单个数据实现删除逻辑
@@ -293,21 +334,51 @@ const onDeleteRow = async (row: any) => {
   fetchTable();
 };
 
-const editFormRef = ref(null);
-const addFormRef = ref(null);
+const formRef = ref(null);
 
+const formTitle = computed(() => {
+  return formAction.value === 'edit' ? '编辑' : '新增';
+});
+const extendForm = ref(null);
 // 编辑表单提交
-const onEditFormSubmit = async () => {
+const onFormSubmit = async () => {
   // 第一步:做校验
-  editFormRef.value.handleSubmit().then(async (result) => {
+  formRef.value.handleSubmit().then(async (result) => {
     if (result !== true) {
       MessagePlugin.warning(Object.values(result)[0][0].message);
     } else {
+      const rlt = await extendForm.value.getComponentData();
+      if (!rlt.success) {
+        MessagePlugin.error('扩展属性校验不通过');
+        return;
+      }
+      const properties = [];
+      for (const key in rlt.data) {
+        properties.push({
+          objectPropertyId: key,
+          propertyValue: rlt.data[key],
+        });
+      }
+      const currentFileList = uploadContentRef.value.getFileList();
+      const postData = {
+        ...formRef.value.getFormData(),
+        properties,
+        fileList: currentFileList,
+        deleteFileList: deleteFileList.value,
+      };
+
       try {
+        if (formAction.value === 'edit') {
+          // 编辑
+          await api.mould.updateItemByCode(postData);
+        } else {
+          // 新增
+          await api.mould.addItem(postData);
+        }
         // 第二步：提交数据
-        await api.mould.updateItemByCode(editFormRef.value.getFormData());
+        // await api.mould.updateItemByCode(formRef.value.getFormData());
         MessagePlugin.success('提交成功');
-        editFormVisible.value = false;
+        formVisible.value = false;
         fetchTable();
       } catch (e) {
         console.log(e);
@@ -317,25 +388,42 @@ const onEditFormSubmit = async () => {
 };
 
 // 添加表单提交
-const onAddFormSubmit = async () => {
-  // 第一步:做校验
-  addFormRef.value.handleSubmit().then(async (result) => {
-    if (result !== true) {
-      MessagePlugin.warning(Object.values(result)[0][0].message);
-    } else {
-      try {
-        // 第二步：提交数据
-        await api.mould.addItem(addFormRef.value.getFormData());
-        MessagePlugin.success('提交成功');
-        addFormVisible.value = false;
-        fetchTable();
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  });
+// const onAddFormSubmit = async () => {
+//   // 第一步:做校验
+//   addFormRef.value.handleSubmit().then(async (result) => {
+//     if (result !== true) {
+//       MessagePlugin.warning(Object.values(result)[0][0].message);
+//     } else {
+//       try {
+//         // 第二步：提交数据
+//         await api.mould.addItem(addFormRef.value.getFormData());
+//         MessagePlugin.success('提交成功');
+//         formVisible.value = false;
+//         fetchTable();
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+//   });
+// };
+// // 上传文件
+const fileList = ref([]);
+const deleteFileList = ref([]);
+const addDeleteSuccess = (file: any) => {
+  // MessagePlugin.info(
+  //   `删除一个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
+  // );
+  deleteFileList.value.push(file);
+  console.log('deleteSuccess', file);
 };
 
+const addBatchDeleteSuccess = (files: any[]) => {
+  // MessagePlugin.info(
+  //   `删除多个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
+  // );
+  deleteFileList.value.push(...files);
+  console.log('batchDeleteSuccess', files);
+};
 // 渲染函数
 onMounted(() => {
   loadSetting();

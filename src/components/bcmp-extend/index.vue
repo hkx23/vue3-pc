@@ -71,7 +71,7 @@
 <script setup lang="tsx" name="BcmpExtend">
 import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 
@@ -244,6 +244,12 @@ const initFormSetting = async () => {
 onMounted(() => {
   initFormSetting();
 });
+watch(
+  () => props.objectId,
+  () => {
+    initFormSetting();
+  },
+);
 
 defineExpose({ getComponentData, initFormSetting });
 </script>

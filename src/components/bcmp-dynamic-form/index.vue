@@ -130,9 +130,12 @@ const loadFormSetting = async () => {
   } else {
     currentFormAction.value = 'add';
   }
-
   // 加载当前按钮动作对应的表单配置
   currentFullFormSetting.value = props.formSetting;
+  if (props.formSetting.formColumnSetting === undefined) {
+    return;
+  }
+
   currentFormSetting.value = props.formSetting.formColumnSetting.filter((column) => column.isVisible);
 
   // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
@@ -218,12 +221,14 @@ watch(
   () => {
     loadFormSetting();
   },
+  { deep: true },
 );
 watch(
   () => props.formData,
   () => {
     loadFormSetting();
   },
+  { deep: true },
 );
 const formSpan = computed(() => {
   if (currentFormSetting.value.length < 6) {

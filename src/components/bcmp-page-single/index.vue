@@ -54,7 +54,12 @@
     </cmp-card>
   </cmp-container>
   <!-- 弹出层 -->
-  <t-dialog v-model:visible="formVisible" header="编辑" :on-confirm="onFormSubmit" :width="calculateFormWidth">
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="currentFormAction == 'edit' ? '编辑' : '新增'"
+    :on-confirm="onFormSubmit"
+    :width="calculateFormWidth"
+  >
     <t-form
       ref="formRef"
       :loading="loading"
@@ -221,7 +226,7 @@ const conditionEnter = (data: any) => {
 const fetchTable = async () => {
   setLoading(true);
   try {
-    const finalFilterList = [];
+    const finalFilterList: any = [];
     finalFilterList.push(...(props.relateCondition || []));
     finalFilterList.push(...(filterList.value || []));
     // 查询条件
@@ -327,13 +332,13 @@ const determineFixed = (isLeftFixed, isRightFixed) => {
   return '';
 };
 const genOpts = async (searchSetting) => {
-  const optSetting = {};
+  const optSetting: any = {};
   const promises = []; // 用于存储所有generateComponentConfig的Promise
 
   searchSetting.forEach((settingConfig) => {
     // 将每个异步调用放入promises数组中
     promises.push(
-      generateComponentConfig(settingConfig).then((optSettingItem) => {
+      generateComponentConfig(settingConfig).then((optSettingItem: any) => {
         optSetting[settingConfig.field] = optSettingItem;
       }),
     );
@@ -441,7 +446,7 @@ const onRowClick = async (rowValue, buttonSetting) => {
       currentFullFormSetting.value = buttonSetting.formColumnSetting;
       currentFormSetting.value = buttonSetting.formColumnSetting.filter((column) => column.isVisible);
       // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
-      currentFormSetting.value.forEach(async (column) => {
+      currentFormSetting.value.forEach(async (column: any) => {
         let optionsData = [];
         if (
           (column.component === 't-select' || column.component === 't-checkbox-group') &&
@@ -498,8 +503,8 @@ const onRowClick = async (rowValue, buttonSetting) => {
       formRulesObject = {};
       // 遍历必需的列，为每个列生成验证规则并添加到规则对象中
       currentFormSetting.value
-        .filter((column) => column.isRequired)
-        .forEach((column) => {
+        .filter((column: any) => column.isRequired)
+        .forEach((column: any) => {
           formRulesObject[column.field] = [
             {
               required: true,
@@ -553,7 +558,7 @@ const onHeaderClick = async (buttonSetting) => {
       currentFormSetting.value = buttonSetting.formColumnSetting.filter((column) => column.isVisible);
 
       // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
-      currentFormSetting.value.forEach(async (column) => {
+      currentFormSetting.value.forEach(async (column: any) => {
         let optionsData = [];
         if (sourceComponents.includes(column.component) && column.componentSource.sourceType === 'dataTable') {
           const postSetting = column.componentSource.dataTable;
@@ -607,8 +612,8 @@ const onHeaderClick = async (buttonSetting) => {
       formRulesObject = {};
       // 遍历必需的列，为每个列生成验证规则并添加到规则对象中
       currentFormSetting.value
-        .filter((column) => column.isRequired)
-        .forEach((column) => {
+        .filter((column: any) => column.isRequired)
+        .forEach((column: any) => {
           formRulesObject[column.field] = [
             {
               required: true,
@@ -666,7 +671,7 @@ const onFormSubmit = async () => {
   // 第一步:做校验
 
   // 第二步：提交数据
-  formRef.value.validate().then(async (result) => {
+  formRef.value.validate().then(async (result: any) => {
     if (result !== true) {
       MessagePlugin.warning(Object.values(result)[0][0].message);
     } else {
@@ -681,7 +686,7 @@ const onFormSubmit = async () => {
         const postValues = cloneDeep(currentFormData.value);
         if (currentFormAction.value === 'edit') {
           // postValues 需要去掉一些字段再post到接口
-          const editColumns = currentFormSetting.value.map((column) => column.field);
+          const editColumns = currentFormSetting.value.map((column: any) => column.field);
           // 除了下面的字段,其他字段都不要
           const fieldsToInclude = ['id', ...editColumns];
 
