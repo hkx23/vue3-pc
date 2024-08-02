@@ -430,6 +430,176 @@ export interface RepairItemVo {
   deleteFileList?: RepairItemFile[];
 }
 
+export interface MaintenanceItemInEquipmentSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+  ids?: string[];
+  maintenanceItemId?: string;
+  relateType?: string;
+}
+
+/** 设备与保养项目关系表 */
+export interface MaintenanceItemInEquipmentVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  maintenanceItemId?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  /** 模具类型 */
+  mouldType?: string;
+  mouldId?: string;
+  /** 保养项目代码 */
+  maintenanceItemCode?: string;
+  /** 保养项目名称 */
+  maintenanceItemName?: string;
+  /** 资产类型 */
+  assetTypeCode?: string;
+  assetTypeName?: string;
+  /** 资产品牌 */
+  assetBrandCode?: string;
+  assetBrandName?: string;
+  /** 资产型号 */
+  assetModelCode?: string;
+  assetModelName?: string;
+  /** 模具类型名称 */
+  mouldTypeName?: string;
+  /** 模具 */
+  mouldCode?: string;
+  mouldName?: string;
+  mouldDesc?: string;
+  /** 关联类型 */
+  relateType?: string;
+}
+
+/** 设备保养项目文件表 */
+export type MaintenanceItemFile = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  maintenanceItemId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMaintenanceItemFile {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MaintenanceItemFile[] | null;
+}
+
+/** 模具展示模型 */
+export interface MaintenanceItemVo {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 保养项目代码 */
+  maintenanceItemCode?: string;
+  /** 保养项目名称 */
+  maintenanceItemName?: string;
+  /** 保养项目要求 */
+  maintenanceItemRequire?: string;
+  /** 保养周期 */
+  maintenancePeriod?: string;
+  /**
+   * 是否拍照
+   * @format int32
+   */
+  isPhoto?: number;
+  /** 文件列表 */
+  fileList?: MaintenanceItemFile[];
+  /** 文件列表 */
+  deleteFileList?: MaintenanceItemFile[];
+}
+
 /** 设备点检计划表 */
 export interface InspectPlanVO {
   id?: string;
@@ -1337,6 +1507,126 @@ export const api = {
      */
     addItem: (data: RepairItemVo) =>
       http.request<ResultObject['data']>(`/api/equipment/repairItem/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  maintenanceItemInEquipment: {
+    /**
+     * No description
+     *
+     * @tags 设备与保养项目关系表
+     * @name Search
+     * @request POST:/maintenanceItemInEquipment/items
+     * @secure
+     */
+    search: (data: MaintenanceItemInEquipmentSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceItemInEquipment/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与保养项目关系表
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/maintenanceItemInEquipment/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceItemInEquipment/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与保养项目关系表
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/maintenanceItemInEquipment/items/add
+     * @secure
+     */
+    addItem: (data: MaintenanceItemInEquipmentVO) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceItemInEquipment/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  maintenanceItemFile: {
+    /**
+     * No description
+     *
+     * @tags 设备保养项目文件表
+     * @name GetFileListByItemId
+     * @summary 根据ID获取模具附件信息
+     * @request POST:/maintenanceItemFile/file/{id}
+     * @secure
+     */
+    getFileListByItemId: (id: string) =>
+      http.request<ResultListMaintenanceItemFile['data']>(`/api/equipment/maintenanceItemFile/file/${id}`, {
+        method: 'POST',
+      }),
+  },
+  maintenanceItem: {
+    /**
+     * No description
+     *
+     * @tags 设备保养项目表
+     * @name Search
+     * @request POST:/maintenanceItem/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceItem/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备保养项目表
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/maintenanceItem/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceItem/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备保养项目表
+     * @name UpdateItemByCode
+     * @summary 修改
+     * @request POST:/maintenanceItem/items/modify
+     * @secure
+     */
+    updateItemByCode: (data: MaintenanceItemVo) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceItem/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备保养项目表
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/maintenanceItem/items/add
+     * @secure
+     */
+    addItem: (data: MaintenanceItemVo) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceItem/items/add`, {
         method: 'POST',
         body: data as any,
       }),

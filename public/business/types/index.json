@@ -302,5 +302,9 @@
   {
     "value": "repairItem",
     "name": "维修项目"
+  },
+  {
+    "value": "maintenanceItem",
+    "name": "保养项目"
   }
 ]

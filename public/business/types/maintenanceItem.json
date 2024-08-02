@@ -1,0 +1,37 @@
+{
+  "title": "保养项目：",
+  "placeholder": "请选择保养项目",
+  "url": "/api/equipment/maintenanceItem/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "保养编码",
+      "key": "maintenanceItemCode",
+      "align": "left"
+    },
+    {
+      "title": "保养描述",
+      "key": "maintenanceItemName",
+      "align": "left"
+    },
+    {
+      "title": "保养要求",
+      "key": "maintenanceItemRequire",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "maintenanceItemName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "maintenanceItemCode",
+    "codeField": "maintenanceItemName",
+    "descField": "maintenanceItemRequire"
+  },
+  "name": "保养项目",
+  "componentType": "list"
+}
