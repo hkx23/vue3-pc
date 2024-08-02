@@ -298,5 +298,9 @@
   {
     "value": "mould",
     "name": "模具"
+  },
+  {
+    "value": "repairItem",
+    "name": "维修项目"
   }
 ]

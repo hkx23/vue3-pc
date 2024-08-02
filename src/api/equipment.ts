@@ -192,6 +192,244 @@ export interface SparePartTransferDtlVO {
   uomName?: string;
 }
 
+export interface DatasourceField {
+  tableName?: string;
+  fieldName?: string;
+}
+
+export interface DatasourceSetting {
+  /** @format int32 */
+  seq?: number;
+  datasourceType?: string;
+  datasourceName?: string;
+  aliasName?: string;
+  relatedType?: string;
+  conditionData?: DatasourceSettingCondition[];
+}
+
+export interface DatasourceSettingCondition {
+  /** @format int32 */
+  seq?: number;
+  fieldName?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  relateType?: string;
+  aliasName?: string;
+  relateFieldName?: string;
+  relateValue?: string;
+}
+
+export interface Filter {
+  tableName?: string;
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  value?: string;
+  valuesList?: string[];
+}
+
+export interface RepairItemInEquipmentSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+  ids?: string[];
+  repairItemId?: string;
+  relateType?: string;
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 设备与点检项目关系表 */
+export interface RepairItemInEquipmentVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  repairItemId?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  /** 模具类型 */
+  mouldType?: string;
+  mouldId?: string;
+  /** 点检项目代码 */
+  repairItemCode?: string;
+  /** 点检项目名称 */
+  repairItemName?: string;
+  /** 资产类型 */
+  assetTypeCode?: string;
+  assetTypeName?: string;
+  /** 资产品牌 */
+  assetBrandCode?: string;
+  assetBrandName?: string;
+  /** 资产型号 */
+  assetModelCode?: string;
+  assetModelName?: string;
+  /** 模具类型名称 */
+  mouldTypeName?: string;
+  /** 模具 */
+  mouldCode?: string;
+  mouldName?: string;
+  mouldDesc?: string;
+  /** 关联类型 */
+  relateType?: string;
+}
+
+/** 设备维修项目文件表 */
+export type RepairItemFile = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  repairItemId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListRepairItemFile {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: RepairItemFile[] | null;
+}
+
+export interface CommonSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  dynamicDefaultSortFiled?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+}
+
+/** 模具展示模型 */
+export interface RepairItemVo {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 故障代码 */
+  repairItemCode?: string;
+  /** 故障描述 */
+  repairItemName?: string;
+  /** 维修方法 */
+  repairItemMethod?: string;
+  /** 文件列表 */
+  fileList?: RepairItemFile[];
+  /** 文件列表 */
+  deleteFileList?: RepairItemFile[];
+}
+
 /** 设备点检计划表 */
 export interface InspectPlanVO {
   id?: string;
@@ -252,40 +490,6 @@ export interface ResultBoolean {
   data?: boolean | null;
 }
 
-export interface DatasourceField {
-  tableName?: string;
-  fieldName?: string;
-}
-
-export interface DatasourceSetting {
-  /** @format int32 */
-  seq?: number;
-  datasourceType?: string;
-  datasourceName?: string;
-  aliasName?: string;
-  relatedType?: string;
-  conditionData?: DatasourceSettingCondition[];
-}
-
-export interface DatasourceSettingCondition {
-  /** @format int32 */
-  seq?: number;
-  fieldName?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
-  relateType?: string;
-  aliasName?: string;
-  relateFieldName?: string;
-  relateValue?: string;
-}
-
-export interface Filter {
-  tableName?: string;
-  field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
-  value?: string;
-  valuesList?: string[];
-}
-
 export interface InspectPlanSearch {
   /** @format int32 */
   pageNum?: number;
@@ -310,11 +514,6 @@ export interface InspectPlanSearch {
   assetTypeId?: string;
   equipmentId?: string;
   ids?: string[];
-}
-
-export interface SortParam {
-  sortBy?: string;
-  descending?: boolean;
 }
 
 /** 响应数据 */
@@ -590,6 +789,223 @@ export interface ResultPagingDataInspectItemVO {
   data?: PagingDataInspectItemVO;
 }
 
+export interface BatchDynamicInsertDTO {
+  businessDomain?: string;
+  tableName?: string;
+  columnList?: ImportSettingColumn[];
+  rows?: Record<string, object>[];
+}
+
+/** 导入列配置表 */
+export interface ImportSettingColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  importId?: string;
+  /**
+   * 列排序
+   * @format int32
+   */
+  seq?: number;
+  /** 列来源（数据表/手动添加） */
+  fromTable?: string;
+  /** 导入字段 */
+  columnField?: string;
+  /** 导入字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDatetype?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /**
+   * 是否导入列
+   * @format int32
+   */
+  isImport?: number;
+  /**
+   * 是否模块列
+   * @format int32
+   */
+  isTemplate?: number;
+  /** 默认值 */
+  defaultValue?: string;
+  /** 数据转换配置 */
+  datatransferJson?: string;
+  /** 正则表达式 */
+  regularExpression?: string;
+}
+
+export interface BatchDynamicQueryDTO {
+  dataTable?: DataTable;
+  rows?: Record<string, object>[];
+  eid?: string;
+  oid?: string;
+}
+
+export interface ConditionData {
+  field?: string;
+  operator?: string;
+  valueType?: string;
+  value?: string;
+}
+
+export interface DataTable {
+  mapBusinessDomain?: string;
+  mapTable?: string;
+  conditionData?: ConditionData[];
+  tableQueryField?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListMapStringObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Record<string, object | null>[];
+}
+
+export interface DynamicCheckUniqueDTO {
+  mapTable?: string;
+  businessDomain?: string;
+  uniqueFields?: string[];
+  checkRow?: Record<string, object>;
+}
+
+export interface DomainParamButtonFormColumn {
+  /** @format int32 */
+  seq?: number;
+  id?: string;
+  field?: string;
+  label?: string;
+  component?: string;
+  componentParam?: string;
+  placeholder?: string;
+  defaultValue?: string;
+  fieldType?: string;
+  columnType?: string;
+  verifyExp?: string;
+  componentSource?: DomainParamComponentSource;
+  isVisible?: boolean;
+  isDisabled?: boolean;
+  isMutiple?: boolean;
+  isRequired?: boolean;
+  isKeyField?: boolean;
+}
+
+export interface DomainParamComponentSource {
+  sourceType?: string;
+  customDict?: DomainParamComponentSourceCustomDict;
+  dataTable?: DomainParamComponentSourceDatatable;
+}
+
+export interface DomainParamComponentSourceCustomDict {
+  dicData?: Record<string, object>[];
+}
+
+export interface DomainParamComponentSourceDatatable {
+  mapBusinessDomain?: string;
+  mapTable?: string;
+  conditionData?: DomainParamComponentSourceDatatableFilter[];
+  valueField?: string;
+  showField?: string;
+}
+
+export interface DomainParamComponentSourceDatatableFilter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  value?: string;
+}
+
+export interface InsertOrUpdateModel {
+  columnSetting?: DomainParamButtonFormColumn[];
+  tableName?: string;
+  fieldValues?: Record<string, object>;
+}
+
+export interface DeleteModel {
+  tableName?: string;
+  ids?: string[];
+}
+
+export interface BatchDynamicUpdateDTO {
+  /** 表唯一主键 */
+  primaryKey?: string;
+  /** 领域名称 */
+  businessDomain?: string;
+  /** 表名 */
+  tableName?: string;
+  /** 更新的字段列表 */
+  columnList?: DynamicColumn[];
+  /** 更新的数据信息 */
+  rows?: Record<string, object>[];
+}
+
+/** 动态列字段 */
+export interface DynamicColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 字段名称 */
+  columnField?: string;
+  /** 字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDateType?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /** 默认值 */
+  defaultValue?: string;
+}
+
 export interface AssetLedgerSearch {
   /**
    * 页码
@@ -723,6 +1139,48 @@ export interface ResultPagingDataAssetLedgerVO {
   data?: PagingDataAssetLedgerVO;
 }
 
+/** 通用响应类 */
+export interface ResultListDataTableVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DataTableVO[] | null;
+}
+
+/** 数据表列对象 */
+export interface DataTableColumnVO {
+  /** 列名 */
+  columnName?: string;
+  /** 列描述 */
+  columnDesc?: string;
+  /** 列类型 */
+  columnType?: string;
+  /** 是否为空 */
+  nullable?: string;
+  /** KEY */
+  columnKey?: string;
+  /** 默认值 */
+  columnDefault?: string;
+  default?: boolean;
+}
+
+/** 数据表对象 */
+export type DataTableVO = {
+  /** 表名 */
+  tableName?: string;
+  /** 表模型名称 */
+  tableModelName?: string;
+  /** 表描述 */
+  tableDescription?: string;
+  /** 列设置 */
+  columns?: DataTableColumnVO[];
+} | null;
+
 /**
  * @title scm项目
  * @version v1
@@ -759,6 +1217,126 @@ export const api = {
      */
     getList: (data: SparePartTransferDtlSearch) =>
       http.request<ResultPagingDataSparePartTransferDtlVO['data']>(`/api/equipment/sparePartTransferDtl/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  repairItemInEquipment: {
+    /**
+     * No description
+     *
+     * @tags 设备与维修项目关系表
+     * @name Search
+     * @request POST:/repairItemInEquipment/items
+     * @secure
+     */
+    search: (data: RepairItemInEquipmentSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairItemInEquipment/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与维修项目关系表
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/repairItemInEquipment/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairItemInEquipment/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与维修项目关系表
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/repairItemInEquipment/items/add
+     * @secure
+     */
+    addItem: (data: RepairItemInEquipmentVO) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairItemInEquipment/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  repairItemFile: {
+    /**
+     * No description
+     *
+     * @tags 设备维修项目文件表
+     * @name GetFileListByItemId
+     * @summary 根据ID获取模具附件信息
+     * @request POST:/repairItemFile/file/{id}
+     * @secure
+     */
+    getFileListByItemId: (id: string) =>
+      http.request<ResultListRepairItemFile['data']>(`/api/equipment/repairItemFile/file/${id}`, {
+        method: 'POST',
+      }),
+  },
+  repairItem: {
+    /**
+     * No description
+     *
+     * @tags 设备维修项目表
+     * @name Search
+     * @request POST:/repairItem/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairItem/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修项目表
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/repairItem/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairItem/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修项目表
+     * @name UpdateItemByCode
+     * @summary 修改
+     * @request POST:/repairItem/items/modify
+     * @secure
+     */
+    updateItemByCode: (data: RepairItemVo) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairItem/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修项目表
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/repairItem/items/add
+     * @secure
+     */
+    addItem: (data: RepairItemVo) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairItem/items/add`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1033,6 +1611,201 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/equipment/inspectItem/batchUpdateState`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  importManage: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name BatchImportData
+     * @summary 根据领域进行动态查询
+     * @request POST:/importManage/batchImportData
+     * @secure
+     */
+    batchImportData: (data: BatchDynamicInsertDTO) =>
+      http.request<ResultObject['data']>(`/api/equipment/importManage/batchImportData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name BatchDynamicQuery
+     * @summary 根据领域进行动态查询
+     * @request POST:/importManage/batchDynamicQuery
+     * @secure
+     */
+    batchDynamicQuery: (data: BatchDynamicQueryDTO) =>
+      http.request<ResultListMapStringObject['data']>(`/api/equipment/importManage/batchDynamicQuery`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name CheckUniqueExist
+     * @summary 根据领域进行动态查询
+     * @request POST:/importManage/CheckUniqueExist
+     * @secure
+     */
+    checkUniqueExist: (data: DynamicCheckUniqueDTO) =>
+      http.request<ResultBoolean['data']>(`/api/equipment/importManage/CheckUniqueExist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Tables
+     * @summary 根据领域获取数据表列表
+     * @request GET:/importManage/tables
+     * @secure
+     */
+    tables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/equipment/importManage/tables`, {
+        method: 'GET',
+      }),
+  },
+  dynamicManage: {
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicUpdateDataSql
+     * @summary 动态更新数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicUpdateDataSql
+     * @secure
+     */
+    dynamicUpdateDataSql: (data: InsertOrUpdateModel) =>
+      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/dynamicUpdateDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryDropdownListSql
+     * @summary 通用查询下拉列表-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicQueryDropdownListSql
+     * @secure
+     */
+    dynamicQueryDropdownListSql: (data: DomainParamComponentSourceDatatable) =>
+      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/dynamicQueryDropdownListSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryData
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryData
+     * @secure
+     */
+    dynamicQueryData: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/dynamicQueryData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryDataSql
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryDataSql
+     * @secure
+     */
+    dynamicQueryDataSql: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/dynamicQueryDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicLogicDeleteDataSql
+     * @summary 逻辑删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicLogicDeleteDataSql
+     * @secure
+     */
+    dynamicLogicDeleteDataSql: (data: DeleteModel) =>
+      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/dynamicLogicDeleteDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicInsertDataSql
+     * @summary 动态插入数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicInsertDataSql
+     * @secure
+     */
+    dynamicInsertDataSql: (data: InsertOrUpdateModel) =>
+      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/dynamicInsertDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicDeleteDataSql
+     * @summary 物理删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicDeleteDataSql
+     * @secure
+     */
+    dynamicDeleteDataSql: (data: DeleteModel) =>
+      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/dynamicDeleteDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name BatchUpdateData
+     * @summary 根据领域进行动态表字段更新
+     * @request POST:/dynamicManage/batchUpdateData
+     * @secure
+     */
+    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
+      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/batchUpdateData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTables
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTables
+     * @secure
+     */
+    sqlTables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/equipment/dynamicManage/sqlTables`, {
+        method: 'GET',
       }),
   },
   assetLedger: {

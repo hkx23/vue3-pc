@@ -1,0 +1,37 @@
+{
+  "title": "维修项目：",
+  "placeholder": "请选择维修项目",
+  "url": "/api/equipment/repairItem/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "故障编码",
+      "key": "repairItemCode",
+      "align": "left"
+    },
+    {
+      "title": "故障描述",
+      "key": "repairItemName",
+      "align": "left"
+    },
+    {
+      "title": "维修方法",
+      "key": "repairItemMethod",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "repairItemName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "repairItemCode",
+    "codeField": "repairItemName",
+    "descField": "repairItemMethod"
+  },
+  "name": "维修项目",
+  "componentType": "list"
+}

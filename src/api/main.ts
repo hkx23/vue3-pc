@@ -3137,6 +3137,78 @@ export type PagingDataPersonVO = {
   total?: number;
 } | null;
 
+/** 员工许可证 */
+export interface PersonInCertificateVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  personId?: string;
+  /** 许可证名称（系统字典） */
+  certificateParam?: string;
+  /** 许可证编号 */
+  certificateCode?: string;
+  /** 许可证级别 */
+  certificateLevel?: string;
+  /**
+   * 许可证有效期
+   * @format date-time
+   */
+  certificateValidity?: string;
+  /** 附件 */
+  attach?: string;
+  /** 附件URL */
+  attachUrl?: string;
+}
+
+/** 员工可操作设备关系表 */
+export interface PersonInDevice {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  personId?: string;
+  /** 许可证名称（系统字典） */
+  certificateParam?: string;
+  deviceTypeId?: string;
+}
+
 /** 员工扩展属性 */
 export interface PersonPropertyVO {
   id?: string;
@@ -3199,6 +3271,10 @@ export interface PersonVO {
   isState?: boolean;
   /** 扩展属性 */
   properties?: PersonPropertyVO[];
+  /** 关联许可证 */
+  certificates?: PersonInCertificateVO[];
+  /** 关联设备 */
+  devices?: PersonInDevice[];
 }
 
 /** 通用响应类 */
@@ -3970,6 +4046,10 @@ export interface MouldVo {
   supplierName?: string;
   /** 扩展属性 */
   properties?: MouldPropertyVO[];
+  /** 文件列表 */
+  fileList?: MouldFile[];
+  /** 文件列表 */
+  deleteFileList?: MouldFile[];
 }
 
 /** 通用响应类 */
@@ -5242,12 +5322,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isState?: boolean;
-  isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5462,14 +5542,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
   isRawName?: string;
   isInProcessName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isState?: boolean;
+  isBatchName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -10605,6 +10685,19 @@ export interface ResultListProductPackRuleDtlVO {
   data?: ProductPackRuleDtlVO[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultPersonVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示员工实体 */
+  data?: PersonVO;
+}
+
 /** 权限功能实体 */
 export type ModulePermissionDTO = {
   id?: string;
@@ -10693,10 +10786,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11266,10 +11359,10 @@ export interface IdentityLinkInfo {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
   scopeType?: string;
-  scopeDefinitionId?: string;
+  subScopeId?: string;
   processInstanceId?: string;
+  scopeDefinitionId?: string;
 }
 
 /** 通用响应类 */
@@ -11287,51 +11380,51 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
-  suspended?: boolean;
   /** @format int32 */
   priority?: number;
   name?: string;
   owner?: string;
+  suspended?: boolean;
+  description?: string;
+  tenantId?: string;
+  localizedDescription?: string;
+  formKey?: string;
   assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  description?: string;
-  tenantId?: string;
   category?: string;
-  localizedDescription?: string;
-  formKey?: string;
-  localizedName?: string;
   parentTaskId?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
+  localizedName?: string;
   id?: string;
   state?: string;
   scopeId?: string;
+  processVariables?: Record<string, object>;
+  taskLocalVariables?: Record<string, object>;
   /** @format date-time */
   createTime?: string;
-  processDefinitionId?: string;
-  propagatedStageInstanceId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
-  taskLocalVariables?: Record<string, object>;
-  inProgressStartedBy?: string;
   /** @format date-time */
   inProgressStartTime?: string;
+  inProgressStartedBy?: string;
   /** @format date-time */
   inProgressStartDueDate?: string;
-  processVariables?: Record<string, object>;
+  propagatedStageInstanceId?: string;
+  processDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   caseVariables?: Record<string, object>;
-  claimedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
   suspendedBy?: string;
   /** @format date-time */
   claimTime?: string;
+  claimedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
 } | null;
 
 /** 响应数据 */
@@ -11342,10 +11435,10 @@ export type IdentityLink = {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
   scopeType?: string;
-  scopeDefinitionId?: string;
+  subScopeId?: string;
   processInstanceId?: string;
+  scopeDefinitionId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -14481,6 +14574,20 @@ export const api = {
       http.request<ResultPagingDataPersonVO['data']>(`/api/main/person/getList`, {
         method: 'GET',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 员工表
+     * @name GetById
+     * @summary 获取员工信息
+     * @request GET:/person/getById/{id}
+     * @secure
+     */
+    getById: (id: string) =>
+      http.request<ResultPersonVO['data']>(`/api/main/person/getById/${id}`, {
+        method: 'GET',
       }),
   },
   paramGroup: {

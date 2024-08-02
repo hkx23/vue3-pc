@@ -15,6 +15,7 @@
             v-if="formItem.component === 't-input'"
             v-model="currentFormData[formItem.field]"
             :disabled="formItem.isDisabled"
+            @change="handleChange"
           />
 
           <t-input-number
@@ -22,23 +23,28 @@
             v-model="currentFormData[formItem.field]"
             :disabled="formItem.isDisabled"
             theme="column"
+            @change="handleChange"
           />
           <t-switch
             v-if="formItem.component === 't-switch'"
             v-model="currentFormData[formItem.field]"
             :disabled="formItem.isDisabled"
+            @change="handleChange"
           />
           <bcmp-select-business
             v-if="formItem.component === 'bcmp-select-business'"
             v-model="currentFormData[formItem.field]"
             :type="formItem.componentParam"
+            :disabled="formItem.isDisabled"
             :show-title="false"
+            @change="handleChange"
           ></bcmp-select-business>
           <bcmp-select-param
             v-if="formItem.component === 'bcmp-select-param'"
             v-model="currentFormData[formItem.field]"
             :disabled="formItem.isDisabled"
             :param-group="formItem.componentParam"
+            @change="handleChange"
           ></bcmp-select-param>
           <t-select
             v-if="formItem.component === 't-select'"
@@ -46,6 +52,7 @@
             :disabled="formItem.isDisabled"
             :options="formItem.options"
             :multiple="formItem.isMutiple"
+            @change="handleChange"
           >
           </t-select>
           <t-date-picker
@@ -55,6 +62,7 @@
             clearable
             format="YYYY-MM-DD"
             :disabled="formItem.isDisabled"
+            @change="handleChange"
           ></t-date-picker>
           <t-date-picker
             v-if="formItem.component === 't-datetime-picker'"
@@ -64,6 +72,7 @@
             clearable
             format="YYYY-MM-DD HH:mm:ss"
             :disabled="formItem.isDisabled"
+            @change="handleChange"
           ></t-date-picker>
 
           <t-checkbox-group
@@ -71,6 +80,7 @@
             v-model="currentFormData[formItem.field]"
             :disabled="formItem.isDisabled"
             :options="formItem.options"
+            @change="handleChange"
           >
           </t-checkbox-group>
           <t-radio-group
@@ -78,6 +88,7 @@
             v-model="currentFormData[formItem.field]"
             :disabled="formItem.isDisabled"
             :options="formItem.options"
+            @change="handleChange"
           >
           </t-radio-group>
         </t-form-item>
@@ -120,8 +131,45 @@ const currentFormSetting = ref([] as any);
 const currentFormData = ref({});
 const currentFormRules = ref<FormRules<Data>>({});
 
-const loadFormSetting = async () => {
+const loadFormValue = () => {
   const formValue = cloneDeep(props.formData);
+  // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
+  currentFormSetting.value.forEach(async (column) => {
+    column.field = common.toLowerCamelCase(column.field);
+    // 加上默认值逻辑 column.defaultValue
+    switch (column.component) {
+      case 't-input':
+        formValue[column.field] = formValue[column.field] || column.defaultValue || '';
+        break;
+      case 't-select':
+      case 't-radio-group':
+      case 't-checkbox-group':
+        if (column.isMutiple) {
+          const preValue = formValue[column.field] ? formValue[column.field].split(',') : [];
+          formValue[column.field] = preValue || column.defaultValue?.split(',');
+        } else {
+          formValue[column.field] = formValue[column.field]?.toString() ?? column.defaultValue ?? '';
+        }
+        break;
+      case 't-date-picker':
+        formValue[column.field] = formValue[column.field] ?? column.defaultValue ?? '';
+        break;
+      case 't-switch':
+        if (formValue[column.field] === undefined) {
+          formValue[column.field] = column.defaultValue;
+        }
+        formValue[column.field] = convertToBoolean(formValue[column.field]);
+        break;
+      default:
+        formValue[column.field] = formValue[column.field] || column.defaultValue || '';
+        break;
+    }
+  });
+
+  // 设置表单数据
+  currentFormData.value = formValue;
+};
+const loadFormSetting = async () => {
   const sourceComponents = ['t-select', 't-radio-group', 't-checkbox-group'];
   let formRulesObject: any = {};
   // 开始处理逻辑
@@ -158,20 +206,11 @@ const loadFormSetting = async () => {
         // 处理错误情况
       }
     }
-
+    // 加上默认值逻辑 column.defaultValue
     switch (column.component) {
-      case 't-input':
-        formValue[column.field] = formValue[column.field] || '';
-        break;
       case 't-select':
       case 't-radio-group':
       case 't-checkbox-group':
-        if (column.isMutiple) {
-          formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
-        } else {
-          formValue[column.field] = formValue[column.field]?.toString() ?? '';
-        }
-
         if (column.componentSource) {
           switch (column.componentSource.sourceType) {
             case 'customDict':
@@ -182,18 +221,11 @@ const loadFormSetting = async () => {
           }
         }
         column.options = optionsData;
-
-        break;
-      case 't-date-picker':
-        formValue[column.field] = formValue[column.field] || '';
         break;
       default:
         break;
     }
   });
-
-  // 设置表单数据
-  currentFormData.value = formValue;
 
   // 生成验证规则
   currentFormRules.value = {};
@@ -212,9 +244,23 @@ const loadFormSetting = async () => {
     });
   currentFormRules.value = formRulesObject;
 };
+
+const convertToBoolean = (value) => {
+  // 将值转换为小写字符串，以便进行比较
+  const lowerCaseValue = value.toString().toLowerCase();
+
+  // 检查值是否为 "1"、"true" 或数字 1
+  if (lowerCaseValue === '1' || lowerCaseValue === 'true' || value === 1) {
+    return true;
+  }
+
+  // 如果不是上述情况，则返回 false
+  return false;
+};
 // 初始化远程数据
 onMounted(() => {
   loadFormSetting();
+  loadFormValue();
 });
 watch(
   () => props.formSetting,
@@ -226,10 +272,15 @@ watch(
 watch(
   () => props.formData,
   () => {
-    loadFormSetting();
+    loadFormValue();
   },
   { deep: true },
 );
+const emits = defineEmits(['change']);
+// 查询条件change事件
+const handleChange = () => {
+  emits('change', currentFormData.value);
+};
 const formSpan = computed(() => {
   if (currentFormSetting.value.length < 6) {
     return 12;
@@ -248,8 +299,12 @@ const getFormData = () => {
   // 提交表单
   return currentFormData.value;
 };
+const setFormData = (formData) => {
+  // 提交表单
+  currentFormData.value = cloneDeep(formData);
+};
 // 暴露方法出去
-defineExpose({ handleSubmit, getFormData });
+defineExpose({ handleSubmit, getFormData, setFormData });
 </script>
 <style lang="less" scoped>
 :deep(.t-form__controls-content) {

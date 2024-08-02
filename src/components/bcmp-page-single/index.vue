@@ -93,6 +93,7 @@
               v-if="formItem.component === 'bcmp-select-business'"
               v-model="currentFormData[formItem.field]"
               :type="formItem.componentParam"
+              :disabled="formItem.isDisabled"
               :show-title="false"
             ></bcmp-select-business>
             <bcmp-select-param
@@ -573,17 +574,23 @@ const onHeaderClick = async (buttonSetting) => {
             // 可能需要处理错误情况，比如设置默认值或抛出错误
           }
         }
+        // 如果props.relateCondition 包含该字段,则使用传入的值作为默认值
+        if (props.relateCondition?.find((item: any) => item.field === column.field)) {
+          column.defaultValue = props.relateCondition.find((item: any) => item.field === column.field)?.value;
+        }
+
         switch (column.component) {
           case 't-input':
-            formValue[column.field] = formValue[column.field] || '';
+            formValue[column.field] = formValue[column.field] || column.defaultValue || '';
             break;
           case 't-select':
           case 't-radio-group':
           case 't-checkbox-group':
             if (column.isMutiple) {
-              formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
+              const preValue = formValue[column.field] ? formValue[column.field].split(',') : [];
+              formValue[column.field] = preValue || column.defaultValue?.split(',');
             } else {
-              formValue[column.field] = formValue[column.field]?.toString() ?? '';
+              formValue[column.field] = formValue[column.field]?.toString() ?? column.defaultValue ?? '';
             }
 
             if (column.componentSource) {
@@ -591,7 +598,6 @@ const onHeaderClick = async (buttonSetting) => {
                 case 'customDict':
                   optionsData = column.componentSource.customDict.dicData;
                   break;
-
                 default:
                   break;
               }
@@ -600,9 +606,16 @@ const onHeaderClick = async (buttonSetting) => {
 
             break;
           case 't-date-picker':
-            formValue[column.field] = formValue[column.field] || '';
+            formValue[column.field] = formValue[column.field] ?? column.defaultValue ?? '';
+            break;
+          case 't-switch':
+            if (formValue[column.field] === undefined) {
+              formValue[column.field] = column.defaultValue;
+            }
+            formValue[column.field] = convertToBoolean(formValue[column.field]);
             break;
           default:
+            formValue[column.field] = formValue[column.field] || column.defaultValue || '';
             break;
         }
       });
@@ -714,6 +727,18 @@ const onFormSubmit = async () => {
   });
 };
 
+const convertToBoolean = (value) => {
+  // 将值转换为小写字符串，以便进行比较
+  const lowerCaseValue = value.toString().toLowerCase();
+
+  // 检查值是否为 "1"、"true" 或数字 1
+  if (lowerCaseValue === '1' || lowerCaseValue === 'true' || value === 1) {
+    return true;
+  }
+
+  // 如果不是上述情况，则返回 false
+  return false;
+};
 // 渲染函数
 onMounted(() => {
   loadSetting();
