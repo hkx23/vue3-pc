@@ -92,7 +92,7 @@
         "columnDefault": null,
         "columnDesc": "故障项目表ID",
         "columnKey": "",
-        "columnName": "e_repair_item_id",
+        "columnName": "e_maintenance_item_id",
         "columnType": "bigint",
         "columnWidth": 100,
         "dataDefault": false,
@@ -110,7 +110,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 0,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -138,7 +138,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 1,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -166,7 +166,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 2,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -194,7 +194,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 3,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -222,7 +222,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 4,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -250,7 +250,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 5,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -278,7 +278,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 6,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -306,7 +306,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 7,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -334,7 +334,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 8,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -362,7 +362,7 @@
         "nullable": "YES",
         "rightFixed": false,
         "seq": 9,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -390,7 +390,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 10,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -418,7 +418,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 11,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -446,7 +446,7 @@
         "nullable": "NO",
         "rightFixed": false,
         "seq": 12,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       },
       {
@@ -474,14 +474,14 @@
         "nullable": "YES",
         "rightFixed": false,
         "seq": 13,
-        "tableName": "e_repair_item_in_equipment",
+        "tableName": "e_maintenance_item_in_equipment",
         "visible": false
       }
     ],
     "pageSize": 10,
     "sortField": "time_create",
     "sortType": "desc",
-    "tableTitle": "设备与维修项目关系表",
+    "tableTitle": "设备与保养项目关系表",
     "usePage": true
   }
 }

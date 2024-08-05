@@ -124,6 +124,7 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/equipment';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 import common from '@/utils/common';

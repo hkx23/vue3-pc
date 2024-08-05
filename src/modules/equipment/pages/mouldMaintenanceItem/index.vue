@@ -22,6 +22,10 @@
             @refresh="fetchTable"
           >
             <!-- 头部按钮区 -->
+            <template #isPhoto="{ row }">
+              {{ row.isPhoto ? t('maintenanceItem.是') : t('maintenanceItem.否') }}
+            </template>
+
             <template #state="{ row }">
               <t-popconfirm
                 :content="
@@ -99,7 +103,7 @@
   </t-dialog>
   <t-dialog v-model:visible="formVisible" :header="formTitle" :on-confirm="onFormSubmit" :width="calculateFormWidth">
     <t-tabs :default-value="1">
-      <t-tab-panel :value="1" label="维修项目信息" :destroy-on-hide="false">
+      <t-tab-panel :value="1" label="保养项目信息" :destroy-on-hide="false">
         <bcmp-dynamic-form ref="formRef" :form-setting="formSetting" :form-data="currentFormData" action-type="add" />
       </t-tab-panel>
       <t-tab-panel :value="2" label="作业指导书" :destroy-on-hide="false">
@@ -121,11 +125,13 @@ export default {
 };
 </script>
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/equipment';
+import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 import common from '@/utils/common';
@@ -184,22 +190,26 @@ const onGroupSelectChange = async ({ row }) => {
 const opts = computed(() => {
   return {
     keyWord: {
-      label: t('maintenanceItem.故障'),
+      label: t('maintenanceItem.保养项目'),
       comp: 't-input',
       defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('maintenanceItem.故障编码或故障描述')}`]),
+      placeholder: t('common.placeholder.input', [`${t('maintenanceItem.项目编码或项目名称')}`]),
     },
-    state: {
-      label: t('maintenanceItem.只显示启用'),
-      comp: 't-checkbox',
-      defaultVal: '',
+    timeCreate: {
+      label: t('maintenanceItem.创建时间'),
+      comp: 't-date-range-picker',
+      event: 'daterange',
+      defaultVal: [dayjs(), dayjs()],
+      bind: {
+        format: 'YYYY-MM-DD',
+      },
     },
   };
 });
 // 查询条件处理数据
 const filterList = ref([]) as any;
 // 表格标题
-const tableTitle = ref('模具维修项目信息');
+const tableTitle = ref('模具保养项目信息');
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   pageUI.value.page = 1;

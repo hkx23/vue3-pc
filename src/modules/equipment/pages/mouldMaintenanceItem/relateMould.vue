@@ -123,16 +123,16 @@ const onSelectChange = (value) => {
 const opts = computed(() => {
   return {
     mouldType: {
-      label: t('repairItem.模具类型'),
+      label: t('maintenanceItem.模具类型'),
       comp: 'bcmp-select-param',
       defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('repairItem.模具类型')}`]),
+      placeholder: t('common.placeholder.input', [`${t('maintenanceItem.模具类型')}`]),
       bind: {
         paramGroup: 'E_MOULD_TYPE',
       },
     },
     keyWord: {
-      label: t('repairItem.模具'),
+      label: t('maintenanceItem.模具'),
       comp: 't-input',
       defaultVal: '',
     },
@@ -141,7 +141,7 @@ const opts = computed(() => {
 // 查询条件处理数据
 const filterList = ref([]) as any;
 // 表格标题
-const tableTitle = ref('模具维修项目信息');
+const tableTitle = ref('模具保养项目信息');
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   pageUI.value.page = 1;
@@ -180,7 +180,7 @@ const fetchTable = async () => {
       filters: finalFilterList,
       relateType: 'mould',
     };
-    const res: any = await api.repairItemInEquipment.search(searchCondition);
+    const res: any = await api.maintenanceItemInEquipment.search(searchCondition);
     tableData.value = res.list; // 表格数据赋值
     dataTotal.value = res.total; // 总页数赋值
   } catch (e) {
@@ -288,7 +288,7 @@ const onAddClick = () => {
 // 单个数据实现删除逻辑
 const onDeleteRow = async (row: any) => {
   const deleteModel = [row.id];
-  await api.repairItemInEquipment.removeItemsById(deleteModel);
+  await api.maintenanceItemInEquipment.removeItemsById(deleteModel);
   fetchTable();
 };
 
@@ -341,7 +341,7 @@ const onFormSubmit = async () => {
 
       try {
         // 新增
-        await api.repairItemInEquipment.addItem(postData);
+        await api.maintenanceItemInEquipment.addItem(postData);
 
         // 第二步：提交数据
         // await api.mould.updateItemByCode(formRef.value.getFormData());

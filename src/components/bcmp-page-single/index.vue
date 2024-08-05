@@ -576,7 +576,8 @@ const onHeaderClick = async (buttonSetting) => {
         }
         // 如果props.relateCondition 包含该字段,则使用传入的值作为默认值
         if (props.relateCondition?.find((item: any) => item.field === column.field)) {
-          column.defaultValue = props.relateCondition.find((item: any) => item.field === column.field)?.value;
+          const relateConditionValue: any = props.relateCondition.find((item: any) => item.field === column.field);
+          column.defaultValue = relateConditionValue.value;
         }
 
         switch (column.component) {
