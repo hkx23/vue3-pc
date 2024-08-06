@@ -91,6 +91,14 @@
             @change="handleChange"
           >
           </t-radio-group>
+          <t-textarea
+            v-if="formItem.component === 't-textarea'"
+            v-model="currentFormData[formItem.field]"
+            :disabled="formItem.isDisabled"
+            :options="formItem.options"
+            @change="handleChange"
+          >
+          </t-textarea>
         </t-form-item>
       </t-col>
     </t-row>

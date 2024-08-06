@@ -137,7 +137,24 @@ const loadSetting = () => {
       fixed: determineFixed(column.isLeftFixed, column.isRightFixed), // 是否固定列
       showOverflowTooltip: !column.isAutoWidth, // 是否开启文本溢出 tooltip，如果autoWidth为true，则可能不需要此配置
       isShow: column.isVisible, // 是否显示该列
+      componentSource: column.componentSource,
     }));
+    tableColumnSetting.forEach((column: any) => {
+      column.cell = (h, { row }) => {
+        // 判断column的componentSource不为空
+        if (column.componentSource) {
+          return h(
+            'span',
+            {},
+            column.componentSource.customDict.dicData.find((item) => item.value === row[column.colKey].toString())
+              ?.label,
+          );
+        }
+
+        return h('span', {}, row[column.colKey]);
+      };
+    });
+
     // 过滤isShow为true的数据,作为表格的列配置
     tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
     // 获取查询信息，配置
@@ -179,7 +196,8 @@ const generateComponentConfig = async (setting) => {
     defaultVal: setting.defaultValue,
   };
   let optionsData = [];
-  if (setting.component === 't-select' && setting.componentSource.sourceType === 'dataTable') {
+  const sourceComponents = ['t-select', 't-radio-group', 't-checkbox-group'];
+  if (sourceComponents.includes(setting.component) && setting.componentSource.sourceType === 'dataTable') {
     const postSetting = setting.componentSource.dataTable;
     const { mapBusinessDomain } = setting.componentSource.dataTable;
     const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
@@ -194,6 +212,27 @@ const generateComponentConfig = async (setting) => {
   }
 
   switch (setting.component) {
+    case 't-date-range-picker-time':
+      optItem.comp = 't-date-range-picker';
+      optItem.bind = {
+        enableTimePicker: true,
+        allowInput: true,
+        clearable: true,
+      };
+      if (optItem.defaultVal === '') {
+        optItem.defaultVal = ['', ''];
+      }
+      break;
+    case 't-date-range-picker':
+      optItem.comp = 't-date-range-picker';
+      optItem.bind = {
+        allowInput: true,
+        clearable: true,
+      };
+      if (optItem.defaultVal === '') {
+        optItem.defaultVal = ['', ''];
+      }
+      break;
     case 'bcmp-select-business':
       optItem.bind = {
         type: setting.componentParam,
@@ -207,6 +246,8 @@ const generateComponentConfig = async (setting) => {
       };
       break;
     case 't-select':
+    case 't-radio-group':
+    case 't-checkbox-group':
       if (setting.componentSource) {
         switch (setting.componentSource.sourceType) {
           case 'customDict':

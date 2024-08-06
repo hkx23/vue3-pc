@@ -347,9 +347,15 @@
                         </template>
 
                         <template #op="row">
-                          <t-link v-if="row.row.isHandAdd" theme="primary" @click="onColumnDeleteClick(row)">{{
-                            t('common.button.delete')
-                          }}</t-link>
+                          <t-space :size="8">
+                            <t-link v-if="row.row.isHandAdd" theme="primary" @click="onColumnDeleteClick(row)">{{
+                              t('common.button.delete')
+                            }}</t-link>
+
+                            <t-link v-if="row.row.isVisible" theme="primary" @click="onColumShowSettingClick(row)">
+                              内容映射
+                            </t-link>
+                          </t-space>
                         </template>
 
                         <template #button>
@@ -424,6 +430,7 @@
                             :clearable="true"
                             filterable
                             :placeholder="t('common.placeholder.select', [t('domainParam.controlType')])"
+                            @change="onSearchComponentChange(row)"
                           >
                             <t-option
                               v-for="item in systemComponents"
@@ -495,7 +502,15 @@
                           <t-input v-model="row.defaultValue" />
                         </template>
                         <template #operator="{ row }">
-                          <t-select v-model="row.operator" filterable :options="operators"> </t-select>
+                          <t-select
+                            v-model="row.operator"
+                            :disabled="
+                              row.component === 't-date-range-picker' || row.component === 't-date-range-picker-time'
+                            "
+                            filterable
+                            :options="operators"
+                          >
+                          </t-select>
                         </template>
 
                         <template #isVisible="{ row }">
@@ -786,6 +801,68 @@
       </cmp-card>
       <!-- #endregion 表格&查询条件&按钮配置 -->
     </cmp-container>
+
+    <!-- #region 表格内容映射弹窗-->
+    <t-drawer
+      v-model:visible="columnMappingVisible"
+      class="component-resource-drawer"
+      :z-index="3000"
+      size="30%"
+      placement="right"
+      header="表格内容映射"
+      :on-confirm="onColumnMappingConfirm"
+      :close-btn="true"
+    >
+      <!-- 1.选择转换类型
+    1.1 系统参数
+    1.2 数据表
+    1.3 自定义字典 -->
+      <t-form>
+        <!-- 如果选择的是自定义字典 -->
+        <!-- 1.选择数据源列
+    2.设置数据表匹配规则
+      2.1 数据源列
+      2.2 匹配字典
+        2.2.1 匹配值
+        2.2.2 保存值 -->
+        <!-- 字典清单 -->
+        <t-form-item label="内容映射列表">
+          <t-space direction="vertical">
+            <t-space align="center" style="float: right">
+              <t-button @click="addTableColumnDicData">添加项</t-button>
+              <!-- <t-button @click="setLowerHeight">lower height</t-button> -->
+              <!-- <t-button @click="setHigherHeight">higher height</t-button> -->
+            </t-space>
+            <t-table
+              ref="tableColumnDict"
+              resizable
+              lazy-load
+              :columns="tableColumnsDic"
+              :data="tableDicData"
+              bordered
+              row-key="value"
+            >
+              <template #value="{ row }">
+                <t-input v-model="row.value"></t-input>
+              </template>
+              <template #label="{ row }">
+                <t-input v-model="row.label"></t-input>
+              </template>
+              <template #op="row">
+                <t-space :size="8">
+                  <t-link theme="primary" @click="onDeleteTableColumnDicRow(row)">删除</t-link>
+                </t-space>
+
+                <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
+                  <icon name="edit-1" class="black-icon" />
+                </t-button> -->
+              </template>
+            </t-table>
+          </t-space>
+        </t-form-item>
+      </t-form>
+    </t-drawer>
+    <!-- #endregion 表格内容映射弹窗 -->
 
     <!-- #region 数据转换设置弹窗-->
     <t-drawer
@@ -1225,6 +1302,11 @@ const systemComponents = ref([
   {
     label: '单选框',
     value: 't-radio-group',
+    useType: 'both',
+  },
+  {
+    label: '多行文本框',
+    value: 't-textarea',
     useType: 'both',
   },
 ]);
@@ -1948,6 +2030,81 @@ const columnColumns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
+// #表格列配置-内容映射-是否显示
+const columnMappingVisible = ref(false);
+
+// #region 数据源为自定义列表相关设置
+const tableColumnsDic: any = computed(() => [
+  {
+    title: '值',
+    colKey: 'value',
+  },
+  {
+    title: '显示',
+    colKey: 'label',
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '130',
+  },
+]);
+const tableDicData = ref([]);
+// #添加字典项
+const addTableColumnDicData = () => {
+  tableDicData.value.push({
+    value: '',
+    label: '',
+  });
+};
+// #删除字典项
+const onDeleteTableColumnDicRow = ({ rowIndex }) => {
+  tableDicData.value.splice(rowIndex, 1);
+};
+
+// # 表格列配置-内容映射-内容映射配置提交
+const onColumnMappingConfirm = () => {
+  // 先做校验
+  let checkResult = true;
+  // 如果选择了自定义字典
+  // dicData至少大于一行
+  // dicData的每一行行数据字段matchValue与saveValue都不可为空
+
+  if (tableDicData.value.length < 1) {
+    MessagePlugin.warning('自定义字典关联时，字典数据不可为空');
+    checkResult = false;
+  }
+  tableDicData.value.forEach((item) => {
+    if (!item.value) {
+      MessagePlugin.warning('自定义字典关联时，字典数据值字段不可为空');
+      checkResult = false;
+    }
+    if (!item.label) {
+      MessagePlugin.warning('自定义字典关联时，字典数据显示字段不可为空');
+      checkResult = false;
+    }
+  });
+
+  if (!checkResult) return;
+
+  MessagePlugin.info('数据保存中...', 1000);
+
+  const sourceData = {
+    customDict: {
+      dicData: tableDicData.value,
+    },
+  };
+  columnsData.value[
+    columnsData.value.findIndex((item) => item.columnName === currentTableColumnSelectRow.value.columnName)
+  ].componentSource = sourceData;
+
+  columnMappingVisible.value = false;
+  MessagePlugin.info('数据保存成功!');
+};
+// #endregion
+
 // #表格列数据源-计算属性，根据关联数据源加载
 const columnAliasNameList = computed(() => {
   // 如果没有关联数据源，则返回默认选项
@@ -1980,6 +2137,17 @@ const columnHandTableChange = (row) => {
   const tableName = relateSourceData.value.find((item) => item.aliasName === row.tableName).datasourceName;
 
   row.columnAliasColumnList = tableList.value.find((item) => item.tableName === tableName)?.columns;
+};
+
+const currentTableColumnSelectRow: any = ref({});
+const onColumShowSettingClick = ({ row }) => {
+  currentTableColumnSelectRow.value = row;
+  tableDicData.value = [];
+  const sourceData: any = currentTableColumnSelectRow.value.componentSource;
+  if (sourceData) {
+    tableDicData.value = sourceData.customDict.dicData;
+  }
+  columnMappingVisible.value = true;
 };
 // #表格列配置-删除行
 const onColumnDeleteClick = ({ rowIndex }) => {
@@ -2070,6 +2238,12 @@ const initSearchComponentSource = (type) => {
     }
   } else {
     selectedSourceType.value = 'customDict';
+  }
+};
+
+const onSearchComponentChange = (row) => {
+  if (row.component === 't-date-range-picker' || row.component === 't-date-range-picker-time') {
+    row.operator = 'BETWEEN';
   }
 };
 
@@ -2176,6 +2350,11 @@ const onCompontSourceConfirm = () => {
 const operators = [
   { value: 'EQ', label: '等于' },
   { value: 'LIKE', label: '包含' },
+  { value: 'BETWEEN', label: '介于区间' },
+  { value: 'GT', label: '大于' },
+  { value: 'LT', label: '小于' },
+  { value: 'GTE', label: '大于等于' },
+  { value: 'LTE', label: '小于等于' },
 ];
 
 // #查询条件表格-列配置数据

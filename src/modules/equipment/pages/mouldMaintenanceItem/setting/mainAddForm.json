@@ -50,7 +50,7 @@
     },
     {
       "columnType": "varchar(2000)",
-      "component": "t-input",
+      "component": "t-textarea",
       "componentParam": "",
       "componentSource": null,
       "defaultValue": "",

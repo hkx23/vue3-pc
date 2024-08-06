@@ -484,7 +484,7 @@ watch(
   () => props.opts,
   (opts, _oldValue) => {
     // console.log('query change', opts, oldValue);
-    state.form = initForm(opts, true);
+    state.form = initForm(opts, false);
     computedTableContentSize();
   },
   { deep: true },
