@@ -153,7 +153,7 @@ const loadSetting = () => {
   if (!domainParamId) {
     return;
   }
-  api.domainParam.getItemById({ id: domainParamId.toString() }).then(async (res) => {
+  api.domainParam.getItemById({ id: domainParamId.toString() }).then(async (res: any) => {
     settingObject.value = res;
     // 获取主要信息
     tableTitle.value = res.domainParamName;
