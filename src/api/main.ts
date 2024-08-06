@@ -349,7 +349,7 @@ export interface Org {
 export interface Filter {
   tableName?: string;
   field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
   value?: string;
   valuesList?: string[];
 }
@@ -545,7 +545,7 @@ export interface DatasourceSettingCondition {
   /** @format int32 */
   seq?: number;
   fieldName?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
   relateType?: string;
   aliasName?: string;
   relateFieldName?: string;
@@ -5542,13 +5542,13 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   isRawName?: string;
-  isBatchName?: string;
-  isProductName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
   isInProcessName?: string;
+  isBatchName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isState?: boolean;
 }
 
@@ -5692,8 +5692,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7113,7 +7113,7 @@ export interface DomainParamComponentSourceDatatable {
 
 export interface DomainParamComponentSourceDatatableFilter {
   field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
   value?: string;
 }
 
@@ -7235,7 +7235,7 @@ export interface DomainParamSearchSetting {
   label?: string;
   component?: string;
   componentParam?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
   defaultValue?: string;
   fieldType?: string;
   componentSource?: DomainParamComponentSource;
@@ -7265,6 +7265,7 @@ export interface DomainParamTableColumn {
   columnWidth?: number;
   align?: string;
   canDelete?: boolean;
+  componentSource?: DomainParamComponentSource;
   isDatabaseField?: boolean;
   isAutoWidth?: boolean;
   isVisible?: boolean;
@@ -10784,10 +10785,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -11356,13 +11357,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  taskId?: string;
   groupId?: string;
+  taskId?: string;
   userId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
 }
 
 /** 通用响应类 */
@@ -11386,45 +11387,45 @@ export type Task = {
   owner?: string;
   suspended?: boolean;
   description?: string;
-  formKey?: string;
   tenantId?: string;
-  localizedName?: string;
+  assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  assignee?: string;
   category?: string;
+  formKey?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
   parentTaskId?: string;
+  localizedName?: string;
   localizedDescription?: string;
   id?: string;
   state?: string;
   scopeId?: string;
   /** @format date-time */
   createTime?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  processDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
-  identityLinks?: IdentityLinkInfo[];
-  executionId?: string;
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
-  propagatedStageInstanceId?: string;
-  suspendedBy?: string;
+  processDefinitionId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   caseVariables?: Record<string, object>;
   /** @format date-time */
   claimTime?: string;
-  claimedBy?: string;
   /** @format date-time */
   suspendedTime?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
+  claimedBy?: string;
+  suspendedBy?: string;
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
   /** @format date-time */
   inProgressStartTime?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
   inProgressStartedBy?: string;
-  taskLocalVariables?: Record<string, object>;
   processVariables?: Record<string, object>;
+  taskLocalVariables?: Record<string, object>;
+  propagatedStageInstanceId?: string;
 } | null;
 
 /** 响应数据 */
@@ -11432,13 +11433,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  taskId?: string;
   groupId?: string;
+  taskId?: string;
   userId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
 } | null;
 
 /** 通用响应类 */
