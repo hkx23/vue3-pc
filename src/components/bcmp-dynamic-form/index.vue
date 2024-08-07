@@ -131,6 +131,10 @@ const props = defineProps({
     type: [String],
     default: 'add',
   },
+  lowerCamel: {
+    type: [Boolean],
+    default: false,
+  },
 });
 // 初始加载参数
 const currentFormAction = ref('edit');
@@ -143,7 +147,10 @@ const loadFormValue = () => {
   const formValue = cloneDeep(props.formData);
   // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
   currentFormSetting.value.forEach(async (column) => {
-    column.field = common.toLowerCamelCase(column.field);
+    if (props.lowerCamel) {
+      column.field = common.toLowerCamelCase(column.field);
+    }
+
     // 加上默认值逻辑 column.defaultValue
     switch (column.component) {
       case 't-input':
@@ -196,7 +203,9 @@ const loadFormSetting = async () => {
 
   // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
   currentFormSetting.value.forEach(async (column) => {
-    column.field = common.toLowerCamelCase(column.field);
+    if (props.lowerCamel) {
+      column.field = common.toLowerCamelCase(column.field);
+    }
     let optionsData = [];
 
     // 获取下拉选项数据

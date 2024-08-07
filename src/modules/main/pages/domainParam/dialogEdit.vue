@@ -3040,6 +3040,7 @@ const initEditData = (insetModel) => {
   // 更新buttonSourceData
   buttonSourceData.value = insetModel.domainParmSetting.buttonSetting;
 
+  loadTableList();
   domainParamFromRef.value.clearValidate();
   // 根据需要，可以添加对columnsData和searchData更细致的处理，
   // 特别是如果它们包含复杂结构或者需要深拷贝的情况。

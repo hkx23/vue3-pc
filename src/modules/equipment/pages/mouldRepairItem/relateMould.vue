@@ -57,6 +57,7 @@
   <t-dialog v-model:visible="formVisible" :header="formTitle" :on-confirm="onFormSubmit" :width="calculateFormWidth">
     <bcmp-dynamic-form
       ref="formRef"
+      :lower-camel="true"
       :form-setting="formSetting"
       :form-data="currentFormData"
       action-type="add"

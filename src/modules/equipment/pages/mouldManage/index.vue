@@ -82,7 +82,13 @@
   <t-dialog v-model:visible="formVisible" :header="formTitle" :on-confirm="onFormSubmit" :width="calculateFormWidth">
     <t-tabs :default-value="1">
       <t-tab-panel :value="1" label="模具信息" :destroy-on-hide="false">
-        <bcmp-dynamic-form ref="formRef" :form-setting="formSetting" :form-data="currentFormData" action-type="add" />
+        <bcmp-dynamic-form
+          ref="formRef"
+          :lower-camel="true"
+          :form-setting="formSetting"
+          :form-data="currentFormData"
+          action-type="add"
+        />
       </t-tab-panel>
       <t-tab-panel :value="2" label="技术文件" :destroy-on-hide="false">
         <bcmp-upload-content

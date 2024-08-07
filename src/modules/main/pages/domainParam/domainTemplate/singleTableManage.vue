@@ -465,10 +465,11 @@ const onFormSubmit = async () => {
         if (currentFormAction.value === 'edit') {
           actionUrl = 'dynamicUpdateDataSql';
         }
+        const postValues = formRef.value.getFormData();
         const postUrl = `/api/${domainCategory.value.toLowerCase()}/dynamicManage/${actionUrl}`;
-
+        currentFullFormSetting.value = currentFormSetting.value.formColumnSetting;
         // 更新的时候,除了ID跟currentFormSetting.value里面的字段,其他字段不上传
-        const postValues = cloneDeep(currentFormData.value);
+
         if (currentFormAction.value === 'edit') {
           // postValues 需要去掉一些字段再post到接口
           const editColumns = currentFormSetting.value.formColumnSetting.map((column) => column.field);
