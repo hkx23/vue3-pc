@@ -75,7 +75,9 @@
           :loading="loading"
           :max-height="maxHeightValue"
           v-bind="$attrs"
+          :keyboard-row-hover="false"
           :on-column-resize-change="onColumnResizeChange"
+          :on-active-row-action="onActiveRowAction"
           @select-change="onSelectKeysChange"
           @filter-change="onFilterChange"
           @sort-change="sortChange"
@@ -968,6 +970,14 @@ onActivated(() => {
 onDeactivated(() => {
   comVisible.value = false;
 });
+const onActiveRowAction = (context) => {
+  if (context.action === 'clear') {
+    context.action = 'stopClear';
+    return false;
+    // 不做下一步操作
+  }
+  return true;
+};
 </script>
 
 <style lang="less" scoped>
