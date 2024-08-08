@@ -53,7 +53,12 @@
     </cmp-card>
   </cmp-container>
   <!-- 弹出层 -->
-  <t-dialog v-model:visible="formVisible" header="编辑" :on-confirm="onFormSubmit" :width="calculateFormWidth">
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="currentFormAction === 'edit' ? '编辑' : '新增'"
+    :on-confirm="onFormSubmit"
+    :width="calculateFormWidth"
+  >
     <bcmp-dynamic-form ref="formRef" :form-setting="currentFormSetting" :form-data="currentFormData" />
   </t-dialog>
 </template>
@@ -205,19 +210,19 @@ const loadSetting = () => {
     }
     // 过滤isShow为true的数据,作为表格的列配置
     tableColumnSetting.forEach((column: any) => {
-      column.cell = (h, { row }) => {
-        // 判断column的componentSource不为空
+      if (column.colKey !== 'op') {
         if (column.componentSource) {
-          return h(
-            'span',
-            {},
-            column.componentSource.customDict.dicData.find((item) => item.value === row[column.colKey].toString())
-              ?.label,
-          );
+          column.cell = (h, { row }) => {
+            // 判断column的componentSource不为空
+            return h(
+              'span',
+              {},
+              column.componentSource.customDict.dicData.find((item) => item.value === row[column.colKey].toString())
+                ?.label,
+            );
+          };
         }
-
-        return h('span', {}, row[column.colKey]);
-      };
+      }
     });
 
     tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
@@ -344,7 +349,6 @@ const onRowClick = async (rowValue, buttonSetting) => {
     tableName: datasourceName.value,
     ids: [rowValue.row.id],
   };
-  const formRulesObject: any = {};
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
     case 'delete':
@@ -364,6 +368,7 @@ const onRowClick = async (rowValue, buttonSetting) => {
     case 'form-edit':
       currentFormAction.value = 'edit';
       currentFormSetting.value = buttonSetting;
+      currentFormData.value = formValue;
       formVisible.value = true;
 
       break;
@@ -381,9 +386,7 @@ const onHeaderClick = async (buttonSetting) => {
     tableName: datasourceName.value,
     ids: [],
   };
-  const sourceComponents = ['t-select', 't-radio-group', 't-checkbox-group'];
 
-  const formRulesObject: any = {};
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
     case 'delete':
@@ -403,6 +406,7 @@ const onHeaderClick = async (buttonSetting) => {
     case 'form-add':
       currentFormAction.value = 'add';
       currentFormSetting.value = buttonSetting;
+      currentFormData.value = {};
       formVisible.value = true;
 
       break;

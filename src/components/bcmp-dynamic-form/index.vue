@@ -4,7 +4,7 @@
     :loading="loading"
     :rules="currentFormRules"
     :data="currentFormData"
-    :label-width="120"
+    :label-width="labelWidth"
     scroll-to-first-error="smooth"
     label-align="right"
   >
@@ -134,6 +134,10 @@ const props = defineProps({
   lowerCamel: {
     type: [Boolean],
     default: false,
+  },
+  labelWidth: {
+    type: [String],
+    default: '120px',
   },
 });
 // 初始加载参数

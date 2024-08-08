@@ -5322,12 +5322,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
   isState?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5542,14 +5542,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
   isProductName?: string;
-  isInProcessName?: string;
+  isRawName?: string;
+  isState?: boolean;
   isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -10787,10 +10787,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11388,44 +11388,44 @@ export type Task = {
   suspended?: boolean;
   description?: string;
   tenantId?: string;
-  assignee?: string;
   /** @format date-time */
   dueDate?: string;
+  assignee?: string;
   category?: string;
-  formKey?: string;
+  localizedName?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
   parentTaskId?: string;
-  localizedName?: string;
+  formKey?: string;
   localizedDescription?: string;
   id?: string;
   state?: string;
   scopeId?: string;
   /** @format date-time */
   createTime?: string;
+  processDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
-  processDefinitionId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
-  caseVariables?: Record<string, object>;
-  /** @format date-time */
-  claimTime?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  claimedBy?: string;
-  suspendedBy?: string;
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
   executionId?: string;
   identityLinks?: IdentityLinkInfo[];
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
+  propagatedStageInstanceId?: string;
+  caseVariables?: Record<string, object>;
+  suspendedBy?: string;
   /** @format date-time */
-  inProgressStartTime?: string;
+  claimTime?: string;
+  claimedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
   /** @format date-time */
   inProgressStartDueDate?: string;
-  inProgressStartedBy?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
   processVariables?: Record<string, object>;
+  inProgressStartedBy?: string;
   taskLocalVariables?: Record<string, object>;
-  propagatedStageInstanceId?: string;
 } | null;
 
 /** 响应数据 */

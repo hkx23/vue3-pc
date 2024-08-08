@@ -574,6 +574,7 @@ const computedTableContentSize = () => {
           }
           const compareResultCount = totalComLengthSum - rowItemCount.value;
           if (compareResultCount > 0 && isFirstRowLastProcessing && cOpts.value[999][i - 1]) {
+            totalComLengthSum += totalComLengthSum;
             if (cOpts.value[999][i - 1].comLength > 1 && leftSpace > 0) {
               buttonItemWidth.value = (cOpts.value[999][i - 1].comLength + leftSpace) * searchItemtWidth.value + 8;
               isFirstRowLastProcessing = false;
