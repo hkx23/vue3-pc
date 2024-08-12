@@ -235,9 +235,9 @@
                         >
                           <t-option
                             v-for="item in columnsData"
-                            :key="item.columnName"
-                            :label="item.columnDesc + ' (' + item.columnName + ')'"
-                            :value="item.columnName"
+                            :key="item.columnName.toLowerCase()"
+                            :label="item.columnDesc + ' (' + item.columnName.toLowerCase() + ')'"
+                            :value="item.columnName.toLowerCase()"
                             :name="item.columnDesc"
                           />
                         </t-select>
@@ -1394,96 +1394,110 @@ const loadTableList = async () => {
 
 // #数据源为数据表-选择数据表变化
 const currentSelectTale = ref(null);
-const changeTable = (value) => {
+
+const getColumnsByTableName = async (table) => {
+  const params = { businessCode: formData.domainCategory.toString(), tableName: table.toString() };
+
+  const columnsResult = await api.domainParam.sqlTableColumns(params);
+  if (columnsResult && columnsResult.length > 0) {
+    const tempColumns: any = columnsResult[0].columns;
+    return tempColumns;
+  }
+  return [];
+};
+
+const changeTable = async (value) => {
   // #region 初始化数据源
   currentSelectTale.value = tableList.value.find((item) => item.tableName === value);
-  let seq = 0;
-  let tempColumns = currentSelectTale.value?.columns;
 
-  tempColumns = tempColumns.map((item) => ({
-    ...item,
-    id: common.generateBigIntId().toString(),
-    tableName: value,
-    isDatabaseField: true,
-    isAutoWidth: true,
-    columnWidth: 100,
-    align: 'center',
-    isVisible: true,
-    isLeftFixed: false,
-    isRightFixed: false,
-    canDelete: false,
-    isHandAdd: false,
-    field: item.columnName,
-    label: item.columnDesc,
-    component: 't-input',
-    componentParam: '',
-    componentSource: '',
-    isMultiple: false,
-    defaultValue: '',
-    isKeyField: false,
-    isRequired: false,
-    isDisabled: false,
-    verifyExp: '',
-    seq: seq++,
-  }));
-  // 识别字段是否默认字段，是否存在于defaultFields，如果匹配，则设置字段为isDataDefault 为 true
+  let tempColumns = await getColumnsByTableName(value);
+  if (tempColumns && tempColumns.length > 0) {
+    let seq = 0;
+    tempColumns = tempColumns.map((item) => ({
+      ...item,
+      id: common.generateBigIntId().toString(),
+      tableName: value,
+      isDatabaseField: true,
+      isAutoWidth: true,
+      columnWidth: 100,
+      align: 'center',
+      isVisible: true,
+      isLeftFixed: false,
+      isRightFixed: false,
+      canDelete: false,
+      isHandAdd: false,
+      field: item.columnName,
+      label: item.columnDesc,
+      component: 't-input',
+      componentParam: '',
+      componentSource: '',
+      isMultiple: false,
+      defaultValue: '',
+      isKeyField: false,
+      isRequired: false,
+      isDisabled: false,
+      verifyExp: '',
+      seq: seq++,
+    }));
+    // 识别字段是否默认字段，是否存在于defaultFields，如果匹配，则设置字段为isDataDefault 为 true
 
-  tempColumns.forEach((item) => {
-    if (defaultFields.includes(item.columnName)) {
-      item.isDataDefault = true;
-      item.isVisible = false;
-    } else {
-      item.isDataDefault = false;
-      item.isVisible = true;
+    tempColumns.forEach((item) => {
+      if (defaultFields.includes(item.columnName.toLowerCase())) {
+        item.isDataDefault = true;
+        item.isVisible = false;
+      } else {
+        item.isDataDefault = false;
+        item.isVisible = true;
+      }
+    });
+
+    // 再根据isDataDefault字段排序，isDataDefault为false排前面
+    tempColumns.sort((a, b) => {
+      if (a.isDataDefault === b.isDataDefault) {
+        return a.seq - b.seq;
+      }
+      return a.isDataDefault ? 1 : -1; // 注意这里调整了比较逻辑，确保非默认字段在前
+    });
+    // 重新分配 seq 值
+    seq = 0;
+    tempColumns.forEach((item, index) => {
+      item.seq = index; // 或者使用 seq++ 来从1开始计数，根据你的需求选择
+    });
+
+    columnsData.value = tempColumns;
+    // #endregion 初始化数据源
+
+    // #region 设置默认按钮配置
+    const currentButtonSetting = cloneDeep(defaultButtonSourceData);
+    currentButtonSetting.find((item) => {
+      return item.buttonCode === 'add';
+    }).formColumnSetting = cloneDeep(tempColumns);
+
+    currentButtonSetting.find((item) => {
+      return item.buttonCode === 'edit';
+    }).formColumnSetting = cloneDeep(tempColumns);
+    buttonSourceData.value = currentButtonSetting;
+
+    // #endregion
+
+    // #region 设置默认值
+    // 1.如果参数编码与参数名称为空，设置成表名与表描述
+    if (!formData.domainParamCode) {
+      formData.domainParamCode = currentSelectTale.value.tableName;
     }
-  });
-
-  // 再根据isDataDefault字段排序，isDataDefault为false排前面
-  tempColumns.sort((a, b) => {
-    if (a.isDataDefault === b.isDataDefault) {
-      return a.seq - b.seq;
+    if (!formData.domainParamName) {
+      formData.domainParamName = currentSelectTale.value.tableDescription;
     }
-    return a.isDataDefault ? 1 : -1; // 注意这里调整了比较逻辑，确保非默认字段在前
-  });
-  // 重新分配 seq 值
-  seq = 0;
-  tempColumns.forEach((item, index) => {
-    item.seq = index; // 或者使用 seq++ 来从1开始计数，根据你的需求选择
-  });
-
-  columnsData.value = tempColumns;
-  // #endregion 初始化数据源
-
-  // #region 设置默认按钮配置
-  const currentButtonSetting = cloneDeep(defaultButtonSourceData);
-  currentButtonSetting.find((item) => {
-    return item.buttonCode === 'add';
-  }).formColumnSetting = cloneDeep(tempColumns);
-
-  currentButtonSetting.find((item) => {
-    return item.buttonCode === 'edit';
-  }).formColumnSetting = cloneDeep(tempColumns);
-  buttonSourceData.value = currentButtonSetting;
-
-  // #endregion
-
-  // #region 设置默认值
-  // 1.如果参数编码与参数名称为空，设置成表名与表描述
-  if (!formData.domainParamCode) {
-    formData.domainParamCode = currentSelectTale.value.tableName;
+    // 2.如果列包含time_create，默认排序字段设置成time_create
+    if (tempColumns.some((item) => item.columnName.toLowerCase() === 'time_create')) {
+      tableFormData.sortField = 'time_create';
+    }
+    // 3.如果表格标题未设置且表名描述不为空，设置值
+    if (!tableFormData.tableTitle) {
+      tableFormData.tableTitle = currentSelectTale.value.tableDescription;
+    }
+    // #endregion
   }
-  if (!formData.domainParamName) {
-    formData.domainParamName = currentSelectTale.value.tableDescription;
-  }
-  // 2.如果列包含time_create，默认排序字段设置成time_create
-  if (currentSelectTale.value.columns.some((item) => item.columnName === 'time_create')) {
-    tableFormData.sortField = 'time_create';
-  }
-  // 3.如果表格标题未设置且表名描述不为空，设置值
-  if (!tableFormData.tableTitle) {
-    tableFormData.tableTitle = currentSelectTale.value.tableDescription;
-  }
-  // #endregion
 };
 // #endregion
 
@@ -1645,12 +1659,13 @@ const setReleteCondition = ({ row }) => {
 // #数据源关联-目标数据源别名列表
 const relateAliasNameList = ref([]);
 //  #数据源关联-加载当前行的条件配置
-const initRelateSourceCondition = () => {
+const initRelateSourceCondition = async () => {
   console.log(currentRelateSourceRow.value);
   // 根据当前行的数据源表格，加载对应的列
   if (currentRelateSourceRow.value.datasourceType === 'dataTable') {
     const { datasourceName } = currentRelateSourceRow.value;
-    selectRelateTableColumns.value = tableList.value.find((item) => item.tableName === datasourceName)?.columns;
+    const tempColumns = await getColumnsByTableName(datasourceName);
+    selectRelateTableColumns.value = tempColumns;
 
     relateAliasNameList.value = [];
     // relateAliasNameList的列表，第一个是基础信息的数据源，
@@ -1697,16 +1712,15 @@ const initRelateSourceCondition = () => {
   }
 };
 const relateAliasColumnList = ref([]);
-const getRelateAliasColumnList = (aliasName) => {
+const getRelateAliasColumnList = async (aliasName) => {
   // 先判断aliasName是否等于主数据的formData.datasourceName
   // 如果是，直接使用数据表列 列表
-  if (aliasName === formData.datasourceName) {
-    relateAliasColumnList.value = tableList.value.find((item) => item.tableName === aliasName)?.columns;
-  } else {
-    // 如果不是，通过aliasName查找表名，再加载列
-    const tableName = relateSourceData.value.find((item) => item.aliasName === aliasName).datasourceName;
-    relateAliasColumnList.value = tableList.value.find((item) => item.tableName === tableName)?.columns;
+  let searchName = aliasName;
+  if (!aliasName === formData.datasourceName) {
+    searchName = relateSourceData.value.find((item) => item.aliasName === aliasName).datasourceName;
   }
+  const tempColumns = await getColumnsByTableName(searchName);
+  relateAliasColumnList.value = tempColumns;
 };
 
 //  #数据源关联-删除关联条件
@@ -1830,14 +1844,14 @@ const handleButtonFormColumn = (tempColumns, type) => {
 };
 
 // 重新加载字段,少的添加到列表,多的从列表删除
-const refreshImportColumn = () => {
+const refreshImportColumn = async () => {
   // columnsData  是表格使用到的数据
   // tempColumns 是原表格数据
   // 需要比对columnsData列表中canDelete为false的数据与columnsData列表的是否一致
   // 如果缺少,就加入到columnsData列表,如果columnsData列表有,但是tempColumns列表没有,需要删除columnsData列表中对应项
   // 创建映射对象，用于快速查找
   currentSelectTale.value = tableList.value.find((item) => item.tableName === formData.datasourceName);
-  const tempColumns = currentSelectTale.value?.columns;
+  const tempColumns = await getColumnsByTableName(formData.datasourceName);
   // 刷新表格配置
   handleTableColumn(tempColumns);
   // 刷新编辑表单配置
@@ -2132,11 +2146,12 @@ const columnAliasNameList = computed(() => {
 });
 
 // 表格列配置-数据源选择变化
-const columnHandTableChange = (row) => {
+const columnHandTableChange = async (row) => {
   // 加载当前行的数据源所对应的列的下拉列数据源
   const tableName = relateSourceData.value.find((item) => item.aliasName === row.tableName).datasourceName;
-
-  row.columnAliasColumnList = tableList.value.find((item) => item.tableName === tableName)?.columns;
+  const tempColumns = await getColumnsByTableName(tableName);
+  row.columnAliasColumnList = tempColumns;
+  // row.columnAliasColumnList = tableList.value.find((item) => item.tableName === tableName)?.columns;
 };
 
 const currentTableColumnSelectRow: any = ref({});
@@ -2155,8 +2170,12 @@ const onColumnDeleteClick = ({ rowIndex }) => {
 };
 // 表格列配置-数据列选择变化
 const columnHandColumnChange = (row) => {
-  row.columnDesc = row.columnAliasColumnList.find((item) => item.columnName === row.columnName)?.columnDesc;
-  row.columnType = row.columnAliasColumnList.find((item) => item.columnName === row.columnName)?.columnType;
+  row.columnDesc = row.columnAliasColumnList.find(
+    (item) => item.columnName.toLowerCase() === row.columnName.toLowerCase(),
+  )?.columnDesc;
+  row.columnType = row.columnAliasColumnList.find(
+    (item) => item.columnName.toLowerCase() === row.columnName.toLowerCase(),
+  )?.columnType;
 };
 // #表格列配置-添加行
 const addColumnData = () => {
@@ -2473,7 +2492,7 @@ const deleteSearchData = ({ rowIndex }) => {
 // #查询条件表格-列-列选择事件-根据选择字段执行一些自动操作
 const onSearchFieldChange = (row: any) => {
   const selectItem = columnsData.value.find((item: any) => {
-    return item.columnName === row.field;
+    return item.columnName.toLowerCase() === row.field.toLowerCase();
   });
   // 如果当前行标题还没有设置，则把表描述赋值
   if (!row.label) {
@@ -2602,12 +2621,13 @@ const loadMapTableList = async () => {
   mapTableList.value = res;
 };
 // #选中表格变化
-const changeTableMatch = (value) => {
+const changeTableMatch = async (value) => {
   selectMapTable.value = mapTableList.value.find((item) => item.tableName === value);
   console.log(selectMapTable.value);
-  selectMapColumns.value = selectMapTable.value?.columns.map((item) => ({
+  const tempColumns = await getColumnsByTableName(value);
+  selectMapColumns.value = tempColumns.map((item) => ({
     ...item,
-    value: item.columnName,
+    value: item.columnName.toLowerCase(),
     label: item.columnDesc,
   }));
   // if (!IsinitRelate.value) {

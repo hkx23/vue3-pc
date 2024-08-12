@@ -521,6 +521,7 @@ export interface CommonSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
@@ -5129,6 +5130,7 @@ export interface MoSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
@@ -5257,6 +5259,7 @@ export interface MitemInSupplierSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
@@ -5323,11 +5326,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
-  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  isForceInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5541,15 +5544,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isState?: boolean;
-  isBatchName?: string;
   isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
+  isProductName?: string;
   isRawChecked?: boolean;
-  isProductChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -7128,58 +7131,6 @@ export interface DeleteModel {
   ids?: string[];
 }
 
-export interface BatchDynamicUpdateDTO {
-  /** 表唯一主键 */
-  primaryKey?: string;
-  /** 领域名称 */
-  businessDomain?: string;
-  /** 表名 */
-  tableName?: string;
-  /** 更新的字段列表 */
-  columnList?: DynamicColumn[];
-  /** 更新的数据信息 */
-  rows?: Record<string, object>[];
-}
-
-/** 动态列字段 */
-export interface DynamicColumn {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** 字段名称 */
-  columnField?: string;
-  /** 字段描述 */
-  columnDesc?: string;
-  /** 列数据类型 */
-  columnDateType?: string;
-  /**
-   * 是否必填项
-   * @format int32
-   */
-  isRequired?: number;
-  /** 默认值 */
-  defaultValue?: string;
-}
-
 /** 领域参数分组表 */
 export interface DomainParamGroup {
   id?: string;
@@ -7899,6 +7850,7 @@ export interface DefectCodeSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
@@ -10785,12 +10737,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11357,13 +11309,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  groupId?: string;
   taskId?: string;
+  groupId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
 }
 
 /** 通用响应类 */
@@ -11381,51 +11333,51 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
+  suspended?: boolean;
   /** @format int32 */
   priority?: number;
   name?: string;
   owner?: string;
-  suspended?: boolean;
   description?: string;
   tenantId?: string;
+  assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  assignee?: string;
   category?: string;
   localizedName?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  parentTaskId?: string;
   formKey?: string;
   localizedDescription?: string;
+  parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
   id?: string;
   state?: string;
   scopeId?: string;
   /** @format date-time */
   createTime?: string;
-  processDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
   executionId?: string;
   identityLinks?: IdentityLinkInfo[];
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
-  propagatedStageInstanceId?: string;
+  processDefinitionId?: string;
+  claimedBy?: string;
   caseVariables?: Record<string, object>;
-  suspendedBy?: string;
   /** @format date-time */
   claimTime?: string;
-  claimedBy?: string;
+  suspendedBy?: string;
   /** @format date-time */
   suspendedTime?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
+  inProgressStartedBy?: string;
   /** @format date-time */
   inProgressStartTime?: string;
-  processVariables?: Record<string, object>;
-  inProgressStartedBy?: string;
   taskLocalVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  processVariables?: Record<string, object>;
+  propagatedStageInstanceId?: string;
 } | null;
 
 /** 响应数据 */
@@ -11433,13 +11385,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  groupId?: string;
   taskId?: string;
+  groupId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -17277,21 +17229,6 @@ export const api = {
      * No description
      *
      * @tags 动态服务
-     * @name BatchUpdateData
-     * @summary 根据领域进行动态表字段更新
-     * @request POST:/dynamicManage/batchUpdateData
-     * @secure
-     */
-    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
-      http.request<ResultObject['data']>(`/api/main/dynamicManage/batchUpdateData`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 动态服务
      * @name SqlTables
      * @summary 根据领域获取数据表列表-SQL方式
      * @request GET:/dynamicManage/sqlTables
@@ -17300,6 +17237,21 @@ export const api = {
     sqlTables: () =>
       http.request<ResultListDataTableVO['data']>(`/api/main/dynamicManage/sqlTables`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTableColumns
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTableColumns
+     * @secure
+     */
+    sqlTableColumns: (query: { tableName: string }) =>
+      http.request<ResultListDataTableVO['data']>(`/api/main/dynamicManage/sqlTableColumns`, {
+        method: 'GET',
+        params: query,
       }),
   },
   domainParamGroup: {
@@ -17405,6 +17357,21 @@ export const api = {
      */
     sqlTables: (query: { businessCode: string }) =>
       http.request<ResultListDataTableVO['data']>(`/api/main/domainParam/sqlTables`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域参数表
+     * @name SqlTableColumns
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/domainParam/sqlTableColumns
+     * @secure
+     */
+    sqlTableColumns: (query: { businessCode: string; tableName: string }) =>
+      http.request<ResultListDataTableVO['data']>(`/api/main/domainParam/sqlTableColumns`, {
         method: 'GET',
         params: query,
       }),
