@@ -151,6 +151,7 @@ const loadFormValue = () => {
   const formValue = cloneDeep(props.formData);
   // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
   currentFormSetting.value.forEach(async (column) => {
+    column.field = column.field.toUpperCase();
     if (props.lowerCamel) {
       column.field = common.toLowerCamelCase(column.field);
     }

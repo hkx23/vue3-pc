@@ -168,8 +168,8 @@ const loadSetting = () => {
     usePager.value = res.domainParmSetting.tableSetting.usePage;
     // 获取表格里面的field字段
     selectedFields.value = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
-      tableName: column.tableName, // 假设column对象中有tableName属性
-      fieldName: column.columnName, // 或者是fieldName，取决于你的实际属性名
+      tableName: column.tableName.toUpperCase(), // 假设column对象中有tableName属性
+      fieldName: column.columnName.toUpperCase(), // 或者是fieldName，取决于你的实际属性名
     }));
     if (usePager.value) {
       pageUI.value.rows = res.domainParmSetting.tableSetting.pageSize || 20;
@@ -188,8 +188,8 @@ const loadSetting = () => {
 
     // 获取表格列，配置
     const tableColumnSetting = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
-      colKey: column.columnName, // 列绑定的字段名
-      title: column.columnDesc || column.columnName, // 列显示的标题，默认使用columnDesc，不存在则使用columnName
+      colKey: column.columnName.toUpperCase(), // 列绑定的字段名
+      title: column.columnDesc || column.columnName.toUpperCase(), // 列显示的标题，默认使用columnDesc，不存在则使用columnName
       align: column.align, // 对齐方式
       width: column.isAutoWidth ? 'auto' : column.columnWidth, // 列宽
       fixed: determineFixed(column.isLeftFixed, column.isRightFixed), // 是否固定列
