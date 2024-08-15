@@ -20,15 +20,24 @@ if (typeof window !== 'undefined' && window.top !== window) {
   // portal 页面
   if (window.top === window) {
     // 加载第三方配置，并设置基础路径
-    fetch(`/config.json?_t=${new Date().getTime()}`).then((res) => {
-      res.json().then((config) => {
+    fetch(`/config.json?_t=${new Date().getTime()}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((config) => {
         const localBaseUrl = localStorage.getItem('baseUrl');
         if (config?.baseUrl && localBaseUrl !== config.baseUrl) {
           fw.config.baseUrl = config.baseUrl;
           localStorage.setItem('baseUrl', config.baseUrl);
         }
+      })
+      .catch((error) => {
+        if (error.name === 'SyntaxError') return;
+        console.error('Fetch failed:', error);
       });
-    });
 
     // 添加路由事件
     fw.ipc.on('appendTabRouterList', async (newRoute: TRouterInfo) => {
