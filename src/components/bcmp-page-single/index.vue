@@ -1,6 +1,6 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12" :ghost="ghost">
+    <cmp-card v-if="opts" :span="12" :ghost="ghost">
       <cmp-query :opts="opts" label-width="100" :loading="loading" @submit="conditionEnter" />
     </cmp-card>
     <cmp-card :span="12" :ghost="ghost">
@@ -12,23 +12,38 @@
         :table-column="tableColumns"
         :table-data="tableData"
         :loading="loading"
+        :hover="true"
+        :active-row-type="'single'"
+        :selected-row-keys="selectedRowKeys"
         :show-pagination="usePager"
         :total="dataTotal"
         :fixed-height="true"
+        @select-change="rehandleSelectChange"
         @refresh="fetchTable"
       >
         <!-- 头部按钮区 -->
 
         <template #button>
           <t-space :size="8">
-            <t-button
-              v-for="(item, index) in tableHeaderButtons"
-              :key="index"
-              theme="primary"
-              @click="onHeaderClick(item)"
-            >
-              {{ item.buttonName }}
-            </t-button>
+            <template v-for="(item, index) in tableHeaderButtons" :key="index">
+              <template v-if="item.actionType === 'delete'">
+                <t-popconfirm content="确认删除吗" @confirm="onHeaderClick(item)">
+                  <t-button :theme="item.buttonTheme">{{ item.buttonName }}</t-button>
+                </t-popconfirm>
+              </template>
+              <template v-else-if="item.actionType === 'import'">
+                <bcmp-import-auto-button
+                  theme="item.buttonTheme"
+                  :button-text="item.buttonName"
+                  :type="item.importCode"
+                ></bcmp-import-auto-button>
+              </template>
+              <template v-else>
+                <t-button :theme="item.buttonTheme" @click="onHeaderClick(item)">
+                  {{ item.buttonName }}
+                </t-button>
+              </template>
+            </template>
             <slot name="headerButton"></slot>
           </t-space>
         </template>
@@ -62,100 +77,6 @@
   >
     <bcmp-dynamic-form ref="formRef" :form-setting="currentFormSetting" :form-data="currentFormData" />
   </t-dialog>
-  <!-- <t-dialog
-    v-model:visible="formVisible"
-    :header="currentFormAction == 'edit' ? '编辑' : '新增'"
-    :on-confirm="onFormSubmit"
-    :width="calculateFormWidth"
-  >
-    <t-form
-      ref="formRef"
-      :loading="loading"
-      :rules="currentFormRules"
-      :data="currentFormData"
-      :label-width="120"
-      scroll-to-first-error="smooth"
-      label-align="right"
-    >
-      <t-row :gutter="12">
-        <t-col v-for="(formItem, index) in currentFormSetting" :key="index" :span="formSpan" style="padding: 8px 0">
-          <t-form-item :label="formItem.label" :name="formItem.field">
-            <t-input
-              v-if="formItem.component === 't-input'"
-              v-model="currentFormData[formItem.field]"
-              :disabled="formItem.isDisabled"
-            />
-
-            <t-input-number
-              v-if="formItem.component === 't-input-number'"
-              v-model="currentFormData[formItem.field]"
-              :disabled="formItem.isDisabled"
-              theme="column"
-            />
-            <t-switch
-              v-if="formItem.component === 't-switch'"
-              v-model="currentFormData[formItem.field]"
-              :disabled="formItem.isDisabled"
-            />
-            <bcmp-select-business
-              v-if="formItem.component === 'bcmp-select-business'"
-              v-model="currentFormData[formItem.field]"
-              :type="formItem.componentParam"
-              :disabled="formItem.isDisabled"
-              :show-title="false"
-            ></bcmp-select-business>
-            <bcmp-select-param
-              v-if="formItem.component === 'bcmp-select-param'"
-              v-model="currentFormData[formItem.field]"
-              :disabled="formItem.isDisabled"
-              :param-group="formItem.componentParam"
-            ></bcmp-select-param>
-            <t-select
-              v-if="formItem.component === 't-select'"
-              v-model="currentFormData[formItem.field]"
-              :disabled="formItem.isDisabled"
-              :options="formItem.options"
-              :multiple="formItem.isMutiple"
-            >
-            </t-select>
-            <t-date-picker
-              v-if="formItem.component === 't-date-picker'"
-              v-model="currentFormData[formItem.field]"
-              allow-input
-              clearable
-              format="YYYY-MM-DD"
-              :disabled="formItem.isDisabled"
-            ></t-date-picker>
-            <t-date-picker
-              v-if="formItem.component === 't-datetime-picker'"
-              v-model="currentFormData[formItem.field]"
-              enable-time-picker
-              allow-input
-              clearable
-              format="YYYY-MM-DD HH:mm:ss"
-              :disabled="formItem.isDisabled"
-            ></t-date-picker>
-
-            <t-checkbox-group
-              v-if="formItem.component === 't-checkbox-group'"
-              v-model="currentFormData[formItem.field]"
-              :disabled="formItem.isDisabled"
-              :options="formItem.options"
-            >
-            </t-checkbox-group>
-            <t-radio-group
-              v-if="formItem.component === 't-radio-group'"
-              v-model="currentFormData[formItem.field]"
-              :disabled="formItem.isDisabled"
-              :options="formItem.options"
-            >
-            </t-radio-group>
-          </t-form-item>
-        </t-col>
-      </t-row>
-     
-    </t-form>
-  </t-dialog> -->
 </template>
 <script lang="ts">
 export default {
@@ -169,7 +90,9 @@ import { computed, onMounted, ref } from 'vue';
 
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+// import { openPage } from '@/router';
 
+const selectedRowKeys = ref([]); // 全选控制存入字段
 // / 00-组件属性定义
 const props = defineProps({
   // 组件展示类型
@@ -221,6 +144,11 @@ const conditionEnter = (data: any) => {
   }
 
   fetchTable();
+};
+// 全选
+const rehandleSelectChange = (value: any) => {
+  selectedRowKeys.value = value;
+  console.log(selectedRowKeys.value);
 };
 // 加载角色数据表格
 const fetchTable = async () => {
@@ -306,21 +234,38 @@ const loadSetting = async () => {
     fixed: determineFixed(column.isLeftFixed, column.isRightFixed), // 是否固定列
     showOverflowTooltip: !column.isAutoWidth, // 是否开启文本溢出 tooltip，如果autoWidth为true，则可能不需要此配置
     isShow: column.isVisible, // 是否显示该列
+    componentSource: column.componentSource,
   }));
   if (rowButtons.value.length > 0) {
+    // 根据所有按钮的内容计算宽度
+    const charWidth = 20;
+    let labelSumWidth = 0;
+    for (let index = 0; index < rowButtons.value.length; index++) {
+      labelSumWidth += rowButtons.value[index].buttonName.length * charWidth;
+    }
+    // 添加一些额外的空间作为缓冲
+    const totalWidth = labelSumWidth + 10 * rowButtons.value.length;
     tableColumnSetting.push({
       colKey: 'op',
       title: '操作',
       align: 'center',
       fixed: 'right',
-      width: '130',
+      width: totalWidth,
       isShow: true,
       showOverflowTooltip: true,
     });
   }
+  if (tableHeaderButtons.value.filter((column) => column.name !== 'add').length > 0) {
+    tableColumnSetting.unshift({
+      colKey: 'checked',
+      type: 'multiple',
+      width: '80',
+      isShow: true,
+    });
+  }
   // 过滤isShow为true的数据,作为表格的列配置
   tableColumnSetting.forEach((column: any) => {
-    if (column.colKey !== 'op') {
+    if (column.colKey !== 'op' && column.colKey !== 'checked') {
       if (column.componentSource) {
         column.cell = (h, { row }) => {
           // 判断column的componentSource不为空
@@ -355,7 +300,7 @@ const genOpts = async (searchSetting) => {
     // 将每个异步调用放入promises数组中
     promises.push(
       generateComponentConfig(settingConfig).then((optSettingItem: any) => {
-        optSetting[settingConfig.field] = optSettingItem;
+        optSetting[settingConfig.field.toUpperCase()] = optSettingItem;
       }),
     );
   });
@@ -456,11 +401,14 @@ const onRowClick = async (rowValue, buttonSetting) => {
   const rowData = tableData.value.find((item) => item.ID === rowValue.row.ID);
 
   let deleteTypeUrl = 'dynamicDeleteDataSql';
+  let jumpLink = '';
+  let customApi = '';
   const formValue = cloneDeep(rowData);
   const deleteModel = {
     tableName: datasourceName.value,
     ids: [rowData.ID],
   };
+  const apiPostModel = [rowData.ID];
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
     case 'delete':
@@ -484,20 +432,61 @@ const onRowClick = async (rowValue, buttonSetting) => {
       formVisible.value = true;
 
       break;
+    case 'form-custom':
+      currentFormAction.value = 'edit';
+      currentFormSetting.value = buttonSetting;
+      currentFormData.value = formValue;
+      formVisible.value = true;
 
+      break;
+    case 'link':
+      jumpLink = buttonSetting.jumpLink;
+
+      // 替换参数 {id} 把对应字段替换
+      // link原数据为 /main#/moRelease?id={id}
+      // 需要把{id} 替换为当前行formValue.id
+      jumpLink = replacePlaceholders(jumpLink, formValue);
+      // openPage(jumpLink);
+      break;
+    case 'customApi':
+      customApi = buttonSetting.customApi;
+      await http.post<any>(customApi, apiPostModel);
+      MessagePlugin.success('执行成功');
+      fetchTable();
+      break;
     default:
       break;
   }
 };
 
+const replacePlaceholders = (url, params) => {
+  return url.replace(/\{(\w+)\}/gi, (match, key) => {
+    const paramKey = key.toLowerCase();
+    return params[paramKey] || match;
+  });
+};
+
 const onHeaderClick = async (buttonSetting) => {
   let deleteTypeUrl = 'dynamicDeleteDataSql';
+  let jumpLink = '';
+  let customApi = '';
   const formValue = {};
   // :todo:这里的应该是要做成批量删除-根据选中行删除
   const deleteModel = {
     tableName: datasourceName.value,
-    ids: [],
+    ids: selectedRowKeys.value,
   };
+  const apiPostModel = selectedRowKeys.value;
+  if (
+    buttonSetting.actionType !== 'form-add' &&
+    buttonSetting.actionType !== 'import' &&
+    buttonSetting.actionType !== 'link'
+  ) {
+    if (selectedRowKeys.value.length === 0) {
+      MessagePlugin.warning('请选择行');
+      return;
+    }
+  }
 
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
@@ -521,6 +510,16 @@ const onHeaderClick = async (buttonSetting) => {
       currentFormData.value = {};
       formVisible.value = true;
 
+      break;
+    case 'link':
+      jumpLink = buttonSetting.jumpLink;
+      // openPage(jumpLink);
+      break;
+    case 'customApi':
+      customApi = buttonSetting.customApi;
+      await http.post<any>(customApi, apiPostModel);
+      MessagePlugin.success('执行成功');
+      fetchTable();
       break;
 
     default:

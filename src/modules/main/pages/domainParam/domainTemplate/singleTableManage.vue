@@ -53,11 +53,11 @@
             <template v-for="(item, index) in rowButtons" :key="index">
               <template v-if="item.actionType === 'delete'">
                 <t-popconfirm content="确认删除吗" @confirm="onRowClick(slotProps, item)">
-                  <t-link theme="primary">{{ item.buttonName }}</t-link>
+                  <t-link :theme="item.buttonTheme">{{ item.buttonName }}</t-link>
                 </t-popconfirm>
               </template>
               <template v-else>
-                <t-link theme="primary" @click="onRowClick(slotProps, item)">
+                <t-link :theme="item.buttonTheme" @click="onRowClick(slotProps, item)">
                   {{ item.buttonName }}
                 </t-link>
               </template>
@@ -79,7 +79,7 @@
 </template>
 <script lang="ts">
 export default {
-  name: 'SearchTemplate',
+  name: 'SingleTableManage',
 };
 </script>
 <script setup lang="ts">
@@ -146,6 +146,8 @@ const fetchTable = async () => {
       dynamicTableName: datasourceName.value,
       dynamicBusinessDomain: domainCategory.value,
       selectedFields: selectedFields.value,
+      dynamicDefaultSortFiled: dynamicDefaultSortFiled.value,
+      dynamicSortType: dynamicSortType.value,
       datasourceSetting: settingObject.value.domainParmSetting.datasourceSetting,
     };
     const postUrl = `/api/${domainCategory.value.toLowerCase()}/dynamicManage/dynamicQueryDataSql`;
@@ -170,7 +172,8 @@ const selectedFields = ref([]);
 const searchSettings = ref([]);
 const usePager = ref(true);
 const currentFormAction = ref('');
-
+const dynamicDefaultSortFiled = ref('');
+const dynamicSortType = ref('DESC');
 // 按钮列表
 const tableHeaderButtons = ref<any[]>([]);
 const rowButtons = ref<any[]>([]);
@@ -185,11 +188,14 @@ const loadSetting = () => {
   api.domainParam.getItemById({ id: domainParamId.toString() }).then(async (res: any) => {
     settingObject.value = res;
     // 获取主要信息
-    tableTitle.value = res.domainParamName;
+    // tableTitle.value = res.domainParamName;
     domainCategory.value = res.domainCategory;
     datasourceCategory.value = res.datasourceCategory;
     datasourceName.value = res.datasourceName;
     usePager.value = res.domainParmSetting.tableSetting.usePage;
+    tableTitle.value = res.domainParmSetting.tableSetting.tableTitle;
+    dynamicDefaultSortFiled.value = res.domainParmSetting.tableSetting.sortField;
+    dynamicSortType.value = res.domainParmSetting.tableSetting.sortType;
     // 获取表格里面的field字段
     selectedFields.value = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
       tableName: column.tableName.toUpperCase(), // 假设column对象中有tableName属性
@@ -222,12 +228,20 @@ const loadSetting = () => {
       componentSource: column.componentSource,
     }));
     if (rowButtons.value.length > 0) {
+      // 根据所有按钮的内容计算宽度
+      const charWidth = 20;
+      let labelSumWidth = 0;
+      for (let index = 0; index < rowButtons.value.length; index++) {
+        labelSumWidth += rowButtons.value[index].buttonName.length * charWidth;
+      }
+      // 添加一些额外的空间作为缓冲
+      const totalWidth = labelSumWidth + 10 * rowButtons.value.length;
       tableColumnSetting.push({
         colKey: 'op',
         title: '操作',
         align: 'center',
         fixed: 'right',
-        width: rowButtons.value.length * 60,
+        width: totalWidth,
         isShow: true,
         showOverflowTooltip: true,
       });

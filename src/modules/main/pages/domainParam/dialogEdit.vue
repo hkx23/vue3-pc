@@ -674,7 +674,7 @@
                                 :placeholder="t('common.placeholder.input', ['调用接口'])"
                               ></t-input>
                             </t-form-item>
-                            <t-form-item
+                            <!-- <t-form-item
                               v-if="currentSelectButton.actionType === 'customApi'"
                               label="接口传输方法"
                               name="apiAction"
@@ -688,7 +688,7 @@
                                 <t-option key="GET" label="GET" value="GET" />
                                 <t-option key="POST " label="POST" value="POST" />
                               </t-select>
-                            </t-form-item>
+                            </t-form-item> -->
                             <t-form-item
                               v-if="currentSelectButton.actionType === 'import'"
                               label="导入配置编码"

@@ -523,6 +523,7 @@ export interface CommonSearch {
   dynamicKeywordFields?: string[];
   isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
 }
@@ -2882,8 +2883,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -5132,6 +5133,7 @@ export interface MoSearch {
   dynamicKeywordFields?: string[];
   isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   /** 工单编码 */
@@ -5261,6 +5263,7 @@ export interface MitemInSupplierSearch {
   dynamicKeywordFields?: string[];
   isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   mitemKeyword?: string;
@@ -5324,13 +5327,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
+  isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5544,15 +5547,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
+  isState?: boolean;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -5695,8 +5698,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7087,6 +7090,7 @@ export interface DomainParamButtonFormColumn {
   defaultValue?: string;
   fieldType?: string;
   columnType?: string;
+  parentField?: string;
   verifyExp?: string;
   componentSource?: DomainParamComponentSource;
   isVisible?: boolean;
@@ -7174,6 +7178,10 @@ export interface DomainParamButtonSetting {
   actionType?: string;
   formColumnSetting?: DomainParamButtonFormColumn[];
   deleteType?: string;
+  jumpLink?: string;
+  customApi?: string;
+  apiAction?: string;
+  importCode?: string;
   isEnabled?: boolean;
   isCustomButton?: boolean;
 }
@@ -7852,6 +7860,7 @@ export interface DefectCodeSearch {
   dynamicKeywordFields?: string[];
   isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   id?: string;
@@ -7946,8 +7955,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -10737,10 +10746,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -11312,10 +11321,10 @@ export interface IdentityLinkInfo {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
 }
 
 /** 通用响应类 */
@@ -11337,47 +11346,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
-  assignee?: string;
   suspended?: boolean;
   description?: string;
   tenantId?: string;
+  assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  localizedName?: string;
   category?: string;
-  localizedDescription?: string;
   formKey?: string;
-  parentTaskId?: string;
+  localizedName?: string;
+  localizedDescription?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
   id?: string;
   state?: string;
   scopeId?: string;
   /** @format date-time */
   createTime?: string;
-  propagatedStageInstanceId?: string;
+  processDefinitionId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
   executionId?: string;
   identityLinks?: IdentityLinkInfo[];
-  taskDefinitionKey?: string;
   taskDefinitionId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  /** @format date-time */
-  inProgressStartTime?: string;
+  taskDefinitionKey?: string;
+  caseVariables?: Record<string, object>;
+  propagatedStageInstanceId?: string;
   inProgressStartedBy?: string;
   /** @format date-time */
   inProgressStartDueDate?: string;
-  processVariables?: Record<string, object>;
   taskLocalVariables?: Record<string, object>;
-  processDefinitionId?: string;
-  caseVariables?: Record<string, object>;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
   /** @format date-time */
   claimTime?: string;
   claimedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  suspendedBy?: string;
 } | null;
 
 /** 响应数据 */
@@ -11388,10 +11397,10 @@ export type IdentityLink = {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
 } | null;
 
 /** 通用响应类 */
@@ -15164,6 +15173,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultObject['data']>(`/api/main/mould/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 模具表
+     * @name SetFreeById
+     * @summary 删除数据
+     * @request POST:/mould/items/setFree
+     * @secure
+     */
+    setFreeById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/mould/items/setFree`, {
         method: 'POST',
         body: data as any,
       }),
