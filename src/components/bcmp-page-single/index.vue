@@ -8,7 +8,7 @@
         ref="tableRef"
         v-model:pagination="pageUI"
         :title="tableTitle"
-        row-key="id"
+        row-key="ID"
         :table-column="tableColumns"
         :table-data="tableData"
         :loading="loading"
@@ -55,6 +55,14 @@
   </cmp-container>
   <!-- 弹出层 -->
   <t-dialog
+    v-model:visible="formVisible"
+    :header="currentFormAction === 'edit' ? '编辑' : '新增'"
+    :on-confirm="onFormSubmit"
+    :width="calculateFormWidth"
+  >
+    <bcmp-dynamic-form ref="formRef" :form-setting="currentFormSetting" :form-data="currentFormData" />
+  </t-dialog>
+  <!-- <t-dialog
     v-model:visible="formVisible"
     :header="currentFormAction == 'edit' ? '编辑' : '新增'"
     :on-confirm="onFormSubmit"
@@ -145,18 +153,9 @@
           </t-form-item>
         </t-col>
       </t-row>
-      <!-- <div ref="formRowRef" style="width: 100%" :style="loading ? 'opacity: 0.1' : ''">
-        <t-form-item
-          v-for="formItem in currentFormSetting"
-          :key="formItem.field"
-          :label="formItem.label"
-          :name="formItem.field"
-        >
-          <t-input v-model="currentFormData[formItem.field]"></t-input>
-        </t-form-item>
-      </div> -->
+     
     </t-form>
-  </t-dialog>
+  </t-dialog> -->
 </template>
 <script lang="ts">
 export default {
@@ -164,8 +163,8 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { cloneDeep } from 'lodash';
-import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { cloneDeep, isEqual } from 'lodash';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { useLoading } from '@/hooks/modules/loading';
@@ -208,14 +207,14 @@ const tableTitle = ref('');
 const conditionEnter = (data: any) => {
   pageUI.value.page = 1;
   filterList.value = [];
-
   for (const key in data) {
     if (data[key] != null && data[key] !== '') {
       const addFilter = {
         tableName: datasourceName.value,
-        field: key,
-        operator: searchSettings.value.find((item: any) => item.field === key)?.operator || 'like',
-        value: data[key],
+        field: key.toUpperCase(),
+        operator:
+          searchSettings.value.find((item: any) => item.field.toUpperCase() === key.toUpperCase())?.operator || 'like',
+        value: data[key.toUpperCase()],
       };
       filterList.value.push(addFilter);
     }
@@ -280,8 +279,8 @@ const loadSetting = async () => {
   usePager.value = res.domainParmSetting.tableSetting.usePage;
   // 获取表格里面的field字段
   selectedFields.value = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
-    tableName: column.tableName, // 假设column对象中有tableName属性
-    fieldName: column.columnName, // 或者是fieldName，取决于你的实际属性名
+    tableName: column.tableName.toUpperCase(), // 假设column对象中有tableName属性
+    fieldName: column.columnName.toUpperCase(), // 或者是fieldName，取决于你的实际属性名
   }));
   if (usePager.value) {
     pageUI.value.rows = res.domainParmSetting.tableSetting.pageSize || 20;
@@ -300,8 +299,8 @@ const loadSetting = async () => {
 
   // 获取表格列，配置
   const tableColumnSetting = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
-    colKey: column.columnName, // 列绑定的字段名
-    title: column.columnDesc || column.columnName, // 列显示的标题，默认使用columnDesc，不存在则使用columnName
+    colKey: column.columnName.toUpperCase(), // 列绑定的字段名
+    title: column.columnDesc || column.columnName.toUpperCase(), // 列显示的标题，默认使用columnDesc，不存在则使用columnName
     align: column.align, // 对齐方式
     width: column.isAutoWidth ? 'auto' : column.columnWidth, // 列宽
     fixed: determineFixed(column.isLeftFixed, column.isRightFixed), // 是否固定列
@@ -319,6 +318,22 @@ const loadSetting = async () => {
       showOverflowTooltip: true,
     });
   }
+  // 过滤isShow为true的数据,作为表格的列配置
+  tableColumnSetting.forEach((column: any) => {
+    if (column.colKey !== 'op') {
+      if (column.componentSource) {
+        column.cell = (h, { row }) => {
+          // 判断column的componentSource不为空
+          return h(
+            'span',
+            {},
+            column.componentSource.customDict.dicData.find((item) => item.value === row[column.colKey].toString())
+              ?.label,
+          );
+        };
+      }
+    }
+  });
   // 过滤isShow为true的数据,作为表格的列配置
   tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
   // 获取查询信息，配置
@@ -374,6 +389,27 @@ const generateComponentConfig = async (setting) => {
   }
 
   switch (setting.component) {
+    case 't-date-range-picker-time':
+      optItem.comp = 't-date-range-picker';
+      optItem.bind = {
+        enableTimePicker: true,
+        allowInput: true,
+        clearable: true,
+      };
+      if (optItem.defaultVal === '') {
+        optItem.defaultVal = ['', ''];
+      }
+      break;
+    case 't-date-range-picker':
+      optItem.comp = 't-date-range-picker';
+      optItem.bind = {
+        allowInput: true,
+        clearable: true,
+      };
+      if (optItem.defaultVal === '') {
+        optItem.defaultVal = ['', ''];
+      }
+      break;
     case 'bcmp-select-business':
       optItem.bind = {
         type: setting.componentParam,
@@ -417,13 +453,14 @@ const generateComponentConfig = async (setting) => {
 const onRowClick = async (rowValue, buttonSetting) => {
   // console.log(rowValue);
   // console.log(buttonSetting);
+  const rowData = tableData.value.find((item) => item.ID === rowValue.row.ID);
+
   let deleteTypeUrl = 'dynamicDeleteDataSql';
-  const formValue = cloneDeep(rowValue.row);
+  const formValue = cloneDeep(rowData);
   const deleteModel = {
     tableName: datasourceName.value,
-    ids: [rowValue.row.id],
+    ids: [rowData.ID],
   };
-  let formRulesObject: any = {};
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
     case 'delete':
@@ -442,80 +479,8 @@ const onRowClick = async (rowValue, buttonSetting) => {
       break;
     case 'form-edit':
       currentFormAction.value = 'edit';
-      // 编辑动作,弹出编辑窗口,加载配置的表单与加载数据
-      // 加载当前按钮动作对应的表单配置,包含表单字段与校验规则
-      currentFullFormSetting.value = buttonSetting.formColumnSetting;
-      currentFormSetting.value = buttonSetting.formColumnSetting.filter((column) => column.isVisible);
-      // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
-      currentFormSetting.value.forEach(async (column: any) => {
-        let optionsData = [];
-        if (
-          (column.component === 't-select' || column.component === 't-checkbox-group') &&
-          column.componentSource.sourceType === 'dataTable'
-        ) {
-          const postSetting = column.componentSource.dataTable;
-          const { mapBusinessDomain } = column.componentSource.dataTable;
-          const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
-          try {
-            const res = await http.post<any>(postUrl, postSetting);
-            const { list } = res;
-            optionsData = list;
-          } catch (error) {
-            console.error('Error fetching data:', error);
-            // 可能需要处理错误情况，比如设置默认值或抛出错误
-          }
-        }
-        switch (column.component) {
-          case 't-input':
-            formValue[column.field] = formValue[column.field] || '';
-            break;
-          case 't-select':
-          case 't-radio-group':
-          case 't-checkbox-group':
-            if (column.isMutiple) {
-              formValue[column.field] = formValue[column.field] ? formValue[column.field].split(',') : [];
-            } else {
-              formValue[column.field] = formValue[column.field]?.toString() ?? '';
-            }
-
-            if (column.componentSource) {
-              switch (column.componentSource.sourceType) {
-                case 'customDict':
-                  optionsData = column.componentSource.customDict.dicData;
-                  break;
-
-                default:
-                  break;
-              }
-            }
-            column.options = optionsData;
-
-            break;
-          case 't-date-picker':
-            formValue[column.field] = formValue[column.field] || '';
-            break;
-          default:
-            break;
-        }
-      });
+      currentFormSetting.value = buttonSetting;
       currentFormData.value = formValue;
-
-      currentFormRules.value = {};
-      formRulesObject = {};
-      // 遍历必需的列，为每个列生成验证规则并添加到规则对象中
-      currentFormSetting.value
-        .filter((column: any) => column.isRequired)
-        .forEach((column: any) => {
-          formRulesObject[column.field] = [
-            {
-              required: true,
-              message: `${column.label} 是必填项`, // 假设column.label存在且表示字段的标签名称
-              type: 'error',
-              trigger: 'blur', // 触发验证的时机，这里设置为失去焦点时
-            },
-          ];
-        });
-      currentFormRules.value = formRulesObject;
       formVisible.value = true;
 
       break;
@@ -533,9 +498,7 @@ const onHeaderClick = async (buttonSetting) => {
     tableName: datasourceName.value,
     ids: [],
   };
-  const sourceComponents = ['t-select', 't-radio-group', 't-checkbox-group'];
 
-  let formRulesObject: any = {};
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
     case 'delete':
@@ -554,90 +517,8 @@ const onHeaderClick = async (buttonSetting) => {
       break;
     case 'form-add':
       currentFormAction.value = 'add';
-      currentFullFormSetting.value = buttonSetting.formColumnSetting;
-      // 加载当前按钮动作对应的表单配置,包含表单字段与校验规则
-      currentFormSetting.value = buttonSetting.formColumnSetting.filter((column) => column.isVisible);
-
-      // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
-      currentFormSetting.value.forEach(async (column: any) => {
-        let optionsData = [];
-        if (sourceComponents.includes(column.component) && column.componentSource.sourceType === 'dataTable') {
-          const postSetting = column.componentSource.dataTable;
-          const { mapBusinessDomain } = column.componentSource.dataTable;
-          const postUrl = `/api/${mapBusinessDomain.toLowerCase()}/dynamicManage/dynamicQueryDropdownListSql`;
-          try {
-            const res = await http.post<any>(postUrl, postSetting);
-            const { list } = res;
-            optionsData = list;
-          } catch (error) {
-            console.error('Error fetching data:', error);
-            // 可能需要处理错误情况，比如设置默认值或抛出错误
-          }
-        }
-        // 如果props.relateCondition 包含该字段,则使用传入的值作为默认值
-        if (props.relateCondition?.find((item: any) => item.field === column.field)) {
-          const relateConditionValue: any = props.relateCondition.find((item: any) => item.field === column.field);
-          column.defaultValue = relateConditionValue.value;
-        }
-
-        switch (column.component) {
-          case 't-input':
-            formValue[column.field] = formValue[column.field] || column.defaultValue || '';
-            break;
-          case 't-select':
-          case 't-radio-group':
-          case 't-checkbox-group':
-            if (column.isMutiple) {
-              const preValue = formValue[column.field] ? formValue[column.field].split(',') : [];
-              formValue[column.field] = preValue || column.defaultValue?.split(',');
-            } else {
-              formValue[column.field] = formValue[column.field]?.toString() ?? column.defaultValue ?? '';
-            }
-
-            if (column.componentSource) {
-              switch (column.componentSource.sourceType) {
-                case 'customDict':
-                  optionsData = column.componentSource.customDict.dicData;
-                  break;
-                default:
-                  break;
-              }
-            }
-            column.options = optionsData;
-
-            break;
-          case 't-date-picker':
-            formValue[column.field] = formValue[column.field] ?? column.defaultValue ?? '';
-            break;
-          case 't-switch':
-            if (formValue[column.field] === undefined) {
-              formValue[column.field] = column.defaultValue;
-            }
-            formValue[column.field] = convertToBoolean(formValue[column.field]);
-            break;
-          default:
-            formValue[column.field] = formValue[column.field] || column.defaultValue || '';
-            break;
-        }
-      });
-      currentFormData.value = formValue;
-
-      currentFormRules.value = {};
-      formRulesObject = {};
-      // 遍历必需的列，为每个列生成验证规则并添加到规则对象中
-      currentFormSetting.value
-        .filter((column: any) => column.isRequired)
-        .forEach((column: any) => {
-          formRulesObject[column.field] = [
-            {
-              required: true,
-              message: `${column.label} 是必填项`, // 假设column.label存在且表示字段的标签名称
-              type: 'error',
-              trigger: 'blur', // 触发验证的时机，这里设置为失去焦点时
-            },
-          ];
-        });
-      currentFormRules.value = formRulesObject;
+      currentFormSetting.value = buttonSetting;
+      currentFormData.value = {};
       formVisible.value = true;
 
       break;
@@ -647,35 +528,54 @@ const onHeaderClick = async (buttonSetting) => {
   }
 };
 const formVisible = ref(false);
-const currentFormSetting = ref([]);
+const currentFormSetting: any = ref([]);
 const currentFullFormSetting = ref([]);
 const currentFormData = ref({});
-const currentFormRules = ref<FormRules<Data>>({});
 // 计算窗口宽度
+// const calculateFormWidth = computed(() => {
+//   const inputWidth = 270; // 假设调整后的输入框宽度
+//   const labelWidth = 120;
+//   const margin = 16;
+//   const gap = 2;
+//   const columnGap = 12;
+//   if (currentFormSetting.value.length < 6) {
+//     return `${inputWidth + labelWidth + margin * 2 + gap}px`;
+//   }
+//   if (currentFormSetting.value.length >= 6 && currentFormSetting.value.length < 16) {
+//     return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
+//   }
+//   return '90%';
+// });
 const calculateFormWidth = computed(() => {
   const inputWidth = 270; // 假设调整后的输入框宽度
   const labelWidth = 120;
   const margin = 16;
   const gap = 2;
   const columnGap = 12;
-  if (currentFormSetting.value.length < 6) {
-    return `${inputWidth + labelWidth + margin * 2 + gap}px`;
+  const formSetting: any = cloneDeep(currentFormSetting.value);
+  if (!isEqual(formSetting, {}) && !isEqual(formSetting, [])) {
+    const currentColumns = formSetting.formColumnSetting.filter((column) => column.isVisible);
+
+    if (currentColumns.length < 6) {
+      return `${inputWidth + labelWidth + margin * 2 + gap}px`;
+    }
+    if (currentColumns.length >= 6 && currentColumns.length < 16) {
+      return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
+    }
+    return '90%';
   }
-  if (currentFormSetting.value.length >= 6 && currentFormSetting.value.length < 16) {
-    return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
-  }
-  return '90%';
+  return '50%';
 });
 
-const formSpan = computed(() => {
-  if (currentFormSetting.value.length < 6) {
-    return 12;
-  }
-  if (currentFormSetting.value.length >= 6 && currentFormSetting.value.length < 16) {
-    return 6;
-  }
-  return 4;
-});
+// const formSpan = computed(() => {
+//   if (currentFormSetting.value.length < 6) {
+//     return 12;
+//   }
+//   if (currentFormSetting.value.length >= 6 && currentFormSetting.value.length < 16) {
+//     return 6;
+//   }
+//   return 4;
+// });
 
 const formRef = ref(null);
 
@@ -685,7 +585,7 @@ const onFormSubmit = async () => {
   // 第一步:做校验
 
   // 第二步：提交数据
-  formRef.value.validate().then(async (result: any) => {
+  formRef.value.handleSubmit().then(async (result) => {
     if (result !== true) {
       MessagePlugin.warning(Object.values(result)[0][0].message);
     } else {
@@ -694,15 +594,16 @@ const onFormSubmit = async () => {
         if (currentFormAction.value === 'edit') {
           actionUrl = 'dynamicUpdateDataSql';
         }
+        const postValues = formRef.value.getFormData();
         const postUrl = `/api/${domainCategory.value.toLowerCase()}/dynamicManage/${actionUrl}`;
-
+        currentFullFormSetting.value = currentFormSetting.value.formColumnSetting;
         // 更新的时候,除了ID跟currentFormSetting.value里面的字段,其他字段不上传
-        const postValues = cloneDeep(currentFormData.value);
+
         if (currentFormAction.value === 'edit') {
           // postValues 需要去掉一些字段再post到接口
-          const editColumns = currentFormSetting.value.map((column: any) => column.field);
+          const editColumns = currentFormSetting.value.formColumnSetting.map((column) => column.field.toUpperCase());
           // 除了下面的字段,其他字段都不要
-          const fieldsToInclude = ['id', ...editColumns];
+          const fieldsToInclude = ['ID', ...editColumns];
 
           Object.keys(postValues).forEach((key) => {
             if (!fieldsToInclude.includes(key)) {
@@ -728,18 +629,18 @@ const onFormSubmit = async () => {
   });
 };
 
-const convertToBoolean = (value) => {
-  // 将值转换为小写字符串，以便进行比较
-  const lowerCaseValue = value.toString().toLowerCase();
+// const convertToBoolean = (value) => {
+//   // 将值转换为小写字符串，以便进行比较
+//   const lowerCaseValue = value.toString().toLowerCase();
 
-  // 检查值是否为 "1"、"true" 或数字 1
-  if (lowerCaseValue === '1' || lowerCaseValue === 'true' || value === 1) {
-    return true;
-  }
+//   // 检查值是否为 "1"、"true" 或数字 1
+//   if (lowerCaseValue === '1' || lowerCaseValue === 'true' || value === 1) {
+//     return true;
+//   }
 
-  // 如果不是上述情况，则返回 false
-  return false;
-};
+//   // 如果不是上述情况，则返回 false
+//   return false;
+// };
 // 渲染函数
 onMounted(() => {
   loadSetting();

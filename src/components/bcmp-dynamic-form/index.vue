@@ -34,6 +34,7 @@
           <bcmp-select-business
             v-if="formItem.component === 'bcmp-select-business'"
             v-model="currentFormData[formItem.field]"
+            :parent-id="currentFormData[formItem.parentField]"
             :type="formItem.componentParam"
             :disabled="formItem.isDisabled"
             :show-title="false"
@@ -151,9 +152,12 @@ const loadFormValue = () => {
   const formValue = cloneDeep(props.formData);
   // 循环匹配表单数据,针对特殊的字段类型或组件进行特殊处理
   currentFormSetting.value.forEach(async (column) => {
-    column.field = column.field.toUpperCase();
     if (props.lowerCamel) {
       column.field = common.toLowerCamelCase(column.field);
+      column.parentField = column.parentField && common.toLowerCamelCase(column.parentField);
+    } else {
+      column.field = column.field.toUpperCase();
+      column.parentField = column.parentField && column.parentField.toUpperCase();
     }
 
     // 加上默认值逻辑 column.defaultValue
@@ -210,6 +214,8 @@ const loadFormSetting = async () => {
   currentFormSetting.value.forEach(async (column) => {
     if (props.lowerCamel) {
       column.field = common.toLowerCamelCase(column.field);
+    } else {
+      column.field = column.field.toUpperCase();
     }
     let optionsData = [];
 

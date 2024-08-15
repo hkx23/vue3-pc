@@ -633,13 +633,72 @@
                                 filterable
                                 :placeholder="t('common.placeholder.select', ['按钮操作'])"
                               >
-                                <t-option key="form-add" label="添加表单" value="form-add" />
-                                <t-option key="form-edit" label="编辑表单" value="form-edit" />
+                                <t-option
+                                  key="form-add"
+                                  label="添加表单"
+                                  value="form-add"
+                                  :disabled="currentSelectButton.isCustomButton"
+                                />
+                                <t-option
+                                  key="form-edit"
+                                  label="编辑表单"
+                                  value="form-edit"
+                                  :disabled="currentSelectButton.isCustomButton"
+                                />
                                 <t-option key="delete" label="删除数据" value="delete" />
                                 <t-option key="link" label="打开新页面" value="link" />
+                                <t-option key="customApi" label="调用接口" value="customApi" />
                                 <t-option key="import" label="导入" value="import" />
                                 <t-option key="form-custom" label="自定义表单-更新操作" value="form-custom" />
                               </t-select>
+                            </t-form-item>
+                            <t-form-item
+                              v-if="currentSelectButton.actionType === 'link'"
+                              label="跳转页面"
+                              name="jumpLink"
+                              help="参考配置:/main#/moRelease?id={id}"
+                            >
+                              <t-input
+                                v-model="currentSelectButton.jumpLink"
+                                :placeholder="t('common.placeholder.input', ['跳转页面'])"
+                              ></t-input>
+                            </t-form-item>
+                            <t-form-item
+                              v-if="currentSelectButton.actionType === 'customApi'"
+                              label="调用接口"
+                              name="customApi"
+                              help="参考配置:/api/main/mould/items/remove 接口统一为POST ids:[1,2] 模式"
+                            >
+                              <t-input
+                                v-model="currentSelectButton.customApi"
+                                :placeholder="t('common.placeholder.input', ['调用接口'])"
+                              ></t-input>
+                            </t-form-item>
+                            <t-form-item
+                              v-if="currentSelectButton.actionType === 'customApi'"
+                              label="接口传输方法"
+                              name="apiAction"
+                            >
+                              <t-select
+                                v-model="currentSelectButton.apiAction"
+                                filterable
+                                disabled
+                                :placeholder="t('common.placeholder.select', ['接口传输方法'])"
+                              >
+                                <t-option key="GET" label="GET" value="GET" />
+                                <t-option key="POST " label="POST" value="POST" />
+                              </t-select>
+                            </t-form-item>
+                            <t-form-item
+                              v-if="currentSelectButton.actionType === 'import'"
+                              label="导入配置编码"
+                              name="importCode"
+                              help="需要先在[导入配置管理]配置后获得导入配置编码"
+                            >
+                              <t-input
+                                v-model="currentSelectButton.importCode"
+                                :placeholder="t('common.placeholder.input', ['导入配置编码'])"
+                              ></t-input>
                             </t-form-item>
                             <t-form-item
                               v-if="currentSelectButton.actionType === 'delete'"
@@ -657,7 +716,7 @@
                             </t-form-item>
                           </t-form>
                         </cmp-card>
-                        <cmp-card :span="12" :ghost="true">
+                        <cmp-card v-show="currentSelectButton.actionType.includes('form')" :span="12" :ghost="true">
                           <t-space direction="vertical" size="4px">
                             <div class="table-box_header">
                               <div class="table-title">表单配置</div>
@@ -666,7 +725,6 @@
                               </t-space>
                             </div>
                             <t-table
-                              v-show="currentSelectButton.actionType.includes('form')"
                               ref="buttonTableRef"
                               :columns="buttonFormColumns"
                               :selected-row-keys="buttonFormSelectedRowKeys"
@@ -746,6 +804,27 @@
                                 >
                                 <span v-else>-</span>
                               </template>
+
+                              <template #parentField="{ row }">
+                                <t-select
+                                  v-if="row.component.indexOf('bcmp-select-business') > -1"
+                                  v-model="row.parentField"
+                                  :clearable="true"
+                                  filterable
+                                  :placeholder="t('common.placeholder.select', [t('domainParam.controlType')])"
+                                >
+                                  <t-option label="无" value="" />
+                                  <t-option
+                                    v-for="item in currentSelectButton.formColumnSetting"
+                                    :key="item.field"
+                                    :label="item.label + ' (' + item.field + ')'"
+                                    :value="item.field"
+                                    :name="item.label"
+                                  />
+                                </t-select>
+                                <span v-else>-</span>
+                              </template>
+
                               <template #isMultiple="{ row }">
                                 <t-switch
                                   v-if="
@@ -2805,6 +2884,12 @@ const buttonFormColumns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
+    colKey: 'parentField',
+    title: '父级字段',
+    align: 'center',
+    width: '100',
+  },
+  {
     colKey: 'isMultiple',
     title: '是否多选',
     align: 'center',
@@ -2849,6 +2934,10 @@ const currentSelectButton = ref({
   actionType: 'form-custom',
   deleteType: '',
   formColumnSetting: [],
+  jumpLink: '',
+  customApi: '',
+  apiAction: '',
+  importCode: '',
 });
 const onClickButton = (value: any) => {
   currButtonName.value = value.buttonName;
@@ -2877,7 +2966,28 @@ const loading = ref(false);
 const domainParamFromRef = ref();
 const onClickAddTab = () => {
   // 添加按钮
-  MessagePlugin.warning('自定义按钮功能暂未开放');
+  // MessagePlugin.warning('自定义按钮功能暂未开放');
+  const temColumns = cloneDeep(
+    buttonSourceData.value.find((item) => {
+      return item.buttonCode === 'edit';
+    }).formColumnSetting,
+  );
+  buttonSourceData.value.push({
+    seq: buttonSourceData.value.length + 1,
+    buttonCode: 'new',
+    buttonName: '新按钮',
+    isEnabled: true,
+    isCustomButton: true,
+    buttonPosition: 'row',
+    buttonTheme: 'primary',
+    actionType: 'form-custom',
+    deleteType: '',
+    formColumnSetting: temColumns,
+    jumpLink: '',
+    customApi: '',
+    apiAction: 'POST',
+    importCode: '',
+  });
 };
 const syncButtonSelectDrawerVisible = ref(false);
 const syncButtonForm = () => {
