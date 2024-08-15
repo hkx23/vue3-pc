@@ -487,7 +487,8 @@ const onHeaderClick = async (buttonSetting) => {
       return;
     }
   }
-
+  const relateConditons = cloneDeep(props.relateCondition);
+  const formData = {};
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
     case 'delete':
@@ -507,7 +508,17 @@ const onHeaderClick = async (buttonSetting) => {
     case 'form-add':
       currentFormAction.value = 'add';
       currentFormSetting.value = buttonSetting;
-      currentFormData.value = {};
+
+      // 将field 属性转换为小写驼峰形式
+      relateConditons.forEach((item: any) => {
+        item.field = item.field.toUpperCase();
+      });
+
+      // formData 添加 relateConditons的属性值
+      relateConditons.forEach((condition: any) => {
+        formData[condition.field] = condition.value;
+      });
+      currentFormData.value = formData;
       formVisible.value = true;
 
       break;
