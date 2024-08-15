@@ -219,10 +219,10 @@ const loadSetting = async () => {
   // 获取按钮信息，配置
   const allButtonSetting = res.domainParmSetting.buttonSetting;
   tableHeaderButtons.value = allButtonSetting.filter(
-    (button) => button.buttonPosition === 'tableHeader' || button.buttonPosition === 'both',
+    (button) => (button.buttonPosition === 'tableHeader' || button.buttonPosition === 'both') && button.isEnabled,
   );
   rowButtons.value = allButtonSetting.filter(
-    (button) => button.buttonPosition === 'row' || button.buttonPosition === 'both',
+    (button) => (button.buttonPosition === 'row' || button.buttonPosition === 'both') && button.isEnabled,
   );
 
   // 获取表格列，配置
