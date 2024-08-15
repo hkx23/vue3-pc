@@ -8,6 +8,7 @@
     "build:dev": "cross-env LIMIT=8192 increase-memory-limit && vue-tsc --noEmit && vite build --mode development",
     "build:uat": "cross-env LIMIT=8192 increase-memory-limit && vue-tsc --noEmit && vite build --mode uat",
     "build:poc": "cross-env LIMIT=8192 increase-memory-limit && vue-tsc --noEmit && vite build --mode poc",
+    "build:changqingdev": "cross-env LIMIT=8192 increase-memory-limit && vue-tsc --noEmit && vite build --mode changqingdev",
     "tsc": "vue-tsc --noEmit",
     "preview": "vite preview",
     "lint": "eslint --ext .vue,.js,.jsx,.ts,.tsx ./ --max-warnings 0",
