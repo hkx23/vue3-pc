@@ -255,17 +255,20 @@ const loadSetting = () => {
     }
 
     // 过滤isShow为true的数据,作为表格的列配置
-    tableColumnSetting.forEach((column: any) => {
+
+    tableColumnSetting.forEach((column) => {
       if (column.colKey !== 'op' && column.colKey !== 'checked') {
         if (column.componentSource) {
           column.cell = (h, { row }) => {
-            // 判断column的componentSource不为空
-            return h(
-              'span',
-              {},
-              column.componentSource.customDict.dicData.find((item) => item.value === row[column.colKey].toString())
-                ?.label,
-            );
+            // 如果 row[column.colKey] 为 null 或 undefined，则直接返回默认值
+            const value = row[column.colKey] ?? '';
+            // 查找对应字典中的条目
+            const dictItem = column.componentSource.customDict.dicData.find((item) => item.value === value.toString());
+
+            // 如果找到了对应的字典条目，则使用该条目的 label，否则使用默认值
+            const label = dictItem ? dictItem.label : value;
+
+            return h('span', {}, label);
           };
         }
       }
