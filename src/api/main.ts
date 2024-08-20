@@ -4038,6 +4038,8 @@ export interface MouldVo {
   status?: string;
   /** 源模具编码 */
   sourceMouldCode?: string;
+  /** 使用次数 */
+  useCount?: number;
   /** 所属部门名称 */
   orgName?: string;
   /** 存放仓库 */
@@ -5329,11 +5331,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5549,13 +5551,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -5698,8 +5700,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7088,16 +7090,16 @@ export interface DomainParamButtonFormColumn {
   componentParam?: string;
   placeholder?: string;
   defaultValue?: string;
+  isVisible?: boolean;
+  isDisabled?: boolean;
+  isMultiple?: boolean;
   fieldType?: string;
   columnType?: string;
   parentField?: string;
-  verifyExp?: string;
-  componentSource?: DomainParamComponentSource;
-  isVisible?: boolean;
-  isDisabled?: boolean;
-  isMutiple?: boolean;
   isRequired?: boolean;
   isKeyField?: boolean;
+  verifyExp?: string;
+  componentSource?: DomainParamComponentSource;
 }
 
 export interface DomainParamComponentSource {
@@ -7172,6 +7174,8 @@ export interface DomainParamButtonSetting {
   id?: string;
   buttonCode?: string;
   buttonName?: string;
+  isEnabled?: boolean;
+  isCustomButton?: boolean;
   buttonPosition?: string;
   buttonTheme?: string;
   needCheckSelectRow?: boolean;
@@ -7182,8 +7186,6 @@ export interface DomainParamButtonSetting {
   customApi?: string;
   apiAction?: string;
   importCode?: string;
-  isEnabled?: boolean;
-  isCustomButton?: boolean;
 }
 
 export interface DomainParamSearchSetting {
@@ -7196,10 +7198,10 @@ export interface DomainParamSearchSetting {
   componentParam?: string;
   operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
   defaultValue?: string;
+  isVisible?: boolean;
+  isMultiple?: boolean;
   fieldType?: string;
   componentSource?: DomainParamComponentSource;
-  isVisible?: boolean;
-  isMutiple?: boolean;
 }
 
 export interface DomainParamSetting {
@@ -7220,18 +7222,18 @@ export interface DomainParamTableColumn {
   columnType?: string;
   nullable?: string;
   tableName?: string;
+  isDatabaseField?: boolean;
+  isAutoWidth?: boolean;
   /** @format int32 */
   columnWidth?: number;
   align?: string;
-  canDelete?: boolean;
-  componentSource?: DomainParamComponentSource;
-  isDatabaseField?: boolean;
-  isAutoWidth?: boolean;
   isVisible?: boolean;
   isLeftFixed?: boolean;
   isRightFixed?: boolean;
+  canDelete?: boolean;
   isDataDefault?: boolean;
   isHandAdd?: boolean;
+  componentSource?: DomainParamComponentSource;
 }
 
 export interface DomainParamTableSetting {
@@ -10746,10 +10748,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -11348,45 +11350,45 @@ export type Task = {
   owner?: string;
   suspended?: boolean;
   description?: string;
+  localizedName?: string;
   tenantId?: string;
-  assignee?: string;
   /** @format date-time */
   dueDate?: string;
+  assignee?: string;
   category?: string;
   formKey?: string;
-  localizedName?: string;
-  localizedDescription?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
   parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  localizedDescription?: string;
   id?: string;
   state?: string;
   scopeId?: string;
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
   /** @format date-time */
   createTime?: string;
-  processDefinitionId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
   executionId?: string;
   identityLinks?: IdentityLinkInfo[];
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
-  caseVariables?: Record<string, object>;
-  propagatedStageInstanceId?: string;
-  inProgressStartedBy?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  suspendedBy?: string;
+  subScopeId?: string;
+  scopeType?: string;
+  processDefinitionId?: string;
   /** @format date-time */
   suspendedTime?: string;
   /** @format date-time */
   claimTime?: string;
   claimedBy?: string;
+  suspendedBy?: string;
+  caseVariables?: Record<string, object>;
+  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  inProgressStartedBy?: string;
+  taskLocalVariables?: Record<string, object>;
+  processVariables?: Record<string, object>;
 } | null;
 
 /** 响应数据 */

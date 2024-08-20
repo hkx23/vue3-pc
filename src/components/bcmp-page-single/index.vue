@@ -1,6 +1,6 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card v-if="opts" :span="12" :ghost="ghost">
+    <cmp-card v-if="opts && Object.keys(opts).length > 0" :span="12" :ghost="ghost">
       <cmp-query :opts="opts" label-width="100" :loading="loading" @submit="conditionEnter" />
     </cmp-card>
     <cmp-card :span="12" :ghost="ghost">

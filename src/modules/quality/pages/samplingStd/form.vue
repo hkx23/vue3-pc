@@ -106,7 +106,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
+
         showColumn: !falg.value,
       },
       // 触发校验的时机（when to validate)
@@ -147,7 +147,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -187,7 +186,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -228,7 +226,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -269,7 +266,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -309,7 +305,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -349,7 +344,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -389,7 +383,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -429,7 +422,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -469,7 +461,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -509,7 +500,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -556,7 +546,7 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
+
         showColumn: falg.value,
       },
       // 触发校验的时机（when to validate)
@@ -597,7 +587,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -637,7 +626,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -678,7 +666,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -719,7 +706,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -759,7 +745,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -799,7 +784,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -839,7 +823,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -879,7 +862,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -919,7 +901,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -959,7 +940,6 @@ const tableColumns2: PrimaryTableCol<TableRowData>[] = [
       // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
       props: {
         clearable: true,
-        autoWidth: true,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',

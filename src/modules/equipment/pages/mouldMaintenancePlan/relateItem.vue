@@ -75,7 +75,7 @@ import common from '@/utils/common';
 
 import { useLang } from './lang';
 import relateItemAddForm from './relateItemAddForm.vue';
-import tableSettingJson from './setting/relateTableSetting.json';
+import tableSettingJson from './setting/relateTableSetting';
 
 const props = defineProps({
   // 组件展示类型
@@ -338,3 +338,4 @@ defineExpose({ fetchTable, conditionEnter });
   }
 }
 </style>
+./setting/relateTableSetting

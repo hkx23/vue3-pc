@@ -244,7 +244,9 @@ export interface RepairItemInEquipmentSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
@@ -388,7 +390,9 @@ export interface CommonSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
 }
@@ -448,7 +452,9 @@ export interface MaintenancePlanItemSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
@@ -527,7 +533,9 @@ export interface MaintenancePlanSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
@@ -633,7 +641,9 @@ export interface MaintenanceItemInEquipmentSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
@@ -786,6 +796,66 @@ export interface MaintenanceItemVo {
   maintenancePeriodName?: string;
 }
 
+export interface MaintenanceBillHeadSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
+  dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+  ids?: string[];
+  relateType?: string;
+}
+
+/** DemoJOB参数 */
+export interface DemoJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+export interface JobCommonDTO {
+  /** 公共JOB参数 */
+  jobCommonParams?: JobCommonParam[];
+  /** DemoJOB参数 */
+  demoJobParam?: DemoJobParam[];
+  /** 模具保养单据参数 */
+  mouldMaintenanceCreateJobParam?: MouldMaintenanceCreateJobParam[];
+}
+
+/** 公共JOB参数 */
+export interface JobCommonParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
+/** 模具保养单据参数 */
+export interface MouldMaintenanceCreateJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
 /** 设备点检计划表 */
 export interface InspectPlanVO {
   id?: string;
@@ -864,7 +934,9 @@ export interface InspectPlanSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   assetTypeId?: string;
@@ -954,7 +1026,9 @@ export interface InspectItemInEquipmentSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
@@ -1114,7 +1188,9 @@ export interface InspectItemSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
   selectedFields?: DatasourceField[];
   datasourceSetting?: DatasourceSetting[];
   /** 点检项目名称 */
@@ -1266,11 +1342,12 @@ export interface DomainParamButtonFormColumn {
   defaultValue?: string;
   fieldType?: string;
   columnType?: string;
+  parentField?: string;
   verifyExp?: string;
   componentSource?: DomainParamComponentSource;
   isVisible?: boolean;
   isDisabled?: boolean;
-  isMutiple?: boolean;
+  isMultiple?: boolean;
   isRequired?: boolean;
   isKeyField?: boolean;
 }
@@ -1308,58 +1385,6 @@ export interface InsertOrUpdateModel {
 export interface DeleteModel {
   tableName?: string;
   ids?: string[];
-}
-
-export interface BatchDynamicUpdateDTO {
-  /** 表唯一主键 */
-  primaryKey?: string;
-  /** 领域名称 */
-  businessDomain?: string;
-  /** 表名 */
-  tableName?: string;
-  /** 更新的字段列表 */
-  columnList?: DynamicColumn[];
-  /** 更新的数据信息 */
-  rows?: Record<string, object>[];
-}
-
-/** 动态列字段 */
-export interface DynamicColumn {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** 字段名称 */
-  columnField?: string;
-  /** 字段描述 */
-  columnDesc?: string;
-  /** 列数据类型 */
-  columnDateType?: string;
-  /**
-   * 是否必填项
-   * @format int32
-   */
-  isRequired?: number;
-  /** 默认值 */
-  defaultValue?: string;
 }
 
 export interface AssetLedgerSearch {
@@ -1951,6 +1976,37 @@ export const api = {
         body: data as any,
       }),
   },
+  maintenanceBillHead: {
+    /**
+     * No description
+     *
+     * @tags 设备保养单据头表
+     * @name Search
+     * @request POST:/maintenanceBillHead/items
+     * @secure
+     */
+    search: (data: MaintenanceBillHeadSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceBillHead/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  jobCommon: {
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name CheckBillCreatedJob
+     * @summary 点检单据生成JOB
+     * @request POST:/jobCommon/checkBillCreatedJob
+     * @secure
+     */
+    checkBillCreatedJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/equipment/jobCommon/checkBillCreatedJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   inspectPlan: {
     /**
      * No description
@@ -2393,21 +2449,6 @@ export const api = {
      * No description
      *
      * @tags 动态服务
-     * @name BatchUpdateData
-     * @summary 根据领域进行动态表字段更新
-     * @request POST:/dynamicManage/batchUpdateData
-     * @secure
-     */
-    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
-      http.request<ResultObject['data']>(`/api/equipment/dynamicManage/batchUpdateData`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 动态服务
      * @name SqlTables
      * @summary 根据领域获取数据表列表-SQL方式
      * @request GET:/dynamicManage/sqlTables
@@ -2416,6 +2457,21 @@ export const api = {
     sqlTables: () =>
       http.request<ResultListDataTableVO['data']>(`/api/equipment/dynamicManage/sqlTables`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTableColumns
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTableColumns
+     * @secure
+     */
+    sqlTableColumns: (query: { tableName: string }) =>
+      http.request<ResultListDataTableVO['data']>(`/api/equipment/dynamicManage/sqlTableColumns`, {
+        method: 'GET',
+        params: query,
       }),
   },
   assetLedger: {
