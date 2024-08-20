@@ -86,12 +86,34 @@
                   >
                     {{ opt.label }}
                   </t-checkbox>
+
+                  <bcmp-select-business
+                    v-if="!opt.slotName && opt.comp.includes('bcmp-select-business')"
+                    v-model="state.form[opt.dataIndex]"
+                    :parent-id="state.form[opt.parentIdField]"
+                    v-bind="
+                      typeof opt.bind == 'function'
+                        ? opt.bind(state.form)
+                        : getComponentAttributes(opt.comp, {
+                            clearable: true,
+                            ...$attrs,
+                            ...opt.bind,
+                          })
+                    "
+                    :size="size"
+                    :label="opt.label"
+                    :placeholder="opt.placeholder || getPlaceholder(opt)"
+                    @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                    v-on="cEvent(opt)"
+                  ></bcmp-select-business>
+
                   <!-- 非日期控件与树选择控件 -->
                   <component
                     :is="opt.comp"
                     v-if="
                       !opt.slotName &&
                       !opt.comp.includes('date') &&
+                      !opt.comp.includes('bcmp-select-business') &&
                       !opt.comp.includes('tree-select') &&
                       !opt.comp.includes('t-radio-button-group') &&
                       !(opt.comp.includes('t-checkbox') && !opt.comp.includes('t-checkbox-group'))

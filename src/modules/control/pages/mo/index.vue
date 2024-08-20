@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-card :span="12">
       <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onHandleResetting" />
+      <cmp-query ref="moQueryRef" :opts="opts" @submit="conditionEnter" @reset="onHandleResetting" />
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
@@ -170,6 +170,7 @@ const columns = ref([
 const moData = ref([]);
 const dataTotal = ref(0);
 const detailFormRef = ref(null);
+const moQueryRef = ref(null);
 const fetchTable = async () => {
   try {
     setLoading(true);
@@ -243,7 +244,6 @@ const opts = computed(() => {
     moClass: {
       label: '工单类别',
       comp: 't-select',
-      defaultVal: '',
       placeholder: '请选择工单类别',
       bind: {
         options: moClassOption.value,
@@ -295,12 +295,13 @@ const opts = computed(() => {
       comp: 'bcmp-select-business',
       defaultVal: '',
       placeholder: '请选择车间',
+      event: 'workshopCode',
       bind: {
         isMultiple: true,
         type: 'workshop',
         valueField: 'orgCode',
         changeFunc: (val: any) => {
-          queryCondition.value.workshopId = val.map((n) => n.id).join(',');
+          moQueryRef.value.setFromValue('workshopId', val.map((n) => n.id).join(','));
         },
       },
     },
@@ -309,11 +310,11 @@ const opts = computed(() => {
       comp: 'bcmp-select-business',
       defaultVal: '',
       placeholder: '请选择工作中心',
+      parentIdField: 'workshopId',
       bind: {
         isMultiple: true,
         type: 'workcenter',
         valueField: 'wcCode',
-        parentId: queryCondition.value.workshopId,
       },
     },
     rootingCode: {
