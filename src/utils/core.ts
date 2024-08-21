@@ -20,7 +20,7 @@ if (typeof window !== 'undefined' && window.top !== window) {
   // portal 页面
   if (window.top === window) {
     // 加载第三方配置，并设置基础路径
-    fetch(`/config.json?_t=${new Date().getTime()}`)
+    fetch(`./config.json?_t=${new Date().getTime()}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
@@ -28,11 +28,8 @@ if (typeof window !== 'undefined' && window.top !== window) {
         return res.json();
       })
       .then((config) => {
-        const localBaseUrl = localStorage.getItem('baseUrl');
-        if (config?.baseUrl && localBaseUrl !== config.baseUrl) {
-          fw.config.baseUrl = config.baseUrl;
-          localStorage.setItem('baseUrl', config.baseUrl);
-        }
+        fw.config.baseUrl = config.baseUrl || window.location.origin;
+        localStorage.setItem('baseUrl', fw.config.baseUrl);
       })
       .catch((error) => {
         if (error.name === 'SyntaxError') return;
