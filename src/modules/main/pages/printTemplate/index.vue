@@ -165,7 +165,7 @@ const templateColumn = [
   },
   {
     title: t('business.main.creator'),
-    colKey: 'creator',
+    colKey: 'creatorName',
   },
   {
     title: t('business.main.timeCreate'),

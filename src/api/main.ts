@@ -5329,13 +5329,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  isState?: boolean;
-  isForceInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5549,15 +5549,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isRawName?: string;
+  isRawChecked?: boolean;
   isProductName?: string;
   isInProcessName?: string;
-  isRawChecked?: boolean;
   isBatchName?: string;
+  isRawName?: string;
+  stateName?: string;
   isState?: boolean;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5700,8 +5700,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -10748,12 +10748,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11323,8 +11323,8 @@ export interface IdentityLinkInfo {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  scopeType?: string;
   subScopeId?: string;
+  scopeType?: string;
   scopeDefinitionId?: string;
   processInstanceId?: string;
 }
@@ -11351,44 +11351,44 @@ export type Task = {
   suspended?: boolean;
   description?: string;
   tenantId?: string;
-  localizedName?: string;
-  formKey?: string;
+  assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  assignee?: string;
-  category?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  parentTaskId?: string;
   localizedDescription?: string;
+  category?: string;
+  parentTaskId?: string;
+  localizedName?: string;
+  formKey?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
   id?: string;
   state?: string;
   scopeId?: string;
-  propagatedStageInstanceId?: string;
+  caseVariables?: Record<string, object>;
   /** @format date-time */
   createTime?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
-  scopeType?: string;
-  subScopeId?: string;
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
+  inProgressStartedBy?: string;
   /** @format date-time */
   inProgressStartTime?: string;
-  inProgressStartedBy?: string;
-  processDefinitionId?: string;
+  propagatedStageInstanceId?: string;
+  processVariables?: Record<string, object>;
+  taskLocalVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  subScopeId?: string;
+  scopeType?: string;
+  /** @format date-time */
+  suspendedTime?: string;
   suspendedBy?: string;
   /** @format date-time */
   claimTime?: string;
   claimedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  caseVariables?: Record<string, object>;
-  taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
+  processDefinitionId?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
+  identityLinks?: IdentityLinkInfo[];
+  executionId?: string;
 } | null;
 
 /** 响应数据 */
@@ -11399,8 +11399,8 @@ export type IdentityLink = {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  scopeType?: string;
   subScopeId?: string;
+  scopeType?: string;
   scopeDefinitionId?: string;
   processInstanceId?: string;
 } | null;
