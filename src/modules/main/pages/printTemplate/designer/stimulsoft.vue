@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { StiDesigner, Stimulsoft } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
+// import { StiDesigner, Stimulsoft } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
 import { CloseIcon } from 'tdesign-icons-vue-next';
 import { onMounted } from 'vue';
 
@@ -40,7 +40,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:visible', 'save']);
 
-let designer: StiDesigner;
+let designer;
 
 onMounted(() => {
   const options = new Stimulsoft.Designer.StiDesignerOptions();
