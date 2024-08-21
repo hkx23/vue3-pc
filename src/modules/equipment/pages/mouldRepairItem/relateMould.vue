@@ -81,8 +81,8 @@ import { usePage } from '@/hooks/modules/page';
 import common from '@/utils/common';
 
 import { useLang } from './lang';
-import relateAddFormJson from './setting/relateAddForm.json';
-import tableSettingJson from './setting/relateTableSetting.json';
+import relateAddFormJson from './setting/relateAddForm';
+import tableSettingJson from './setting/relateTableSetting';
 
 const props = defineProps({
   // 组件展示类型
@@ -372,3 +372,4 @@ defineExpose({ fetchTable, conditionEnter });
   }
 }
 </style>
+./setting/relateTableSetting./setting/relateAddForm

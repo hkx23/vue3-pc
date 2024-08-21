@@ -1231,7 +1231,7 @@ export interface DomainParamButtonFormColumn {
   componentSource?: DomainParamComponentSource;
   isVisible?: boolean;
   isDisabled?: boolean;
-  isMutiple?: boolean;
+  isMultiple?: boolean;
   isRequired?: boolean;
   isKeyField?: boolean;
 }

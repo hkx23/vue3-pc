@@ -1178,7 +1178,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     //   props: {
     //     clearable: true,
     //     autofocus: true,
-    //     autoWidth: true,
+    //
     //     style: {
     //       width: '130px', // 调整宽度的样式属性
     //     },

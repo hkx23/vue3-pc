@@ -122,10 +122,10 @@ import { usePage } from '@/hooks/modules/page';
 import common from '@/utils/common';
 
 import { useLang } from './lang';
-import mainAddFormJson from './setting/mainAddForm.json';
-import mainEditFormJson from './setting/mainEditForm.json';
-import mainSettingJson from './setting/mainSetting.json';
-import mitemSettingJson from './setting/mitemSetting.json';
+import mainAddFormJson from './setting/mainAddForm';
+import mainEditFormJson from './setting/mainEditForm';
+import mainSettingJson from './setting/mainSetting';
+import mitemSettingJson from './setting/mitemSetting';
 
 const uploadPath = ref('main/mould');
 const { t } = useLang();

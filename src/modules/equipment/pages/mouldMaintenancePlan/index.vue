@@ -102,9 +102,9 @@ import common from '@/utils/common';
 
 import { useLang } from './lang';
 import relateItem from './relateItem.vue';
-import mainAddFormJson from './setting/mainAddForm.json';
-import mainEditFormJson from './setting/mainEditForm.json';
-import mainSettingJson from './setting/mainSetting.json';
+import mainAddFormJson from './setting/mainAddForm';
+import mainEditFormJson from './setting/mainEditForm';
+import mainSettingJson from './setting/mainSetting';
 
 const { t } = useLang();
 

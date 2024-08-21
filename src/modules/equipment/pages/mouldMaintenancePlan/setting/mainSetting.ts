@@ -1,0 +1,651 @@
+import { DomainParamSetting } from '@/api/main';
+
+export default {
+  tableSetting: {
+    columnSetting: [
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '保养计划编码',
+        columnKey: '',
+        columnName: 'maintenance_plan_code',
+        columnType: 'varchar(80)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '1979249244809189376',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'NO',
+
+        seq: 1,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '保养计划名称',
+        columnKey: '',
+        columnName: 'maintenance_plan_name',
+        columnType: 'varchar(240)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '6430913614447872000',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'NO',
+
+        seq: 2,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '保养方式',
+        columnKey: '',
+        columnName: 'maintenance_plan_type',
+        columnType: 'varchar(80)',
+        columnWidth: 100,
+        componentSource: {
+          customDict: {
+            dicData: [
+              {
+                label: '周期',
+                value: 'PERIOD',
+              },
+              {
+                label: '使用次数',
+                value: 'USETIME',
+              },
+            ],
+          },
+          dataTable: null,
+          sourceType: null,
+        },
+
+        id: '5781640216176422912',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'NO',
+
+        seq: 3,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '生效时间',
+        columnKey: '',
+        columnName: 'datetime_effect',
+        columnType: 'datetime(4)',
+        columnWidth: 150,
+        componentSource: null,
+
+        id: '7582449786451361792',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'NO',
+
+        seq: 4,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '保养周期（天）',
+        columnKey: '',
+        columnName: 'day_maintenance_period',
+        columnType: 'int',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '8079611604183496704',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'NO',
+
+        seq: 5,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '预警提前期（天）',
+        columnKey: '',
+        columnName: 'day_early_warn',
+        columnType: 'int',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '1957731539453566976',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'YES',
+
+        seq: 6,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '运行次数',
+        columnKey: '',
+        columnName: 'hour_run',
+        columnType: 'int',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '4228583883284498432',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'YES',
+
+        seq: 7,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '提前运行次数',
+        columnKey: '',
+        columnName: 'hour_run_early',
+        columnType: 'int',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '2861171201225009152',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'YES',
+
+        seq: 8,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '模具类型',
+        columnKey: null,
+        columnName: 'mouldTypeName',
+        columnType: 'varchar(240)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '6741599358854416384',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: false,
+        isHandAdd: true,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: null,
+
+        seq: 9,
+        tableName: 's_param_20240807102125',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '模具名称',
+        columnKey: null,
+        columnName: 'mould_name',
+        columnType: 'varchar(240)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '6276247007855908864',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: false,
+        isHandAdd: true,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: null,
+
+        seq: 10,
+        tableName: 'm_mould_20240807105956',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '模具代码',
+        columnKey: null,
+        columnName: 'mould_code',
+        columnType: 'varchar(80)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '4170211946404575232',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: false,
+        isHandAdd: true,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: null,
+
+        seq: 11,
+        tableName: 'm_mould_20240807105956',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '启用状态',
+        columnKey: '',
+        columnName: 'state',
+        columnType: 'int',
+        columnWidth: 100,
+
+        id: '6848017972128808960',
+        isAutoWidth: true,
+        isDataDefault: true,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: 'NO',
+
+        seq: 12,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '模具类型',
+        columnKey: '',
+        columnName: 'mould_type',
+        columnType: 'varchar(80)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '1191873293498304512',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'YES',
+
+        seq: 13,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '资产类型表ID',
+        columnKey: '',
+        columnName: 'm_asset_type_id',
+        columnType: 'bigint',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '196172220756541440',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'YES',
+
+        seq: 14,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '资产品牌表ID',
+        columnKey: '',
+        columnName: 'm_asset_brand_id',
+        columnType: 'bigint',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '7194000198495977472',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'YES',
+
+        seq: 15,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '资产型号表ID',
+        columnKey: '',
+        columnName: 'm_asset_model_id',
+        columnType: 'bigint',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '5356558238514077696',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'YES',
+
+        seq: 16,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '模具表ID',
+        columnKey: '',
+        columnName: 'm_mould_id',
+        columnType: 'bigint',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '6372160288314134528',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'YES',
+
+        seq: 17,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '',
+        columnKey: 'PRI',
+        columnName: 'id',
+        columnType: 'bigint',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '6294374149532706816',
+        isAutoWidth: true,
+        isDataDefault: true,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'NO',
+
+        seq: 18,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '创建时间',
+        columnKey: '',
+        columnName: 'time_create',
+        columnType: 'datetime(4)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '4750236166081570816',
+        isAutoWidth: true,
+        isDataDefault: true,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'NO',
+
+        seq: 19,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '创建人',
+        columnKey: '',
+        columnName: 'creator',
+        columnType: 'varchar(80)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '658595641727797248',
+        isAutoWidth: true,
+        isDataDefault: true,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'NO',
+
+        seq: 20,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '修改时间',
+        columnKey: '',
+        columnName: 'time_modified',
+        columnType: 'datetime(4)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '9147958099678668800',
+        isAutoWidth: true,
+        isDataDefault: true,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'YES',
+
+        seq: 21,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '修改人',
+        columnKey: '',
+        columnName: 'modifier',
+        columnType: 'varchar(80)',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '3019427964243161088',
+        isAutoWidth: true,
+        isDataDefault: true,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'YES',
+
+        seq: 22,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '企业ID',
+        columnKey: 'MUL',
+        columnName: 'eid',
+        columnType: 'bigint',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '7989769675184011264',
+        isAutoWidth: true,
+        isDataDefault: true,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'NO',
+
+        seq: 23,
+        tableName: 'e_maintenance_plan',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '组织ID',
+        columnKey: '',
+        columnName: 'oid',
+        columnType: 'bigint',
+        columnWidth: 100,
+        componentSource: null,
+
+        id: '3195778080208447488',
+        isAutoWidth: true,
+        isDataDefault: true,
+        isDatabaseField: true,
+        isHandAdd: false,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: false,
+
+        nullable: 'NO',
+
+        seq: 24,
+        tableName: 'e_maintenance_plan',
+      },
+    ],
+    pageSize: null,
+    sortField: 'time_create',
+    sortType: 'desc',
+    tableTitle: '模具保养计划',
+    usePage: true,
+  },
+} as DomainParamSetting;
