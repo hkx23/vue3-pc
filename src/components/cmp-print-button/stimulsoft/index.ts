@@ -1,7 +1,7 @@
 // import { Stimulsoft, StiOptions } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
 
 const timer = window.setInterval(() => {
-  if (StiOptions && Stimulsoft) {
+  try {
     StiOptions.Engine.barcodeQRCodeAllowUnicodeBOM = true;
     Stimulsoft.Base.StiLicense.Key =
       '6vJhGtLLLz2GNviWmUTrhSqnOItdDwjBylQzQcAOiHkrLyWoNKqkTY1XgUpo2eVfPZDTuBkdCQBJ7ewY23s24RzWm3' +
@@ -13,6 +13,8 @@ const timer = window.setInterval(() => {
       'mPov3Gg5rL3RYD2a11iO6Q5/ow9+clGQ+58bLNcqUNIvdDBLohP3qUS5xcu1ytqsocwPLYHGyMkmOu5HnIqGLgM5DJ' +
       'DlqFlHCj5itkIo3nCSrWwRCu26aKzxCXGnn9WRYab6bBM61+PFWyY=';
     window.clearInterval(timer);
+  } catch {
+    console.log('Stimulsoft is not loaded yet');
   }
 }, 1000);
 
