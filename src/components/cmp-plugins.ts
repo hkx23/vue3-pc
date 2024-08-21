@@ -28,7 +28,7 @@ import CmpCard from './cmp-layout/CmpCard.vue';
 import CmpContainer from './cmp-layout/CmpContainer.vue';
 import CmpRow from './cmp-layout/CmpRow.vue';
 import CmpMessage from './cmp-message/index.vue';
-import CmpPrintButton from './cmp-print-button/index.vue';
+// import CmpPrintButton from './cmp-print-button/index.vue';
 import CmpQuery from './cmp-query/index.vue';
 import CmpScanInput from './cmp-scan-input/index.vue';
 import CmpTable from './cmp-table/index.vue';
@@ -85,7 +85,7 @@ declare module '@vue/runtime-core' {
     CmpRow: typeof CmpRow;
     CmpCard: typeof CmpCard;
     CmpButton: typeof CmpButton;
-    CmpPrintButton: typeof CmpPrintButton;
+    // CmpPrintButton: typeof CmpPrintButton;
     CmpTable: typeof CmpTable;
     CmpWrapper: typeof CmpWrapper;
 
