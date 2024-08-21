@@ -52,7 +52,7 @@
             v-model="currentFormData[formItem.field]"
             :disabled="formItem.isDisabled"
             :options="formItem.options"
-            :multiple="formItem.isMutiple"
+            :multiple="formItem.isMultiple"
             @change="handleChange"
           >
           </t-select>
@@ -168,7 +168,7 @@ const loadFormValue = () => {
       case 't-select':
       case 't-radio-group':
       case 't-checkbox-group':
-        if (column.isMutiple) {
+        if (column.isMultiple) {
           const preValue = formValue[column.field] ? formValue[column.field].split(',') : [];
           formValue[column.field] = preValue || column.defaultValue?.split(',');
         } else {

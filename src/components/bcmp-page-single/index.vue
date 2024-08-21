@@ -361,13 +361,13 @@ const generateComponentConfig = async (setting) => {
     case 'bcmp-select-business':
       optItem.bind = {
         type: setting.componentParam,
-        multiple: setting.isMutiple,
+        multiple: setting.isMultiple,
       };
       break;
     case 'bcmp-select-param':
       optItem.bind = {
         paramGroup: setting.componentParam,
-        multiple: setting.isMutiple,
+        multiple: setting.isMultiple,
       };
       break;
     case 't-select':
@@ -388,7 +388,7 @@ const generateComponentConfig = async (setting) => {
       }
       optItem.bind = {
         options: optionsData,
-        multiple: setting.isMutiple,
+        multiple: setting.isMultiple,
       };
       break;
 
