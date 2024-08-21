@@ -105,7 +105,6 @@ export default ({ mode, command }: ConfigEnv): UserConfig => {
             vue: ['vue', 'vue-router'],
             echarts: ['echarts'],
             lodash: ['lodash'],
-            stimulsoft: ['stimulsoft-reports-js', 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor'],
             hiprint: ['vue-plugin-hiprint'],
           },
         },
