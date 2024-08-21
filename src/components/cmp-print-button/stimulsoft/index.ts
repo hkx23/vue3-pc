@@ -1,5 +1,18 @@
 // import { Stimulsoft, StiOptions } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
 
+// StiOptions.Engine.barcodeQRCodeAllowUnicodeBOM = true;
+// Stimulsoft.Base.StiLicense.Key =
+//   '6vJhGtLLLz2GNviWmUTrhSqnOItdDwjBylQzQcAOiHkrLyWoNKqkTY1XgUpo2eVfPZDTuBkdCQBJ7ewY23s24RzWm3' +
+//   'Kqvz1M0Ic8q/gLB8OtHfyeGIFVvS/CcdBtJkURBywzrcEqWttjvuHIqql+oxdA21Mjw4uOPnFo+ocQ/1bmqGQbEdlB' +
+//   'ArJdu3YQSNFiCMsPzlIOqgYlMy8sQ42PJkhkgZnfovFlWBww9HYqjz9wEwCkwAVIPhQ9ojlx88EY3Sopl/MiHRWcgS' +
+//   'RDF5bxvzxN91Mk3W6/cFLU1rmM+T8eJwjSO4XARHnoVoC/RwTx8x34ILCZBVRbKSVJpdI+Beafwy+PE0LTBJaxyPx8' +
+//   'BZ8koPGOv6lhmqHTQJX1h6kbc9Dhbo3QMFum3LxNn2bYw7MVcEZMyuqSgLdVQJkOQYi8vW/Q5Ooig8QIBkLBErIpbX' +
+//   'Kgy7ESnRuuaDV2cLJ6ODyI2wv+ugM6QbpgyeDrcn0+a/lCx6ilfWqTu77SX5tYyHRQC+hqk0l/XY/FQOORSxbmRlOG' +
+//   'mPov3Gg5rL3RYD2a11iO6Q5/ow9+clGQ+58bLNcqUNIvdDBLohP3qUS5xcu1ytqsocwPLYHGyMkmOu5HnIqGLgM5DJ' +
+//   'DlqFlHCj5itkIo3nCSrWwRCu26aKzxCXGnn9WRYab6bBM61+PFWyY=';
+import { CustomError } from '@/assets/libs/web-core';
+
+let isLoadFinised = false;
 const timer = window.setInterval(() => {
   try {
     StiOptions.Engine.barcodeQRCodeAllowUnicodeBOM = true;
@@ -13,6 +26,7 @@ const timer = window.setInterval(() => {
       'mPov3Gg5rL3RYD2a11iO6Q5/ow9+clGQ+58bLNcqUNIvdDBLohP3qUS5xcu1ytqsocwPLYHGyMkmOu5HnIqGLgM5DJ' +
       'DlqFlHCj5itkIo3nCSrWwRCu26aKzxCXGnn9WRYab6bBM61+PFWyY=';
     window.clearInterval(timer);
+    isLoadFinised = true;
   } catch {
     console.log('Stimulsoft is not loaded yet');
   }
@@ -49,11 +63,13 @@ export const printByStimulsoft = (templateBody: string, printData: any) => {
  * @returns 报表对象
  */
 const createReportByStimulsoft = (templateBody: string, printData: any) => {
+  if (isLoadFinised === false) {
+    throw new CustomError('打印组件正在加载中,请稍后打印', 400, 'error');
+  }
   // report.value = new Stimulsoft.Report.StiReport();
   // report.value.load(templateBody.value);
   // report.value.regData('data', 'data', props.data);
   // report.value.render();
-
   const jsonBody = JSON.parse(templateBody);
   const type = getPrintDataType(jsonBody);
   let dsCount = 0;
