@@ -100,14 +100,14 @@ export default ({ mode, command }: ConfigEnv): UserConfig => {
       outDir,
       rollupOptions: {
         input: isBuild ? inputs : null,
-        output: {
-          manualChunks: {
-            vue: ['vue', 'vue-router'],
-            echarts: ['echarts'],
-            lodash: ['lodash'],
-            hiprint: ['vue-plugin-hiprint'],
-          },
-        },
+        // output: {
+        //   manualChunks: {
+        //     vue: ['vue', 'vue-router'],
+        //     echarts: ['echarts'],
+        //     lodash: ['lodash'],
+        //     hiprint: ['vue-plugin-hiprint'],
+        //   },
+        // },
         // plugins: [
         //   visualizer({
         //     filename: './dist/stats.html', // 生成的报告文件名和路径
