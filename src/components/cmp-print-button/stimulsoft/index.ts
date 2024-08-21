@@ -1,4 +1,4 @@
-import { Stimulsoft, StiOptions } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
+// import { Stimulsoft, StiOptions } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
 
 StiOptions.Engine.barcodeQRCodeAllowUnicodeBOM = true;
 Stimulsoft.Base.StiLicense.Key =
@@ -132,7 +132,7 @@ const getDataSourceCount = (jsonBody) => {
 };
 
 // 填充variable数据
-const fillVariableData = (reportItem: Stimulsoft.Report.StiReport, item: Object) => {
+const fillVariableData = (reportItem, item: Object) => {
   Object.keys(item).forEach((key: any) => {
     const variable = reportItem.dictionary.variables.list.find((x) => x.getValue() === key); // 对应编码
     if (variable) variable.value = item[key];
@@ -140,7 +140,7 @@ const fillVariableData = (reportItem: Stimulsoft.Report.StiReport, item: Object)
 };
 
 // 填充dataSource数据
-const fillDataSourceData = (reportItem: Stimulsoft.Report.StiReport, dsCount: String, item: any) => {
+const fillDataSourceData = (reportItem, dsCount: String, item: any) => {
   reportItem.dictionary.databases.clear();
   if (dsCount === '1') {
     // 这里的数据源名字可以随便取，不需要读取模板！！！

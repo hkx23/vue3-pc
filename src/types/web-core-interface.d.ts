@@ -34,6 +34,8 @@ declare interface Framework {
 declare global {
   const fw: Framework;
   const http: Http;
+  const Stimulsoft: any;
+  const StiOptions: any;
   interface Window {
     fw: Framework;
     http: Http;

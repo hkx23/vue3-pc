@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { Stimulsoft } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
+// import { Stimulsoft } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.editor';
 import { onMounted } from 'vue';
 
 onMounted(() => {
