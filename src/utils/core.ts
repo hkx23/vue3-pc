@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n';
 import { useTabsRouterStore } from '@/store';
 import { TRouterInfo } from '@/types/interface';
 
+const env = import.meta.env.MODE || 'development';
 // 所有页面设置请求基础路径
 fw.config.baseUrl = localStorage.getItem('baseUrl') || import.meta.env.VITE_API_URL;
 if (typeof window !== 'undefined' && window.top !== window) {
@@ -28,8 +29,12 @@ if (typeof window !== 'undefined' && window.top !== window) {
         return res.json();
       })
       .then((config) => {
-        fw.config.baseUrl = config.baseUrl || window.location.origin;
-        localStorage.setItem('baseUrl', fw.config.baseUrl);
+        if (env === 'production') {
+          fw.config.baseUrl = config.baseUrl || window.location.origin;
+          localStorage.setItem('baseUrl', fw.config.baseUrl);
+        } else {
+          localStorage.setItem('baseUrl', import.meta.env.VITE_API_URL);
+        }
       })
       .catch((error) => {
         if (error.name === 'SyntaxError') return;
