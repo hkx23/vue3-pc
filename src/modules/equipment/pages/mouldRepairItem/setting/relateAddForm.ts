@@ -1,4 +1,4 @@
-import { DomainParamTableColumn } from '@/api/main';
+import { DomainParamButtonSetting } from '@/api/main';
 
 export default {
   formColumnSetting: [
@@ -308,4 +308,4 @@ export default {
       verifyExp: '',
     },
   ],
-} as DomainParamTableColumn;
+} as DomainParamButtonSetting;
