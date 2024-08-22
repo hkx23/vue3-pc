@@ -398,7 +398,7 @@
                         bordered
                         resizable
                         lazy-load
-                        row-key="id"
+                        row-key="field"
                         drag-sort="row-handler"
                         @drag-sort="onSearchDragSort"
                       >
@@ -493,6 +493,7 @@
                               row.component.indexOf('bcmp-select-business') > -1
                             "
                             v-model="row.isMultiple"
+                            @change="onSearchMulChange(row)"
                           ></t-switch>
 
                           <span v-else>-</span>
@@ -505,7 +506,9 @@
                           <t-select
                             v-model="row.operator"
                             :disabled="
-                              row.component === 't-date-range-picker' || row.component === 't-date-range-picker-time'
+                              row.component === 't-date-range-picker' ||
+                              row.component === 't-date-range-picker-time' ||
+                              row.isMultiple
                             "
                             filterable
                             :options="operators"
@@ -2582,6 +2585,14 @@ const onSearchFieldChange = (row: any) => {
   if (selectItem.columnType.indexOf('date') > -1) {
     row.fieldType = 'datetime';
     row.component = 't-date-picker';
+  }
+};
+
+const onSearchMulChange = (row: any) => {
+  if (row.isMultiple) {
+    row.operator = 'IN';
+  } else {
+    row.operator = 'EQ';
   }
 };
 

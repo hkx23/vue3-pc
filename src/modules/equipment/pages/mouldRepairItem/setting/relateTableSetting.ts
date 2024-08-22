@@ -432,7 +432,7 @@ export default {
     pageSize: 10,
     sortField: 'time_create',
     sortType: 'desc',
-    tableTitle: '设备与维修项目关系表',
+    tableTitle: '模具与维修项目关系表',
     usePage: true,
   },
 } as DomainParamSetting;
