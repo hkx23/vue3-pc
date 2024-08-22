@@ -794,6 +794,7 @@ export interface MaintenanceItemVo {
   /** 文件列表 */
   deleteFileList?: MaintenanceItemFile[];
   maintenancePeriodName?: string;
+  memo?: string;
 }
 
 export interface MaintenanceBillHeadSearch {
@@ -1340,16 +1341,16 @@ export interface DomainParamButtonFormColumn {
   componentParam?: string;
   placeholder?: string;
   defaultValue?: string;
-  fieldType?: string;
-  columnType?: string;
-  parentField?: string;
-  verifyExp?: string;
-  componentSource?: DomainParamComponentSource;
   isVisible?: boolean;
   isDisabled?: boolean;
   isMultiple?: boolean;
+  fieldType?: string;
+  columnType?: string;
+  parentField?: string;
   isRequired?: boolean;
   isKeyField?: boolean;
+  verifyExp?: string;
+  componentSource?: DomainParamComponentSource;
 }
 
 export interface DomainParamComponentSource {
@@ -1987,6 +1988,38 @@ export const api = {
      */
     search: (data: MaintenanceBillHeadSearch) =>
       http.request<ResultObject['data']>(`/api/equipment/maintenanceBillHead/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  maintenanceBillDtlFile: {
+    /**
+     * No description
+     *
+     * @tags 设备保养明细文件表
+     * @name GetFilesByDtlId
+     * @summary 获取设备保养计划项目表-除计划外
+     * @request POST:/maintenanceBillDtlFile/getFilesByDtlId
+     * @secure
+     */
+    getFilesByDtlId: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceBillDtlFile/getFilesByDtlId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  maintenanceBillDtl: {
+    /**
+     * No description
+     *
+     * @tags 设备保养单据明细表
+     * @name GetItemsByBillId
+     * @summary 获取设备保养计划项目表-除计划外
+     * @request POST:/maintenanceBillDtl/getItemsByBillId
+     * @secure
+     */
+    getItemsByBillId: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceBillDtl/getItemsByBillId`, {
         method: 'POST',
         body: data as any,
       }),

@@ -24,6 +24,10 @@
             <!-- 头部按钮区 -->
 
             <!-- 行按钮区 -->
+
+            <template #billNo="{ row }">
+              <t-link theme="primary" @click="viewBill(row)"> {{ row.billNo || '-' }}</t-link>
+            </template>
           </cmp-table>
         </cmp-card>
       </cmp-container>
@@ -51,6 +55,9 @@
   </cmp-container>
 
   <!-- 弹出层 -->
+  <t-dialog v-model:visible="viewFormVisible" :header="formTitle" width="80%" :confirm-btn="null" cancel-btn="关闭">
+    <view-form ref="viewFormRef" :bill-id="currentBillId" />
+  </t-dialog>
   <!-- <t-dialog v-model:visible="formVisible" :header="formTitle" :on-confirm="onFormSubmit" :width="calculateFormWidth">
     <bcmp-dynamic-form
       ref="formRef"
@@ -82,6 +89,7 @@ import billItemSettingJson from './setting/billItemSetting';
 // import mainAddFormJson from './setting/mainAddForm.json';
 // import mainEditFormJson from './setting/mainEditForm.json';
 import mainSettingJson from './setting/mainSetting';
+import viewForm from './viewForm.vue';
 
 const { t } = useLang();
 
@@ -269,6 +277,17 @@ const determineFixed = (isLeftFixed, isRightFixed) => {
   if (isLeftFixed) return 'left';
   if (isRightFixed) return 'right';
   return '';
+};
+
+// 模具查看窗口
+const viewFormVisible = ref(false);
+const formTitle = ref('模具保养单据查看');
+const currentBillId = ref('');
+const viewBill = async (row) => {
+  currentBillId.value = row.id;
+  viewFormVisible.value = true;
+  await nextTick();
+  // viewBillRef.value.fetchTable();
 };
 
 // 渲染函数
