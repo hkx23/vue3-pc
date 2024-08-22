@@ -259,6 +259,7 @@ export interface PrintTmplDTO {
   fileContent?: string;
   /** 打印模板下载地址 */
   fileUrl?: string;
+  creatorName?: string;
 }
 
 /** 组织层级表 */
@@ -3014,47 +3015,14 @@ export interface ResultPagingDataPrintTmplMapDTO {
 }
 
 /** 响应数据 */
-export type PagingDataPrintTmpl = {
-  list?: PrintTmpl[];
+export type PagingDataPrintTmplDTO = {
+  list?: PrintTmplDTO[];
   /** @format int32 */
   total?: number;
 } | null;
 
-/** 标签模板 */
-export interface PrintTmpl {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  tmplCode?: string;
-  tmplName?: string;
-  tmplDesc?: string;
-  tmplBodyPath?: string;
-  tmplCategory?: string;
-  tmplType?: string;
-}
-
 /** 通用响应类 */
-export interface ResultPagingDataPrintTmpl {
+export interface ResultPagingDataPrintTmplDTO {
   /**
    * 响应代码
    * @format int32
@@ -3063,7 +3031,7 @@ export interface ResultPagingDataPrintTmpl {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataPrintTmpl;
+  data?: PagingDataPrintTmplDTO;
 }
 
 /** 响应数据 */
@@ -5329,13 +5297,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
   stateName?: string;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
   isState?: boolean;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5549,15 +5517,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   isRawChecked?: boolean;
-  isProductName?: string;
   isInProcessName?: string;
   isBatchName?: string;
+  isProductName?: string;
   isRawName?: string;
-  stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -9218,8 +9186,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -10748,12 +10716,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11205,6 +11173,39 @@ export interface ResultPagingDataModule {
   data?: PagingDataModule;
 }
 
+/** 标签模板 */
+export type PrintTmpl = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  tmplCode?: string;
+  tmplName?: string;
+  tmplDesc?: string;
+  tmplBodyPath?: string;
+  tmplCategory?: string;
+  tmplType?: string;
+} | null;
+
 /** 通用响应类 */
 export interface ResultListPrintTmpl {
   /**
@@ -11323,10 +11324,10 @@ export interface IdentityLinkInfo {
   groupId?: string;
   taskId?: string;
   userId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
 }
 
 /** 通用响应类 */
@@ -11348,47 +11349,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
+  localizedDescription?: string;
   suspended?: boolean;
+  formKey?: string;
   description?: string;
   tenantId?: string;
+  localizedName?: string;
   assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  localizedDescription?: string;
   category?: string;
-  parentTaskId?: string;
-  localizedName?: string;
-  formKey?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
   id?: string;
   state?: string;
   scopeId?: string;
-  caseVariables?: Record<string, object>;
-  /** @format date-time */
-  createTime?: string;
-  inProgressStartedBy?: string;
-  /** @format date-time */
-  inProgressStartTime?: string;
   propagatedStageInstanceId?: string;
-  processVariables?: Record<string, object>;
-  taskLocalVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  suspendedBy?: string;
+  caseVariables?: Record<string, object>;
   /** @format date-time */
   claimTime?: string;
   claimedBy?: string;
-  processDefinitionId?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  suspendedBy?: string;
+  taskLocalVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  inProgressStartedBy?: string;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  createTime?: string;
+  executionId?: string;
   taskDefinitionId?: string;
   taskDefinitionKey?: string;
   identityLinks?: IdentityLinkInfo[];
-  executionId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
+  processDefinitionId?: string;
 } | null;
 
 /** 响应数据 */
@@ -11399,10 +11400,10 @@ export type IdentityLink = {
   groupId?: string;
   taskId?: string;
   userId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -11472,6 +11473,26 @@ export interface ResultDomainParamVO {
   /** 提示信息 */
   message?: string;
   data?: DomainParamVO;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmpl = {
+  list?: PrintTmpl[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmpl;
 }
 
 /** 响应数据 */
@@ -12173,7 +12194,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataPrintTmpl['data']>(`/api/main/printTmpl/items`, {
+      http.request<ResultPagingDataPrintTmplDTO['data']>(`/api/main/printTmpl/items`, {
         method: 'POST',
         body: data as any,
       }),

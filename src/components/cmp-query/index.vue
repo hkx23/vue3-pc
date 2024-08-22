@@ -301,10 +301,9 @@ const cOpts = computed(() => {
     const opt = {
       ...props.opts[field],
     };
-
-    if (opt.comp === 't-select' && opt.bind && opt.bind && opt.bind.multiple === true) {
-      opt.bind.minCollapsedNum = 1;
-    }
+    // if (opt.comp === 't-select' && opt.bind && opt.bind.multiple && opt.bind.multiple === true) {
+    //   opt.bind.minCollapsedNum = 1;
+    // }
     // 收起、展开操作
     // if (props.isShowOpen) {
     //   openSearchForm.value = true;
@@ -662,6 +661,7 @@ const getComponentAttributes = (compName, defaultAttrs) => {
   // 如果组件名在支持的列表中，则添加 filterable 属性
   if (filterableComponents.includes(compName)) {
     attrs.filterable = true;
+    attrs.minCollapsedNum = 1;
   }
 
   return attrs;

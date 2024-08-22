@@ -2447,7 +2447,8 @@ const onCompontSourceConfirm = () => {
 // #查询条件-条件列表
 const operators = [
   { value: 'EQ', label: '等于' },
-  { value: 'LIKE', label: '包含' },
+  { value: 'LIKE', label: '模糊查询' },
+  { value: 'IN', label: '包含(多选)' },
   { value: 'BETWEEN', label: '介于区间' },
   { value: 'GT', label: '大于' },
   { value: 'LT', label: '小于' },
