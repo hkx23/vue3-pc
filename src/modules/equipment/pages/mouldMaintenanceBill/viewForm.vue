@@ -82,7 +82,7 @@ const getItemList = async () => {
 const viewPhoto = async (row: any) => {
   fileList.value = [];
   const dtlId = [row.id];
-  const fileListData = await api.maintenanceBillDtlFile.getFilesByDtlId(dtlId);
+  const fileListData = await api.maintenanceBillDtlFile.getFilesByDtlIds(dtlId);
   fileList.value = fileListData || [];
   photoVisible.value = true;
 };
