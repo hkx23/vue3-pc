@@ -19,10 +19,12 @@ onMounted(() => {
   if (window.top !== window) return;
   fw.ipc.on('custom_error', (args: CustomError) => {
     if (args.code === 401) {
-      router.push({
-        path: '/login',
-        query: { redirect: encodeURIComponent(router.currentRoute.value.fullPath) },
-      });
+      if (router.currentRoute.value.path !== '/login') {
+        router.push({
+          path: '/login',
+          query: { redirect: encodeURIComponent(router.currentRoute.value.fullPath) },
+        });
+      }
     }
 
     if (args.name === 'OperationError') {
