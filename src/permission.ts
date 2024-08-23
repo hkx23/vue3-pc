@@ -1,7 +1,7 @@
 import 'nprogress/nprogress.css'; // progress bar style
 
 import NProgress from 'nprogress'; // progress bar
-import { MessagePlugin } from 'tdesign-vue-next';
+import { LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
 import { RouteRecordRaw } from 'vue-router';
 
 import { CustomError } from '@/assets/libs/web-core';
@@ -13,6 +13,7 @@ NProgress.configure({ showSpinner: false });
 
 router.beforeEach(async (to, from, next) => {
   NProgress.start();
+  LoadingPlugin(true);
 
   const permissionStore = getPermissionStore();
   const { whiteListRouters } = permissionStore;
@@ -59,6 +60,7 @@ router.beforeEach(async (to, from, next) => {
         query: { redirect: to.path === '/login' ? to.query.redirect : encodeURIComponent(to.fullPath) },
       });
       NProgress.done();
+      LoadingPlugin(false);
     }
   } else {
     /* white list router */
@@ -71,6 +73,7 @@ router.beforeEach(async (to, from, next) => {
       });
     }
     NProgress.done();
+    LoadingPlugin(false);
   }
 });
 
@@ -96,4 +99,5 @@ router.afterEach((to) => {
     meta: to.meta,
   });
   NProgress.done();
+  LoadingPlugin(false);
 });
