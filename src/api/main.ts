@@ -2155,26 +2155,83 @@ export interface SparePart {
   memo?: string;
 }
 
-export interface CommonImportSparePartVO {
-  title?: string;
-  tableName?: string;
-  data?: SparePartVO[];
-  columns?: ImportColumn[];
-  /** @format int32 */
-  batchSize?: number;
+export interface SparePartSearch {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  supplierId?: string;
+  /** 备品备件型号 */
+  sparePartModel?: string;
+  /** 单位 */
+  uom?: string;
+  /** 安全库存 */
+  safetyStockQty?: number;
+  /** 备注 */
+  memo?: string;
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  warehouseId?: string;
+  districtId?: string;
+  /** 是否低于安全库存 */
+  isBelowSafelyStock?: boolean;
+  sparePartId?: string;
+  /** tab查询分类 */
+  category?: string;
+  equipmentId?: string;
 }
 
-export interface ImportColumn {
-  field?: string;
-  fieldType?: string;
-  title?: string;
-  isRequired?: boolean;
-  isValidateRepeat?: boolean;
-  validateExpression?: string;
-  items?: string[];
-  list?: ImportColumn[];
-  required?: boolean;
-  validateRepeat?: boolean;
+/** 响应数据 */
+export type PagingDataSparePartVO = {
+  list?: SparePartVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSparePartVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSparePartVO;
 }
 
 export interface SparePartVO {
@@ -2258,6 +2315,28 @@ export interface SparePartVO {
   modelDesc?: string;
 }
 
+export interface CommonImportSparePartVO {
+  title?: string;
+  tableName?: string;
+  data?: SparePartVO[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
+}
+
+export interface ImportColumn {
+  field?: string;
+  fieldType?: string;
+  title?: string;
+  isRequired?: boolean;
+  isValidateRepeat?: boolean;
+  validateExpression?: string;
+  items?: string[];
+  list?: ImportColumn[];
+  required?: boolean;
+  validateRepeat?: boolean;
+}
+
 /** 响应数据 */
 export type ImportSummaryObject = {
   /** @format int32 */
@@ -2280,84 +2359,6 @@ export interface ResultImportSummaryObject {
   message?: string;
   /** 响应数据 */
   data?: ImportSummaryObject;
-}
-
-export interface SparePartSearch {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 备品备件编码 */
-  sparePartCode?: string;
-  /** 备品备件名称 */
-  sparePartName?: string;
-  supplierId?: string;
-  /** 备品备件型号 */
-  sparePartModel?: string;
-  /** 单位 */
-  uom?: string;
-  /** 安全库存 */
-  safetyStockQty?: number;
-  /** 备注 */
-  memo?: string;
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 模糊关键词 */
-  keyword?: string;
-  warehouseId?: string;
-  districtId?: string;
-  /** 是否低于安全库存 */
-  isBelowSafelyStock?: boolean;
-  sparePartId?: string;
-  /** tab查询分类 */
-  category?: string;
-}
-
-/** 响应数据 */
-export type PagingDataSparePartVO = {
-  list?: SparePartVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataSparePartVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataSparePartVO;
 }
 
 /** 工艺路线映射表 */
@@ -5299,11 +5300,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
-  isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  isForceInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5518,12 +5519,12 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isInProcessName?: string;
+  isState?: boolean;
   isRawChecked?: boolean;
   isBatchName?: string;
-  isRawName?: string;
   isProductName?: string;
-  isState?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
 }
@@ -5668,8 +5669,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -9186,8 +9187,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -11321,11 +11322,11 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  subScopeId?: string;
-  scopeType?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
 }
@@ -11354,42 +11355,42 @@ export type Task = {
   tenantId?: string;
   /** @format date-time */
   dueDate?: string;
-  formKey?: string;
   assignee?: string;
   category?: string;
-  localizedName?: string;
-  parentTaskId?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
+  formKey?: string;
   localizedDescription?: string;
+  localizedName?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  processDefinitionId?: string;
   /** @format date-time */
   createTime?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   identityLinks?: IdentityLinkInfo[];
   executionId?: string;
-  caseVariables?: Record<string, object>;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  processDefinitionId?: string;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
+  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  inProgressStartedBy?: string;
+  processVariables?: Record<string, object>;
   /** @format date-time */
   inProgressStartTime?: string;
-  inProgressStartedBy?: string;
-  claimedBy?: string;
+  taskLocalVariables?: Record<string, object>;
+  caseVariables?: Record<string, object>;
   /** @format date-time */
   claimTime?: string;
   /** @format date-time */
   suspendedTime?: string;
+  claimedBy?: string;
   suspendedBy?: string;
-  propagatedStageInstanceId?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
 } | null;
 
 /** 响应数据 */
@@ -11397,11 +11398,11 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  subScopeId?: string;
-  scopeType?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
 } | null;
@@ -13945,6 +13946,21 @@ export const api = {
      */
     modify: (data: SparePart) =>
       http.request<ResultObject['data']>(`/api/main/sparePart/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name ItemsByEquipmentId
+     * @summary 根据设备获取可用的备品备件
+     * @request POST:/sparePart/itemsByEquipmentID
+     * @secure
+     */
+    itemsByEquipmentId: (data: SparePartSearch) =>
+      http.request<ResultPagingDataSparePartVO['data']>(`/api/main/sparePart/itemsByEquipmentID`, {
         method: 'POST',
         body: data as any,
       }),

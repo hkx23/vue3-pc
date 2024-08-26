@@ -591,7 +591,9 @@ const remoteLoad = async (val: any) => {
     if (searchCondition.pageNum === 1) {
       state.tableData = list;
     } else {
-      state.tableData = state.tableData.concat(list);
+      const combinedList = state.tableData.concat(list);
+      const uniqueList = combinedList.filter((item, index, arr) => arr.findIndex((t) => t.id === item.id) === index);
+      state.tableData = uniqueList;
     }
     asyncLoading.value = list.length < searchCondition.pageSize ? '' : 'load-more';
   } catch (_e) {
