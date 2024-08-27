@@ -26,15 +26,15 @@
           </t-space>
         </template>
 
-        <template #mouldTypeName="{ row }">
-          {{ row.mouldTypeName || '-' }}
+        <template #equipmentTypeName="{ row }">
+          {{ row.equipmentTypeName || '-' }}
         </template>
 
-        <template #mouldCode="{ row }">
-          {{ row.mouldCode || '-' }}
+        <template #equipmentCode="{ row }">
+          {{ row.equipmentCode || '-' }}
         </template>
-        <template #mouldName="{ row }">
-          {{ row.mouldName || '-' }}
+        <template #equipmentName="{ row }">
+          {{ row.equipmentName || '-' }}
         </template>
 
         <!-- 行按钮区 -->
@@ -67,7 +67,7 @@
 </template>
 <script lang="ts">
 export default {
-  name: 'RelateMould',
+  name: 'RelateEquipment',
 };
 </script>
 <script setup lang="ts">
@@ -123,17 +123,17 @@ const onSelectChange = (value) => {
 // const opts = ref({});
 const opts = computed(() => {
   return {
-    mouldType: {
-      label: t('repairItem.模具类型'),
+    equipmentType: {
+      label: t('maintenanceItem.设备类型'),
       comp: 'bcmp-select-param',
       defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('repairItem.模具类型')}`]),
+      placeholder: t('common.placeholder.input', [`${t('maintenanceItem.设备类型')}`]),
       bind: {
         paramGroup: 'E_MOULD_TYPE',
       },
     },
-    mouldCode: {
-      label: t('repairItem.模具'),
+    keyWord: {
+      label: t('maintenanceItem.设备'),
       comp: 't-input',
       defaultVal: '',
     },
@@ -142,7 +142,7 @@ const opts = computed(() => {
 // 查询条件处理数据
 const filterList = ref([]) as any;
 // 表格标题
-const tableTitle = ref('模具维修项目信息');
+const tableTitle = ref('设备保养项目信息');
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   pageUI.value.page = 1;
@@ -179,9 +179,9 @@ const fetchTable = async () => {
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       filters: finalFilterList,
-      relateType: 'mould',
+      relateType: 'equipment',
     };
-    const res: any = await api.repairItemInEquipment.search(searchCondition);
+    const res: any = await api.maintenanceItemInEquipment.search(searchCondition);
     tableData.value = res.list; // 表格数据赋值
     dataTotal.value = res.total; // 总页数赋值
   } catch (e) {
@@ -193,7 +193,7 @@ const fetchTable = async () => {
 
 // 数据源类型
 const settingObject = ref();
-const datasourceName = ref('m_mould');
+const datasourceName = ref('m_equipment');
 const selectedFields = ref([]);
 const searchSettings = ref([]);
 const usePager = ref(true);
@@ -289,7 +289,7 @@ const onAddClick = () => {
 // 单个数据实现删除逻辑
 const onDeleteRow = async (row: any) => {
   const deleteModel = [row.id];
-  await api.repairItemInEquipment.removeItemsById(deleteModel);
+  await api.maintenanceItemInEquipment.removeItemsById(deleteModel);
   fetchTable();
 };
 
@@ -302,25 +302,25 @@ const onFormChange = (formData: any) => {
   const formDataChange = _.cloneDeep(formData);
   console.log(formDataChange);
   // 如果 formData.relateType变化，对应的表单设置需要变化
-  // formData.relateType 为mould,则field为m_mould_id的字段显示，field为mould_type隐藏
-  // formData.relateType 为mouldType,则field为m_mould_id的字段隐藏，field为mould_type显示
-  if (formDataChange.relateType === 'mould') {
+  // formData.relateType 为equipment,则field为m_equipment_id的字段显示，field为equipment_type隐藏
+  // formData.relateType 为equipmentType,则field为m_equipment_id的字段隐藏，field为equipment_type显示
+  if (formDataChange.relateType === 'equipment') {
     formSetting.value.formColumnSetting.forEach((item: any) => {
-      if (item.field === 'm_mould_id' || item.field === common.toLowerCamelCase('m_mould_id')) {
+      if (item.field === 'm_equipment_id' || item.field === common.toLowerCamelCase('m_equipment_id')) {
         item.isVisible = true;
       }
-      if (item.field === 'mouldType') {
+      if (item.field === 'equipmentType') {
         item.isVisible = false;
-        formDataChange.mouldType = '';
+        formDataChange.equipmentType = '';
       }
     });
   } else {
     formSetting.value.formColumnSetting.forEach((item: any) => {
-      if (item.field === 'm_mould_id' || item.field === common.toLowerCamelCase('m_mould_id')) {
+      if (item.field === 'm_equipment_id' || item.field === common.toLowerCamelCase('m_equipment_id')) {
         item.isVisible = false;
-        formDataChange.mouldId = '';
+        formDataChange.equipmentId = '';
       }
-      if (item.field === 'mouldType') {
+      if (item.field === 'equipmentType') {
         item.isVisible = true;
       }
     });
@@ -337,15 +337,15 @@ const onFormSubmit = async () => {
     } else {
       const postData = {
         ...formRef.value.getFormData(),
-        relateType: 'mould',
+        relateType: 'equipment',
       };
 
       try {
         // 新增
-        await api.repairItemInEquipment.addItem(postData);
+        await api.maintenanceItemInEquipment.addItem(postData);
 
         // 第二步：提交数据
-        // await api.mould.updateItemByCode(formRef.value.getFormData());
+        // await api.equipment.updateItemByCode(formRef.value.getFormData());
         MessagePlugin.success('提交成功');
         formVisible.value = false;
         fetchTable();
@@ -372,4 +372,3 @@ defineExpose({ fetchTable, conditionEnter });
   }
 }
 </style>
-./setting/relateTableSetting./setting/relateAddForm

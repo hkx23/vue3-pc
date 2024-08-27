@@ -434,6 +434,246 @@ export interface RepairItemVo {
   deleteFileList?: RepairItemFile[];
 }
 
+export interface RepairBillHeadSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
+  dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+  ids?: string[];
+  relateType?: string;
+  userGroupIds?: string[];
+}
+
+/** 设备维修明细文件表 */
+export interface RepairBillDtlFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  repairBillDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+  /** 文件类型 */
+  fileCategory?: string;
+}
+
+export interface RepairBillDtlSparePart {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: number;
+  oid?: number;
+  repairBillDtlId?: number;
+  sparePartId?: number;
+  changeCount?: number;
+}
+
+export interface RepairBillDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  repairBillHeadId?: string;
+  /** 维修项目代码 */
+  repairItemCode?: string;
+  /** 维修项目描述 */
+  repairItemDesc?: string;
+  /** 维修项目方法 */
+  repairItemMethod?: string;
+  /** 解决方法 */
+  solveItemMethod?: string;
+  /** 备注 */
+  memo?: string;
+  billDtlFiles?: RepairBillDtlFile[];
+  billDtlSpareParts?: RepairBillDtlSparePart[];
+  repairItemFiles?: RepairItemFile[];
+  repairItemId?: string;
+}
+
+/** 设备维修单据文件表 */
+export interface RepairBillHeadFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  repairBillHeadId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+export interface RepairBillHeadVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  workcenterId?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  equipmentId?: string;
+  userRepairId?: string;
+  /**
+   * 维修开始时间
+   * @format date-time
+   */
+  datetimeRepairStart?: string;
+  /**
+   * 维修完成时间
+   * @format date-time
+   */
+  datetimeRepairEnd?: string;
+  userAcceptId?: string;
+  /**
+   * 验收时间
+   * @format date-time
+   */
+  datetimeAccept?: string;
+  /** 备注 */
+  memo?: string;
+  status?: string;
+  mouldId?: string;
+  userCreatorName?: string;
+  userRepairName?: string;
+  userAcceptName?: string;
+  mouldCode?: string;
+  mouldName?: string;
+  equipmentCode?: string;
+  equipmentName?: string;
+  positionName?: string;
+  billHeadFiles?: RepairBillHeadFile[];
+  billDetails?: RepairBillDtlVO[];
+  statusName?: string;
+  workcenterName?: string;
+  workshopName?: string;
+  billType?: string;
+  positionPath?: string;
+}
+
+export interface RepairBillAcceptDTO {
+  billId?: string;
+  isAccepted?: boolean;
+  memo?: string;
+}
+
 export interface MaintenancePlanItemSearch {
   /** @format int32 */
   pageNum?: number;
@@ -831,6 +1071,35 @@ export interface MaintenanceBillDtlFile {
   fileCategory?: string;
 }
 
+export interface MaintenanceBillDtlSparePart {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: number;
+  oid?: number;
+  maintenanceBillDtlId?: number;
+  sparePartId?: number;
+  changeCount?: number;
+}
+
 export interface MaintenanceBillDtlVO {
   id?: string;
   /**
@@ -877,6 +1146,7 @@ export interface MaintenanceBillDtlVO {
   maintenancePeriod?: string;
   billDtlFiles?: MaintenanceBillDtlFile[];
   maintenanceItemFiles?: MaintenanceItemFile[];
+  billDtlSpareParts?: MaintenanceBillDtlSparePart[];
   maintenanceItemId?: string;
 }
 
@@ -976,6 +1246,9 @@ export interface MaintenanceBillHeadVO {
   mouldName?: string;
   equipmentCode?: string;
   equipmentName?: string;
+  workcenterName?: string;
+  workshopName?: string;
+  positionPath?: string;
   mouldMaintenanceDealId?: string;
   mouldMaintenanceAcceptId?: string;
   equipmentMaintenanceDealId?: string;
@@ -1009,6 +1282,12 @@ export interface MaintenanceBillHeadSearch {
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
   relateType?: string;
+}
+
+export interface MaintenanceBillAcceptDTO {
+  billId?: string;
+  isAccepted?: boolean;
+  memo?: string;
 }
 
 /** DemoJOB参数 */
@@ -1709,6 +1988,18 @@ export interface ResultPagingDataAssetLedgerVO {
 }
 
 /** 通用响应类 */
+export interface ResultRepairBillHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: RepairBillHeadVO;
+}
+
+/** 通用响应类 */
 export interface ResultMaintenanceBillHeadVO {
   /**
    * 响应代码
@@ -1920,6 +2211,133 @@ export const api = {
       http.request<ResultObject['data']>(`/api/equipment/repairItem/items/add`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  repairBillHead: {
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name Search
+     * @summary 获取设备/模具维修单据
+     * @request POST:/repairBillHead/items
+     * @secure
+     */
+    search: (data: RepairBillHeadSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name GetCurrentUserMouldTodoBills
+     * @summary 根据当前的登录用户获取 我的待处理 单据(带分页,带查询条件)
+     * @request POST:/repairBillHead/getCurrentUserMouldTodoBills
+     * @secure
+     */
+    getCurrentUserMouldTodoBills: (data: RepairBillHeadSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/getCurrentUserMouldTodoBills`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name GetCurrentUserMouldCreateBills
+     * @summary 根据当前的登录用户获取 我的报障 单据(带分页,带查询条件)
+     * @request POST:/repairBillHead/getCurrentUserMouldCreateBills
+     * @secure
+     */
+    getCurrentUserMouldCreateBills: (data: RepairBillHeadSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/getCurrentUserMouldCreateBills`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name CompleteRepair
+     * @summary 完成维修单据
+     * @request POST:/repairBillHead/completeRepair
+     * @secure
+     */
+    completeRepair: (data: RepairBillHeadVO) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/completeRepair`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name AddRepairBill
+     * @summary 报障-新增维修单据
+     * @request POST:/repairBillHead/addRepairBill
+     * @secure
+     */
+    addRepairBill: (data: RepairBillHeadVO) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/addRepairBill`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name AcceptRepair
+     * @summary 验收/驳回保养单据
+     * @request POST:/repairBillHead/acceptRepair
+     * @secure
+     */
+    acceptRepair: (data: RepairBillAcceptDTO) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/acceptRepair`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name StartRepair
+     * @summary 开始维修
+     * @request GET:/repairBillHead/startRepair
+     * @secure
+     */
+    startRepair: (query?: {
+      /** @default "0" */
+      id?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/startRepair`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name GetBillInfoById
+     * @summary 根据模具/设备维修单据ID,获取维修明细(包含单据头信息+维修项目信息+照片列表+维修项目作业指导书)
+     * @request GET:/repairBillHead/getBillInfoByID
+     * @secure
+     */
+    getBillInfoById: (query?: {
+      /** @default "0" */
+      id?: string;
+    }) =>
+      http.request<ResultRepairBillHeadVO['data']>(`/api/equipment/repairBillHead/getBillInfoByID`, {
+        method: 'GET',
+        params: query,
       }),
   },
   maintenancePlanItem: {
@@ -2286,6 +2704,21 @@ export const api = {
      * No description
      *
      * @tags 设备保养单据头表
+     * @name AcceptMaintenance
+     * @summary 验收保养单据
+     * @request POST:/maintenanceBillHead/acceptMaintenance
+     * @secure
+     */
+    acceptMaintenance: (data: MaintenanceBillAcceptDTO) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceBillHead/acceptMaintenance`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备保养单据头表
      * @name StartMaintenance
      * @summary 开始保养
      * @request GET:/maintenanceBillHead/startMaintenance
@@ -2304,16 +2737,34 @@ export const api = {
      * No description
      *
      * @tags 设备保养单据头表
-     * @name GetBillInfoById
+     * @name GetMouldBillInfoById
      * @summary 根据模具/设备保养单据ID,获取保养明细(包含单据头信息+模具项目信息+照片列表+保养项目作业指导书)
-     * @request GET:/maintenanceBillHead/getBillInfoByID
+     * @request GET:/maintenanceBillHead/getMouldBillInfoByID
      * @secure
      */
-    getBillInfoById: (query?: {
+    getMouldBillInfoById: (query?: {
       /** @default "0" */
       id?: string;
     }) =>
-      http.request<ResultMaintenanceBillHeadVO['data']>(`/api/equipment/maintenanceBillHead/getBillInfoByID`, {
+      http.request<ResultMaintenanceBillHeadVO['data']>(`/api/equipment/maintenanceBillHead/getMouldBillInfoByID`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备保养单据头表
+     * @name GetEquipmentBillInfoById
+     * @summary 根据模具/设备保养单据ID,获取保养明细(包含单据头信息+模具项目信息+照片列表+保养项目作业指导书)
+     * @request GET:/maintenanceBillHead/getEquipmentBillInfoByID
+     * @secure
+     */
+    getEquipmentBillInfoById: (query?: {
+      /** @default "0" */
+      id?: string;
+    }) =>
+      http.request<ResultMaintenanceBillHeadVO['data']>(`/api/equipment/maintenanceBillHead/getEquipmentBillInfoByID`, {
         method: 'GET',
         params: query,
       }),
@@ -2325,11 +2776,11 @@ export const api = {
      * @tags 设备保养明细文件表
      * @name GetFilesByDtlIds
      * @summary 获取设备保养计划项目表-除计划外
-     * @request POST:/maintenanceBillDtlFile/getFilesByDtlId
+     * @request POST:/maintenanceBillDtlFile/getFilesByDtlIds
      * @secure
      */
     getFilesByDtlIds: (data: string[]) =>
-      http.request<ResultObject['data']>(`/api/equipment/maintenanceBillDtlFile/getFilesByDtlId`, {
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceBillDtlFile/getFilesByDtlIds`, {
         method: 'POST',
         body: data as any,
       }),
