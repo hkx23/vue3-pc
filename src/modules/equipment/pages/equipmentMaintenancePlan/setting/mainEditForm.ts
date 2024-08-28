@@ -53,10 +53,10 @@ export default {
               label: '周期保养',
               value: 'PERIOD',
             },
-            {
-              label: '使用次数',
-              value: 'USETIME',
-            },
+            // {
+            //   label: '使用次数',
+            //   value: 'USETIME',
+            // },
           ],
         },
         dataTable: {
@@ -319,7 +319,7 @@ export default {
       isKeyField: false,
       isMultiple: false,
       isRequired: false,
-      isVisible: true,
+      isVisible: false,
       label: '资产品牌',
       parentField: 'm_asset_type_id',
       placeholder: null,
@@ -339,7 +339,7 @@ export default {
       isKeyField: false,
       isMultiple: false,
       isRequired: false,
-      isVisible: true,
+      isVisible: false,
       label: '资产型号',
       parentField: 'm_asset_brand_id',
       placeholder: null,
