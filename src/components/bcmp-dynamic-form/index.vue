@@ -217,6 +217,7 @@ const loadFormSetting = async () => {
     } else {
       column.field = column.field.toUpperCase();
     }
+
     let optionsData = [];
 
     // 获取下拉选项数据

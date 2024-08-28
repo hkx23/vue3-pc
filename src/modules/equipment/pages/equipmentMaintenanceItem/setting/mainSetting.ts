@@ -356,7 +356,7 @@ export default {
     pageSize: null,
     sortField: 'time_create',
     sortType: 'desc',
-    tableTitle: '模具保养项目',
+    tableTitle: '设备保养项目',
     usePage: true,
   },
 } as DomainParamSetting;

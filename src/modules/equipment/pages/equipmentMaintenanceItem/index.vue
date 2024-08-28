@@ -214,7 +214,7 @@ const opts = computed(() => {
 // 查询条件处理数据
 const filterList = ref([]) as any;
 // 表格标题
-const tableTitle = ref('模具保养项目信息');
+const tableTitle = ref('设备保养项目信息');
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   pageUI.value.page = 1;

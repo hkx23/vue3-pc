@@ -71,7 +71,7 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import _ from 'lodash';
+import _, { cloneDeep, isEqual } from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, Ref, ref } from 'vue';
 
@@ -255,13 +255,19 @@ const calculateFormWidth = computed(() => {
   const margin = 16;
   const gap = 2;
   const columnGap = 12;
-  if (relateAddFormJson.formColumnSetting.length < 6) {
-    return `${inputWidth + labelWidth + margin * 2 + gap}px`;
+  const formSetting: any = cloneDeep(relateAddFormJson);
+  if (!isEqual(formSetting, {}) && !isEqual(formSetting, [])) {
+    const currentColumns = formSetting.formColumnSetting.filter((column) => column.isVisible);
+
+    if (currentColumns.length < 6) {
+      return `${inputWidth + labelWidth + margin * 2 + gap}px`;
+    }
+    if (currentColumns.length >= 6 && currentColumns.length < 16) {
+      return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
+    }
+    return '90%';
   }
-  if (relateAddFormJson.formColumnSetting.length >= 6 && relateAddFormJson.formColumnSetting.length < 16) {
-    return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
-  }
-  return '90%';
+  return '50%';
 });
 
 const currentEditId = ref('');

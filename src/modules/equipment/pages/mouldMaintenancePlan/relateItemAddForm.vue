@@ -30,6 +30,9 @@
         <template #title>
           {{ '待选择保养项目' }}
         </template>
+        <template #isPhoto="{ row }">
+          {{ row.isPhoto == 1 ? '是' : '否' }}
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>

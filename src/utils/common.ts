@@ -63,6 +63,12 @@ export default {
       // 移除第一个字符和下划线
       str = str.substring(2);
     }
+    // 判断字符串是否包含下划线
+    if (str.includes('_')) {
+      // 包含的话,先转成小写字母
+      str = str.toLowerCase();
+    }
+
     return str
       .split('_')
       .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))

@@ -1,8 +1,5 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12" :ghost="ghost">
-      <cmp-query :opts="opts" label-width="100" :bool-enter="true" :loading="loading" @submit="conditionEnter" />
-    </cmp-card>
     <cmp-card :ghost="ghost">
       <cmp-table
         ref="tableRef"
@@ -26,15 +23,18 @@
           </t-space>
         </template>
 
-        <template #equipmentTypeName="{ row }">
-          {{ row.equipmentTypeName || '-' }}
+        <template #assetBrandCode="{ row }">
+          {{ row.assetBrandCode || '-' }}
+        </template>
+        <template #assetBrandName="{ row }">
+          {{ row.assetBrandName || '-' }}
         </template>
 
-        <template #equipmentCode="{ row }">
-          {{ row.equipmentCode || '-' }}
+        <template #assetModelCode="{ row }">
+          {{ row.assetModelCode || '-' }}
         </template>
-        <template #equipmentName="{ row }">
-          {{ row.equipmentName || '-' }}
+        <template #assetModelName="{ row }">
+          {{ row.assetModelName || '-' }}
         </template>
 
         <!-- 行按钮区 -->
@@ -71,7 +71,7 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import _ from 'lodash';
+import _, { cloneDeep, isEqual } from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, Ref, ref } from 'vue';
 
@@ -121,24 +121,6 @@ const onSelectChange = (value) => {
 };
 // 查询组件
 // const opts = ref({});
-const opts = computed(() => {
-  return {
-    equipmentType: {
-      label: t('maintenanceItem.设备类型'),
-      comp: 'bcmp-select-param',
-      defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('maintenanceItem.设备类型')}`]),
-      bind: {
-        paramGroup: 'E_MOULD_TYPE',
-      },
-    },
-    keyWord: {
-      label: t('maintenanceItem.设备'),
-      comp: 't-input',
-      defaultVal: '',
-    },
-  };
-});
 // 查询条件处理数据
 const filterList = ref([]) as any;
 // 表格标题
@@ -255,13 +237,19 @@ const calculateFormWidth = computed(() => {
   const margin = 16;
   const gap = 2;
   const columnGap = 12;
-  if (relateAddFormJson.formColumnSetting.length < 6) {
-    return `${inputWidth + labelWidth + margin * 2 + gap}px`;
+  const formSetting: any = cloneDeep(relateAddFormJson);
+  if (!isEqual(formSetting, {}) && !isEqual(formSetting, [])) {
+    const currentColumns = formSetting.formColumnSetting.filter((column) => column.isVisible);
+
+    if (currentColumns.length < 6) {
+      return `${inputWidth + labelWidth + margin * 2 + gap}px`;
+    }
+    if (currentColumns.length >= 6 && currentColumns.length < 16) {
+      return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
+    }
+    return '90%';
   }
-  if (relateAddFormJson.formColumnSetting.length >= 6 && relateAddFormJson.formColumnSetting.length < 16) {
-    return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
-  }
-  return '90%';
+  return '50%';
 });
 
 const currentEditId = ref('');
@@ -301,30 +289,6 @@ const formTitle = computed(() => {
 const onFormChange = (formData: any) => {
   const formDataChange = _.cloneDeep(formData);
   console.log(formDataChange);
-  // 如果 formData.relateType变化，对应的表单设置需要变化
-  // formData.relateType 为equipment,则field为m_equipment_id的字段显示，field为equipment_type隐藏
-  // formData.relateType 为equipmentType,则field为m_equipment_id的字段隐藏，field为equipment_type显示
-  if (formDataChange.relateType === 'equipment') {
-    formSetting.value.formColumnSetting.forEach((item: any) => {
-      if (item.field === 'm_equipment_id' || item.field === common.toLowerCamelCase('m_equipment_id')) {
-        item.isVisible = true;
-      }
-      if (item.field === 'equipmentType') {
-        item.isVisible = false;
-        formDataChange.equipmentType = '';
-      }
-    });
-  } else {
-    formSetting.value.formColumnSetting.forEach((item: any) => {
-      if (item.field === 'm_equipment_id' || item.field === common.toLowerCamelCase('m_equipment_id')) {
-        item.isVisible = false;
-        formDataChange.equipmentId = '';
-      }
-      if (item.field === 'equipmentType') {
-        item.isVisible = true;
-      }
-    });
-  }
   formRef.value.setFormData(formDataChange);
 };
 
