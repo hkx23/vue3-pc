@@ -491,7 +491,7 @@ export default {
     pageSize: null,
     sortField: 'time_create',
     sortType: 'desc',
-    tableTitle: '模具保养计划项目表',
+    tableTitle: '设备保养计划项目',
     usePage: true,
   },
 } as DomainParamSetting;

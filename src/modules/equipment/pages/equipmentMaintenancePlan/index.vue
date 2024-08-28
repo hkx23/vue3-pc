@@ -195,7 +195,7 @@ const fetchTable = async () => {
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       filters: filterList.value,
-      relateType: 'mould',
+      relateType: 'equipment',
     };
     const res: any = await api.maintenancePlan.search(searchCondition);
     tableData.value = res.list; // 表格数据赋值
@@ -315,22 +315,11 @@ const calculateFormWidth = computed(() => {
 // 点击编辑按钮逻辑
 const onEditRow = async (row: any) => {
   formAction.value = 'edit';
-  let relateType = 'mould';
-  if (row.mouldId === null || row.mouldId === '') {
-    relateType = 'mouldType';
-  }
+  const relateType = 'equipment';
   row.relateType = relateType;
   const currentSetting = { ...mainEditFormJson };
   // 找到字段为m_mould_id的字段显示，field为mould_type隐藏
   currentSetting.formColumnSetting.forEach((column) => {
-    if (column.field === 'm_mould_id' || column.field === common.toLowerCamelCase('m_mould_id')) {
-      column.isVisible = relateType === 'mould';
-    }
-
-    if (column.field === 'mould_type' || column.field === common.toLowerCamelCase('mould_type')) {
-      column.isVisible = relateType === 'mouldType';
-    }
-
     if (
       column.field === 'day_maintenance_period' ||
       column.field === common.toLowerCamelCase('day_maintenance_period')
@@ -405,27 +394,6 @@ const onFormChange = (formData: any) => {
         item.isVisible = true;
       }
       if (item.field === 'hour_run_early' || item.field === common.toLowerCamelCase('hour_run_early')) {
-        item.isVisible = true;
-      }
-    });
-  }
-  if (formDataChange.relateType === 'mould') {
-    formSetting.value.formColumnSetting.forEach((item: any) => {
-      if (item.field === 'm_mould_id' || item.field === common.toLowerCamelCase('m_mould_id')) {
-        item.isVisible = true;
-      }
-      if (item.field === 'mould_type' || item.field === common.toLowerCamelCase('mould_type')) {
-        item.isVisible = false;
-        formDataChange.mouldType = '';
-      }
-    });
-  } else {
-    formSetting.value.formColumnSetting.forEach((item: any) => {
-      if (item.field === 'm_mould_id' || item.field === common.toLowerCamelCase('m_mould_id')) {
-        item.isVisible = false;
-        formDataChange.mouldId = '';
-      }
-      if (item.field === 'mould_type' || item.field === common.toLowerCamelCase('mould_type')) {
         item.isVisible = true;
       }
     });

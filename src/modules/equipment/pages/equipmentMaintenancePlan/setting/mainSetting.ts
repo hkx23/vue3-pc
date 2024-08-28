@@ -5,7 +5,6 @@ export default {
     columnSetting: [
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '保养计划编码',
@@ -14,7 +13,6 @@ export default {
         columnType: 'varchar(80)',
         columnWidth: 120,
         componentSource: null,
-
         id: '1979249244809189376',
         isAutoWidth: false,
         isDataDefault: false,
@@ -23,15 +21,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: 'NO',
-
         seq: 1,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '保养计划名称',
@@ -40,7 +35,6 @@ export default {
         columnType: 'varchar(240)',
         columnWidth: 120,
         componentSource: null,
-
         id: '6430913614447872000',
         isAutoWidth: false,
         isDataDefault: false,
@@ -49,15 +43,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: 'NO',
-
         seq: 2,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '保养方式',
@@ -81,7 +72,6 @@ export default {
           dataTable: null,
           sourceType: null,
         },
-
         id: '5781640216176422912',
         isAutoWidth: false,
         isDataDefault: false,
@@ -90,15 +80,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: 'NO',
-
         seq: 3,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '生效时间',
@@ -107,7 +94,6 @@ export default {
         columnType: 'datetime(4)',
         columnWidth: 180,
         componentSource: null,
-
         id: '7582449786451361792',
         isAutoWidth: false,
         isDataDefault: false,
@@ -116,15 +102,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: 'NO',
-
         seq: 4,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '保养周期（天）',
@@ -133,7 +116,6 @@ export default {
         columnType: 'int',
         columnWidth: 150,
         componentSource: null,
-
         id: '8079611604183496704',
         isAutoWidth: false,
         isDataDefault: false,
@@ -142,15 +124,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: 'NO',
-
         seq: 5,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '预警提前期（天）',
@@ -159,7 +138,6 @@ export default {
         columnType: 'int',
         columnWidth: 150,
         componentSource: null,
-
         id: '1957731539453566976',
         isAutoWidth: false,
         isDataDefault: false,
@@ -168,15 +146,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: 'YES',
-
         seq: 6,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '运行次数',
@@ -185,7 +160,6 @@ export default {
         columnType: 'int',
         columnWidth: 100,
         componentSource: null,
-
         id: '4228583883284498432',
         isAutoWidth: false,
         isDataDefault: false,
@@ -194,15 +168,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: 'YES',
-
         seq: 7,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '提前运行次数',
@@ -211,7 +182,6 @@ export default {
         columnType: 'int',
         columnWidth: 150,
         componentSource: null,
-
         id: '2861171201225009152',
         isAutoWidth: false,
         isDataDefault: false,
@@ -220,25 +190,21 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: 'YES',
-
         seq: 8,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
-        columnDesc: '模具类型',
+        columnDesc: '资产类型',
         columnKey: null,
-        columnName: 'mouldTypeName',
-        columnType: 'varchar(240)',
+        columnName: 'ASSET_TYPE_NAME',
+        columnType: 'NVARCHAR2',
         columnWidth: 120,
         componentSource: null,
-
-        id: '6741599358854416384',
+        id: '5798825733633738752',
         isAutoWidth: false,
         isDataDefault: false,
         isDatabaseField: false,
@@ -246,25 +212,21 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: null,
-
         seq: 9,
-        tableName: 's_param_20240807102125',
+        tableName: 'M_ASSET_TYPE_20240828173549',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
-        columnDesc: '模具代码',
+        columnDesc: '资产品牌',
         columnKey: null,
-        columnName: 'mould_code',
-        columnType: 'varchar(80)',
+        columnName: 'ASSET_BRAND_NAME',
+        columnType: 'NVARCHAR2',
         columnWidth: 120,
         componentSource: null,
-
-        id: '4170211946404575232',
+        id: '3691294425856532480',
         isAutoWidth: false,
         isDataDefault: false,
         isDatabaseField: false,
@@ -272,25 +234,21 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: null,
-
         seq: 10,
-        tableName: 'm_mould_20240807105956',
+        tableName: 'M_ASSET_BRAND_20240828173614',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
-        columnDesc: '模具名称',
+        columnDesc: '资产型号',
         columnKey: null,
-        columnName: 'mould_name',
-        columnType: 'varchar(240)',
+        columnName: 'ASSET_MODEL_NAME',
+        columnType: 'NVARCHAR2',
         columnWidth: 120,
         componentSource: null,
-
-        id: '6276247007855908864',
+        id: '4664714592579631104',
         isAutoWidth: false,
         isDataDefault: false,
         isDatabaseField: false,
@@ -298,21 +256,35 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: true,
-
         nullable: null,
-
         seq: 11,
-        tableName: 'm_mould_20240807105956',
+        tableName: 'M_ASSET_MODEL_20240828173716',
       },
       {
         align: 'center',
         canDelete: false,
         columnDefault: null,
-        columnDesc: '启用状态',
+        columnDesc: '状态',
         columnKey: '',
         columnName: 'state',
         columnType: 'int',
         columnWidth: 100,
+        componentSource: {
+          customDict: {
+            dicData: [
+              {
+                label: '启用',
+                value: '1',
+              },
+              {
+                label: '禁用',
+                value: '0',
+              },
+            ],
+          },
+          dataTable: null,
+          sourceType: null,
+        },
         id: '6848017972128808960',
         isAutoWidth: false,
         isDataDefault: true,
@@ -327,7 +299,6 @@ export default {
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '模具类型',
@@ -336,7 +307,6 @@ export default {
         columnType: 'varchar(80)',
         columnWidth: 100,
         componentSource: null,
-
         id: '1191873293498304512',
         isAutoWidth: true,
         isDataDefault: false,
@@ -345,15 +315,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'YES',
-
         seq: 13,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '资产类型表ID',
@@ -362,7 +329,6 @@ export default {
         columnType: 'bigint',
         columnWidth: 100,
         componentSource: null,
-
         id: '196172220756541440',
         isAutoWidth: true,
         isDataDefault: false,
@@ -371,15 +337,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'YES',
-
         seq: 14,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '资产品牌表ID',
@@ -388,7 +351,6 @@ export default {
         columnType: 'bigint',
         columnWidth: 100,
         componentSource: null,
-
         id: '7194000198495977472',
         isAutoWidth: true,
         isDataDefault: false,
@@ -397,15 +359,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'YES',
-
         seq: 15,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '资产型号表ID',
@@ -414,7 +373,6 @@ export default {
         columnType: 'bigint',
         columnWidth: 100,
         componentSource: null,
-
         id: '5356558238514077696',
         isAutoWidth: true,
         isDataDefault: false,
@@ -423,15 +381,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'YES',
-
         seq: 16,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '模具表ID',
@@ -440,7 +395,6 @@ export default {
         columnType: 'bigint',
         columnWidth: 100,
         componentSource: null,
-
         id: '6372160288314134528',
         isAutoWidth: true,
         isDataDefault: false,
@@ -449,15 +403,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'YES',
-
         seq: 17,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '',
@@ -466,7 +417,6 @@ export default {
         columnType: 'bigint',
         columnWidth: 100,
         componentSource: null,
-
         id: '6294374149532706816',
         isAutoWidth: true,
         isDataDefault: true,
@@ -475,15 +425,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'NO',
-
         seq: 18,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '创建时间',
@@ -492,7 +439,6 @@ export default {
         columnType: 'datetime(4)',
         columnWidth: 100,
         componentSource: null,
-
         id: '4750236166081570816',
         isAutoWidth: true,
         isDataDefault: true,
@@ -501,15 +447,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'NO',
-
         seq: 19,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '创建人',
@@ -518,7 +461,6 @@ export default {
         columnType: 'varchar(80)',
         columnWidth: 100,
         componentSource: null,
-
         id: '658595641727797248',
         isAutoWidth: true,
         isDataDefault: true,
@@ -527,15 +469,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'NO',
-
         seq: 20,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '修改时间',
@@ -544,7 +483,6 @@ export default {
         columnType: 'datetime(4)',
         columnWidth: 100,
         componentSource: null,
-
         id: '9147958099678668800',
         isAutoWidth: true,
         isDataDefault: true,
@@ -553,15 +491,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'YES',
-
         seq: 21,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '修改人',
@@ -570,7 +505,6 @@ export default {
         columnType: 'varchar(80)',
         columnWidth: 100,
         componentSource: null,
-
         id: '3019427964243161088',
         isAutoWidth: true,
         isDataDefault: true,
@@ -579,15 +513,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'YES',
-
         seq: 22,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '企业ID',
@@ -596,7 +527,6 @@ export default {
         columnType: 'bigint',
         columnWidth: 100,
         componentSource: null,
-
         id: '7989769675184011264',
         isAutoWidth: true,
         isDataDefault: true,
@@ -605,15 +535,12 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'NO',
-
         seq: 23,
         tableName: 'e_maintenance_plan',
       },
       {
         align: 'center',
-
         canDelete: false,
         columnDefault: null,
         columnDesc: '组织ID',
@@ -622,7 +549,6 @@ export default {
         columnType: 'bigint',
         columnWidth: 100,
         componentSource: null,
-
         id: '3195778080208447488',
         isAutoWidth: true,
         isDataDefault: true,
@@ -631,9 +557,7 @@ export default {
         isLeftFixed: false,
         isRightFixed: false,
         isVisible: false,
-
         nullable: 'NO',
-
         seq: 24,
         tableName: 'e_maintenance_plan',
       },
@@ -641,7 +565,7 @@ export default {
     pageSize: null,
     sortField: 'time_create',
     sortType: 'desc',
-    tableTitle: '模具保养计划',
+    tableTitle: '设备保养计划',
     usePage: true,
   },
 } as DomainParamSetting;
