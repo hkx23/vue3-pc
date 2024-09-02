@@ -188,6 +188,7 @@ const datasourceName = ref('');
 const selectedFields = ref([]);
 const searchSettings = ref([]);
 const usePager = ref(true);
+const isAutoLoad = ref(true);
 const currentFormAction = ref('');
 
 // 按钮列表
@@ -205,6 +206,7 @@ const loadSetting = async () => {
   datasourceCategory.value = res.datasourceCategory;
   datasourceName.value = res.datasourceName;
   usePager.value = res.domainParmSetting.tableSetting.usePage;
+  isAutoLoad.value = res.domainParmSetting.tableSetting.isAutoLoad !== false;
   // 获取表格里面的field字段
   selectedFields.value = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
     tableName: column.tableName.toUpperCase(), // 假设column对象中有tableName属性
@@ -319,6 +321,7 @@ const generateComponentConfig = async (setting) => {
     label: setting.label,
     comp: setting.component,
     defaultVal: setting.defaultValue,
+    isRequired: setting.isRequired,
   };
   let optionsData = [];
   const sourceComponents = ['t-select', 't-radio-group', 't-checkbox-group'];
@@ -362,6 +365,7 @@ const generateComponentConfig = async (setting) => {
       optItem.bind = {
         type: setting.componentParam,
         multiple: setting.isMultiple,
+        autoSelect: setting.autoSelect,
       };
       break;
     case 'bcmp-select-param':
