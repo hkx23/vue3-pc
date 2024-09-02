@@ -1298,6 +1298,14 @@ export interface DemoJobParam {
   orgCode?: string;
 }
 
+/** 设备保养单据参数 */
+export interface EquipmentMaintenanceCreateJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+}
+
 export interface JobCommonDTO {
   /** 公共JOB参数 */
   jobCommonParams?: JobCommonParam[];
@@ -1305,6 +1313,8 @@ export interface JobCommonDTO {
   demoJobParam?: DemoJobParam[];
   /** 模具保养单据参数 */
   mouldMaintenanceCreateJobParam?: MouldMaintenanceCreateJobParam[];
+  /** 设备保养单据参数 */
+  equipmentMaintenanceCreateJobParam?: EquipmentMaintenanceCreateJobParam[];
 }
 
 /** 公共JOB参数 */
@@ -2806,13 +2816,28 @@ export const api = {
      * No description
      *
      * @tags 公用JOB业务组件接口
-     * @name CheckBillCreatedJob
-     * @summary 点检单据生成JOB
-     * @request POST:/jobCommon/checkBillCreatedJob
+     * @name MouldMaintenanceBillCreateJob
+     * @summary 模具保养单据生成JOB
+     * @request POST:/jobCommon/mouldMaintenanceBillCreateJob
      * @secure
      */
-    checkBillCreatedJob: (data: JobCommonDTO) =>
-      http.request<ResultObject['data']>(`/api/equipment/jobCommon/checkBillCreatedJob`, {
+    mouldMaintenanceBillCreateJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/equipment/jobCommon/mouldMaintenanceBillCreateJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name EquipmentMaintenanceBillCreateJob
+     * @summary 设备保养单据生成JOB
+     * @request POST:/jobCommon/equipmentMaintenanceBillCreateJob
+     * @secure
+     */
+    equipmentMaintenanceBillCreateJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/equipment/jobCommon/equipmentMaintenanceBillCreateJob`, {
         method: 'POST',
         body: data as any,
       }),
