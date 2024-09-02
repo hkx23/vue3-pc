@@ -11,6 +11,7 @@
     "datasourceCategory": "数据源类型",
     "datasourceName": "数据源",
     "tableTitle": "表格标题",
+    "isAutoLoad": "是否初始查询",
     "isPaging": "是否分页",
     "pageSize": "每页数量",
     "sortField": "排序字段",

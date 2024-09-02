@@ -77,6 +77,7 @@ const opts = computed(() => {
       label: '1.普通Input',
       comp: 't-input',
       event: 'input',
+      isRequired: true,
       defaultVal: '单选测试(包含事件)',
       eventHandle: {
         focus: ($event, row) => focus($event, row),

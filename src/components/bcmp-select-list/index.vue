@@ -303,6 +303,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  autoSelect: {
+    type: Boolean,
+    default: false,
+  },
   // 动态查询接口用到的参数
   dynamicTableName: {
     type: String,
@@ -485,8 +489,12 @@ const rehandleSelectChange = (value: any[], { selectedRowData }: any) => {
 // 搜索完全匹配，直接选中
 const radioCSelectRedirct = (val: string) => {
   if (!props.multiple) {
-    if (state.tableData && state.tableData.length === 1 && val === state.tableData[0][props.keywords.value]) {
-      rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: state.tableData[0] });
+    if (state.tableData && state.tableData.length === 1) {
+      if (firstLoad.value && props.autoSelect) {
+        rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: state.tableData[0] });
+      } else if (val === state.tableData[0][props.keywords.value]) {
+        rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: state.tableData[0] });
+      }
     }
   }
 };
@@ -545,6 +553,7 @@ const loadSelectedData = async () => {
     loading.value = false;
   }
 };
+const firstLoad = ref(true);
 
 const remoteLoad = async (val: any) => {
   loading.value = true;

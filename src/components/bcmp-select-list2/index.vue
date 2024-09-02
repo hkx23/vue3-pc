@@ -198,6 +198,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  autoSelect: {
+    type: Boolean,
+    default: false,
+  },
 });
 const onOptionClick = (item) => {
   state.defaultValue = item;

@@ -23,6 +23,7 @@
     :dynamic-default-sort-filed="finalDynamicDefaultSortFiled"
     :query-setting="finalQuerySetting"
     :bottom-query-setting="finalBottomQuerySetting"
+    :auto-select="autoSelect"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
@@ -52,6 +53,7 @@
     :dynamic-business-domain="finalDynamicBusinessDomain"
     :dynamic-keyword-fields="finalDynamicKeywordFields"
     :dynamic-default-sort-filed="finalDynamicDefaultSortFiled"
+    :auto-select="autoSelect"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
@@ -81,6 +83,7 @@
     :dynamic-business-domain="finalDynamicBusinessDomain"
     :dynamic-keyword-fields="finalDynamicKeywordFields"
     :dynamic-default-sort-filed="finalDynamicDefaultSortFiled"
+    :auto-select="autoSelect"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
@@ -274,6 +277,10 @@ const props = defineProps({
     default: null,
   },
   autoWidth: {
+    type: Boolean,
+    default: false,
+  },
+  autoSelect: {
     type: Boolean,
     default: false,
   },

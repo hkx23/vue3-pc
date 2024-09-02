@@ -171,6 +171,7 @@ const datasourceName = ref('');
 const selectedFields = ref([]);
 const searchSettings = ref([]);
 const usePager = ref(true);
+const isAutoLoad = ref(true);
 const currentFormAction = ref('');
 const dynamicDefaultSortFiled = ref('');
 const dynamicSortType = ref('DESC');
@@ -193,6 +194,7 @@ const loadSetting = () => {
     datasourceCategory.value = res.datasourceCategory;
     datasourceName.value = res.datasourceName;
     usePager.value = res.domainParmSetting.tableSetting.usePage;
+    isAutoLoad.value = res.domainParmSetting.tableSetting.isAutoLoad !== false;
     tableTitle.value = res.domainParmSetting.tableSetting.tableTitle;
     dynamicDefaultSortFiled.value = res.domainParmSetting.tableSetting.sortField;
     dynamicSortType.value = res.domainParmSetting.tableSetting.sortType;
@@ -279,7 +281,9 @@ const loadSetting = () => {
     searchSettings.value = res.domainParmSetting.searchSetting;
     const genOptsResult = await genOpts(res.domainParmSetting.searchSetting);
     opts.value = genOptsResult;
-    conditionEnter(null);
+    if (isAutoLoad.value) {
+      conditionEnter(null);
+    }
   });
 };
 const determineFixed = (isLeftFixed, isRightFixed) => {
@@ -310,6 +314,7 @@ const generateComponentConfig = async (setting) => {
     label: setting.label,
     comp: setting.component,
     defaultVal: setting.defaultValue,
+    isRequired: setting.isRequired,
   };
   let optionsData = [];
   const sourceComponents = ['t-select', 't-radio-group', 't-checkbox-group'];
@@ -353,6 +358,7 @@ const generateComponentConfig = async (setting) => {
       optItem.bind = {
         type: setting.componentParam,
         multiple: setting.isMultiple || false,
+        autoSelect: setting.autoSelect,
       };
       break;
     case 'bcmp-select-param':

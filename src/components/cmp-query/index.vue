@@ -3,12 +3,15 @@
     <t-row ref="QueryRef" @keydown.enter="enterCheckHandle">
       <t-col ref="formContentRef" flex="1 1">
         <t-form
+          ref="formRef"
           colon
+          scroll-to-first-error="smooth"
           class="search-form"
           :style="{ height: openSearchForm ? '' : '32px', padding: '0px 0px' }"
           v-bind="$attrs"
           :label-width="0"
-          :form="state.form"
+          :rules="currentFormRules"
+          :data="state.form"
           size="default"
           @submit.prevent
         >
@@ -16,7 +19,12 @@
             <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[8, 8]">
               <!--  :span="opt.span" -->
               <t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
-                ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
+                ><t-form-item
+                  v-bind="$attrs"
+                  :label="opt.label"
+                  :name="opt.field"
+                  :class="[opt.className, { render_label: opt.labelRender }]"
+                >
                   <!-- 自定义label -->
                   <template v-if="opt.labelRender" #label>
                     <render-comp :form="state.form" :render="opt.labelRender" />
@@ -187,7 +195,7 @@
 
 <script setup lang="tsx" name="CmpQuery">
 import _ from 'lodash';
-import { SizeEnum } from 'tdesign-vue-next';
+import { Data, FormRules, MessagePlugin, SizeEnum } from 'tdesign-vue-next';
 import {
   computed,
   getCurrentInstance,
@@ -260,6 +268,8 @@ const props = defineProps({
 });
 const loading = ref(false);
 const rowItemCount = ref(1);
+const currentFormRules = ref<FormRules<Data>>({});
+
 // 初始化表单数据
 const state = reactive({
   form: Object.keys(props.opts).reduce((acc: any, field: any) => {
@@ -301,6 +311,7 @@ const cOpts = computed(() => {
     const opt = {
       ...props.opts[field],
     };
+    opt.field = field;
     // if (opt.comp === 't-select' && opt.bind && opt.bind.multiple && opt.bind.multiple === true) {
     //   opt.bind.minCollapsedNum = 1;
     // }
@@ -333,6 +344,7 @@ const cOpts = computed(() => {
     return acc;
   }, {});
   const optRows = _.groupBy(result, 'row');
+  setRules();
   return optRows;
 });
 // 引用第三方事件
@@ -353,6 +365,7 @@ const cEvent = computed(() => {
     return { ...changeEvent };
   };
 });
+const formRef = ref(null);
 // 初始化表单数据
 const initForm = (opts: any, keepVal = false) => {
   return Object.keys(opts).reduce((acc, field) => {
@@ -371,9 +384,11 @@ const emits = defineEmits(['handleEvent', 'submit', 'reset', 'change']);
 const resetHandle = () => {
   state.form = initForm(props.opts);
   emits('reset', _.cloneDeep(state.form));
-  if (props.isResetQuery) {
-    checkHandle('reset');
-  }
+  nextTick(() => {
+    if (props.isResetQuery) {
+      checkHandle('reset');
+    }
+  });
 };
 // 查询条件change事件
 const handleEvent = (type, val) => {
@@ -382,13 +397,25 @@ const handleEvent = (type, val) => {
 };
 // 查询
 const checkHandle = (flagText: any = false) => {
-  emits('submit', _.cloneDeep(state.form), flagText);
+  formRef.value.validate().then((result) => {
+    if (result !== true) {
+      MessagePlugin.warning(Object.values(result)[0][0].showMessage);
+      return;
+    }
+    emits('submit', _.cloneDeep(state.form), flagText);
+  });
 };
 
 // 查询
 const enterCheckHandle = (flagText: any = false) => {
   if (props.boolEnter) {
-    emits('submit', _.cloneDeep(state.form), flagText);
+    formRef.value.validate().then((result) => {
+      if (result !== true) {
+        MessagePlugin.warning(Object.values(result)[0][0].showMessage);
+        return;
+      }
+      emits('submit', _.cloneDeep(state.form), flagText);
+    });
   }
 };
 // 子组件名称
@@ -508,12 +535,37 @@ onMounted(() => {
 watch(
   () => props.opts,
   (opts, _oldValue) => {
-    // console.log('query change', opts, oldValue);
+    console.log('query change', opts, _oldValue);
     state.form = initForm(opts, false);
+    setRules();
     computedTableContentSize();
   },
   { deep: true },
 );
+
+const setRules = () => {
+  const optsValue = props.opts;
+  // 生成验证规则
+  currentFormRules.value = {};
+  const formRulesObject: any = {};
+  // 遍历 opts 中的所有字段
+  Object.keys(optsValue).forEach((key) => {
+    const column = optsValue[key];
+    if (column.isRequired) {
+      formRulesObject[key] = [
+        {
+          required: true,
+          message: ` `,
+          showMessage: `${column.label} 是必填项`,
+          type: 'error',
+          trigger: 'blur', // 触发验证的时机，这里设置为失去焦点时
+        },
+      ];
+    }
+  });
+
+  currentFormRules.value = formRulesObject;
+};
 
 // 展开按钮点击事件
 const onExpandSwitch = () => {

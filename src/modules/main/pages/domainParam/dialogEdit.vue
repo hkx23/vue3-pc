@@ -223,6 +223,9 @@
                           :placeholder="t('common.placeholder.input', [t('domainParam.tableTitle')])"
                         ></t-input>
                       </t-form-item>
+                      <t-form-item :label="t('domainParam.isAutoLoad')" name="isAutoLoad">
+                        <t-switch v-model="tableFormData.isAutoLoad"></t-switch>
+                      </t-form-item>
                       <t-form-item :label="t('domainParam.isPaging')" name="isPaging">
                         <t-switch v-model="tableFormData.usePage"></t-switch>
                       </t-form-item>
@@ -423,6 +426,9 @@
                         <template #label="{ row }">
                           <t-input v-model="row.label" />
                         </template>
+                        <template #isRequired="{ row }">
+                          <t-switch v-model="row.isRequired"></t-switch>
+                        </template>
 
                         <template #component="{ row }">
                           <t-select
@@ -470,6 +476,15 @@
                             filterable
                           />
                           <!-- 如果是其他，则显示-，不需要设置 -->
+                          <span v-else>-</span>
+                        </template>
+
+                        <template #autoSelect="{ row }">
+                          <t-switch
+                            v-if="row.component.indexOf('bcmp-select-business') > -1"
+                            v-model="row.autoSelect"
+                          ></t-switch>
+
                           <span v-else>-</span>
                         </template>
 
@@ -2008,6 +2023,7 @@ const defaultFields = ['id', 'time_create', 'creator', 'time_modified', 'modifie
 const tableFormData = reactive({
   tableTitle: null,
   usePage: true,
+  isAutoLoad: true,
   pageSize: 20,
   sortField: '',
   sortType: 'desc',
@@ -2486,6 +2502,12 @@ const searchColumns: PrimaryTableCol<TableRowData>[] = [
     width: '90',
   },
   {
+    colKey: 'isRequired',
+    title: '是否必填',
+    align: 'center',
+    width: '100',
+  },
+  {
     colKey: 'component',
     title: '控件',
     align: 'center',
@@ -2494,6 +2516,12 @@ const searchColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'componentParam',
     title: '控件关键参数',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'autoSelect',
+    title: '是否自动选择',
     align: 'center',
     width: '100',
   },
@@ -2515,6 +2543,7 @@ const searchColumns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '100',
   },
+
   {
     colKey: 'isVisible',
     title: '是否显示(隐藏用于设置固定查询条件)',
@@ -3103,6 +3132,7 @@ const getInsetModel = () => {
       tableSetting: {
         tableTitle: tableFormData.tableTitle,
         usePage: tableFormData.usePage,
+        isAutoLoad: tableFormData.isAutoLoad,
         sortField: tableFormData.sortField,
         sortType: tableFormData.sortType,
         columnSetting: columnsData.value,
@@ -3166,6 +3196,7 @@ const initEditData = (insetModel) => {
   // 更新tableFormData的属性
   tableFormData.tableTitle = insetModel.domainParmSetting.tableSetting.tableTitle;
   tableFormData.usePage = insetModel.domainParmSetting.tableSetting.usePage;
+  tableFormData.isAutoLoad = insetModel.domainParmSetting.tableSetting.isAutoLoad;
   tableFormData.pageSize = insetModel.domainParmSetting.tableSetting.pageSize;
   tableFormData.sortField = insetModel.domainParmSetting.tableSetting.sortField;
   tableFormData.sortType = insetModel.domainParmSetting.tableSetting.sortType;
@@ -3205,6 +3236,7 @@ const initAddData = (paramGroupId: string) => {
   // 更新tableFormData的属性
   tableFormData.tableTitle = null;
   tableFormData.usePage = true;
+  tableFormData.isAutoLoad = true;
   tableFormData.pageSize = 20;
   tableFormData.sortField = '';
   tableFormData.sortType = 'desc';

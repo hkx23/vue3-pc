@@ -321,7 +321,13 @@
         <!-- 计量单位-->
         <t-row :gutter="[10, 10]">
           <t-col flex="300px">
-            <bcmp-select-business v-model="uomValue" :is-multiple="isMultiple" type="uom"></bcmp-select-business
+            <bcmp-select-business
+              v-model="uomValue"
+              :is-multiple="isMultiple"
+              type="uom"
+              auto-select
+              :custom-conditions="uomCustomConditions"
+            ></bcmp-select-business
           ></t-col>
           <t-col flex="300px">
             <t-input v-model="uomValue" label="计量单位值" disabled />
@@ -456,6 +462,8 @@ const routingValue = ref();
 const moValue = ref('');
 const moScheduleValue = ref();
 const dynamicValue = ref();
+
+const uomCustomConditions = ref([{ field: 'uom', operator: 'EQ', value: 'CM' }]);
 onMounted(() => {});
 </script>
 

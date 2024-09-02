@@ -274,6 +274,15 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  autoSelect: {
+    type: Boolean,
+    default: false,
+  },
+  // 默认分页数量
+  pageSize: {
+    type: Number,
+    default: 10,
+  },
 });
 
 type Filters = { [key: string]: any };
@@ -363,7 +372,7 @@ const onPageChange = (PageInfo: any) => {
 const pagination = props.isShowPagination
   ? ref({
       current: 1,
-      pageSize: 10,
+      pageSize: 200,
       showPageNumber: false,
       showJumper: true,
       showPreviousAndNextBtn: false,
@@ -604,7 +613,7 @@ const onLoadMore: ListProps['onLoadMore'] = () => {
 };
 
 const tempCondition = ref({});
-
+const firstLoad = ref(true);
 const remoteLoad = async (val: any, isSetDefaultVal) => {
   loading.value = true;
   const finalFilterList = _.cloneDeep(filterList.value);
@@ -749,8 +758,12 @@ const conditionEnter = (_data: any) => {
 // 搜索完全匹配，直接选中
 const radioCSelectRedirct = (val: string) => {
   if (!props.multiple) {
-    if (state.tableData && state.tableData.length === 1 && val === state.tableData[0][props.keywords.value]) {
-      rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: [state.tableData[0]] });
+    if (state.tableData && state.tableData.length === 1) {
+      if (firstLoad.value && props.autoSelect) {
+        rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: state.tableData[0] });
+      } else if (val === state.tableData[0][props.keywords.value]) {
+        rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: state.tableData[0] });
+      }
     } else if (
       state.tableData &&
       state.tableData.length > 1 &&
