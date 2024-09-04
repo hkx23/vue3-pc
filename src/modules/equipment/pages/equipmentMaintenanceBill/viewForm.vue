@@ -110,6 +110,7 @@ const getBillItem = async () => {
     pageSize: 1,
     selectedField: 'id',
     selectedValue: props.billId,
+    relateType: 'equipment',
   };
   const res: any = await api.maintenanceBillHead.search(searchCondition);
   if (res.list && res.list.length > 0) {
