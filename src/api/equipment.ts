@@ -1071,7 +1071,7 @@ export interface MaintenanceBillDtlFile {
   fileCategory?: string;
 }
 
-export interface MaintenanceBillDtlSparePart {
+export interface MaintenanceBillDtlSparePartVO {
   id?: string;
   /**
    * 创建时间
@@ -1093,11 +1093,14 @@ export interface MaintenanceBillDtlSparePart {
    * @default 1
    */
   state?: number;
-  eid?: number;
-  oid?: number;
-  maintenanceBillDtlId?: number;
-  sparePartId?: number;
-  changeCount?: number;
+  eid?: string;
+  oid?: string;
+  maintenanceBillDtlId?: string;
+  sparePartId?: string;
+  changeCount?: string;
+  sparePartName?: string;
+  sparePartCode?: string;
+  sparePartModel?: string;
 }
 
 export interface MaintenanceBillDtlVO {
@@ -1146,7 +1149,7 @@ export interface MaintenanceBillDtlVO {
   maintenancePeriod?: string;
   billDtlFiles?: MaintenanceBillDtlFile[];
   maintenanceItemFiles?: MaintenanceItemFile[];
-  billDtlSpareParts?: MaintenanceBillDtlSparePart[];
+  billDtlSpareParts?: MaintenanceBillDtlSparePartVO[];
   maintenanceItemId?: string;
 }
 
