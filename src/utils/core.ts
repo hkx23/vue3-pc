@@ -29,11 +29,11 @@ if (typeof window !== 'undefined' && window.top !== window) {
         return res.json();
       })
       .then((config) => {
-        if (env === 'production') {
+        if (env === 'development') {
+          localStorage.setItem('baseUrl', import.meta.env.VITE_API_URL);
+        } else {
           fw.config.baseUrl = config.baseUrl || window.location.origin;
           localStorage.setItem('baseUrl', fw.config.baseUrl);
-        } else {
-          localStorage.setItem('baseUrl', import.meta.env.VITE_API_URL);
         }
       })
       .catch((error) => {
