@@ -518,10 +518,10 @@ export interface RepairBillDtlSparePart {
    * @default 1
    */
   state?: number;
-  eid?: number;
-  oid?: number;
-  repairBillDtlId?: number;
-  sparePartId?: number;
+  eid?: string;
+  oid?: string;
+  repairBillDtlId?: string;
+  sparePartId?: string;
   changeCount?: number;
 }
 
@@ -2780,6 +2780,22 @@ export const api = {
       http.request<ResultMaintenanceBillHeadVO['data']>(`/api/equipment/maintenanceBillHead/getEquipmentBillInfoByID`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  maintenanceBillDtlSparePart: {
+    /**
+     * No description
+     *
+     * @tags
+     * @name GetItemsByBillId
+     * @summary 获取设备保养计划项目对应备品备件表-除计划外
+     * @request POST:/maintenanceBillDtlSparePart/getItemsByBillId
+     * @secure
+     */
+    getItemsByBillId: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/maintenanceBillDtlSparePart/getItemsByBillId`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   maintenanceBillDtlFile: {

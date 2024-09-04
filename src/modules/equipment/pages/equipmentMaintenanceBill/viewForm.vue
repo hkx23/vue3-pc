@@ -5,8 +5,8 @@
         <t-descriptions-item label="单据编号">{{ billItem.billNo }}</t-descriptions-item>
         <t-descriptions-item label="保养计划编号">{{ billItem.maintenancePlanCode }}</t-descriptions-item>
         <t-descriptions-item label="保养计划名称">{{ billItem.maintenancePlanName }}</t-descriptions-item>
-        <t-descriptions-item label="模具编码">{{ billItem.mouldCode }}</t-descriptions-item>
-        <t-descriptions-item label="模具名称">{{ billItem.mouldName }}</t-descriptions-item>
+        <t-descriptions-item label="设备编码">{{ billItem.equipmentCode }}</t-descriptions-item>
+        <t-descriptions-item label="设备名称">{{ billItem.equipmentName }}</t-descriptions-item>
         <t-descriptions-item label="保养人">{{ billItem.userMaintenanceName }}</t-descriptions-item>
         <t-descriptions-item label="保养时间">{{ billItem.datetimeMaintenance }}</t-descriptions-item>
         <t-descriptions-item label="验收人">{{ billItem.userAcceptName }}</t-descriptions-item>
@@ -30,6 +30,22 @@
         </template>
         <template #photo="{ row }">
           <t-link theme="primary" @click="viewPhoto(row)">查看</t-link>
+        </template>
+      </cmp-table>
+    </cmp-card>
+    <cmp-card flex="auto" :ghost="true">
+      <cmp-table
+        size="small"
+        row-key="id"
+        :table-column="itemSparePartColumn"
+        :table-data="itemSparePartList"
+        :fixed-height="true"
+        max-height="300px"
+        :show-pagination="false"
+        empty="没有符合条件的数据"
+      >
+        <template #title>
+          {{ '单据更换备件' }}
         </template>
       </cmp-table>
     </cmp-card>
@@ -100,12 +116,29 @@ const getBillItem = async () => {
     [billItem.value] = res.list;
   }
 };
+
+const itemSparePartColumn: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'sparePartCode', title: '备件编码', width: 100, align: 'center' },
+  { colKey: 'sparePartName', title: '备件描述', width: 100, align: 'center' },
+  { colKey: 'changeCount', title: '更换数量', width: 100, align: 'center' },
+  { colKey: 'uom', title: '单位', width: 100, align: 'center' },
+];
+const itemSparePartList: any = ref([]);
+const getBillItemSparePart = async () => {
+  selectItemId.value = [];
+  if (!props.billId) return;
+  const billId = [props.billId];
+
+  const itemListData = await api.maintenanceBillDtlSparePart.getItemsByBillId(billId);
+  itemSparePartList.value = itemListData;
+};
 watch(
   () => props.billId,
   (val) => {
     if (val) {
       getBillItem();
       getItemList();
+      getBillItemSparePart();
     }
   },
 );
