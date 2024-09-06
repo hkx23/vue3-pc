@@ -496,7 +496,7 @@ export interface RepairBillDtlFile {
   fileCategory?: string;
 }
 
-export interface RepairBillDtlSparePart {
+export interface RepairBillDtlSparePartVO {
   id?: string;
   /**
    * 创建时间
@@ -523,6 +523,10 @@ export interface RepairBillDtlSparePart {
   repairBillDtlId?: string;
   sparePartId?: string;
   changeCount?: number;
+  sparePartName?: string;
+  sparePartCode?: string;
+  sparePartModel?: string;
+  uom?: string;
 }
 
 export interface RepairBillDtlVO {
@@ -563,7 +567,7 @@ export interface RepairBillDtlVO {
   /** 备注 */
   memo?: string;
   billDtlFiles?: RepairBillDtlFile[];
-  billDtlSpareParts?: RepairBillDtlSparePart[];
+  billDtlSpareParts?: RepairBillDtlSparePartVO[];
   repairItemFiles?: RepairItemFile[];
   repairItemId?: string;
 }
@@ -665,6 +669,10 @@ export interface RepairBillHeadVO {
   workcenterName?: string;
   workshopName?: string;
   billType?: string;
+  repairDealGroupName?: string;
+  repairAcceptGroupName?: string;
+  repairItemCode?: string;
+  repairItemDesc?: string;
   positionPath?: string;
 }
 
@@ -1101,6 +1109,7 @@ export interface MaintenanceBillDtlSparePartVO {
   sparePartName?: string;
   sparePartCode?: string;
   sparePartModel?: string;
+  uom?: string;
 }
 
 export interface MaintenanceBillDtlVO {
@@ -2276,6 +2285,36 @@ export const api = {
      * No description
      *
      * @tags 设备维修单据头表
+     * @name GetCurrentUserEquipmentTodoBills
+     * @summary 根据当前的登录用户获取 我的待处理 单据(带分页,带查询条件)
+     * @request POST:/repairBillHead/getCurrentUserEquipmentTodoBills
+     * @secure
+     */
+    getCurrentUserEquipmentTodoBills: (data: RepairBillHeadSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/getCurrentUserEquipmentTodoBills`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name GetCurrentUserEquipmentCreateBills
+     * @summary 根据当前的登录用户获取 我的报障 单据(带分页,带查询条件)
+     * @request POST:/repairBillHead/getCurrentUserEquipmentCreateBills
+     * @secure
+     */
+    getCurrentUserEquipmentCreateBills: (data: RepairBillHeadSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/repairBillHead/getCurrentUserEquipmentCreateBills`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
      * @name CompleteRepair
      * @summary 完成维修单据
      * @request POST:/repairBillHead/completeRepair
@@ -2331,6 +2370,42 @@ export const api = {
       id?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/equipment/repairBillHead/startRepair`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name GetMouldBillInfoById
+     * @summary 根据模具维修单据ID,获取维修明细(包含单据头信息+维修项目信息+照片列表+维修项目作业指导书)
+     * @request GET:/repairBillHead/getMouldBillInfoByID
+     * @secure
+     */
+    getMouldBillInfoById: (query?: {
+      /** @default "0" */
+      id?: string;
+    }) =>
+      http.request<ResultRepairBillHeadVO['data']>(`/api/equipment/repairBillHead/getMouldBillInfoByID`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备维修单据头表
+     * @name GetEquipmentBillInfoById
+     * @summary 根据设备维修单据ID,获取维修明细(包含单据头信息+维修项目信息+照片列表+维修项目作业指导书)
+     * @request GET:/repairBillHead/getEquipmentBillInfoByID
+     * @secure
+     */
+    getEquipmentBillInfoById: (query?: {
+      /** @default "0" */
+      id?: string;
+    }) =>
+      http.request<ResultRepairBillHeadVO['data']>(`/api/equipment/repairBillHead/getEquipmentBillInfoByID`, {
         method: 'GET',
         params: query,
       }),
@@ -2755,7 +2830,7 @@ export const api = {
      * @request GET:/maintenanceBillHead/getMouldBillInfoByID
      * @secure
      */
-    getMouldBillInfoById: (query?: {
+    getMouldBillInfoByID: (query?: {
       /** @default "0" */
       id?: string;
     }) =>
@@ -2773,7 +2848,7 @@ export const api = {
      * @request GET:/maintenanceBillHead/getEquipmentBillInfoByID
      * @secure
      */
-    getEquipmentBillInfoById: (query?: {
+    getEquipmentBillInfoByID: (query?: {
       /** @default "0" */
       id?: string;
     }) =>
