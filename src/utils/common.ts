@@ -58,16 +58,17 @@ export default {
     });
   },
   toLowerCamelCase(str) {
+    str = str.toLowerCase();
     // 检查字符串是否以字母开头且紧接着是下划线
     if (/^[a-zA-Z]_/.test(str)) {
       // 移除第一个字符和下划线
       str = str.substring(2);
     }
     // 判断字符串是否包含下划线
-    if (str.includes('_')) {
-      // 包含的话,先转成小写字母
-      str = str.toLowerCase();
-    }
+    // if (str.includes('_')) {
+    //   // 包含的话,先转成小写字母
+    //   str = str.toLowerCase();
+    // }
 
     return str
       .split('_')
