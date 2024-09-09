@@ -30,7 +30,7 @@
             <template #button>
               <!--  @click="retransmissionAll" -->
               <t-button theme="primary" disabled>重传</t-button>
-              <t-button theme="default">导出</t-button>
+              <!-- <t-button theme="default">导出</t-button> -->
             </template>
 
             <template #op="{ row }">
@@ -210,19 +210,22 @@ const defaultEndDateTime = getNextDayDateTime();
 
 //* 表格数据
 const fetchTable = async () => {
-  setLoading(false);
-  inventoryManagement.value = [];
-  tableDataReckoning.value = [];
-  const data = await apiMain.integratedConsole.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-  });
-  tableDataReckoning.value = data.list.map((item) => ({
-    ...item,
-    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
-  }));
-  dataTotal.value = data.total;
-  setLoading(false);
+  try {
+    setLoading(true);
+    inventoryManagement.value = [];
+    tableDataReckoning.value = [];
+    const data = await apiMain.integratedConsole.getList({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+    });
+    tableDataReckoning.value = data.list.map((item) => ({
+      ...item,
+      _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+    }));
+    dataTotal.value = data.total;
+  } finally {
+    setLoading(false);
+  }
 };
 
 const InterfaceOption = ref([]);
@@ -305,37 +308,40 @@ const documentStatusData = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
-  pageUI.value.page = 1;
-  setLoading(true);
-  const {
-    msgCategory, // 接口分类
-    msgDomainCategory, // mes领域分类
-    businessCategoryId, // 事务类型
-    imsgQueueStatus, // 执行结果
-    erpBillNo, // ERP凭据单号
-    datetimeExecute, // 事务开始时间
-    billNo, // MES/业务单据号
-  } = data;
-  if (!data.value) {
-    const data = await apiMain.integratedConsole.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      msgCategory,
-      msgDomainCategory,
-      businessCategoryId,
-      imsgQueueStatus,
-      erpBillNo,
-      billNo,
-      dateStart: datetimeExecute[0],
-      dateEnd: datetimeExecute[1],
-    });
-    tableDataReckoning.value = data.list.map((item) => ({
-      ...item,
-      _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
-    }));
-    dataTotal.value = data.total;
+  try {
+    pageUI.value.page = 1;
+    setLoading(true);
+    const {
+      msgCategory, // 接口分类
+      msgDomainCategory, // mes领域分类
+      businessCategoryId, // 事务类型
+      imsgQueueStatus, // 执行结果
+      erpBillNo, // ERP凭据单号
+      datetimeExecute, // 事务开始时间
+      billNo, // MES/业务单据号
+    } = data;
+    if (!data.value) {
+      const data = await apiMain.integratedConsole.getList({
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+        msgCategory,
+        msgDomainCategory,
+        businessCategoryId,
+        imsgQueueStatus,
+        erpBillNo,
+        billNo,
+        dateStart: datetimeExecute[0],
+        dateEnd: datetimeExecute[1],
+      });
+      tableDataReckoning.value = data.list.map((item) => ({
+        ...item,
+        _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+      }));
+      dataTotal.value = data.total;
+    }
+  } finally {
+    setLoading(false);
   }
-  setLoading(false);
 };
 
 const rowData = ref({});

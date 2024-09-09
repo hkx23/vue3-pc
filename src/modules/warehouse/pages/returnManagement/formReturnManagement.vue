@@ -50,6 +50,7 @@
               </t-col>
               <t-col>
                 <bcmp-select-business
+                  v-if="formData.supplierCode"
                   v-model="formData.asnBillNo"
                   :parent-id="formData.supplierCode"
                   type="iqcBillInfo"
@@ -148,14 +149,12 @@ import { reactive, Ref, ref, watch } from 'vue';
 import { api as apiQuality } from '@/api/quality';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
-import { useLoading } from '@/hooks/modules/loading';
 
 import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import { useLang } from './lang';
 
 const Emit = defineEmits(['parent-refresh-event']);
 
-const { setLoading } = useLoading();
 const { t } = useLang();
 const isEdit = ref(false);
 const tabDisabled = ref(false);
@@ -226,6 +225,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '供应商', width: 120, colKey: 'supplierName' },
   { title: '物料编码', width: 120, colKey: 'mitemCode' },
   { title: '物料描述', width: 120, colKey: 'mitemName' },
+  { title: '处理意见', width: 120, colKey: 'handleMethodName' },
   { title: '不合格数量', width: 120, colKey: 'sumNgQty' },
   { title: '可退数量', width: 120, colKey: 'curReturnQty' },
   { title: '关联单据号', width: 140, colKey: 'deliveryNo' },
@@ -276,8 +276,6 @@ const onConfirmForm = async () => {
         MessagePlugin.error(t('returnManagement.请选择需要退货的物料'));
         return;
       }
-
-      setLoading(true);
       await apiWarehouse.returnManagement.submitBillNoByIqc({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
@@ -303,7 +301,6 @@ const onConfirmForm = async () => {
         return;
       }
 
-      setLoading(true);
       await apiWarehouse.returnManagement.submitBillNoByPurchaseOrder({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
@@ -312,13 +309,10 @@ const onConfirmForm = async () => {
       });
       MessagePlugin.success(t('returnManagement.退货单创建成功'));
     }
-    // Emit('showCloseEvent', false);
     Emit('parent-refresh-event');
     formVisible.value = false;
   } catch (e) {
     console.log(e);
-  } finally {
-    setLoading(false);
   }
 };
 const tabsChange = async (tabValue) => {
@@ -355,15 +349,16 @@ const getReturnDeliveryDtl = async () => {
       if (res && res.list.length > 0) {
         const list = res.list.filter((n) => n.status !== 'CANCELED');
         if (list.length > 0) {
-          MessagePlugin.error(t('returnManagement.采购订单已有退货单，请检查'));
+          MessagePlugin.error(t('returnManagement.该检验单已存在退货单，请检查'));
           return;
         }
       }
     }
-
-    tableData.value.push({ ...data });
-    tableSelectedRowKeys.value = [];
-    tableSelectedRowData.value = [];
+    if (data != null) {
+      tableData.value.push({ ...data });
+      tableSelectedRowKeys.value = [];
+      tableSelectedRowData.value = [];
+    }
   }
 };
 const getReturnPurchaseDtl = async () => {
@@ -375,6 +370,9 @@ const getReturnPurchaseDtl = async () => {
       warehouseId: formData.warehouseId,
       mitemId: formData.mitemId,
     });
+    if (data.list.length === 0) {
+      MessagePlugin.error(t('returnManagement.该采购订单暂无可退货物料'));
+    }
     tableTab2Data.value = data.list;
     tableTab2SelectedRowKeys.value = [];
     tableTab2SelectedRowData.value = [];
@@ -399,6 +397,7 @@ const onChangeSupplier = async (value) => {
   list.push(
     { field: 'inspectResult', operator: 'EQ', value: 'NG' },
     { field: 'status', operator: 'EQ', value: 'COMPLETED' },
+    { field: 'returnBillNo', operator: 'EQ', value: 'NULL' },
   );
   formData.iqcBillInfoConditions = list;
 };

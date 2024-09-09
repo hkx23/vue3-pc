@@ -1,0 +1,45 @@
+{
+  "title": "供应商：",
+  "placeholder": "请选择供应商",
+  "url": "/api/main/supplier/itemsAuth",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "供应商代码",
+      "key": "supplierCode",
+      "width": 150,
+      "align": "left"
+    },
+    {
+      "title": "供应商名称",
+      "key": "supplierName",
+      "width": 150,
+      "align": "left"
+    },
+    {
+      "title": "供应商联系人",
+      "key": "contactPerson",
+      "width": 150,
+      "align": "left"
+    },
+    {
+      "title": "供应商联系电话",
+      "width": 150,
+      "key": "contactTel",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "supplierName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "supplierName",
+    "descField": "supplierCode"
+  },
+  "name": "供应商",
+  "componentType": "list"
+}

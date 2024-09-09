@@ -3,7 +3,7 @@
     <t-row :gutter="[32, 16]">
       <!-- 第 1️⃣ 行数据 -->
       <t-col :span="12">
-        <t-form-item label="检验标准" name="inspectStdCode">
+        <t-form-item label="检验标准" name="iqcInspectStdId">
           <bcmp-select-business
             v-model="formData.iqcInspectStdId"
             type="inspectStd"

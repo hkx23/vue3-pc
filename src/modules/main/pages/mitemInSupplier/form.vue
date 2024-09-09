@@ -69,6 +69,19 @@
           />
         </t-form-item>
       </t-col>
+      <t-col :span="6">
+        <t-form-item label="容器类型" required-mark>
+          <bcmp-select-business
+            v-model="formData.containerType"
+            name="容器类型"
+            placeholder="请选择容器类型"
+            :show-panel-title="false"
+            type="param"
+            category="SUPPLIER_CONTAINER_TYPE"
+            :show-title="false"
+          />
+        </t-form-item>
+      </t-col>
     </t-row>
   </t-form>
 </template>
@@ -119,6 +132,7 @@ export default {
       isForceInspectionChecked: false, // 是否强制供方检验
       dateExemptionExpiredStr: '', // 免检失效日期
       dateExemptionExpired: '',
+      containerType: '', // 容器类型
     });
 
     onMounted(() => {
@@ -141,6 +155,11 @@ export default {
 
         if (formData.value.qty <= 0) {
           MessagePlugin.error('最小包装数量必须大于0');
+          return false;
+        }
+
+        if (isEmpty(formData.value.containerType)) {
+          MessagePlugin.error('请选择容器类型');
           return false;
         }
 
@@ -167,13 +186,14 @@ export default {
       formData.value.supplierCode = '';
       formData.value.supplierName = '';
       formData.value.qty = 0; // 最小包装数
-      formData.value.inspectionStringency = '正常'; // 检验严格度
-      formData.value.isExemptionInspection = 1; // 是否免检
+      formData.value.inspectionStringency = 'NORMAL'; // 检验严格度
+      formData.value.isExemptionInspection = 0; // 是否免检
       formData.value.isExemptionInspectionChecked = false; // 是否免检
-      formData.value.isForceInspection = 1; // 是否强制供方检验
+      formData.value.isForceInspection = 0; // 是否强制供方检验
       formData.value.isForceInspectionChecked = false; // 是否强制供方检验
       formData.value.dateExemptionExpiredStr = ''; // 免检失效日期
       formData.value.dateExemptionExpired = '';
+      formData.value.containerType = '';
     };
     const onSupplierChange = (value: any) => {
       formData.value.supplierId = value.id;

@@ -211,42 +211,45 @@ const onReset = () => {
 
 // 查询
 const onInput = async (data: any) => {
-  // 如果是在执行重置操作，直接返回不执行校验
-  if (isResetting.value) {
-    return;
-  }
+  try {
+    // 如果是在执行重置操作，直接返回不执行校验
+    if (isResetting.value) {
+      return;
+    }
 
-  if (!data.stockCheckType) {
-    MessagePlugin.error('盘点类型为必填项');
-    return;
+    if (!data.stockCheckType) {
+      MessagePlugin.error('盘点类型为必填项');
+      return;
+    }
+    if (!data.warehouseId) {
+      MessagePlugin.error('仓库为必填项');
+      return;
+    }
+    pageUI.value.page = 1;
+    if (!data.value) {
+      setLoading(true);
+      const { stockCheckType, warehouseId, districtId, locationId, mitemId } = data;
+      const result = await api.stockCheckBill.getOnHand({
+        pageNum: 1,
+        pageSize: 999999,
+        stockCheckType,
+        warehouseId,
+        districtId,
+        locationId,
+        mitemId,
+      });
+      tableDataInventory.value = result.list;
+      dataTotal.value = result.total;
+      // selectedRowKeys.value = []; // 重置清空选中的数据
+      // 全选逻辑：提取所有记录的onhandId作为selectedRowKeys的值
+      selectedRowKeys.value = result.list.map((item) => item.onhandId);
+      // 存添加需要的数据
+      newstockCheckType.value = stockCheckType;
+      newWarehouseId.value = warehouseId;
+    }
+  } finally {
+    setLoading(false);
   }
-  if (!data.warehouseId) {
-    MessagePlugin.error('仓库为必填项');
-    return;
-  }
-  pageUI.value.page = 1;
-  if (!data.value) {
-    setLoading(true);
-    const { stockCheckType, warehouseId, districtId, locationId, mitemId } = data;
-    const result = await api.stockCheckBill.getOnHand({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      stockCheckType,
-      warehouseId,
-      districtId,
-      locationId,
-      mitemId,
-    });
-    tableDataInventory.value = result.list;
-    dataTotal.value = result.total;
-    // selectedRowKeys.value = []; // 重置清空选中的数据
-    // 全选逻辑：提取所有记录的onhandId作为selectedRowKeys的值
-    selectedRowKeys.value = result.list.map((item) => item.onhandId);
-    // 存添加需要的数据
-    newstockCheckType.value = stockCheckType;
-    newWarehouseId.value = warehouseId;
-  }
-  setLoading(false);
 };
 
 // 确定提交
@@ -290,7 +293,6 @@ const onConfirmAnother = async () => {
 // const fetchTable = async (data: any) => {
 //   const { districtId, locationId, mitemId } = data;
 //   try {
-//     setLoading(true);
 //     // 使用存储在组件状态中的默认参数
 //     const data = await api.stockCheckBill.getOnHand({
 //       pageNum: pageUI.value.page,
@@ -304,7 +306,6 @@ const onConfirmAnother = async () => {
 //     // 更新表格数据
 //     tableDataInventory.value = data.list;
 //     dataTotal.value = data.total;
-//     setLoading(false);
 //   } catch (error) {
 //     console.error('获取数据失败:', error);
 //   }

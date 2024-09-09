@@ -7,7 +7,13 @@
           <template #panel>
             <cmp-container :full="false">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
+                <cmp-query
+                  ref="queryComponent"
+                  :opts="opts"
+                  :bool-enter="false"
+                  @submit="onInput"
+                  @reset="onHandleResetting"
+                >
                   <template #workState="{ param }">
                     <t-select v-model="param.workState" label="排产单状态" :clearable="true">
                       <t-option
@@ -37,16 +43,15 @@
               <cmp-table
                 ref="tableRefs"
                 v-model:pagination="pageUITop"
+                v-model:selected-row-keys="selectedCardKeys"
                 empty="没有符合条件的数据"
                 row-key="moScheduleId"
                 :fixed-height="true"
-                :active-row-type="'single'"
                 :hover="true"
                 :table-column="labelPrintTop"
                 :table-data="printTopTabData.list"
                 :total="totalPrintTop"
                 max-height="300px"
-                select-on-row-click
                 @select-change="onGenerateChange"
                 @refresh="onTopRefresh"
               >
@@ -92,7 +97,9 @@
                       :value="item.id"
                     />
                   </t-select>
-                  <t-button theme="primary" :disabled="!generateData.moScheduleId" @click="onGenerate"> 生成 </t-button>
+                  <t-button theme="primary" :disabled="selectedCardKeys.length === 0" @click="onGenerate">
+                    生成
+                  </t-button>
                 </template>
               </cmp-table>
               <!-- ################# 配送卡打印 下2️⃣下 表格数据 ###################### -->
@@ -208,7 +215,6 @@
                       style="width: 240px"
                       label="打印模板"
                       :options="onPrintManagementList"
-                      :on-popup-visible-change="onPopupVisibleChange"
                     >
                     </t-select>
                     <t-button
@@ -232,7 +238,7 @@
                     >
                       作废
                     </t-button>
-                    <t-button theme="default"> 导出 </t-button>
+                    <!-- <t-button theme="default"> 导出 </t-button> -->
                   </template>
                 </cmp-table>
               </cmp-card>
@@ -368,7 +374,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { debounce } from 'lodash';
+import _, { debounce } from 'lodash';
 import {
   CustomValidateResolveType,
   Data,
@@ -382,19 +388,18 @@ import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpPrintButton from '@/components/cmp-print-button/index.vue';
-import CmpQuery from '@/components/cmp-query/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
-import { usePage } from '@/hooks/modules/page';
+import { useCustomerPage, usePage } from '@/hooks/modules/page';
 
 const printData = ref([]);
 const printManagerData = ref([]);
 const radioValue = ref(1);
 const loading = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
+const selectedCardKeys: Ref<any[]> = ref([]); // 选择配送卡
 const selectedRowKeys: Ref<any[]> = ref([]); // 打印数组
 const productSelectedRowKeys: Ref<any[]> = ref([]); // 补打 打印数组
 const { pageUI: pageUITop } = usePage(); // 分页工具
-const { pageUI: pageUIDown } = usePage(); // 分页工具
+const { pageUI: pageUIDown } = useCustomerPage(); // 分页工具
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUIDay } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
@@ -428,6 +433,7 @@ const cardPrintData = ref({
   workcenterId: '', // 工作中心ID
   mitemId: '', // 物料 ID
   scheStatus: '', // 工单状态
+  mitemCategoryId: '', // 物料分类
 });
 
 // 配送卡管理 表格 数据
@@ -445,6 +451,7 @@ const cardManageData = ref({
   mitemId: '', // 物料 ID
   deliveryStatus: '', // 条码状态
   deliveryCardNo: '', // 条码
+  mitemCategoryId: '', // 物料分类
 });
 
 // 打印模板 数据
@@ -470,7 +477,7 @@ const totalDay = ref(0);
 const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
-    type: 'single',
+    type: 'multiple',
     width: 46,
   },
   {
@@ -622,7 +629,17 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'deliveryCardNo',
     title: '条码',
-    width: '250',
+    width: '300',
+  },
+  {
+    colKey: 'lotNo',
+    title: '批次号',
+    width: '200',
+  },
+  {
+    colKey: 'scheCode',
+    title: '排产单',
+    width: '150',
   },
   {
     colKey: 'deliveryCardStatuName',
@@ -644,11 +661,7 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
     title: '工作中心',
     width: '180',
   },
-  {
-    colKey: 'scheCode',
-    title: '排产单',
-    width: '130',
-  },
+
   {
     colKey: 'mitemCode',
     title: '物料编码',
@@ -764,7 +777,6 @@ const onTopRefresh = async () => {
   tableRefs.value.setSelectedRowKeys([]);
   printDownTabData.list = [];
   totalPrintDown.value = 0;
-  topPrintID.value = null;
 };
 // 下表格数据刷新
 const onDownRefresh = async () => {
@@ -822,12 +834,18 @@ const onResolutionSelectData = async () => {
 // // #配送卡打印 上 表格数据
 const topPrintID = ref(null);
 const onGetPrintTopTabData = async () => {
-  cardPrintData.value.pageNum = pageUITop.value.page;
-  cardPrintData.value.pageSize = pageUITop.value.rows;
-  const res = await api.deliveryCard.getMoScheduleList(cardPrintData.value);
-  const newArr = res.list.map((item) => ({ ...item, specificationQuantity: 0, numberGeneration: 0 })); // 规格数量
-  printTopTabData.list = newArr;
-  totalPrintTop.value = res.total;
+  loading.value = true;
+  try {
+    cardPrintData.value.pageNum = pageUITop.value.page;
+    cardPrintData.value.pageSize = pageUITop.value.rows;
+    const res = await api.deliveryCard.getMoScheduleList(cardPrintData.value);
+    const newArr = res.list.map((item) => ({ ...item, numberGeneration: 0 })); // 规格数量
+    printTopTabData.list = newArr;
+    totalPrintTop.value = res.total;
+    loading.value = false;
+  } catch (e) {
+    loading.value = false;
+  }
 };
 
 // // #配送卡 下 表格数据
@@ -838,14 +856,26 @@ const onGetPrintDownTabData = async () => {
   } else {
     isCreated = false;
   }
-  const res = await api.deliveryCard.getDeliveryCardList({
-    pageNum: pageUIDown.value.page,
-    pageSize: pageUIDown.value.rows,
-    moScheduleId: topPrintID.value,
-    isCreated,
-  });
-  printDownTabData.list = res.list;
-  totalPrintDown.value = res.total;
+  loading.value = true;
+  try {
+    const moScheduleIdList = topPrintID.value;
+    if (moScheduleIdList && moScheduleIdList.length > 0) {
+      const res = await api.deliveryCard.getDeliveryCardList({
+        pageNum: pageUIDown.value.page,
+        pageSize: pageUIDown.value.rows,
+        moScheduleIdList,
+        isCreated,
+      });
+      printDownTabData.list = res.list;
+      totalPrintDown.value = res.total;
+    } else {
+      printDownTabData.list = [];
+      totalPrintDown.value = 0;
+    }
+    loading.value = false;
+  } catch (e) {
+    loading.value = false;
+  }
 };
 
 // // #获取搜索 工单状态 下拉框数据
@@ -885,6 +915,9 @@ const onProductRightFetchData = (value: any, context: any) => {
   barcodePkgStatuNameArr.value = context.selectedRowData.map((item: any) => item.deliveryCardStatuName); // 获取条码状态
   pkgBarcodeName.value = context.selectedRowData.map((item: any) => item.deliveryCardNo); // 条码回填
   productSelectedRowKeys.value = value;
+
+  // 配送卡管理界面打印模板 事件
+  onPopupVisibleChange(true);
 };
 
 const onPrintManager = async () => {
@@ -907,12 +940,27 @@ const onPrintManager = async () => {
 
     printManagerData.value = [];
     loading.value = true;
-
+    const printDatas = [];
     productSelectedRowKeys.value.forEach((deliveryCardId) => {
       const foundItem = manageTabData.list.find((item) => item.deliveryCardId === deliveryCardId);
+
+      // 如果是配送卡，则需要补充客户编码
+      if (foundItem.isProduct === 1 && foundItem.customerCode) {
+        foundItem.mitemCode = foundItem.customerCode;
+      }
+      const excItem = {};
+      Object.assign(excItem, foundItem);
+      // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
+      Object.keys(excItem).forEach((key) => {
+        if (_.isFunction(excItem[key])) {
+          excItem[key] = null;
+        } else if (_.isObject(excItem[key])) {
+          excItem[key] = null;
+        }
+      });
       const DataBase = {
         DELIVERY_CARD_NO: foundItem.deliveryCardNo,
-        TIME_CREATE: new Date(),
+        TIME_CREATE: foundItem.timeCreate,
         PRINT_SEQ: foundItem.printSeq,
         QTY: foundItem.qty,
         MITEM_CODE: foundItem.mitemCode,
@@ -921,11 +969,20 @@ const onPrintManager = async () => {
         WC_NAME: foundItem.workcenterName,
         DATETIME_SCHE: foundItem.datetimeSche,
         ORG_NAME: foundItem.orgName,
+        BATCH_NO: foundItem.batchNo,
+        ...excItem,
       };
-      printManagerData.value.push({
-        variable: DataBase,
-        dataSource: { DataBase },
-      });
+      printDatas.push(DataBase);
+      // 多个对象则打印多页
+      // printManagerData.value.push({
+      //   variable: DataBase,
+      //   dataSource: { DataBase },
+      // });
+    });
+
+    printManagerData.value.push({
+      variable: printDatas,
+      dataSource: printDatas,
     });
 
     await api.deliveryCard.reprintBarcode({
@@ -1084,50 +1141,76 @@ const onSecondarySubmit = async (context: { validateResult: boolean }) => {
   }
 };
 // // 上表格 单选框 选择事件
-const onGenerateChange = async (value: any, context: any) => {
-  const { moScheduleId } = context.currentRowData;
-  numInput.value = context.currentRowData.planQty - context.currentRowData.generateQty;
-  generateData.value.createNum = context.currentRowData.thisTimeQty;
-  generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
-  generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
-  generateData.value.mitemId = context.currentRowData.mitemId; // 物料 Id
-  [topPrintID.value] = value;
+const onGenerateChange = async (value: any) => {
+  // const { moScheduleId } = context.currentRowData;
+  // numInput.value = context.currentRowData.planQty - context.currentRowData.generateQty;
+  // generateData.value.createNum = context.currentRowData.thisTimeQty;
+  // generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
+  // generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
+  // generateData.value.mitemId = context.currentRowData.mitemId; // 物料 Id
+  topPrintID.value = value;
   await onGetPrintDownTabData();
-  await onPrintRulesData(moScheduleId);
-  await onPrintTemplateData(moScheduleId);
+  await onPrintRulesData();
+  await onPrintTemplateData();
 };
 
 // 提条码规则下拉数据
 const onPrintRulesList = reactive({ list: [] });
-const onPrintRulesData = async (moScheId) => {
-  const res = await api.deliveryCard.getBarcodeRuleList({ moScheId });
-  onPrintRulesList.list = res?.list;
+const onPrintRulesData = async () => {
+  const moScheduleIdList = topPrintID.value;
+  if (moScheduleIdList && moScheduleIdList.length > 0) {
+    const res = await api.deliveryCard.getBarcodeRuleList({ moScheduleIdList });
+    onPrintRulesList.list = res?.list;
+    if (onPrintRulesList.list && onPrintRulesList.list.length > 0) {
+      generateData.value.barcodeRuleId = onPrintRulesList.list[0].id;
+    }
+  } else {
+    onPrintRulesList.list = [];
+    generateData.value.barcodeRuleId = '';
+  }
 };
 
 // 获取 打印模板 下拉数据
 const onPrintTemplateList = ref([]);
-const onPrintTemplateData = async (moScheId) => {
-  const res = await api.deliveryCard.getPrintTmplList({ moScheId });
-  const transformedArray = res.list.map((item) => {
-    return {
-      value: item.id,
-      label: item.tmplName,
-    };
-  });
-  onPrintTemplateList.value = transformedArray;
+const onPrintTemplateData = async () => {
+  const moScheduleIdList = topPrintID.value;
+  if (moScheduleIdList && moScheduleIdList.length > 0) {
+    const res = await api.deliveryCard.getPrintTmplList({ moScheduleIdList });
+    const transformedArray = res.list.map((item) => {
+      return {
+        value: item.id,
+        label: item.tmplName,
+      };
+    });
+    onPrintTemplateList.value = transformedArray;
+    if (transformedArray && transformedArray.length > 0) {
+      printTemplateName.value = transformedArray[0].value;
+    }
+  } else {
+    onPrintTemplateList.value = [];
+    printTemplateName.value = '';
+  }
 };
 
 // 获取配送卡管理界面 打印模板
 const onPrintManagementList = ref([]);
-const onPrintManagementData = async (moScheId) => {
-  const res = await api.deliveryCard.getPrintTmplList({ moScheId });
-  const transformedArray = res.list.map((item) => {
-    return {
-      value: item.id,
-      label: item.tmplName,
-    };
-  });
-  onPrintManagementList.value = transformedArray;
+const onPrintManagementData = async (moScheduleIdList) => {
+  if (moScheduleIdList && moScheduleIdList.length > 0) {
+    const res = (await api.deliveryCard.getPrintTmplList({ moScheduleIdList })) as any;
+    const transformedArray = res.list.map((item) => {
+      return {
+        value: item.id,
+        label: item.tmplName,
+      };
+    });
+    onPrintManagementList.value = transformedArray;
+    if (transformedArray && transformedArray.length > 0) {
+      printTemplateName.value = transformedArray[0].value;
+    }
+  } else {
+    onPrintManagementList.value = [];
+    printTemplateName.value = '';
+  }
 };
 
 // 配送卡管理界面打印模板 事件
@@ -1137,66 +1220,106 @@ const onPopupVisibleChange = async (visible) => {
       MessagePlugin.warning('请至少选择一条数据！');
       return;
     }
-    if (moScheduleIdSole.value.length > 1) {
-      MessagePlugin.warning('存在排产单不一致，请重新选择！');
-      return;
-    }
-    await onPrintManagementData(moScheduleIdSole.value[0]);
+    // if (moScheduleIdSole.value.length > 1) {
+    //   MessagePlugin.warning('存在排产单不一致，请重新选择！');
+    //   return;
+    // }
+    await onPrintManagementData(moScheduleIdSole.value);
   }
 };
 
 // // 生成点击事件
 const onGenerate = debounce(async () => {
-  if (!generateData?.value?.workcenterId) {
-    MessagePlugin.warning('参数有误，请联系管理员！');
-    return;
-  }
-  if (!generateData?.value?.moScheduleId) {
-    MessagePlugin.warning('请选择需打印的数据！');
-    return;
-  }
+  const printData = [];
   if (!generateData?.value?.barcodeRuleId) {
-    MessagePlugin.warning('请选择条码规则！');
+    MessagePlugin.warning(`请选择条码规则！`);
     return;
   }
-  if (generateData?.value?.createNum < 0) {
-    MessagePlugin.warning('本次生成数量不能为负数！');
-    return;
-  }
-  if (!generateData?.value?.createNum) {
-    MessagePlugin.warning('请正确填写本次生成数量！');
-    return;
-  }
-  // if (generateData?.value?.createNum > numInput.value) {
-  //   MessagePlugin.warning(`本次生成数量不得大于 ${numInput.value}！`);
-  //   return;
-  // }
-  if (generateData?.value?.createSize < 0) {
-    MessagePlugin.warning('规格数量不得小于0！');
-    return;
-  }
-  if (Math.ceil(generateData.value.createNum / generateData.value.createSize) > 50000) {
-    MessagePlugin.warning(`本次生成张数不得大于50000！`);
-    return;
-  }
-  if (!generateData?.value?.createSize) {
-    MessagePlugin.warning('请正确填写规格数量！');
-    return;
-  }
-  try {
-    loading.value = true;
-    await api.deliveryCard.generateBarcode(generateData.value); // 生成请求
-    await onGetPrintTopTabData(); // 刷新数据
-    await onGetPrintDownTabData(); // 下表格数据
-    MessagePlugin.success('生成成功');
-    // tableRefs.value.setSelectedRowKeys([]);
-    // generateData.value.moScheduleId = null;
-  } catch (e) {
-    console.log(e);
-  } finally {
-    loading.value = false;
+  const selectDataList = printTopTabData.list.filter((item) => selectedCardKeys.value.includes(item.moScheduleId));
+  let index = 1;
+  let isCheckOK = true;
+  selectDataList.forEach((item) => {
+    if (isCheckOK) {
+      const currentRowData = item;
+      if (currentRowData) {
+        generateData.value.createNum = currentRowData.thisTimeQty;
+        generateData.value.createSize = currentRowData.specificationQuantity;
+        generateData.value.workcenterId = currentRowData.workcenterId; // 工作中心 Id
+        generateData.value.moScheduleId = currentRowData.moScheduleId; // 行 Id
+        generateData.value.mitemId = currentRowData.mitemId; // 物料 Id
+      }
+      const preMeg = `勾选数据中第${index}行,`;
+      if (!generateData?.value?.workcenterId) {
+        MessagePlugin.warning(`${preMeg}参数有误，工作中心为空,请联系管理员！`);
+        isCheckOK = false;
+        return;
+      }
+      if (!generateData?.value?.moScheduleId) {
+        MessagePlugin.warning(`${preMeg}请选择需打印的数据！`);
+        isCheckOK = false;
+        return;
+      }
+
+      if (generateData?.value?.createNum < 0) {
+        MessagePlugin.warning(`${preMeg}本次生成数量不能为负数！`);
+        isCheckOK = false;
+        return;
+      }
+      if (!generateData?.value?.createNum) {
+        MessagePlugin.warning(`${preMeg}请正确填写本次生成数量！`);
+        isCheckOK = false;
+        return;
+      }
+      if (!generateData?.value?.createSize) {
+        MessagePlugin.warning(`${preMeg}请正确填写规格数量！`);
+        isCheckOK = false;
+        return;
+      }
+      if (generateData?.value?.createSize <= 0) {
+        MessagePlugin.warning(`${preMeg}规格数量不得小于等于0！`);
+        isCheckOK = false;
+        return;
+      }
+      if (Math.ceil(generateData.value.createNum / generateData.value.createSize) > 50000) {
+        MessagePlugin.warning(`${preMeg}本次生成张数不得大于50000！`);
+        isCheckOK = false;
+        return;
+      }
+      index++;
+      const data = { ...generateData.value };
+      printData.push(data);
+    }
+  });
+  if (isCheckOK) {
+    const promiseAll = [];
+    try {
+      loading.value = true;
+      printData.forEach((element) => {
+        const promiseQuery = generateBarcode(element);
+        promiseAll.push(promiseQuery);
+      });
+      await Promise.all(promiseAll);
+      await onGetPrintTopTabData(); // 刷新数据
+      await onGetPrintDownTabData(); // 下表格数据
+      MessagePlugin.success('生成成功');
+    } catch (e) {
+      console.log(e);
+    } finally {
+      loading.value = false;
+    }
   }
 }, 500);
+
+const generateBarcode = (generateData: any) => {
+  return new Promise((resolve, reject) => {
+    const billInfoData = api.deliveryCard.generateBarcode(generateData) as any;
+    if (billInfoData) {
+      resolve(billInfoData);
+    } else {
+      reject();
+    }
+  });
+};
 
 // // 点击 打印事件
 const onPrint = async () => {
@@ -1216,25 +1339,52 @@ const onPrint = async () => {
   try {
     printData.value = [];
     loading.value = true;
-    const moSchedule = printTopTabData.list.find((item) => item.moScheduleId === topPrintID.value);
+    const printDatas = [];
     selectedRowKeys.value.forEach((deliveryCardId) => {
       const foundItem = printDownTabData.list.find((item) => item.deliveryCardId === deliveryCardId);
+      if (foundItem.isProduct === 1 && foundItem.customerCode) {
+        foundItem.mitemCode = foundItem.customerCode;
+      }
+      const excItem = {};
+      Object.assign(excItem, foundItem);
+      // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
+      Object.keys(excItem).forEach((key) => {
+        if (_.isFunction(excItem[key])) {
+          excItem[key] = null;
+        } else if (_.isObject(excItem[key])) {
+          excItem[key] = null;
+        }
+      });
+
+      const moSchedule = printTopTabData.list.find((item) => foundItem.moScheduleId === item.moScheduleId);
       const DataBase = {
         DELIVERY_CARD_NO: foundItem.deliveryCardNo,
-        TIME_CREATE: new Date(),
+        TIME_CREATE: foundItem.timeCreate,
         PRINT_SEQ: foundItem.printSeq,
         QTY: foundItem.qty,
-        MITEM_CODE: moSchedule.mitemCode,
-        MITEM_NAME: moSchedule.mitemName,
-        SCHE_CODE: moSchedule.scheCode,
-        WC_NAME: moSchedule.workcenterName,
-        DATETIME_SCHE: moSchedule.datetimeSche,
-        ORG_NAME: moSchedule.orgName,
+        MITEM_CODE: foundItem.mitemCode,
+        MITEM_NAME: foundItem.mitemName,
+        SCHE_CODE: moSchedule?.scheCode,
+        WC_NAME: moSchedule?.workcenterName,
+        DATETIME_SCHE: moSchedule?.datetimeSche,
+        ORG_NAME: moSchedule?.orgName,
+        BATCH_NO: moSchedule?.batchNo,
+        ...excItem,
       };
-      printData.value.push({
-        variable: DataBase,
-        dataSource: { DataBase },
-      });
+
+      printDatas.push(DataBase);
+
+      console.log(DataBase);
+      // 多个对象则打印多页
+      // printData.value.push({
+      //   variable: DataBase,
+      //   dataSource: { DataBase },
+      // });
+    });
+
+    printData.value.push({
+      variable: printDatas,
+      dataSource: printDatas,
     });
 
     await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
@@ -1310,7 +1460,6 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'moSchedule',
-        showTitle: false,
       },
     },
     workshop: {
@@ -1320,7 +1469,6 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'workshop',
-        showTitle: false,
       },
     },
     workcenter: {
@@ -1330,7 +1478,16 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'workcenter',
-        showTitle: false,
+      },
+    },
+    mitemCategoryId: {
+      label: '物料分类',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'mitemCategory',
+        isMultiple: false,
       },
     },
     mitem: {
@@ -1340,7 +1497,6 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'mitem',
-        showTitle: false,
       },
     },
     workState: {
@@ -1395,8 +1551,8 @@ const onInput = async (data: any) => {
     cardPrintData.value.mitemId = data.mitem; // 物料 ID
     cardPrintData.value.scheStatus = data.workState; // 工单状态
     cardPrintData.value.isFinishDisplay = isFinishDisplay; // 是否仅显示已打印
+    cardPrintData.value.mitemCategoryId = data.mitemCategoryId; // 物料分类 ID
     await onGetPrintTopTabData(); // 表格数据渲染
-    topPrintID.value = null; // 置空行ID
     printDownTabData.list = [];
     tableRefs.value.setSelectedRowKeys([]);
   } else {
@@ -1413,11 +1569,18 @@ const onInput = async (data: any) => {
     cardManageData.value.mitemId = data.mitem; // 物料 ID
     cardManageData.value.deliveryStatus = data.barCodeState; // 条码状态
     cardManageData.value.deliveryCardNo = data.barCode; // 条码
+    cardManageData.value.mitemCategoryId = data.mitemCategoryId; // 物料分类 ID
     await onLabelManageTabData();
     tableRefCard.value.setSelectedRowKeys([]);
     productSelectedRowKeys.value = [];
   }
   // MessagePlugin.success('查询成功');
+};
+
+// 重置
+const onHandleResetting = () => {
+  topPrintID.value = null; // 置空行ID
+  pageUI.value.page = 1;
 };
 </script>
 

@@ -123,6 +123,11 @@
             <t-input-number v-model="locationInMitemTabData.list.maxBoxVolume" />
           </t-form-item>
         </t-descriptions-item>
+        <t-descriptions-item>
+          <t-form-item label="安全库存" name="safeStockVolume" required-mark>
+            <t-input-number v-model="locationInMitemTabData.list.safeStockVolume" />
+          </t-form-item>
+        </t-descriptions-item>
       </t-descriptions>
     </t-form>
     <template #footer>
@@ -145,12 +150,12 @@ import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
+const { loading, setLoading } = useLoading();
 const { t } = useLang();
 const { pageUI } = usePage();
 const formVisible = ref(false);
 const diaLogTitle = ref('');
 const selectedRowKeys: Ref<any[]> = ref([]);
-const { loading, setLoading } = useLoading();
 const formData = ref({
   itemCode: '',
   itemName: '',
@@ -185,6 +190,7 @@ const locationInMitemTabData = reactive({
     maxVolume: 0,
     maxPackageVolume: 0,
     maxBoxVolume: 0,
+    safeStockVolume: 0,
   },
 });
 // 表格列表数据
@@ -245,6 +251,12 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'maxBoxVolume',
     title: '最大外箱数量',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'safeStockVolume',
+    title: '安全库存',
     align: 'center',
     width: '100',
   },
@@ -395,6 +407,10 @@ const onEditRequest = async () => {
       MessagePlugin.error('请输入最大外箱数量');
       return;
     }
+    if (locationInMitemTabData.list.safeStockVolume !== undefined && locationInMitemTabData.list.safeStockVolume < 0) {
+      MessagePlugin.error('请输入安全库存');
+      return;
+    }
 
     setLoading(true);
     await apiWarehouse.locationInMitem.update({
@@ -457,6 +473,10 @@ const onAddRequest = async () => {
     }
     if (locationInMitemTabData.list.maxBoxVolume !== undefined && locationInMitemTabData.list.maxBoxVolume < 0) {
       MessagePlugin.error('请输入最大外箱数量');
+      return;
+    }
+    if (locationInMitemTabData.list.safeStockVolume !== undefined && locationInMitemTabData.list.safeStockVolume < 0) {
+      MessagePlugin.error('请输入安全库存');
       return;
     }
 

@@ -180,7 +180,7 @@
                   </t-select>
                   <t-button theme="primary" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
                   <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
-                  <t-button theme="default"> 导出 </t-button>
+                  <!-- <t-button theme="default"> 导出 </t-button> -->
                 </template>
                 <template #operations="{ row }">
                   <t-link theme="primary" @click.stop="openLog(row)"> 日志 </t-link>
@@ -273,6 +273,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
@@ -338,18 +339,39 @@ const onPrint = async () => {
   try {
     pageLoading.value = true;
     printData.value = [];
+    const printDatas = [];
     selectedRowKeys.value.forEach((barcodePkgId) => {
       const foundItem = moBelowList.list.find((item) => item.barcodePkgId === barcodePkgId);
+      const excItem = {};
+      Object.assign(excItem, foundItem);
+      // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
+      Object.keys(excItem).forEach((key) => {
+        if (_.isFunction(excItem[key])) {
+          excItem[key] = null;
+        } else if (_.isObject(excItem[key])) {
+          excItem[key] = null;
+        }
+      });
       const DataBase = {
         PKG_BARCODE: foundItem.pkgBarcode,
         QTY: foundItem.qty,
         MITEM_CODE: curRow.value.mitemCode,
         MITEM_NAME: curRow.value.mitemName,
+        ...excItem,
       };
-      printData.value.push({
-        variable: DataBase,
-        dataSource: { DataBase },
-      });
+      printDatas.push(DataBase);
+
+      // 多个对象则打印多页
+      // printData.value.push({
+      //   variable: DataBase,
+      //   dataSource: { DataBase },
+      // });
+    });
+
+    // datasource 传入对象数组即可一页连续打印
+    printData.value.push({
+      variable: printDatas,
+      dataSource: printDatas,
     });
 
     await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
@@ -383,19 +405,38 @@ const onPrintManager = async () => {
 
     printManagerData.value = [];
     pageLoading.value = true;
-
+    const printDatas = [];
     selectedManageRowKeys.value.forEach((barcodePkgId) => {
       const foundItem = pkgManageDataList.list.find((item) => item.barcodePkgId === barcodePkgId);
+      const excItem = {};
+      Object.assign(excItem, foundItem);
+      // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
+      Object.keys(excItem).forEach((key) => {
+        if (_.isFunction(excItem[key])) {
+          excItem[key] = null;
+        } else if (_.isObject(excItem[key])) {
+          excItem[key] = null;
+        }
+      });
       const DataBase = {
         PKG_BARCODE: foundItem.pkgBarcode,
         QTY: foundItem.qty,
         MITEM_CODE: foundItem.mitemCode,
         MITEM_NAME: foundItem.mitemName,
+        ...excItem,
       };
-      printManagerData.value.push({
-        variable: DataBase,
-        dataSource: { DataBase },
-      });
+      printDatas.push(DataBase);
+
+      // 多个对象则打印多页
+      // printManagerData.value.push({
+      //   variable: DataBase,
+      //   dataSource: { DataBase },
+      // });
+    });
+
+    printManagerData.value.push({
+      variable: printDatas,
+      dataSource: printDatas,
     });
 
     await api.barcodePkg.reprintBarcode({

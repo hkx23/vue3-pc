@@ -19,7 +19,7 @@
             formData.supplierName
           }}</t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.物料编码')">{{
-            formData.mitemCategoryCode
+            formData.mitemCode
           }}</t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.物料名')">
             <div class="div_break_word">
@@ -41,11 +41,17 @@
           <t-descriptions-item :label="t('mitemIncomingInspection.查看附件')">
             <t-link theme="primary">{{ t('mitemIncomingInspection.查看附件') }}</t-link></t-descriptions-item
           >
+          <t-descriptions-item :label="t('mitemIncomingInspection.合格数量')">
+            <div>{{ formData.okQty }}</div>
+          </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.不合格数量')">
+            <div>{{ formData.ngQty }}</div>
+          </t-descriptions-item>
         </t-descriptions>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :column="3" size="large">
-          <t-descriptions-item :label="t('mitemIncomingInspection.缺陷类型')">
+          <!-- <t-descriptions-item :label="t('mitemIncomingInspection.缺陷类型')">
             <bcmp-select-business
               v-model="formNgData.defectCodes"
               type="defectCode"
@@ -53,14 +59,14 @@
               :is-multiple="true"
             >
             </bcmp-select-business>
-          </t-descriptions-item>
-          <t-descriptions-item :label="t('mitemIncomingInspection.缺陷等级')"
+          </t-descriptions-item> -->
+          <!-- <t-descriptions-item :label="t('mitemIncomingInspection.缺陷等级')"
             ><t-select v-model="formNgData.iqcDefectCategoryCode" :options="iqcDefectCategoryOption" />
-          </t-descriptions-item>
+          </t-descriptions-item> -->
           <t-descriptions-item :label="t('mitemIncomingInspection.物料处理意见')"
             ><t-select v-model="formNgData.iqcHandleMethodCode" :options="iqcHandleMethodOption"
           /></t-descriptions-item>
-          <t-descriptions-item :label="t('mitemIncomingInspection.责任判定')"
+          <!-- <t-descriptions-item :label="t('mitemIncomingInspection.责任判定')"
             ><t-select v-model="formNgData.iqcResponsibilityCode" :options="iqcResponsibilityOption"
           /></t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.供方整改意见')"
@@ -72,13 +78,13 @@
               type="person"
               :show-title="false"
             ></bcmp-select-business
-          ></t-descriptions-item>
+          ></t-descriptions-item> -->
           <t-descriptions-item :label="t('mitemIncomingInspection.描述')" :span="3">
             <t-textarea v-model="formNgData.memo" :placeholder="t('mitemIncomingInspection.请输入内容')"
           /></t-descriptions-item>
-          <t-descriptions-item>
+          <!-- <t-descriptions-item>
             <t-checkbox v-model="formNgData.isPdca" :label="t('mitemIncomingInspection.启用PDCA')" />
-          </t-descriptions-item>
+          </t-descriptions-item> -->
         </t-descriptions>
       </cmp-card>
     </cmp-container>
@@ -119,6 +125,8 @@ const formData = reactive({
   inspectionStringency: '',
   inspectionStringencyName: '',
   inspectStdName: '',
+  okQty: 0,
+  ngQty: 0,
 });
 
 const mainTableData = ref([]);
@@ -145,30 +153,31 @@ const onConfirmForm = async () => {
           label: item,
         };
       });
-    } else {
-      MessagePlugin.error(t('mitemIncomingInspection.缺陷类型不能为空'));
-      return;
     }
-    if (_.isEmpty(formNgData.iqcDefectCategoryCode)) {
-      MessagePlugin.error(t('mitemIncomingInspection.缺陷等级不能为空'));
-      return;
-    }
+    //  else {
+    //   MessagePlugin.error(t('mitemIncomingInspection.缺陷类型不能为空'));
+    //   return;
+    // }
+    // if (_.isEmpty(formNgData.iqcDefectCategoryCode)) {
+    //   MessagePlugin.error(t('mitemIncomingInspection.缺陷等级不能为空'));
+    //   return;
+    // }
     if (_.isEmpty(formNgData.iqcHandleMethodCode)) {
       MessagePlugin.error(t('mitemIncomingInspection.物料处理意见不能为空'));
       return;
     }
-    if (_.isEmpty(formNgData.iqcResponsibilityCode)) {
-      MessagePlugin.error(t('mitemIncomingInspection.责任判定不能为空'));
-      return;
-    }
-    if (_.isEmpty(formNgData.iqcCorrectCode)) {
-      MessagePlugin.error(t('mitemIncomingInspection.供方整改意见不能为空'));
-      return;
-    }
-    if (_.isEmpty(formNgData.personResponsibilityId)) {
-      MessagePlugin.error(t('mitemIncomingInspection.跟进人不能为空'));
-      return;
-    }
+    // if (_.isEmpty(formNgData.iqcResponsibilityCode)) {
+    //   MessagePlugin.error(t('mitemIncomingInspection.责任判定不能为空'));
+    //   return;
+    // }
+    // if (_.isEmpty(formNgData.iqcCorrectCode)) {
+    //   MessagePlugin.error(t('mitemIncomingInspection.供方整改意见不能为空'));
+    //   return;
+    // }
+    // if (_.isEmpty(formNgData.personResponsibilityId)) {
+    //   MessagePlugin.error(t('mitemIncomingInspection.跟进人不能为空'));
+    //   return;
+    // }
 
     formNgData.isStartImprove = formNgData.isPdca ? 1 : 0;
     await apiQuality.iqcInspect.submitIqcInspect({
@@ -182,6 +191,8 @@ const onConfirmForm = async () => {
       mitemCategoryCode: formData.mitemCategoryCode,
       mitemCategoryName: formData.mitemCategoryName,
       pickQty: Number(formData.pickQty),
+      okQty: formData.okQty,
+      ngQty: formData.ngQty,
       supplierId: formData.supplierId,
       supplierCode: formData.supplierCode,
       supplierName: formData.supplierName,
@@ -189,7 +200,7 @@ const onConfirmForm = async () => {
       iqcInspectStdList: mainTableData.value,
       iqcInspectNg: formNgData,
     });
-
+    MessagePlugin.success(t('common.message.saveSuccess'));
     Emit('form-close-event');
     formVisible.value = false;
   } catch (e) {
@@ -242,6 +253,8 @@ const showForm = async (edit, row, tableData) => {
   formData.inspectionStringency = row.inspectionStringency;
   formData.inspectionStringencyName = row.inspectionStringencyName;
   formData.inspectStdName = row.inspectStdName;
+  formData.okQty = row.okQty;
+  formData.ngQty = row.ngQty;
   mainTableData.value = tableData.value;
 };
 const closeForm = async () => {

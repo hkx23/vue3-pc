@@ -7,28 +7,26 @@
   "tableWidth": 850,
   "columns": [
     {
-      "title": "工单代码",
-      "key": "moCode",
+      "title": "生产订单号",
+      "key": "scheCode",
       "width": "150",
-      "align": "left",
-      "sorter": false,
-      "filter": false
+      "align": "left"
     },
     {
-      "title": "排产单",
-      "key": "scheCode",
+      "title": "产品编码",
+      "key": "mitemCode",
+      "width": "150",
+      "align": "left"
+    },
+    {
+      "title": "产品名称",
+      "key": "mitemName",
       "width": "150",
       "align": "left"
     },
     {
       "title": "计划数量",
       "key": "planQty",
-      "width": "120",
-      "align": "left"
-    },
-    {
-      "title": "排产数量",
-      "key": "scheQty",
       "width": "120",
       "align": "left"
     },
@@ -45,30 +43,8 @@
       "align": "left"
     },
     {
-      "title": "工艺路线编码",
-      "key": "routingCode",
-      "width": "150",
-      "align": "left",
-      "sorter": false,
-      "filter": false
-    },
-    {
-      "title": "工艺路线名称",
-      "key": "routingName",
-      "width": "150",
-      "align": "left",
-      "sorter": false,
-      "filter": false
-    },
-    {
-      "title": "车间",
-      "key": "workshopName",
-      "width": "160",
-      "align": "left"
-    },
-    {
       "title": "工作中心",
-      "key": "workcenterName",
+      "key": "workCenterName",
       "width": "160",
       "align": "left"
     }
@@ -104,7 +80,7 @@
         "label": "日期范围",
         "comp": "t-radio-button-group",
         "defaultVal": "0",
-        "flex": "280px",
+        "flex": "320px",
         "options": [
           {
             "value": "0",
@@ -121,6 +97,10 @@
           {
             "value": "3",
             "label": "近一周"
+          },
+          {
+            "value": "4",
+            "label": "明天"
           }
         ],
         "operator": "eq"

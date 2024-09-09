@@ -20,8 +20,8 @@
         <template #title> 物料与供应商列表 </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
-          <t-button theme="default">导入</t-button>
-          <t-button theme="default">导出</t-button>
+          <!-- <t-button theme="default">导入</t-button> -->
+          <!-- <t-button theme="default">导出</t-button> -->
         </template>
         <template #op="slotProps">
           <t-space :size="8">
@@ -89,6 +89,7 @@ const tableMitemInSupplierColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '是否免检', width: 160, colKey: 'isExemptionInspectionName' },
   { title: '免检失效日期', width: 160, colKey: 'dateExemptionExpiredStr' },
   { title: '是否强制供方申请', width: 160, colKey: 'isForceInspectionName' },
+  { title: '容器类型', width: 160, colKey: 'containerTypeName' },
   { title: '操作', fixed: 'right', width: 160, colKey: 'op' },
 ];
 

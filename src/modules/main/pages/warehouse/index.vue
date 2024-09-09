@@ -19,7 +19,7 @@
         <template #title> 仓库列表 </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
-          <t-button theme="default">导入</t-button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="m_warehouse" />
         </template>
         <template #opAttribute="slotProps">
           <t-space>
@@ -102,6 +102,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '状态', width: 86, colKey: 'stateSwitch' },
   { title: '货位管理', width: 100, colKey: 'enableLocationName' },
   { title: '先进先出', width: 100, colKey: 'fifoName' },
+  { title: '是否供应商寄存', width: 140, colKey: 'supplierConsignmentName' },
   { title: '最后更新人', width: 120, colKey: 'modifier' },
   { title: '最后更新时间', width: 170, colKey: 'timeModified' },
   { title: '操作', align: 'left', fixed: 'right', width: 90, colKey: 'op' },
@@ -174,6 +175,7 @@ const onEditRowClick = (value: any) => {
   formRef.value.formData.enableLocation = value.row.isEnableLocation === 1;
   formRef.value.formData.enableUpload = value.row.isEnableUpload === 1;
   formRef.value.formData.fifo = value.row.isFifo === 1;
+  formRef.value.formData.supplierConsignment = value.row.isSupplierConsignment === 1;
   formRef.value.formData.operateTpye = 'edit';
   formVisible.value = true;
 };

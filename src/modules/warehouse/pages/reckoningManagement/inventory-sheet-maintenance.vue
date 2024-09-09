@@ -6,7 +6,6 @@
         <span>{{ props.formTitle }}</span>
       </t-space>
     </template>
-
     <cmp-container :full="true" style="height: calc(90vh - 56px - 57px)">
       <scroll-view ref="scrollView" class="scroll-view">
         <cmp-card>
@@ -20,8 +19,8 @@
          -->
           <div class="buttonSty">
             <t-button @click="getMaterialDetails(props.propsdtlId)">刷新</t-button>
-            <t-button>导出</t-button>
-            <t-button>打印</t-button>
+            <!-- <t-button>导出</t-button>
+            <t-button>打印</t-button> -->
             <t-button :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint" @click="saveData"
               >保存</t-button
             >
@@ -30,7 +29,10 @@
               @click="finish(props.propsdtlId)"
               >盘点完成</t-button
             >
-            <t-button :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint" @click="getAdjustment"
+            <t-button
+              :loading="adjstmentLoading"
+              :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint"
+              @click="getAdjustment"
               >差异调整</t-button
             >
             <t-button
@@ -142,6 +144,7 @@
           <template #title> {{ selectedRowBatch ? '批次明细' : '标签明细' }} </template>
           <cmp-table
             v-show="!selectedRowBatch"
+            :loading="loadingDtl"
             row-key="scanBarcode"
             :table-column="tableWarehouseColumns2"
             :table-data="tableDataInventory2"
@@ -155,12 +158,13 @@
           </cmp-table>
           <cmp-table
             v-show="selectedRowBatch"
+            :loading="loadingDtl"
             row-key="batchLot"
             :table-column="tableWarehouseColumns3"
             :table-data="tableDataInventory2"
             :show-pagination="false"
             :hover="true"
-            max-height="400px"
+            max-height="500px"
             empty="没有符合条件的数据"
             :show-toolbar="false"
             :total="dataTotals"
@@ -212,7 +216,7 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 const { loading, setLoading } = useLoading();
-
+const { loading: loadingDtl, setLoading: setLoadingDtl } = useLoading();
 //* 表格标题--物料明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'single', fixed: 'left' },
@@ -344,18 +348,22 @@ const confirmOnhandQty = () => {
 // 差异调整
 const getAdjustment = async () => {
   let same = true;
+
   tableDataInventory1.value.forEach((item) => {
     if (item.onhandQty !== item.checkQty) {
       same = false;
     }
   });
+  setLoadingDtl(true);
   if (!same) {
     confirmOnhandQty();
   } else {
-    doAdjustment();
+    await doAdjustment();
   }
+  setLoadingDtl(false);
 };
 
+const adjstmentLoading = ref(false);
 const doAdjustment = async () => {
   // 处理参数
   desData.value = tableDataInventory1.value;
@@ -363,12 +371,17 @@ const doAdjustment = async () => {
   const billId = props.propsdtlId[0];
   const billNo = props.propsbillNo;
   const warehouseId = props.propswarehouseId;
-  await api.stockCheckBill.adjustment({
-    billId,
-    billNo,
-    warehouseId,
-    dtlsWithBarcode: desData.value,
-  });
+  adjstmentLoading.value = true;
+  try {
+    await api.stockCheckBill.adjustment({
+      billId,
+      billNo,
+      warehouseId,
+      dtlsWithBarcode: desData.value,
+    });
+  } finally {
+    adjstmentLoading.value = false;
+  }
   emit('updateStatus', '已关闭'); // 发射事件，可以携带新状态作为参数
   // 提示调整完成
   await MessagePlugin.success('调整完成!');
@@ -456,34 +469,40 @@ const props = defineProps({
 
 // 获取物料明细
 const getMaterialDetails = async (billId) => {
-  setLoading(true);
-  newInventoryManagement1.value = [];
-  tableDataInventory1.value = [];
-  const data = await api.stockCheckBill.getDtlList({
-    pageNum: 1,
-    pageSize: 9999999,
-    billId,
-  });
-  tableDataInventory1.value = data.list;
-  dataTotal.value = data.total;
-  setLoading(false);
+  try {
+    setLoading(true);
+    tableDataInventory2.value = [];
+    newInventoryManagement1.value = [];
+    tableDataInventory1.value = [];
+    const data = await api.stockCheckBill.getDtlList({
+      pageNum: 1,
+      pageSize: 9999999,
+      billId,
+    });
+    tableDataInventory1.value = data.list;
+    dataTotal.value = data.total;
+    sonId.value = '';
+  } finally {
+    setLoading(false);
+  }
 };
 
 // 获取标签明细
 const getBarcodesData = async (dtlId) => {
   newInventoryManagement2.value = [];
   tableDataInventory2.value = [];
-
-  // const data = await api.stockCheckBill.getBarcodes({
-  //   pageNum: 1,
-  //   pageSize: 9999999,
-  //   dtlId,
-  // });
-  const data = tableDataInventory1.value.filter((item) => item.pdDtlId === dtlId);
-  if (data && data.length > 0) {
-    tableDataInventory2.value = data[0].dtls;
-    dataTotals.value = data[0].dtls.length;
+  setLoadingDtl(true);
+  const data = await api.stockCheckBill.getBarcodes({
+    pageNum: 1,
+    pageSize: 9999999,
+    dtlId,
+  });
+  // const data = tableDataInventory1.value.filter((item) => item.pdDtlId === dtlId);
+  if (data) {
+    tableDataInventory2.value = data.list;
+    dataTotals.value = data.total;
   }
+  setLoadingDtl(false);
 };
 
 watch(

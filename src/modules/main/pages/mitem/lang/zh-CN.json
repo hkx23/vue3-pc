@@ -1,5 +1,6 @@
 {
   "mitem": {
+    "min_packaging_qty":"最小包装单元",
     "mitemCode": "物料编码",
     "mitemName": "物料名称",
     "mitemDesc": "物料描述"

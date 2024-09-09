@@ -164,8 +164,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SamplingStdDtlDTO {
@@ -223,8 +223,9 @@ export interface ResultImportSummaryObject {
 }
 
 export interface Filter {
+  tableName?: string;
   field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
   value?: string;
   valuesList?: string[];
 }
@@ -275,7 +276,37 @@ export interface CommonSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+}
+
+export interface DatasourceField {
+  tableName?: string;
+  fieldName?: string;
+}
+
+export interface DatasourceSetting {
+  /** @format int32 */
+  seq?: number;
+  datasourceType?: string;
+  datasourceName?: string;
+  aliasName?: string;
+  relatedType?: string;
+  conditionData?: DatasourceSettingCondition[];
+}
+
+export interface DatasourceSettingCondition {
+  /** @format int32 */
+  seq?: number;
+  fieldName?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
+  relateType?: string;
+  aliasName?: string;
+  relateFieldName?: string;
+  relateValue?: string;
 }
 
 /** 响应数据 */
@@ -1064,7 +1095,11 @@ export interface PqcInspectPatrolSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   /** 检验单据 */
   billNo?: string;
   /** 待取消的检验单据 */
@@ -2717,10 +2752,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -3385,8 +3420,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3702,7 +3737,11 @@ export interface IqcInspectDtlFileSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   iqcInspectDtlId?: string;
   uploadPath?: string;
 }
@@ -3789,7 +3828,11 @@ export interface IqcInspectRecheckSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   /** 复检单号 */
   recheckBillNo?: string;
   iqcInspectStdId?: string;
@@ -4330,6 +4373,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
+  /** 合格数量 */
+  okQty?: number;
+  /** 不合格数量 */
+  ngQty?: number;
   /** 检验结果名称 */
   inspectResultName?: string;
   /** 停留时长 */
@@ -4410,6 +4457,12 @@ export interface IqcInspectSubmitVO {
   iqcInspectStdList?: IqcInspectStdFullVO[];
   /** 是否创建入库单据 */
   isCreatedStockIn?: boolean;
+  /** 合格数量 */
+  okQty?: number;
+  /** 不合格数量 */
+  ngQty?: number;
+  /** 是否需要校验合格数量 */
+  isNeedCheckOkQty?: boolean;
 }
 
 /** 物料检验单查询 */
@@ -4431,7 +4484,11 @@ export interface IqcInspectSearch {
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
   dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
   /** IQC单号 */
   iqcBillNo?: string;
   mitemId?: string;
@@ -4448,6 +4505,8 @@ export interface IqcInspectSearch {
   timeCreateEnd?: string;
   /** 供应商IDS */
   supplierIds?: string[];
+  /** 来料接收单号 */
+  incomingReceiveNo?: string;
   iqcInspectStdId?: string;
 }
 
@@ -4622,6 +4681,14 @@ export interface IqcInspectVO {
   inspectResult?: string;
   /** 单据状态 */
   status?: string;
+  /** 合格数量 */
+  okQty?: number;
+  /** 不合格数量 */
+  ngQty?: number;
+  /** 来料接收单号 */
+  incomingReceiveNo?: string;
+  /** 不合格退货状态 */
+  returnBillNo?: string;
   /** 显示名 */
   displayName?: string;
   /** 单据状态名称 */
@@ -4668,6 +4735,9 @@ export interface IqcInspectVO {
   sumNgQty?: number;
   /** 本次可退数量 */
   curReturnQty?: number;
+  handleMethodName?: string;
+  /** 是否拒收 */
+  isReject?: boolean;
 }
 
 /** 响应数据 */
@@ -4799,6 +4869,10 @@ export interface MitemReceiveBillVO {
   /** 检验严格度 */
   inspectionStringencyName?: string;
   iqcInspectStdId?: string;
+  /** 合格数量 */
+  okQty?: number;
+  /** 不合格数量 */
+  ngQty?: number;
   id?: string;
 }
 
@@ -4943,9 +5017,9 @@ export interface IqcInspectDtlFullVO {
   /** 项目分类 */
   itemCategoryName?: string;
   iqcInspectStdDtlId?: string;
-  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -4981,6 +5055,14 @@ export interface ResultIqcInspectVO {
   message?: string;
   /** 物料检验头表 */
   data?: IqcInspectVO;
+}
+
+/** 检验结果对应退货单更新模型 */
+export interface IqcInspectReturnDTO {
+  /** 检验单号 */
+  iqcBillNo?: string;
+  /** 退货单号 */
+  returnBillNo?: string;
 }
 
 export interface InspectGroupSearch {
@@ -6014,56 +6096,61 @@ export interface ResultListQcHoldDtlVO {
   data?: QcHoldDtlVO[] | null;
 }
 
-export interface BatchDynamicUpdateDTO {
-  /** 表唯一主键 */
-  primaryKey?: string;
-  /** 领域名称 */
-  businessDomain?: string;
-  /** 表名 */
-  tableName?: string;
-  /** 更新的字段列表 */
-  columnList?: DynamicColumn[];
-  /** 更新的数据信息 */
-  rows?: Record<string, object>[];
+export interface DomainParamButtonFormColumn {
+  /** @format int32 */
+  seq?: number;
+  id?: string;
+  field?: string;
+  label?: string;
+  component?: string;
+  componentParam?: string;
+  placeholder?: string;
+  defaultValue?: string;
+  isVisible?: boolean;
+  isDisabled?: boolean;
+  isMultiple?: boolean;
+  fieldType?: string;
+  columnType?: string;
+  parentField?: string;
+  isRequired?: boolean;
+  isKeyField?: boolean;
+  verifyExp?: string;
+  componentSource?: DomainParamComponentSource;
 }
 
-/** 动态列字段 */
-export interface DynamicColumn {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** 字段名称 */
-  columnField?: string;
-  /** 字段描述 */
-  columnDesc?: string;
-  /** 列数据类型 */
-  columnDateType?: string;
-  /**
-   * 是否必填项
-   * @format int32
-   */
-  isRequired?: number;
-  /** 默认值 */
-  defaultValue?: string;
+export interface DomainParamComponentSource {
+  sourceType?: string;
+  customDict?: DomainParamComponentSourceCustomDict;
+  dataTable?: DomainParamComponentSourceDatatable;
+}
+
+export interface DomainParamComponentSourceCustomDict {
+  dicData?: Record<string, object>[];
+}
+
+export interface DomainParamComponentSourceDatatable {
+  mapBusinessDomain?: string;
+  mapTable?: string;
+  conditionData?: DomainParamComponentSourceDatatableFilter[];
+  valueField?: string;
+  showField?: string;
+}
+
+export interface DomainParamComponentSourceDatatableFilter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
+  value?: string;
+}
+
+export interface InsertOrUpdateModel {
+  columnSetting?: DomainParamButtonFormColumn[];
+  tableName?: string;
+  fieldValues?: Record<string, object>;
+}
+
+export interface DeleteModel {
+  tableName?: string;
+  ids?: string[];
 }
 
 /** 通用响应类 */
@@ -6145,13 +6232,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
-  ii?: string;
   s4?: string;
+  s2?: string;
+  s1?: string;
   iii?: string;
+  ii?: string;
   s3?: string;
   i?: string;
-  s2?: string;
 } | null;
 
 /** 标签模板 */
@@ -8241,6 +8328,51 @@ export const api = {
      * No description
      *
      * @tags 物料检验头表
+     * @name GetIqcBillInfoByIncomingReceiveNo
+     * @summary 根据送货单行ID获取IQC检验单信息
+     * @request POST:/iqcInspect/getIqcBillInfoByIncomingReceiveNo
+     * @secure
+     */
+    getIqcBillInfoByIncomingReceiveNo: (data: IqcInspectSearch) =>
+      http.request<ResultIqcInspectVO['data']>(`/api/quality/iqcInspect/getIqcBillInfoByIncomingReceiveNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验头表
+     * @name BatchCreatedIqcInspectByMitemReceipt
+     * @summary 根据来料接收批量生成检验单（跨库调用）
+     * @request POST:/iqcInspect/batchCreatedIqcInspectByMitemReceipt
+     * @secure
+     */
+    batchCreatedIqcInspectByMitemReceipt: (data: IqcInspectStdFullSearch[]) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspect/batchCreatedIqcInspectByMitemReceipt`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验头表
+     * @name UpdateIqcReturnBill
+     * @summary 更新IQC不合格对应退货单信息
+     * @request POST:/iqcInspect/UpdateIqcReturnBill
+     * @secure
+     */
+    updateIqcReturnBill: (data: IqcInspectReturnDTO) =>
+      http.request<ResultBoolean['data']>(`/api/quality/iqcInspect/UpdateIqcReturnBill`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验头表
      * @name CreatedIqcInspectByMitemReceipt
      * @summary 根据来料接收生成检验单（跨库调用）
      * @request POST:/iqcInspect/CreatedIqcInspectByMitemReceipt
@@ -8681,6 +8813,36 @@ export const api = {
      * No description
      *
      * @tags 动态服务
+     * @name DynamicUpdateDataSql
+     * @summary 动态更新数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicUpdateDataSql
+     * @secure
+     */
+    dynamicUpdateDataSql: (data: InsertOrUpdateModel) =>
+      http.request<ResultObject['data']>(`/api/quality/dynamicManage/dynamicUpdateDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicQueryDropdownListSql
+     * @summary 通用查询下拉列表-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicQueryDropdownListSql
+     * @secure
+     */
+    dynamicQueryDropdownListSql: (data: DomainParamComponentSourceDatatable) =>
+      http.request<ResultObject['data']>(`/api/quality/dynamicManage/dynamicQueryDropdownListSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
      * @name DynamicQueryData
      * @summary 根据领域进行动态表字段查询
      * @request POST:/dynamicManage/dynamicQueryData
@@ -8696,13 +8858,58 @@ export const api = {
      * No description
      *
      * @tags 动态服务
-     * @name BatchUpdateData
-     * @summary 根据领域进行动态表字段更新
-     * @request POST:/dynamicManage/batchUpdateData
+     * @name DynamicQueryDataSql
+     * @summary 根据领域进行动态表字段查询
+     * @request POST:/dynamicManage/dynamicQueryDataSql
      * @secure
      */
-    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
-      http.request<ResultObject['data']>(`/api/quality/dynamicManage/batchUpdateData`, {
+    dynamicQueryDataSql: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/quality/dynamicManage/dynamicQueryDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicLogicDeleteDataSql
+     * @summary 逻辑删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicLogicDeleteDataSql
+     * @secure
+     */
+    dynamicLogicDeleteDataSql: (data: DeleteModel) =>
+      http.request<ResultObject['data']>(`/api/quality/dynamicManage/dynamicLogicDeleteDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicInsertDataSql
+     * @summary 动态插入数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicInsertDataSql
+     * @secure
+     */
+    dynamicInsertDataSql: (data: InsertOrUpdateModel) =>
+      http.request<ResultObject['data']>(`/api/quality/dynamicManage/dynamicInsertDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name DynamicDeleteDataSql
+     * @summary 物理删除数据-SQL方式-免实体类
+     * @request POST:/dynamicManage/dynamicDeleteDataSql
+     * @secure
+     */
+    dynamicDeleteDataSql: (data: DeleteModel) =>
+      http.request<ResultObject['data']>(`/api/quality/dynamicManage/dynamicDeleteDataSql`, {
         method: 'POST',
         body: data as any,
       }),
@@ -8719,6 +8926,21 @@ export const api = {
     sqlTables: () =>
       http.request<ResultListDataTableVO['data']>(`/api/quality/dynamicManage/sqlTables`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name SqlTableColumns
+     * @summary 根据领域获取数据表列表-SQL方式
+     * @request GET:/dynamicManage/sqlTableColumns
+     * @secure
+     */
+    sqlTableColumns: (query: { tableName: string }) =>
+      http.request<ResultListDataTableVO['data']>(`/api/quality/dynamicManage/sqlTableColumns`, {
+        method: 'GET',
+        params: query,
       }),
   },
   sampleCode: {

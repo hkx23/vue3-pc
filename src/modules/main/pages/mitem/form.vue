@@ -1,5 +1,12 @@
 <template>
-  <t-form ref="formRef" :data="formData" :show-cancel="true" :show-error-message="true" @submit="submit">
+  <t-form
+    ref="formRef"
+    :data="formData"
+    :show-cancel="true"
+    label-width="120px"
+    :show-error-message="true"
+    @submit="submit"
+  >
     <t-row :gutter="[12, 16]">
       <t-col :span="6">
         <t-form-item :label="t('business.main.mitemCode')" required-mark name="mitemCode">
@@ -27,7 +34,7 @@
       ></t-col>
       <t-col :span="6">
         <t-form-item :label="t('business.main.isBatchNo')">
-          <t-select v-model="formData.isBatchNo" :options="isBatchNoOptions" clearable /> </t-form-item
+          <t-select v-model="formData.isBatchNo" :disabled="true" :options="isBatchNoOptions" clearable /> </t-form-item
       ></t-col>
       <t-col :span="6">
         <t-form-item :label="t('business.main.defaultWarehouse')">
@@ -44,11 +51,21 @@
         </t-form-item>
       </t-col>
       <t-col :span="6">
+        <t-form-item :label="t('business.main.specificationsQty')">
+          <t-input-number v-model="formData.specificationsQty" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('mitem.min_packaging_qty')">
+          <t-input-number v-model="formData.minPackagingQty" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
         <t-form-item>
           <t-space :size="16">
             <t-checkbox v-model="formData.isRawChecked" :label="t('business.main.raw')" />
-            <t-checkbox v-model="formData.isProductChecked" :label="t('business.main.product')" />
-            <t-checkbox v-model="formData.isInProcessChecked" :label="t('business.main.inProduct')" />
+            <t-checkbox v-model="formData.isInProcessChecked" :label="t('business.main.product')" />
+            <t-checkbox v-model="formData.isProductChecked" :label="t('business.main.inProduct')" />
           </t-space> </t-form-item
       ></t-col>
     </t-row>
@@ -106,11 +123,14 @@ export default {
       warehouseName: '',
       shelfLifeDays: 0, // 保质期天数
       isBatchNo: 0, // 是否启用批次
-    });
+      specificationsQty: 0,
+      minPackagingQty: 0,
+    }) as any;
     const formRef = ref(null);
 
     onMounted(() => {
       console.log('打开dialog');
+      getUom();
     });
     const submit = async () => {
       if (_.isEmpty(formData.value.mitemName)) {
@@ -144,7 +164,6 @@ export default {
         console.log(e);
       }
     };
-
     return {
       t,
       submit,

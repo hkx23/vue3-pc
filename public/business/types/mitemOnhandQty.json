@@ -1,0 +1,38 @@
+{
+  "title": "物料：",
+  "placeholder": "请选择物料",
+  "url": "/api/warehouse/onhandQty/getMitemByWarehouseId",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "物料编码",
+      "key": "mitemCode",
+      "align": "left"
+    },
+    {
+      "title": "物料名称",
+      "key": "mitemName",
+      "align": "left"
+    },
+    {
+      "title": "物料描述",
+      "key": "mitemDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "mitemName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "mitemCode",
+    "codeField": "mitemName",
+    "descField": "mitemDesc",
+    "categoryField": "mitemCategoryName"
+  },
+  "name": "物料",
+  "componentType": "list"
+}

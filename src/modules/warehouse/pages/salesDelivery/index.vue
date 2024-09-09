@@ -35,6 +35,7 @@
               template-code="DELIVERY_LIST"
               :disabled="selectRowKeys?.length == 0"
               :data="printData"
+              :show-icon="false"
               @before-print="onPrintClick"
             >
               {{ t('common.button.print') }}
@@ -78,7 +79,6 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apiWarehouse, SaleDeliveryVO } from '@/api/warehouse';
 import CmpPrintButton from '@/components/cmp-print-button/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -312,7 +312,7 @@ const onHandleShowClose = () => {
 
 // 打印数据
 const printData = ref([]);
-// 打印, 目前只支持单笔打印
+// 打印, 目前只支持单笔打印;
 const onPrintClick = async () => {
   let isSuccess = true;
   printData.value = [];
@@ -343,7 +343,7 @@ const onPrintClick = async () => {
   }
   return isSuccess;
 };
-// 打印方法
+// 打印方法;
 const getPrintBillInfo = (billNo) => {
   return new Promise((resolve, reject) => {
     const billInfoData = apiWarehouse.saleDelivery.getPrintBillInfo({

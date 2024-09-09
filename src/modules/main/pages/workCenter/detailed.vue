@@ -26,7 +26,11 @@
         </t-col>
         <t-col :span="6">
           <t-form-item label="地点" name="wcLocation">
-            <t-input v-model="formData.wcLocation" />
+            <bcmp-select-param
+              v-model="formData.wcLocation"
+              placeholder="请选择地点"
+              param-group="P_WORKCENTER_LOCATION"
+            ></bcmp-select-param>
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -35,18 +39,13 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="顺序号" name="wcSeq">
-            <t-input-number v-model="formData.wcSeq" theme="column" min="0" />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="开动率" name="wcStartRate">
-            <t-input-number v-model="formData.wcStartRate" theme="column" min="0" />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
           <t-form-item label="负责人" name="wcOwner">
             <t-input v-model="formData.wcOwner" />
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="顺序号" name="wcSeq">
+            <t-input-number v-model="formData.wcSeq" theme="column" min="0" />
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -200,7 +199,6 @@ const fetchData = async () => {
   Object.assign(formData, props.wordCenterId);
   console.log(formData.state);
   try {
-    // setLoading(true);
     // 子节点请求
     const res = await api.workcenter.getChildCenter({
       id: props.wordCenterId.id,
@@ -239,8 +237,6 @@ const fetchData = async () => {
     // 控制多选
   } catch (e) {
     console.log(e);
-  } finally {
-    // setLoading(false);
   }
 };
 // 存在渲染数据数组
@@ -262,7 +258,6 @@ const formData = reactive({
   id: props.wordCenterId && props.wordCenterId.id, // 父节点的id
   allRecord: [],
   wcSeq: 0, // 顺序号
-  wcStartRate: 0, // 开动率
 });
 // 类型数据数组
 const typeData = ref([

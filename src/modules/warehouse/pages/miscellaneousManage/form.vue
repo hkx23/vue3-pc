@@ -62,7 +62,7 @@
             </t-form-item>
           </t-col>
           <t-col>
-            <t-form-item label="费用部门" required-mark label-align="right">
+            <t-form-item label="部门" required-mark label-align="right">
               <t-select v-model="formData.warehouseCode" label-width="113px" :disabled="formData.operateTpye !== 'add'">
                 <t-option
                   v-for="(option, index) in reasonOption"

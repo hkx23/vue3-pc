@@ -35,8 +35,8 @@
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches()">
               <t-button theme="default">批量删除</t-button>
             </t-popconfirm>
-            <t-button theme="default">导入</t-button>
-            <t-button theme="default">导出</t-button>
+            <!-- <t-button theme="default">导入</t-button>
+            <t-button theme="default">导出</t-button> -->
           </t-space>
         </template>
         <template #oidOrgName="{ row }">

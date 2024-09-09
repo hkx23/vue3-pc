@@ -1038,8 +1038,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -1177,6 +1177,11 @@ export interface Warehouse {
    * @format int32
    */
   isFifo?: number;
+  /**
+   * 是否供应商寄存
+   * @format int32
+   */
+  isSupplierConsignment?: number;
 }
 
 /** 通用响应类 */
@@ -1256,6 +1261,92 @@ export type WarehouseFeignDTO = {
   /** ERP仓库 */
   erpWarehouse?: string;
 } | null;
+
+export interface UserWorkcenterAuthoritySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  userId?: string;
+  workcenterId?: string;
+  /** 多个用户ID */
+  userIds?: string[];
+  /** 需要新增的关系 */
+  inseartList?: string[];
+  /** 需要删除的关系 */
+  removeList?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataUserWorkcenterAuthorityVO = {
+  list?: UserWorkcenterAuthorityVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataUserWorkcenterAuthorityVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataUserWorkcenterAuthorityVO;
+}
+
+export interface UserWorkcenterAuthorityVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  workcenterId?: string;
+  /** 库存组织名称 */
+  orgName?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 用户显示名 */
+  userDisplayName?: string;
+  /** 工作中心编码 */
+  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+}
 
 /** 角色用户操作实体 */
 export interface UserRoleDTO {
@@ -2115,6 +2206,393 @@ export interface ResultPagingDataMsgSendLog {
   data?: PagingDataMsgSendLog;
 }
 
+export interface SparePartTransferHeadSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 单据号模糊 */
+  billNo?: string;
+  /** 单据类型 */
+  billCategory?: string;
+  creatorId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataSparePartTransferHeadVO = {
+  list?: SparePartTransferHeadVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSparePartTransferHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSparePartTransferHeadVO;
+}
+
+export interface SparePartTransferHeadVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 单据业务类型 */
+  billBusinessType?: string;
+  /** 单据类型 */
+  billCategory?: string;
+  /** 关联单据号 */
+  relateBillNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 单据类型名称 */
+  billCategoryName?: string;
+  /** 单据业务类型名称 */
+  billBusinessTypeName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+}
+
+export interface SparePartTransferDtlSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  transferHeadId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataSparePartTransferDtlVO = {
+  list?: SparePartTransferDtlVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSparePartTransferDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSparePartTransferDtlVO;
+}
+
+export interface SparePartTransferDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  transferHeadId?: string;
+  sparePartId?: string;
+  warehouseId?: string;
+  districtId?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 备注 */
+  memo?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  /** 源仓库名称 */
+  warehouseName?: string;
+  /** 源货位名称 */
+  districtName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
+  /** 目标货位名称 */
+  toDistrictName?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+}
+
+/** 设备 */
+export interface Equipment {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetModelId?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保联系人 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
+}
+
+export interface AssetLedgerSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  equipmentId?: string;
+}
+
+export interface AssetLedgerVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetModelId?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保联系人 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
+  /** 资产型号名称 */
+  modelName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 管理状态名称 */
+  stateName?: string;
+  assetBrandId?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  assetTypeId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 单据类型 */
+  billCategory?: string;
+  /** 单据类型名称 */
+  billCategoryName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 位置名称 */
+  positionName?: string;
+  /** 保管部门名称 */
+  departmentOwnerName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAssetLedgerVO = {
+  list?: AssetLedgerVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetLedgerVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetLedgerVO;
+}
+
 /** 备品备件表 */
 export interface SparePart {
   id?: string;
@@ -2567,6 +3045,19 @@ export type Role = {
   /** 角色描述 */
   roleDesc?: string;
 } | null;
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
 
 export interface ProfileSearch {
   /** 模糊搜索字段 */
@@ -4023,6 +4514,42 @@ export interface MouldVo {
   fileList?: MouldFile[];
   /** 文件列表 */
   deleteFileList?: MouldFile[];
+  workcenterName?: string;
+  workshopName?: string;
+  positionPath?: string;
+}
+
+/** 用户功能操作记录表 */
+export interface ModuleUserOperate {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 菜单路径 */
+  modulePath?: string;
+  userId?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /** 操作内容 */
+  operateContent?: string;
 }
 
 /** 通用响应类 */
@@ -4656,6 +5183,8 @@ export interface Mo {
   /** 工单速率 */
   moRate?: number;
   workcenterId?: string;
+  /** 批次号 */
+  batchNo?: string;
 }
 
 /** 排产单 */
@@ -4892,19 +5421,6 @@ export interface MoStatusControl {
   isHold?: number;
 }
 
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
-}
-
 /** 显示工单管理列表 */
 export interface MoVO {
   id?: string;
@@ -5020,6 +5536,8 @@ export interface MoVO {
   /** 工单速率 */
   moRate?: number;
   workcenterId?: string;
+  /** 批次号 */
+  batchNo?: string;
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
@@ -5290,6 +5808,8 @@ export interface MitemInSupplierVO {
    * @format date-time
    */
   dateExemptionExpired?: string;
+  /** 容器类型 */
+  containerType?: string;
   /** 供应商编码 */
   supplierCode?: string;
   /** 供应商名称 */
@@ -5298,13 +5818,15 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 容器类型名称 */
+  containerTypeName?: string;
   stateName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
-  isForceInspectionChecked?: boolean;
+  isState?: boolean;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  isState?: boolean;
+  isForceInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5376,6 +5898,8 @@ export interface MitemInSupplier {
    * @format date-time
    */
   dateExemptionExpired?: string;
+  /** 容器类型 */
+  containerType?: string;
 }
 
 /** 物料分类 */
@@ -5518,15 +6042,18 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  /** 配送卡规格数量 */
+  specificationsQty?: number;
+  minPackagingQty?: string;
   stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawName?: string;
+  isState?: boolean;
+  isProductName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
-  isProductName?: string;
-  isState?: boolean;
+  isRawName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5810,6 +6337,12 @@ export interface LabelVO {
   isHold?: number;
   /** 条码类型 */
   labelType?: string;
+  /** 供应商批次 */
+  supplierLotNo?: string;
+  /** 来料接收单号 */
+  incomingReceiveNo?: string;
+  /** 检验结果 */
+  inspectResult?: string;
   /** 送货单 */
   billNo?: string;
   /** 供应商编码 */
@@ -5850,8 +6383,11 @@ export interface LabelVO {
   barcodeStatusName?: string;
   /** 收货人名称 */
   creatorName?: string;
+  warehouseId?: string;
   /** 仓库名称 */
   warehouseName?: string;
+  /** 仓库属性 */
+  warehouseAttr?: string;
   /** 货区名称 */
   districtName?: string;
   /** 货位名称 */
@@ -5876,7 +6412,6 @@ export interface LabelVO {
    * @format date-time
    */
   dataDelivery?: string;
-  warehouseId?: string;
   districtId?: string;
   locId?: string;
   newOnhandId?: string;
@@ -5887,6 +6422,51 @@ export interface LabelVO {
   transferDtlBarcodeId?: string;
   /** 包装条码下的所有SN条码 */
   barcodeWipList?: BarcodeWip[];
+  mitemCategoryId?: string;
+  /** 采购订单号 */
+  poNo?: string;
+  /** 采购订单行号 */
+  poLineNo?: string;
+  /**
+   * 采购订单到货时间
+   * @format date-time
+   */
+  datetimeArrive?: string;
+  /** 容器类型 */
+  containerType?: string;
+  purchaseWarehouseId?: string;
+  /** 采购订单明细行仓库编码 */
+  purchaseWarehouseCode?: string;
+  /** 采购订单明细行仓库名称 */
+  purchaseWarehouseName?: string;
+  /**
+   * 是否成品
+   * @format int32
+   */
+  isProduct?: number;
+  /** 客户编码 */
+  customerCode?: string;
+  /** 质量特性 */
+  qualityCharacteristics?: string;
+  tmplCode?: string;
+  tmplName?: string;
+  tmplCategory?: string;
+  /** 原始数量 */
+  oldQty?: number;
+  /** 检验状态--配送卡使用 */
+  checkStatus?: string;
+}
+
+/** 标签供应商批次批量实体 */
+export interface LabelSupplierLotNoDTO {
+  /** 标签状态 */
+  status?: string;
+  /** 供应商批次 */
+  lotNo?: string;
+  /** 来料接收单号 */
+  incomingReceiveNo?: string;
+  /** 批量标签号 */
+  labelNoList?: string[];
 }
 
 /** 产品标签拆分模型 */
@@ -5989,6 +6569,28 @@ export interface LabelSearch {
   minPkgQty?: number;
   /** 标签拆分模型-一个标签拆分多个 */
   groupLabelVOS?: GroupLabelVO[];
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  onhandId?: string;
+  /** 打印变更状态 */
+  printStatus?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 来料接收单号 */
+  incomingReceiveNo?: string;
 }
 
 /** 响应数据 */
@@ -6175,6 +6777,12 @@ export interface Label {
   isHold?: number;
   /** 标签类型 */
   labelType?: string;
+  /** 供应商批次 */
+  supplierLotNo?: string;
+  /** 来料接收单号 */
+  incomingReceiveNo?: string;
+  /** 检验结果 */
+  inspectResult?: string;
 }
 
 /** emailSendJob参数 */
@@ -6183,6 +6791,8 @@ export interface EmailSendJobParam {
   epCode?: string;
   /** 组织编码 */
   orgCode?: string;
+  /** @format int32 */
+  effectDays?: number;
 }
 
 export interface JobCommonDTO {
@@ -6190,6 +6800,10 @@ export interface JobCommonDTO {
   jobCommonParams?: JobCommonParam[];
   /** emailSendJob参数 */
   emailSendJobParam?: EmailSendJobParam[];
+  /** SAP下载数据JOB参数--公共 */
+  sapDownloadJobParams?: SapDownloadJobParam[];
+  /** SAP下载MO数据JOB参数 */
+  sapDownloadMOJobParams?: SapDownloadMOJobParam[];
 }
 
 /** 公共JOB参数 */
@@ -6198,6 +6812,41 @@ export interface JobCommonParam {
   epCode?: string;
   /** 组织编码 */
   orgCode?: string;
+}
+
+/** SAP下载数据JOB参数--公共 */
+export interface SapDownloadJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+  /** @format int32 */
+  executionMinute?: number;
+  /** @format int32 */
+  bufferMinute?: number;
+  /** @format int32 */
+  pageSize?: number;
+  statTime?: string;
+  endTime?: string;
+  primaryKeys?: string;
+}
+
+/** SAP下载MO数据JOB参数 */
+export interface SapDownloadMOJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+  /** @format int32 */
+  executionMinute?: number;
+  /** @format int32 */
+  bufferMinute?: number;
+  /** @format int32 */
+  pageSize?: number;
+  statTime?: string;
+  endTime?: string;
+  primaryKeys?: string;
+  defaultWarehouseCode?: string;
 }
 
 export interface IntegratedConsoleSearch {
@@ -6401,6 +7050,358 @@ export interface ResultPagingDataIntegratedConsoleVO {
   data?: PagingDataIntegratedConsoleVO;
 }
 
+/** 设备点检计划表 */
+export interface InspectPlanVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetTypeId?: string;
+  equipmentId?: string;
+  /**
+   * 点检周期(天)
+   * @format int32
+   */
+  dayInspectPeriod?: number;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  datetimeEffect?: string;
+  /** 资产类型编码 */
+  assetTypeCode?: string;
+  /** 资产类型名称 */
+  assetTypeName?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+}
+
+export interface InspectPlanSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
+  dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+  assetTypeId?: string;
+  equipmentId?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataInspectPlanVO = {
+  list?: InspectPlanVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectPlanVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectPlanVO;
+}
+
+/** 设备与点检项目关系表 */
+export interface InspectItemInEquipmentVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectItemId?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  /** 点检项目代码 */
+  inspectItemCode?: string;
+  /** 点检项目名称 */
+  inspectItemName?: string;
+  /** 资产类型 */
+  assetTypeCode?: string;
+  assetTypeName?: string;
+  /** 资产品牌 */
+  assetBrandCode?: string;
+  assetBrandName?: string;
+  /** 资产型号 */
+  assetModelCode?: string;
+  assetModelName?: string;
+}
+
+export interface InspectItemInEquipmentSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
+  dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+  ids?: string[];
+  inspectItemId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataInspectItemInEquipmentVO = {
+  list?: InspectItemInEquipmentVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectItemInEquipmentVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectItemInEquipmentVO;
+}
+
+/** 设备点检项目文件表 */
+export interface InspectItemFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectItemId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+/** 上传控件文件VO */
+export type AddFileTypeVO = {
+  serialNumber?: string;
+  fullFileName?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+  id?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListAddFileTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AddFileTypeVO[] | null;
+}
+
+/** 设备点检项目表 */
+export interface InspectItemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 点检项目代码 */
+  inspectItemCode?: string;
+  /** 点检项目名称 */
+  inspectItemName?: string;
+  /** 点检标准 */
+  inspectItemStandard?: string;
+  /** 点检方式或方法 */
+  inspectMethod?: string;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 单位 */
+  uom?: string;
+  /** 点检类型 */
+  inspectItemType?: string;
+  /**
+   * 是否拍照
+   * @format int32
+   */
+  isPhoto?: number;
+  /** 点检方式或方法 */
+  inspectMethodName?: string;
+  /** 点检类型 */
+  inspectItemTypeName?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+  /** 文件列表 */
+  fileList?: AddFileTypeVO[];
+}
+
+export interface InspectItemSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
+  dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+  /** 点检项目名称 */
+  inspectItemName?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataInspectItemVO = {
+  list?: InspectItemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectItemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectItemVO;
+}
+
 /** 导入配置表 */
 export interface ImportSetting {
   id?: string;
@@ -6579,20 +7580,6 @@ export interface ImportSettingRule {
   /** 数据转换配置 */
   datatransferJson?: string;
 }
-
-/** 上传控件文件VO */
-export type AddFileTypeVO = {
-  serialNumber?: string;
-  fullFileName?: string;
-  fileName?: string;
-  fileType?: string;
-  fileSizeShow?: string;
-  fileSize?: number;
-  timeUpload?: string;
-  signedUrl?: string;
-  percent?: number;
-  id?: string;
-} | null;
 
 /** 通用响应类 */
 export interface ResultAddFileTypeVO {
@@ -6836,8 +7823,8 @@ export interface ResultPagingDataEquipmentFileVO {
   data?: PagingDataEquipmentFileVO;
 }
 
-/** 设备 */
-export interface Equipment {
+/** 设备展示模型 */
+export interface EquipmentVo {
   id?: string;
   /**
    * 创建时间
@@ -6905,6 +7892,29 @@ export interface Equipment {
   inspectAcceptId?: string;
   /** 状态 */
   status?: string;
+  workcenterName?: string;
+  workshopName?: string;
+  positionPath?: string;
+}
+
+/** 响应数据 */
+export type PagingDataEquipmentVo = {
+  list?: EquipmentVo[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataEquipmentVo {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataEquipmentVo;
 }
 
 /** 响应数据 */
@@ -7168,6 +8178,8 @@ export interface DomainParamSearchSetting {
   operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN' | 'BETWEEN';
   defaultValue?: string;
   isVisible?: boolean;
+  isRequired?: boolean;
+  autoSelect?: boolean;
   isMultiple?: boolean;
   fieldType?: string;
   componentSource?: DomainParamComponentSource;
@@ -7208,6 +8220,7 @@ export interface DomainParamTableColumn {
 export interface DomainParamTableSetting {
   tableTitle?: string;
   usePage?: boolean;
+  isAutoLoad?: boolean;
   pageSize?: number;
   sortField?: string;
   sortType?: string;
@@ -7499,6 +8512,7 @@ export type BarcodeDTO = {
   status?: string;
   statusName?: string;
   parentBarcode?: string;
+  inspectResult?: string;
   /** @format int32 */
   isHold?: number;
   snList?: WipCompletionLabelDTO[];
@@ -7534,6 +8548,17 @@ export interface WipCompletionLabelDTO {
   warehouseId?: string;
   /** 仓库编码 */
   warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /**
+   * 是否启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  districtId?: string;
+  locId?: string;
+  /** 货位编码 */
+  locCode?: string;
   moScheId?: string;
   /** 工单编码 */
   moCode?: string;
@@ -7564,6 +8589,18 @@ export interface WipCompletionLabelDTO {
 }
 
 export interface DeliveryCardSearch {
+  /** 是否正常生成 */
+  isNormalGenerate?: boolean;
+  /** 批次号 */
+  batchNo?: string;
+  onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
+  /** 新的状态 */
+  newStatus?: string;
   /**
    * 页码
    * @format int32
@@ -7586,6 +8623,7 @@ export interface DeliveryCardSearch {
   planDateEnd?: string;
   workshopId?: string;
   workcenterId?: string;
+  mitemCategoryId?: string;
   mitemId?: string;
   /** 排产单状态 */
   scheStatus?: string;
@@ -7631,26 +8669,69 @@ export interface DeliveryCardSearch {
   splitNum?: number;
   /** 标签拆分模型-一个标签拆分多个 */
   groupLabelVOS?: GroupLabelVO[];
+  /** 排产表id集合 */
+  moScheduleIdList?: string[];
 }
 
 /** 配送卡输出类 */
-export interface DeliveryCardVO {
+export type DeliveryCardVO = {
+  id?: string;
+  /** @format date-time */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** deliveryCard条码 */
+  deliveryCardNo?: string;
+  mitemId?: string;
+  workcenterId?: string;
+  /** deliveryCard数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  moScheId?: string;
+  printTmplId?: string;
   /**
    * 标签顺序号
    * @format int32
    */
   printSeq?: number;
+  /** 状态 */
+  status?: string;
+  onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
+  /** 检验状态 */
+  checkStatus?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 批次号 */
+  lotNo?: string;
   moScheduleId?: string;
   /** 排产单编码 */
   scheCode?: string;
-  /** 排产单状态名称 */
-  scheStatusName?: string;
   /**
    * 计划生产日期
    * @format date-time
    */
   datetimeSche?: string;
-  mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
   /** 物料名称 */
@@ -7679,25 +8760,97 @@ export interface DeliveryCardVO {
   uomName?: string;
   /** 车间名称 */
   workshopName?: string;
-  workcenterId?: string;
   /** 工作中心名称 */
   workcenterName?: string;
   deliveryCardId?: string;
-  /** deliveryCard条码 */
-  deliveryCardNo?: string;
   /** deliveryCard状态名称 */
   deliveryCardStatuName?: string;
-  /** deliveryCard数量 */
-  qty?: number;
   /** 创建人名称 */
   creatorName?: string;
-  /** @format date-time */
-  timeCreate?: string;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
   reason?: string;
   orgName?: string;
+  /** 配送卡规格数量 */
+  specificationQuantity?: number;
+  /** 批次号 */
+  batchNo?: string;
+  /**
+   * 是否成品
+   * @format int32
+   */
+  isProduct?: number;
+  /** 客户编码 */
+  customerCode?: string;
+  /** 排产单状态名称 */
+  scheStatusName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDeliveryCardVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DeliveryCardVO[] | null;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmpl = {
+  list?: PrintTmpl[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 标签模板 */
+export interface PrintTmpl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  tmplCode?: string;
+  tmplName?: string;
+  tmplDesc?: string;
+  tmplBodyPath?: string;
+  tmplCategory?: string;
+  tmplType?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmpl;
 }
 
 /** 响应数据 */
@@ -7718,6 +8871,119 @@ export interface ResultPagingDataDeliveryCardVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataDeliveryCardVO;
+}
+
+/** 条码生成规则 */
+export interface BarcodeRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码规则代码 */
+  ruleCode?: string;
+  /** 条码规则名称 */
+  ruleName?: string;
+  /** 条码规则描述 */
+  ruleDesc?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeRule = {
+  list?: BarcodeRule[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeRule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeRule;
+}
+
+/** 配送卡表 */
+export interface DeliveryCard {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 配送卡号 */
+  deliveryCardNo?: string;
+  mitemId?: string;
+  workcenterId?: string;
+  /** 标签初始化数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  moScheId?: string;
+  printTmplId?: string;
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
+  /** 状态 */
+  status?: string;
+  onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
+  /** 检验状态 */
+  checkStatus?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 批次号 */
+  lotNo?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -8824,6 +10090,7 @@ export interface ResultPagingDataBarcodeVaildateRuleVO {
 }
 
 export interface BarcodeSequenceDTO {
+  ruleCode?: string;
   currentNum?: string;
   barcodeType?: string;
   prefix?: string;
@@ -8977,8 +10244,7 @@ export interface BarcodeRuleInMitem {
   mitemCategoryId?: string;
 }
 
-/** 条码生成规则 */
-export interface BarcodeRule {
+export interface BarcodeRuleVO {
   id?: string;
   /**
    * 创建时间
@@ -9012,6 +10278,49 @@ export interface BarcodeRule {
   barcodeType?: string;
   /** 条码规则表达式 */
   ruleExpression?: string;
+  /**
+   * 本次创建数量
+   * @format int32
+   */
+  createNum?: number;
+  mitemId?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  mitemCategoryId?: string;
+  deliveryDtlId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: (string | null)[];
+}
+
+/** 响应数据 */
+export type DeliveryDtlInBarcodeDTO = {
+  deliveryDtlId?: string;
+  /** 条码 */
+  barcode?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDeliveryDtlInBarcodeDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DeliveryDtlInBarcodeDTO[] | null;
 }
 
 export interface BarcodePkgSearch {
@@ -9187,8 +10496,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -9593,139 +10902,6 @@ export interface ResultPagingDataAssetModelVO {
   data?: PagingDataAssetModelVO;
 }
 
-export interface AssetLedgerSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 模糊关键词 */
-  keyword?: string;
-  equipmentId?: string;
-}
-
-export interface AssetLedgerVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  assetModelId?: string;
-  /** 设备编码 */
-  equipmentCode?: string;
-  /** 设备名称 */
-  equipmentName?: string;
-  /** 设备描述 */
-  equipmentDesc?: string;
-  /** 资产编码 */
-  assetCode?: string;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  dateEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  dateInvalid?: string;
-  /** 存放位置 */
-  position?: string;
-  /** 保管部门 */
-  departmentOwner?: string;
-  /** 保管人 */
-  userOwner?: string;
-  /** 设备供应商 */
-  equipmentSupplier?: string;
-  /** 维保联系人 */
-  maintenanceOwner?: string;
-  /** 维保联系方式 */
-  maintenanceOwnerContact?: string;
-  /**
-   * 进场时间
-   * @format date-time
-   */
-  datetimeEntry?: string;
-  repairDealId?: string;
-  repairAcceptId?: string;
-  maintenanceDealId?: string;
-  maintenanceAcceptId?: string;
-  inspectDealId?: string;
-  inspectAcceptId?: string;
-  /** 状态 */
-  status?: string;
-  /** 资产型号名称 */
-  modelName?: string;
-  /** 状态名称 */
-  statusName?: string;
-  /** 管理状态名称 */
-  stateName?: string;
-  assetBrandId?: string;
-  /** 资产品牌名称 */
-  brandName?: string;
-  assetTypeId?: string;
-  /** 单据号 */
-  billNo?: string;
-  /** 单据类型 */
-  billCategory?: string;
-  /** 单据类型名称 */
-  billCategoryName?: string;
-  /** 创建人名称 */
-  creatorName?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  createTime?: string;
-  /** 位置名称 */
-  positionName?: string;
-  /** 保管部门名称 */
-  departmentOwnerName?: string;
-}
-
-/** 响应数据 */
-export type PagingDataAssetLedgerVO = {
-  list?: AssetLedgerVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataAssetLedgerVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataAssetLedgerVO;
-}
-
 /** 资产品牌 */
 export interface AssetBrand {
   id?: string;
@@ -10005,6 +11181,19 @@ export type WechatSignature = {
   noncestr?: string;
   signature?: string;
 } | null;
+
+/** 通用响应类 */
+export interface ResultListLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string[] | null;
+}
 
 /** 通用响应类 */
 export interface ResultListUserInRoleVO {
@@ -10619,6 +11808,19 @@ export interface ResultListProductPackRuleDtlVO {
 }
 
 /** 通用响应类 */
+export interface ResultListPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PrintTmpl[] | null;
+}
+
+/** 通用响应类 */
 export interface ResultPersonVO {
   /**
    * 响应代码
@@ -10717,12 +11919,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11154,6 +12356,19 @@ export interface ResultListAppMsgDTO {
   data?: AppMsgDTO[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultModuleUserOperate {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 用户功能操作记录表 */
+  data?: ModuleUserOperate;
+}
+
 /** 响应数据 */
 export type PagingDataModule = {
   list?: Module[];
@@ -11172,52 +12387,6 @@ export interface ResultPagingDataModule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataModule;
-}
-
-/** 标签模板 */
-export type PrintTmpl = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  tmplCode?: string;
-  tmplName?: string;
-  tmplDesc?: string;
-  tmplBodyPath?: string;
-  tmplCategory?: string;
-  tmplType?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultListPrintTmpl {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PrintTmpl[] | null;
 }
 
 /** 通用响应类 */
@@ -11322,13 +12491,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
+  groupId?: string;
+  taskId?: string;
+  userId?: string;
   subScopeId?: string;
   scopeType?: string;
   scopeDefinitionId?: string;
   processInstanceId?: string;
-  groupId?: string;
-  taskId?: string;
-  userId?: string;
 }
 
 /** 通用响应类 */
@@ -11346,51 +12515,51 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
+  suspended?: boolean;
   /** @format int32 */
   priority?: number;
   name?: string;
   owner?: string;
-  suspended?: boolean;
   description?: string;
   tenantId?: string;
-  assignee?: string;
   /** @format date-time */
   dueDate?: string;
+  assignee?: string;
   category?: string;
-  localizedDescription?: string;
   localizedName?: string;
+  formKey?: string;
+  localizedDescription?: string;
   parentTaskId?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
-  formKey?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
+  /** @format date-time */
+  createTime?: string;
   subScopeId?: string;
   scopeType?: string;
+  propagatedStageInstanceId?: string;
   scopeDefinitionId?: string;
   processInstanceId?: string;
   processDefinitionId?: string;
-  /** @format date-time */
-  createTime?: string;
-  propagatedStageInstanceId?: string;
-  taskDefinitionId?: string;
+  caseVariables?: Record<string, object>;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
   taskDefinitionKey?: string;
-  /** @format date-time */
-  inProgressStartTime?: string;
+  taskDefinitionId?: string;
   inProgressStartedBy?: string;
   /** @format date-time */
   inProgressStartDueDate?: string;
   taskLocalVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartTime?: string;
   processVariables?: Record<string, object>;
-  caseVariables?: Record<string, object>;
+  /** @format date-time */
+  suspendedTime?: string;
   claimedBy?: string;
   suspendedBy?: string;
   /** @format date-time */
   claimTime?: string;
-  /** @format date-time */
-  suspendedTime?: string;
 } | null;
 
 /** 响应数据 */
@@ -11398,13 +12567,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
+  groupId?: string;
+  taskId?: string;
+  userId?: string;
   subScopeId?: string;
   scopeType?: string;
   scopeDefinitionId?: string;
   processInstanceId?: string;
-  groupId?: string;
-  taskId?: string;
-  userId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -11476,15 +12645,8 @@ export interface ResultDomainParamVO {
   data?: DomainParamVO;
 }
 
-/** 响应数据 */
-export type PagingDataPrintTmpl = {
-  list?: PrintTmpl[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
 /** 通用响应类 */
-export interface ResultPagingDataPrintTmpl {
+export interface ResultDeliveryCardVO {
   /**
    * 响应代码
    * @format int32
@@ -11492,28 +12654,8 @@ export interface ResultPagingDataPrintTmpl {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
-  data?: PagingDataPrintTmpl;
-}
-
-/** 响应数据 */
-export type PagingDataBarcodeRule = {
-  list?: BarcodeRule[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataBarcodeRule {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataBarcodeRule;
+  /** 配送卡输出类 */
+  data?: DeliveryCardVO;
 }
 
 /** 业务执行单元表 */
@@ -12256,6 +13398,21 @@ export const api = {
      */
     getTmplByIdOrCode: (query: { id: string; code: string }) =>
       http.request<ResultString['data']>(`/api/main/printTmpl/getTmplByIdOrCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name GetPrintTmplListByCategory
+     * @summary 按类型获取条码打印模板
+     * @request GET:/printTmpl/getPrintTmplListByCategory
+     * @secure
+     */
+    getPrintTmplListByCategory: (query: { category: string }) =>
+      http.request<ResultListPrintTmpl['data']>(`/api/main/printTmpl/getPrintTmplListByCategory`, {
         method: 'GET',
         params: query,
       }),
@@ -13121,6 +14278,81 @@ export const api = {
         body: data as any,
       }),
   },
+  userWorkcenterAuthority: {
+    /**
+     * No description
+     *
+     * @tags 用户工作中心权限表
+     * @name SaveAuthority
+     * @summary 保存用户工作中心权限
+     * @request POST:/userWorkcenterAuthority/saveAuthority
+     * @secure
+     */
+    saveAuthority: (data: UserWorkcenterAuthoritySearch) =>
+      http.request<ResultObject['data']>(`/api/main/userWorkcenterAuthority/saveAuthority`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户工作中心权限表
+     * @name RemoveBatch
+     * @summary 删除工作中心权限
+     * @request POST:/userWorkcenterAuthority/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/userWorkcenterAuthority/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户工作中心权限表
+     * @name SearchAuth
+     * @request POST:/userWorkcenterAuthority/itemsAuth
+     * @secure
+     */
+    searchAuth: (data: CommonSearch) =>
+      http.request<ResultPagingDataWorkcenter['data']>(`/api/main/userWorkcenterAuthority/itemsAuth`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户工作中心权限表
+     * @name GetList
+     * @summary 获得页面数据
+     * @request POST:/userWorkcenterAuthority/getList
+     * @secure
+     */
+    getList: (data: UserWorkcenterAuthoritySearch) =>
+      http.request<ResultPagingDataUserWorkcenterAuthorityVO['data']>(`/api/main/userWorkcenterAuthority/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户工作中心权限表
+     * @name GetUserAuthority
+     * @summary 获得该用户所拥有的工作中心权限
+     * @request GET:/userWorkcenterAuthority/getUserAuthority
+     * @secure
+     */
+    getUserAuthority: (query: { userId: string }) =>
+      http.request<ResultListLong['data']>(`/api/main/userWorkcenterAuthority/getUserAuthority`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   userInRole: {
     /**
      * No description
@@ -13771,6 +15003,20 @@ export const api = {
      * No description
      *
      * @tags 供应商
+     * @name ItemsAuth
+     * @request POST:/supplier/itemsAuth
+     * @secure
+     */
+    itemsAuth: (data: CommonSearch) =>
+      http.request<ResultPagingDataSupplier['data']>(`/api/main/supplier/itemsAuth`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
      * @name GetItemById
      * @request POST:/supplier/items/{id}
      * @secure
@@ -13917,6 +15163,99 @@ export const api = {
     cpuCompute: () =>
       http.request<ResultInteger['data']>(`/api/main/stressTest/CPUCompute`, {
         method: 'GET',
+      }),
+  },
+  sparePartTransferHead: {
+    /**
+     * No description
+     *
+     * @tags 备品备件库存交易头表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/sparePartTransferHead/getList
+     * @secure
+     */
+    getList: (data: SparePartTransferHeadSearch) =>
+      http.request<ResultPagingDataSparePartTransferHeadVO['data']>(`/api/main/sparePartTransferHead/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  sparePartTransferDtl: {
+    /**
+     * No description
+     *
+     * @tags 备品备件库存交易明细表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/sparePartTransferDtl/getList
+     * @secure
+     */
+    getList: (data: SparePartTransferDtlSearch) =>
+      http.request<ResultPagingDataSparePartTransferDtlVO['data']>(`/api/main/sparePartTransferDtl/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  sparePartTransfer: {
+    /**
+     * No description
+     *
+     * @tags 备品备件出入库报表
+     * @name RemoveBatch
+     * @summary 批量删除资产台账
+     * @request POST:/sparePartTransfer/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件出入库报表
+     * @name Modify
+     * @summary 编辑资产台账
+     * @request POST:/sparePartTransfer/modify
+     * @secure
+     */
+    modify: (data: Equipment) =>
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件出入库报表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/sparePartTransfer/getList
+     * @secure
+     */
+    getList: (data: AssetLedgerSearch) =>
+      http.request<ResultPagingDataAssetLedgerVO['data']>(`/api/main/sparePartTransfer/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件出入库报表
+     * @name Add
+     * @summary 新增资产台账
+     * @request POST:/sparePartTransfer/add
+     * @secure
+     */
+    add: (data: Equipment) =>
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/add`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   sparePart: {
@@ -14112,6 +15451,21 @@ export const api = {
      */
     delete: (data: Role) =>
       http.request<ResultObject['data']>(`/api/main/role/delete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name CheckUserInRoleCode
+     * @summary 校验用户是否在角色中
+     * @request POST:/role/checkUserInRoleCode
+     * @secure
+     */
+    checkUserInRoleCode: (data: Role) =>
+      http.request<ResultBoolean['data']>(`/api/main/role/checkUserInRoleCode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -15276,6 +16630,37 @@ export const api = {
         body: data as any,
       }),
   },
+  moduleUserOperate: {
+    /**
+     * No description
+     *
+     * @tags 用户功能操作记录表
+     * @name SaveUserOperate
+     * @summary 保存用户功能操作记录
+     * @request POST:/moduleUserOperate/saveUserOperate
+     * @secure
+     */
+    saveUserOperate: (data: ModuleUserOperate) =>
+      http.request<ResultObject['data']>(`/api/main/moduleUserOperate/saveUserOperate`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户功能操作记录表
+     * @name GetUserOperate
+     * @summary 获取用户操作记录
+     * @request GET:/moduleUserOperate/getUserOperate
+     * @secure
+     */
+    getUserOperate: (query: { modulePath: string; operateType: string }) =>
+      http.request<ResultModuleUserOperate['data']>(`/api/main/moduleUserOperate/getUserOperate`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   module: {
     /**
      * No description
@@ -15566,6 +16951,21 @@ export const api = {
      * No description
      *
      * @tags 工单排产表
+     * @name ItemsAuth
+     * @summary 弹出框公共方法--包含工作中心权限
+     * @request POST:/moSchedule/itemsAuth
+     * @secure
+     */
+    itemsAuth: (data: CommonSearch) =>
+      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/main/moSchedule/itemsAuth`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
      * @name GetItemById
      * @summary 弹出框公共方法
      * @request POST:/moSchedule/items/{id}
@@ -15801,6 +17201,21 @@ export const api = {
      */
     getmolist: (data: MoSearch) =>
       http.request<ResultPagingDataMoVO['data']>(`/api/main/mo/getmolist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单表
+     * @name AddCompleteQty
+     * @summary 增加完工数量
+     * @request POST:/mo/addCompleteQty
+     * @secure
+     */
+    addCompleteQty: (data: Mo[]) =>
+      http.request<ResultObject['data']>(`/api/main/mo/addCompleteQty`, {
         method: 'POST',
         body: data as any,
       }),
@@ -16265,6 +17680,36 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name UpdateLabelStatusAndLotNo
+     * @summary 更新条码状态和入库批次
+     * @request POST:/label/updateLabelStatusAndLotNo
+     * @secure
+     */
+    updateLabelStatusAndLotNo: (data: LabelSupplierLotNoDTO[]) =>
+      http.request<ResultObject['data']>(`/api/main/label/updateLabelStatusAndLotNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name UpdateInspectResultByIncomingReceiveNo
+     * @summary 根据来料接收单更新检验结果
+     * @request POST:/label/updateInspectResultByIncomingReceiveNo
+     * @secure
+     */
+    updateInspectResultByIncomingReceiveNo: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/label/updateInspectResultByIncomingReceiveNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name SplitBarcodes
      * @summary 拆分条码-一个条码拆分多个
      * @request POST:/label/splitBarcodes
@@ -16400,6 +17845,36 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name GetInventoryLabelList
+     * @summary 获取库存打印页标签数据--标签
+     * @request POST:/label/getInventoryLabelList
+     * @secure
+     */
+    getInventoryLabelList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getInventoryLabelList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetInventoryDeliveryCardList
+     * @summary 获取库存打印页标签数据--配送卡
+     * @request POST:/label/getInventoryDeliveryCardList
+     * @secure
+     */
+    getInventoryDeliveryCardList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getInventoryDeliveryCardList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name GetCount
      * @request POST:/label/getCount
      * @secure
@@ -16444,6 +17919,21 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name GenerateBarcodeInventory
+     * @summary 生库存标签
+     * @request POST:/label/generateBarcodeInventory
+     * @secure
+     */
+    generateBarcodeInventory: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/label/generateBarcodeInventory`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name CancellationBarcode
      * @summary 作废条码
      * @request POST:/label/cancellationBarcode
@@ -16451,6 +17941,21 @@ export const api = {
      */
     cancellationBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/cancellationBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name BatchUpdateLabels
+     * @summary 批量更新条码信息
+     * @request POST:/label/batchUpdateLabels
+     * @secure
+     */
+    batchUpdateLabels: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/label/batchUpdateLabels`, {
         method: 'POST',
         body: data as any,
       }),
@@ -16518,13 +18023,28 @@ export const api = {
      * No description
      *
      * @tags 公用JOB业务组件接口
+     * @name SapDownloadMoJob
+     * @summary SAP下载MO数据
+     * @request POST:/jobCommon/sapDownloadMoJob
+     * @secure
+     */
+    sapDownloadMoJob: (data: JobCommonDTO) =>
+      http.request<ResultString['data']>(`/api/main/jobCommon/sapDownloadMoJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
      * @name EmailSendJob
      * @summary 邮件发送测试JOB
      * @request POST:/jobCommon/emailSendJob
      * @secure
      */
     emailSendJob: (data: JobCommonDTO) =>
-      http.request<ResultObject['data']>(`/api/main/jobCommon/emailSendJob`, {
+      http.request<ResultString['data']>(`/api/main/jobCommon/emailSendJob`, {
         method: 'POST',
         body: data as any,
       }),
@@ -16541,6 +18061,278 @@ export const api = {
      */
     getList: (data: IntegratedConsoleSearch) =>
       http.request<ResultPagingDataIntegratedConsoleVO['data']>(`/api/main/integratedConsole/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectPlan: {
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Update
+     * @summary 编辑点检项目
+     * @request POST:/inspectPlan/update
+     * @secure
+     */
+    update: (data: InspectPlanVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Search
+     * @request POST:/inspectPlan/items
+     * @secure
+     */
+    search: (data: InspectPlanSearch) =>
+      http.request<ResultPagingDataInspectPlanVO['data']>(`/api/main/inspectPlan/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name Insert
+     * @summary 新增点检项目
+     * @request POST:/inspectPlan/insert
+     * @secure
+     */
+    insert: (data: InspectPlanVO[]) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/inspectPlan/getList
+     * @secure
+     */
+    getList: (data: InspectPlanSearch) =>
+      http.request<ResultPagingDataInspectPlanVO['data']>(`/api/main/inspectPlan/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name BatchUpdateState
+     * @summary 批量删除点检项目
+     * @request POST:/inspectPlan/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: InspectPlanSearch) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectPlan/batchUpdateState`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectItemInEquipment: {
+    /**
+     * No description
+     *
+     * @tags 设备与点检项目关系表
+     * @name Update
+     * @summary 编辑资产关联
+     * @request POST:/inspectItemInEquipment/update
+     * @secure
+     */
+    update: (data: InspectItemInEquipmentVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemInEquipment/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与点检项目关系表
+     * @name Insert
+     * @summary 新增资产关联
+     * @request POST:/inspectItemInEquipment/insert
+     * @secure
+     */
+    insert: (data: InspectItemInEquipmentVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemInEquipment/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与点检项目关系表
+     * @name GetList
+     * @summary 根据项目ID获取资产关联信息
+     * @request POST:/inspectItemInEquipment/getList
+     * @secure
+     */
+    getList: (data: InspectItemInEquipmentSearch) =>
+      http.request<ResultPagingDataInspectItemInEquipmentVO['data']>(`/api/main/inspectItemInEquipment/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备与点检项目关系表
+     * @name BatchDeleteItem
+     * @summary 批量删除资产关联
+     * @request POST:/inspectItemInEquipment/batchDeleteItem
+     * @secure
+     */
+    batchDeleteItem: (data: InspectItemInEquipmentSearch) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemInEquipment/batchDeleteItem`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectItemFile: {
+    /**
+     * No description
+     *
+     * @tags 设备点检项目文件表
+     * @name DeleteInspectItemFile
+     * @summary 删除文件
+     * @request POST:/inspectItemFile/deleteInspectItemFile
+     * @secure
+     */
+    deleteInspectItemFile: (data: InspectItemFileVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemFile/deleteInspectItemFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目文件表
+     * @name DeleteBatchInspectItemFile
+     * @summary 批量删除文件
+     * @request POST:/inspectItemFile/deleteBatchInspectItemFile
+     * @secure
+     */
+    deleteBatchInspectItemFile: (data: InspectItemFileVO[]) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemFile/deleteBatchInspectItemFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目文件表
+     * @name AddInspectItemFile
+     * @summary 新增文件
+     * @request POST:/inspectItemFile/addInspectItemFile
+     * @secure
+     */
+    addInspectItemFile: (data: InspectItemFileVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItemFile/addInspectItemFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目文件表
+     * @name GetInspectItemFileList
+     * @summary 根据ID获取文件信息
+     * @request POST:/inspectItemFile/GetInspectItemFileList
+     * @secure
+     */
+    getInspectItemFileList: (data: string) =>
+      http.request<ResultListAddFileTypeVO['data']>(`/api/main/inspectItemFile/GetInspectItemFileList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectItem: {
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name Update
+     * @summary 编辑点检项目
+     * @request POST:/inspectItem/update
+     * @secure
+     */
+    update: (data: InspectItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItem/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name Search
+     * @request POST:/inspectItem/items
+     * @secure
+     */
+    search: (data: InspectItemSearch) =>
+      http.request<ResultPagingDataInspectItemVO['data']>(`/api/main/inspectItem/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name Insert
+     * @summary 新增点检项目
+     * @request POST:/inspectItem/insert
+     * @secure
+     */
+    insert: (data: InspectItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItem/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/inspectItem/getList
+     * @secure
+     */
+    getList: (data: InspectItemSearch) =>
+      http.request<ResultPagingDataInspectItemVO['data']>(`/api/main/inspectItem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检项目表
+     * @name BatchUpdateState
+     * @summary 批量删除点检项目
+     * @request POST:/inspectItem/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: InspectItemSearch) =>
+      http.request<ResultBoolean['data']>(`/api/main/inspectItem/batchUpdateState`, {
         method: 'POST',
         body: data as any,
       }),
@@ -17118,7 +18910,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/items`, {
+      http.request<ResultPagingDataEquipmentVo['data']>(`/api/main/equipment/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -17696,6 +19488,21 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
+     * @name WaitCheckDeliveryCardList
+     * @summary 获取待品质确认配送卡列表
+     * @request POST:/deliveryCard/waitCheckDeliveryCardList
+     * @secure
+     */
+    waitCheckDeliveryCardList: (data: DeliveryCardSearch) =>
+      http.request<ResultListDeliveryCardVO['data']>(`/api/main/deliveryCard/waitCheckDeliveryCardList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
      * @name UpdateDeliveryCardStatusAndOnhandId
      * @summary 更新条码状态和库存现有量ID
      * @request POST:/deliveryCard/updateDeliveryCardStatusAndOnhandId
@@ -17771,6 +19578,21 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
+     * @name GetPrintTmplList
+     * @summary 获得打印模板下拉数据
+     * @request POST:/deliveryCard/getPrintTmplList
+     * @secure
+     */
+    getPrintTmplList: (data: DeliveryCardSearch) =>
+      http.request<ResultPagingDataPrintTmpl['data']>(`/api/main/deliveryCard/getPrintTmplList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
      * @name GetMoScheduleList
      * @summary 查询工单排产
      * @request POST:/deliveryCard/getMoScheduleList
@@ -17831,6 +19653,21 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
+     * @name GetBarcodeRuleList
+     * @summary 获得条码规则下拉数据- 根据排产单ID集合
+     * @request POST:/deliveryCard/getBarcodeRuleList
+     * @secure
+     */
+    getBarcodeRuleList: (data: DeliveryCardSearch) =>
+      http.request<ResultPagingDataBarcodeRule['data']>(`/api/main/deliveryCard/getBarcodeRuleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
      * @name GenerateBarcode
      * @summary 生成条码
      * @request POST:/deliveryCard/generateBarcode
@@ -17861,13 +19698,57 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
-     * @name GetPrintTmplList
-     * @summary 获得打印模板下拉数据
-     * @request GET:/deliveryCard/getPrintTmplList
+     * @name BatchUpdateLabels
+     * @summary 批量更新条码信息
+     * @request POST:/deliveryCard/batchUpdateLabels
      * @secure
      */
-    getPrintTmplList: (query: { moScheId: string }) =>
-      http.request<ResultPagingDataPrintTmpl['data']>(`/api/main/deliveryCard/getPrintTmplList`, {
+    batchUpdateLabels: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/deliveryCard/batchUpdateLabels`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
+     * @name BatchUpdateCheckStatus
+     * @summary 更新配送卡检验状态
+     * @request POST:/deliveryCard/batchUpdateCheckStatus
+     * @secure
+     */
+    batchUpdateCheckStatus: (data: DeliveryCard[]) =>
+      http.request<ResultObject['data']>(`/api/main/deliveryCard/batchUpdateCheckStatus`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
+     * @name GetDeliveryCardPrintTmplList
+     * @summary 获取配送卡打印模板
+     * @request GET:/deliveryCard/getDeliveryCardPrintTmplList
+     * @secure
+     */
+    getDeliveryCardPrintTmplList: () =>
+      http.request<ResultListPrintTmpl['data']>(`/api/main/deliveryCard/getDeliveryCardPrintTmplList`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
+     * @name GetDeliveryCardByCode
+     * @summary 按配送卡编码获取配送卡
+     * @request GET:/deliveryCard/getDeliveryCardByCode
+     * @secure
+     */
+    getDeliveryCardByCode: (query: { deliveryCardNo: string }) =>
+      http.request<ResultDeliveryCardVO['data']>(`/api/main/deliveryCard/getDeliveryCardByCode`, {
         method: 'GET',
         params: query,
       }),
@@ -17876,13 +19757,13 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
-     * @name GetBarcodeRuleList
-     * @summary 获得条码规则下拉数据
-     * @request GET:/deliveryCard/getBarcodeRuleList
+     * @name GetBarcodeRuleListByMitemId
+     * @summary 获得条码规则下拉数据-- 根据物料ID
+     * @request GET:/deliveryCard/getBarcodeRuleListByMitemId
      * @secure
      */
-    getBarcodeRuleList: (query: { moScheId: string }) =>
-      http.request<ResultPagingDataBarcodeRule['data']>(`/api/main/deliveryCard/getBarcodeRuleList`, {
+    getBarcodeRuleListByMitemId: (query: { mitemId: string }) =>
+      http.request<ResultPagingDataBarcodeRule['data']>(`/api/main/deliveryCard/getBarcodeRuleListByMitemId`, {
         method: 'GET',
         params: query,
       }),
@@ -18616,6 +20497,21 @@ export const api = {
      * No description
      *
      * @tags 在制品条码表
+     * @name BatchUpdateLabels
+     * @summary 批量更新条码信息
+     * @request POST:/barcodeWip/batchUpdateLabels
+     * @secure
+     */
+    batchUpdateLabels: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWip/batchUpdateLabels`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
      * @name GetPrintTmplList
      * @summary 获得打印模板下拉数据
      * @request GET:/barcodeWip/getPrintTmplList
@@ -18855,6 +20751,36 @@ export const api = {
      */
     getBarcodeRuleList: (data: BarcodeRuleInMitemSearch) =>
       http.request<ResultPagingDataBarcodeRuleInMitemVO['data']>(`/api/main/barcodeRule/getBarcodeRuleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码生成规则
+     * @name GenerateBarcodeByRuleCode
+     * @summary 根据条码验证规则创建
+     * @request POST:/barcodeRule/generateBarcodeByRuleCode
+     * @secure
+     */
+    generateBarcodeByRuleCode: (data: BarcodeRuleVO) =>
+      http.request<ResultListString['data']>(`/api/main/barcodeRule/generateBarcodeByRuleCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码生成规则
+     * @name BatchDeliveryGenerateBarcode
+     * @summary 批量生成送货单的供应商批次条码
+     * @request POST:/barcodeRule/batchDeliveryGenerateBarcode
+     * @secure
+     */
+    batchDeliveryGenerateBarcode: (data: BarcodeRuleVO[]) =>
+      http.request<ResultListDeliveryDtlInBarcodeDTO['data']>(`/api/main/barcodeRule/batchDeliveryGenerateBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -19638,6 +21564,21 @@ export const api = {
      */
     getAll: () =>
       http.request<ResultListWorkbenchIndex['data']>(`/api/main/workbenchIndex/getAll`, {
+        method: 'GET',
+      }),
+  },
+  supportGroupInUser: {
+    /**
+     * No description
+     *
+     * @tags 处理组用户表
+     * @name GetCurrentUserSupportGroupList
+     * @summary 查询处理组信息
+     * @request GET:/supportGroupInUser/getCurrentUserSupportGroupList
+     * @secure
+     */
+    getCurrentUserSupportGroupList: () =>
+      http.request<ResultObject['data']>(`/api/main/supportGroupInUser/getCurrentUserSupportGroupList`, {
         method: 'GET',
       }),
   },

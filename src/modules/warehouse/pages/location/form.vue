@@ -12,8 +12,6 @@
     <t-row :gutter="[32, 16]">
       <t-col :span="6">
         <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" name="warehouseId">
-          <!--  label-field="warehouseName"
-            value-field="warehouseCode"  -->
           <bcmp-select-business
             v-model="formData.warehouseId"
             :show-title="false"
@@ -23,7 +21,7 @@
           ></bcmp-select-business>
         </t-form-item>
         <t-form-item v-else label="选择仓库" required-mark>
-          <t-input v-model="formData.warehouseId" disabled></t-input>
+          <t-input v-model="formData.warehouseCode" disabled></t-input>
         </t-form-item>
       </t-col>
       <t-col :span="6">
@@ -33,17 +31,6 @@
       </t-col>
       <t-col :span="6">
         <t-form-item v-if="formData.operateTpye === 'add'" label="选择货区" name="districtId">
-          <!-- <bcmp-select-business
-            v-model="formData.districtId"
-            :show-title="false"
-            :is-multiple="false"
-            type="district"
-            label-field="districtName"
-            value-field="districtCode"
-            :disabled="formData.operateTpye !== 'add'"
-            @selection-change="onMaterialTabDatas"
-          ></bcmp-select-business> -->
-
           <t-select
             v-model="formData.districtId"
             :show-title="false"
@@ -61,20 +48,12 @@
           </t-select>
         </t-form-item>
         <t-form-item v-else label="选择货区" required-mark>
-          <t-input v-model="formData.districtId" disabled></t-input>
+          <t-input v-model="formData.districtCode" disabled></t-input>
         </t-form-item>
       </t-col>
       <t-col :span="6">
         <t-form-item label="货区名称" required-mark>
-          <!-- <t-input v-model="formData.districtName" placeholder="手动输入...." disabled /> -->
-          <t-select v-model="formData.districtId" :show-title="false" :is-multiple="false" disabled>
-            <t-option
-              v-for="option in districtOptions"
-              :key="option.value"
-              :value="option.value"
-              :label="option.label"
-            ></t-option>
-          </t-select>
+          <t-input v-model="formData.districtName" disabled placeholder="请输入仓库名称" />
         </t-form-item>
       </t-col>
       <t-col :span="6">
@@ -91,9 +70,14 @@
           <t-input v-model="formData.locationName" placeholder="手动输入...." />
         </t-form-item>
       </t-col>
-      <t-col :span="6">
+      <t-col :span="12">
         <t-form-item label="货位描述" name="locationDesc">
           <t-textarea v-model="formData.locationDesc" placeholder="手动输入...." />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="固定货位">
+          <t-switch v-model="formData.isFixed" :custom-value="[1, 0]" />
         </t-form-item>
       </t-col>
       <t-col :span="6">
@@ -107,9 +91,11 @@
 <script setup lang="ts">
 import { isEmpty } from 'lodash';
 import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 import { api, District } from '@/api/warehouse';
+
+import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 
 interface LocationForm extends District {
   operateTpye: string;
@@ -120,6 +106,7 @@ interface LocationForm extends District {
   locationName: string;
   districtId: string;
   locationDesc: string;
+  isFixed: number;
 }
 
 const formRef = ref(null);
@@ -139,6 +126,7 @@ const formData = ref<LocationForm>({
   locationName: '',
   state: 1,
   locationDesc: '',
+  isFixed: 1,
 });
 
 //* 新增清除数据
@@ -154,6 +142,7 @@ const init = () => {
   formData.value.districtId = '';
   formData.value.districtCode = '';
   formData.value.state = 1;
+  formData.value.isFixed = 1;
   formData.value.locationCode = '';
   formData.value.locationName = '';
   formData.value.locationDesc = '';
@@ -265,18 +254,6 @@ const rules: FormRules<Data> = {
   ],
 };
 
-// 监听仓库ID的变化
-watch(
-  () => formData.value.warehouseId,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      // 当仓库变化时，重置货区信息
-      formData.value.districtId = '';
-      formData.value.districtName = '';
-    }
-  },
-);
-
 // 根据仓库获取货位
 // const getLocationByWarehouse = async (warehouseId) => {
 //   // try {
@@ -299,8 +276,10 @@ const getLocationByWarehouse = async (warehouseId) => {
   }
 
   try {
+    formData.value.districtName = '';
+    formData.value.districtId = '';
+    formData.value.districtCode = '';
     const result = await api.location.getDistrict({ warehouseId });
-    console.log('🚀 ~ getLocationByWarehouse ~ result:', result);
     districtOptions.value = result.map((item) => ({
       label: item.districtName,
       value: item.id,

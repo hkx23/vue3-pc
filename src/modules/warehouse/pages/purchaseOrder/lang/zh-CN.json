@@ -1,17 +1,24 @@
 {
   "purchaseOrder": {
+    "orgName":"收货工厂",
+    "billLineNo": "订单行号",
     "tableSubTilte": "采购订单列表",
-    "tableDtlSubTilte":"采购订单明细列表",
+    "tableDtlSubTilte": "采购订单明细列表",
     "supplierCode": "供应商编码",
     "supplierName": "供应商名称",
-    "mitemCode": "产品编码",
-    "mitemName": "产品名称",
-    "mitemDesc": "产品描述",
+    "mitemCode": "物料编码",
+    "mitemName": "物料名称",
+    "mitemDesc": "物料描述",
     "supplierId": "供应商",
     "qty": "采购数量",
     "arrivaledQty": "已到货数量",
     "stockInQty": "已入库数量",
     "returnQty": "退货数量",
-    "billNo": "采购订单号"
+    "billNo": "采购订单号",
+    "categoryCode": "业务编码",
+    "categoryName": "业务流程",
+    "isConfirmName": "是否确认",
+    "要求到货时间":"要求到货时间",
+    "confirmDeliveryMemo": "交货回复"
   }
 }

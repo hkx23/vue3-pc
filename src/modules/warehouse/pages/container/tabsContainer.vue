@@ -427,88 +427,101 @@ const getcontainerType = async () => {
 //* 查询
 const inventoryManagement1 = ref([]);
 const onInput = async (data: any) => {
-  // 检查是否选中了主表的某一项
-  if (!props.propsId || props.propsId === '') {
-    MessagePlugin.warning('请先选中主表数据');
-    return; // 如果没有选中，则终止函数执行
+  try {
+    // 检查是否选中了主表的某一项
+    if (!props.propsId || props.propsId === '') {
+      MessagePlugin.warning('请先选中主表数据');
+      return; // 如果没有选中，则终止函数执行
+    }
+    pageUI.value.page = 1;
+    setLoading(true);
+    inventoryManagement1.value = [];
+    tableContainerData1.value = [];
+    const { status, keyword } = data;
+    if (!data.value) {
+      const result = await api.container.getList({
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+        containerTypeId: props.propsId, // 查询时必须传左侧主表选中的id
+        status,
+        keyword,
+      });
+      tableContainerData1.value = result.list;
+      dataTotal1.value = result.total;
+    }
+  } finally {
+    setLoading(false);
   }
-  pageUI.value.page = 1;
-  setLoading(true);
-  inventoryManagement1.value = [];
-  tableContainerData1.value = [];
-  const { status, keyword } = data;
-  if (!data.value) {
-    const result = await api.container.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      containerTypeId: props.propsId, // 查询时必须传左侧主表选中的id
-      status,
-      keyword,
-    });
-    tableContainerData1.value = result.list;
-    dataTotal1.value = result.total;
-  }
-  setLoading(false);
 };
 //* 查询2
 const inventoryManagement2 = ref([]);
 const onInput2 = async (data: any) => {
-  // 检查是否选中了主表的某一项
-  if (!props.propsId || props.propsId === '') {
-    MessagePlugin.warning('请先选中主表数据');
-    return; // 如果没有选中，则终止函数执行
-  }
-  setLoading(true);
-  pageUI.value.page = 1;
-  inventoryManagement2.value = [];
-  tableContainerData2.value = [];
-  const { state, keyword } = data;
-  if (!data.value) {
-    const result = await api.containerInMitem.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      keyword,
-      state,
-      containerTypeId: props.propsId, // 查询时必须传左侧主表选中的id
-    });
-    tableContainerData2.value = result.list;
-    dataTotal2.value = result.total;
+  try {
+    // 检查是否选中了主表的某一项
+    if (!props.propsId || props.propsId === '') {
+      MessagePlugin.warning('请先选中主表数据');
+      return; // 如果没有选中，则终止函数执行
+    }
+    setLoading(true);
+    pageUI.value.page = 1;
+    inventoryManagement2.value = [];
+    tableContainerData2.value = [];
+    const { state, keyword } = data;
+    if (!data.value) {
+      const result = await api.containerInMitem.getList({
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+        keyword,
+        state,
+        containerTypeId: props.propsId, // 查询时必须传左侧主表选中的id
+      });
+      tableContainerData2.value = result.list;
+      dataTotal2.value = result.total;
+    }
+  } finally {
+    setLoading(false);
   }
 };
 
 // 父调子fn
 /* * data 主表接口 的id 查右侧的数据 */
 const fetchTable = async (data: any) => {
-  setLoading(true);
-  inventoryManagement1.value = [];
-  tableContainerData1.value = [];
-  if (!data.value) {
-    const result = await api.container.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      containerTypeId: data, // containerTypeId 必传
-    });
-    tableContainerData1.value = result.list;
-    dataTotal1.value = result.total;
+  try {
+    setLoading(true);
+    inventoryManagement1.value = [];
+    tableContainerData1.value = [];
+    if (!data.value) {
+      const result = await api.container.getList({
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+        containerTypeId: data, // containerTypeId 必传
+      });
+      tableContainerData1.value = result.list;
+      dataTotal1.value = result.total;
+    }
+  } finally {
+    setLoading(false);
   }
-  setLoading(false);
 };
 
 // fetchTable 物料关联
 const fetchTable2 = async (data: any) => {
-  inventoryManagement2.value = [];
-  tableContainerData2.value = [];
-  setLoading(true);
-  if (!data.value) {
-    const result = await api.containerInMitem.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      containerTypeId: data,
-    });
-    tableContainerData2.value = result.list;
-    dataTotal2.value = result.total;
+  try {
+    inventoryManagement2.value = [];
+    tableContainerData2.value = [];
+    setLoading(true);
+    if (!data.value) {
+      const result = await api.containerInMitem.getList({
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+        containerTypeId: data,
+      });
+      tableContainerData2.value = result.list;
+      dataTotal2.value = result.total;
+    }
+  } finally {
+    setLoading(false);
   }
-  setLoading(false);
 };
 
 // 提交1

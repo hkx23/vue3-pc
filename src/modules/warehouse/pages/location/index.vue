@@ -36,7 +36,7 @@
         </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
-          <t-button theme="default">导入</t-button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="w_location" />
         </template>
         <template #op="row">
           <t-space>
@@ -141,6 +141,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'warehouseCode',
   },
   { title: '仓库名称', width: 100, colKey: 'warehouseName' },
+  { title: '固定货位', width: 100, colKey: 'isFixedName' },
   {
     title: '状态',
     width: 85,
@@ -153,19 +154,22 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 
 //* 表格数据
 const fetchTable = async () => {
-  setLoading(true);
-  selectedWarehouseRowKeys.value = [];
-  tableDataLocation.value = [];
-  const data = await api.location.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    warehouseId: formData.queryData.warehouseId,
-    districtKeyword: formData.queryData.districtKeyword,
-    locationKeyword: formData.queryData.locationKeyword,
-  });
-  tableDataLocation.value = data.list;
-  dataTotal.value = data.total;
-  setLoading(false);
+  try {
+    setLoading(true);
+    selectedWarehouseRowKeys.value = [];
+    tableDataLocation.value = [];
+    const data = await api.location.getList({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      warehouseId: formData.queryData.warehouseId,
+      districtKeyword: formData.queryData.districtKeyword,
+      locationKeyword: formData.queryData.locationKeyword,
+    });
+    tableDataLocation.value = data.list;
+    dataTotal.value = data.total;
+  } finally {
+    setLoading(false);
+  }
 };
 //* 表格刷新
 const tabRefresh = async () => {
@@ -200,8 +204,7 @@ const onEditRowClick = async (value: any) => {
     ...value.row,
     state: value.row.state ? 1 : 0,
   };
-  formRef.value.formData = JSON.parse(JSON.stringify(editedData)); // todo
-  // formRef.value.formData = clone2(editedData);
+  formRef.value.formData = JSON.parse(JSON.stringify(editedData));
   formVisible.value = true;
 };
 

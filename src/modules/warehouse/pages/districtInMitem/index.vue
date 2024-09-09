@@ -120,8 +120,8 @@ import utils from '@/utils/common';
 
 import { useLang } from './lang';
 
-const { t } = useLang();
 const { loading, setLoading } = useLoading();
+const { t } = useLang();
 const { pageUI } = usePage();
 const formVisible = ref(false);
 const diaLogTitle = ref('');

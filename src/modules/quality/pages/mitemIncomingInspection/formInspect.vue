@@ -26,34 +26,43 @@
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :title="t('mitemIncomingInspection.检验单号') + formData.iqcBillNo" :column="4" size="large">
-          <t-descriptions-item :label="t('mitemIncomingInspection.供应商')">{{
-            formData.supplierName
-          }}</t-descriptions-item>
-          <t-descriptions-item :label="t('mitemIncomingInspection.物料编码')">{{
-            formData.mitemCode
-          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.供应商')">
+            {{ formData.supplierName }}
+          </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.物料编码')">
+            {{ formData.mitemCode }}
+          </t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.物料名')">
             <div class="div_break_word">
               {{ formData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item :label="t('mitemIncomingInspection.检验严格度')">{{
-            formData.inspectionStringencyName
-          }}</t-descriptions-item>
-          <t-descriptions-item :label="t('mitemIncomingInspection.报批数量')">{{
-            formData.inspectQty
-          }}</t-descriptions-item>
-          <t-descriptions-item :label="t('mitemIncomingInspection.检验标准')">{{
-            formData.inspectStdName
-          }}</t-descriptions-item>
-          <t-descriptions-item :label="t('mitemIncomingInspection.接收单号')">{{
-            formData.billNoStr
-          }}</t-descriptions-item>
-          <t-descriptions-item :label="t('mitemIncomingInspection.查看附件')">
-            <t-link theme="primary" @click="onShowHeadFiles(formData)">{{
-              t('mitemIncomingInspection.查看附件')
-            }}</t-link>
+          <t-descriptions-item :label="t('mitemIncomingInspection.检验严格度')">
+            {{ formData.inspectionStringencyName }}
           </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.报批数量')">
+            {{ formData.inspectQty }}
+          </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.检验标准')">
+            {{ formData.inspectStdName }}
+          </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.接收单号')">
+            {{ formData.billNoStr }}
+          </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.查看附件')">
+            <t-link theme="primary" @click="onShowHeadFiles(formData)">
+              {{ t('mitemIncomingInspection.查看附件') }}
+            </t-link>
+          </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.合格数量')">
+            <t-input v-if="isEdit" v-model="formData.okQty" style="width: 200px" />
+            <div v-else>{{ formData.okQty }}</div>
+          </t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.不合格数量')">
+            <t-input v-if="isEdit" v-model="formData.ngQty" style="width: 200px" />
+            <div v-else>{{ formData.ngQty }}</div>
+          </t-descriptions-item>
+          <t-descriptions-item :span="3" />
         </t-descriptions>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
@@ -88,8 +97,11 @@
               </template>
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">{{
+                  <t-link v-if="isEdit" @click="showUplaodImg(rowData)">{{
                     t('mitemIncomingInspection.上传照片')
+                  }}</t-link>
+                  <t-link v-else theme="primary" @click="showUplaodImg(rowData)">{{
+                    t('mitemIncomingInspection.查看照片')
                   }}</t-link>
                 </t-space>
               </template>
@@ -137,8 +149,11 @@
               </template>
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">{{
+                  <t-link v-if="isEdit" @click="showUplaodImg(rowData)">{{
                     t('mitemIncomingInspection.上传照片')
+                  }}</t-link>
+                  <t-link v-else theme="primary" @click="showUplaodImg(rowData)">{{
+                    t('mitemIncomingInspection.查看照片')
                   }}</t-link>
                 </t-space>
               </template>
@@ -186,8 +201,11 @@
               </template>
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">{{
+                  <t-link v-if="isEdit" @click="showUplaodImg(rowData)">{{
                     t('mitemIncomingInspection.上传照片')
+                  }}</t-link>
+                  <t-link v-else theme="primary" @click="showUplaodImg(rowData)">{{
+                    t('mitemIncomingInspection.查看照片')
                   }}</t-link>
                 </t-space>
               </template>
@@ -247,7 +265,7 @@ import formNg from './formNg.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
-const Emit = defineEmits(['parent-refresh-event', 'form-close-event']);
+const Emit = defineEmits(['parent-refresh-event']);
 
 const formVisible = ref(false);
 
@@ -280,6 +298,8 @@ const formData = reactive({
   inspectionStringencyName: '',
   inspectStdName: '',
   inspectStdId: '',
+  okQty: 0,
+  ngQty: 0,
 });
 
 const { loading, setLoading } = useLoading();
@@ -332,9 +352,15 @@ const tableSelectedChange = (value: any[]) => {
 };
 const onConfirmForm = async () => {
   try {
+    let isHasTableDtlNg = false;
+    let isHasHeadNg = false;
+    if (formData.ngQty > 0) {
+      isHasHeadNg = true;
+    }
     for (let index = 0; index < tableData.value.length; index++) {
       const item = tableData.value[index];
       if (item.inspectResult === 'NG') {
+        isHasTableDtlNg = true; // 表格中有不合格的记录
         const ngQty = Number(item.ngQty);
         if (_.isNaN(ngQty)) {
           MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数'));
@@ -360,6 +386,15 @@ const onConfirmForm = async () => {
         }
       }
     }
+    if (isHasHeadNg && !isHasTableDtlNg) {
+      MessagePlugin.error('请至少选择一个不合格的记录');
+      return;
+    }
+
+    if (!isHasHeadNg && isHasTableDtlNg) {
+      MessagePlugin.error('检验项目存在不合格,请输入不合格数量');
+      return;
+    }
 
     const ngList = tableData.value.filter((n) => n.inspectResult === 'NG');
     if (ngList.length > 0) {
@@ -379,6 +414,8 @@ const onConfirmForm = async () => {
         mitemCategoryCode: formData.mitemCategoryCode,
         mitemCategoryName: formData.mitemCategoryName,
         pickQty: formData.inspectQty,
+        okQty: formData.okQty,
+        ngQty: formData.ngQty,
         supplierId: formData.supplierId,
         supplierCode: formData.supplierCode,
         supplierName: formData.supplierName,
@@ -386,7 +423,7 @@ const onConfirmForm = async () => {
         iqcInspectStdList: tableData.value,
         // iqcInspectNg: null,
       });
-
+      MessagePlugin.success(t('common.message.saveSuccess'));
       Emit('parent-refresh-event');
       formVisible.value = false;
     }
@@ -494,6 +531,14 @@ const showForm = async (edit, load, row) => {
   formData.mitemCategoryCode = row.mitemCategoryCode;
   formData.mitemCategoryName = row.mitemCategoryName;
   formData.inspectQty = row.pickQty;
+  if (isEdit.value) {
+    formData.okQty = row.pickQty;
+    formData.ngQty = 0;
+  } else if (isLoad.value) {
+    formData.okQty = row.okQty;
+    formData.ngQty = row.ngQty;
+  }
+
   formData.supplierId = row.supplierId;
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;
@@ -549,6 +594,7 @@ const onShowMeasureDialog = async (row) => {
 };
 const onFormCloseDialog = async () => {
   formVisible.value = false;
+  Emit('parent-refresh-event');
 };
 const parentConfirm = async (measureList, isOK) => {
   if (!_.isEmpty(measureList)) {
@@ -571,7 +617,8 @@ const showUplaodImg = async (rowData) => {
       rowData.row.fileList = list;
     }
     const { showForm } = formFilesRef.value;
-    await showForm(false, rowData.row.fileList);
+    const isReadonly = !isEdit.value;
+    await showForm(isReadonly, rowData.row.fileList);
   } catch (e) {
     console.log(e);
   }

@@ -392,10 +392,14 @@ const onDeletePackRowClick = async (row: any) => {
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
-      await api.productPackRule.delete({ id: row.id });
-      fetchTable();
-      confirmDia.hide();
-      MessagePlugin.success(t('common.message.deleteSuccess'));
+      try {
+        await api.productPackRule.delete({ id: row.id });
+        fetchTable();
+        confirmDia.hide();
+        MessagePlugin.success(t('common.message.deleteSuccess'));
+      } catch (e) {
+        confirmDia.hide();
+      }
     },
     onClose: () => {
       confirmDia.hide();

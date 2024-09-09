@@ -1,0 +1,38 @@
+{
+  "title": "工作中心：",
+  "placeholder": "请选择工作中心",
+  "url": "/api/main/userWorkcenterAuthority/itemsAuth",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "工作中心代码",
+      "key": "wcCode",
+      "align": "left"
+    },
+    {
+      "title": "工作中心名称",
+      "key": "wcName",
+      "align": "left"
+    },
+    {
+      "title": "工作中心描述",
+      "key": "wcDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "wcName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "wcName",
+    "codeField": "wcCode",
+    "descField": "wcDesc"
+  },
+  "name": "工作中心",
+  "componentType": "list"
+}

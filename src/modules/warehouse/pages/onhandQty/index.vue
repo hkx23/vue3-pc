@@ -4,7 +4,7 @@
     <cmp-card :span="12">
       <cmp-query ref="queryRef" :opts="opts" @submit="onInput">
         <template #warehouseId="{ param }">
-          <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"> </bcmp-select-business>
+          <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"></bcmp-select-business>
         </template>
         <template #districtId="{ param }">
           <bcmp-select-business
@@ -38,7 +38,10 @@
           {{ '库存现有量列表' }}
         </template>
         <template #labelDetails="{ row }">
-          <t-link theme="primary" @click="onEditRow(row)"> 标签明细 </t-link>
+          <t-link v-if="checkIsShowLabelInfo(row)" theme="primary" @click="onEditRow(row)"> 标签明细 </t-link>
+        </template>
+        <template v-if="handQtyData.list && handQtyData.list.length > 0" #footerSummary>
+          <div class="t-table__row-filter-inner">库存现有量汇总: {{ handSumQtyTotal }}</div>
         </template>
       </cmp-table>
     </cmp-card>
@@ -86,6 +89,15 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+// 是否显示标签信息
+const checkIsShowLabelInfo = (row) => {
+  let isShowLabelInfo = true;
+  // 车间仓库 和 中转仓 不显示
+  if (row.warehouseAttribute === 'WORKSHOP' || row.warehouseAttribute === 'TRANSIT_WAREHOUSE') {
+    isShowLabelInfo = false;
+  }
+  return isShowLabelInfo;
+};
 const queryRef = ref();
 const tableRef = ref(); // 表格实例
 const { pageUI } = usePage(); // 分页工具
@@ -93,7 +105,8 @@ const { pageUI: pageUITwo } = usePage(); // 分页工具
 const selectedRowKeys = ref([]); // 删除计量单位 id
 const pageShow = ref(false);
 const formVisible = ref(false);
-
+// 表格数据库存现有量汇总
+const handSumQtyTotal = ref(0);
 // 表格数据总条数
 const handQtyTotal = ref(0);
 // 表格数据
@@ -225,6 +238,21 @@ const onGetHandQtyData = async () => {
   const res = await api.onhandQty.getList(handQtyParam.value);
   handQtyData.list = res.list;
   handQtyTotal.value = res.total;
+
+  // 查询汇总数量
+  onGetHandSumQtyData();
+};
+
+const onGetHandSumQtyData = async () => {
+  selectedRowKeys.value = [];
+  handQtyParam.value.pageNum = pageUI.value.page;
+  handQtyParam.value.pageSize = pageUI.value.rows;
+  const res = await api.onhandQty.getOnHandSum(handQtyParam.value);
+  if (res) {
+    handSumQtyTotal.value = res.qty;
+  } else {
+    handSumQtyTotal.value = 0;
+  }
 };
 
 // #query 查询参数

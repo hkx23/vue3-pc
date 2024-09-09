@@ -33,7 +33,8 @@
       "more": "更多",
       "selectAll": "全选",
       "print": "打印",
-      "preView": "预览",
+      "rePrint": "补打",
+      "preView":"预览",
       "cancellation": "作废"
     },
     "dialog": {
@@ -53,6 +54,7 @@
       "addSuccess": "新增成功",
       "editSuccess": "编辑成功",
       "saveSuccess": "保存成功",
+      "submitSuccess": "提交成功",
       "invalidationSuccess": "作废成功",
       "uploadSuccess": "上传成功",
       "downloadSuccess": "下载成功",
@@ -105,6 +107,7 @@
       "warehouseCode": "仓库",
       "warehouseName": "仓库名称",
       "shelfLifeDays": "保质期（天）",
+      "specificationsQty": "配送卡规格数量",
       "push": "推式",
       "pull": "拉式",
       "yes": "是",
