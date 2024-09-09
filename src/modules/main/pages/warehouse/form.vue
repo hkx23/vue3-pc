@@ -85,6 +85,11 @@
         <t-checkbox v-model="formData.fifo">启用先进先出</t-checkbox>
       </t-form-item>
     </t-col>
+    <t-col :span="6">
+      <t-form-item label-align="left">
+        <t-checkbox v-model="formData.supplierConsignment">是否供应商寄存</t-checkbox>
+      </t-form-item>
+    </t-col>
   </t-form>
 </template>
 
@@ -116,6 +121,8 @@ export default {
       fifo: false,
       isEnableLocation: 0,
       isFifo: 0,
+      supplierConsignment: false,
+      isSupplierConsignment: 0,
     });
     const warehousePropertyOption = ref([]);
     api.param.getListByGroupCode({ parmGroupCode: 'W_WAREHOUSE_PROPERTY' }).then((data) => {
@@ -143,7 +150,7 @@ export default {
         formData.value.isFifo = formData.value.fifo === true ? 1 : 0;
         formData.value.isEnableUpload = formData.value.enableUpload === true ? 1 : 0;
         formData.value.state = formData.value.isState === true ? 1 : 0;
-
+        formData.value.isSupplierConsignment = formData.value.supplierConsignment === true ? 1 : 0;
         if (formData.value.operateTpye === 'add') {
           await api.warehouse.addWareHouse(formData.value);
           MessagePlugin.success('新增成功');
@@ -168,6 +175,7 @@ export default {
       formData.value.isState = true;
       formData.value.enableLocation = false;
       formData.value.enableUpload = false;
+      formData.value.supplierConsignment = false;
       formData.value.fifo = false;
       formData.value.warehouseAttribute = '';
       formData.value.warehouseCategory = '';

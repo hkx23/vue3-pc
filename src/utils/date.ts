@@ -10,3 +10,5 @@ export const LAST_30_DAYS = [
   dayjs().subtract(30, 'day').format('YYYY-MM-DD'),
   dayjs().subtract(1, 'day').format('YYYY-MM-DD'),
 ];
+
+export const CURRENT_DAYS = [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')];

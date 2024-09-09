@@ -6,6 +6,7 @@
         <!-- ################# 处理组表格数据 ###################### -->
         <cmp-table
           ref="tableRef"
+          v-model:pagination="pageUI"
           row-key="id"
           active-row-type="single"
           :table-column="tableMaterialRequisitionColumns"
@@ -169,6 +170,7 @@ const tableMaterialRequisitionColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
   { title: `${t('materialRequisition.billNo')}`, width: 140, colKey: 'billNo' },
   { title: `${t('materialRequisition.workshopName')}`, width: 100, colKey: 'workshopName' },
+
   { title: `${t('materialRequisition.statusName')}`, width: 80, colKey: 'statusName' },
   { title: `${t('business.main.creator')}`, width: 110, colKey: 'creatorName' },
   { title: `${t('business.main.timeCreate')}`, width: 140, colKey: 'timeCreate' },
@@ -178,6 +180,7 @@ const tableMaterialRequisitionColumns: PrimaryTableCol<TableRowData>[] = [
 
 const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('materialRequisition.moScheCode')}`, width: 200, colKey: 'scheCode' },
+  { title: `${t('materialRequisition.工作中心')}`, width: 100, colKey: 'workcenterName' },
   { title: `${t('materialRequisition.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('materialRequisition.mitemName')}`, width: 120, colKey: 'mitemName' },
   { title: `${t('materialRequisition.uomName')}`, width: 120, colKey: 'uomName' },
@@ -277,6 +280,7 @@ const onBatchCompleteClick = async (row: any) => {
       fetchTable();
       confirmDia.hide();
       MessagePlugin.success(t('common.message.saveSuccess'));
+      tableRef.value.setSelectedRowKeys([]);
     },
     onClose: () => {
       confirmDia.hide();
@@ -297,14 +301,19 @@ const onBatchCancelledClick = async (row: any) => {
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
-      console.log(row);
-      const deleteModel: MaterialRequisitionDTO = {
-        cancelledIds: ids,
-      };
-      await apiWarehouse.materialRequisition.materialRequisitionCanceled(deleteModel);
-      fetchTable();
-      confirmDia.hide();
-      MessagePlugin.success(t('materialRequisition.deleteSuccess'));
+      try {
+        console.log(row);
+        const deleteModel: MaterialRequisitionDTO = {
+          cancelledIds: ids,
+        };
+        await apiWarehouse.materialRequisition.materialRequisitionCanceled(deleteModel);
+        fetchTable();
+        confirmDia.hide();
+        MessagePlugin.success(t('materialRequisition.deleteSuccess'));
+        tableRef.value.setSelectedRowKeys([]);
+      } catch (e) {
+        confirmDia.hide();
+      }
     },
     onClose: () => {
       confirmDia.hide();
@@ -325,7 +334,7 @@ const onPrintClick = async () => {
         const promiseQuery = getPrintBillInfo(billInfo.billNo).then((billInfoData: any) => {
           if (billInfoData) {
             const billDtls = billInfoData.dtls;
-            // printData.value.push([{ dataSource: billInfoData, dataSource1: billDtls }]);
+            // printData.value.push([{ dataSource: billInfoData, datasource1: billDtls }]);
             printData.value.push({
               variable: billInfoData,
               dataSource: { BillInfoList: billInfoData, BillDetailInfoList: billDtls },
@@ -336,6 +345,7 @@ const onPrintClick = async () => {
       }
     });
     await Promise.all(promiseAll);
+    tableRef.value.setSelectedRowKeys([]);
   } catch (e) {
     console.log(e);
     isSuccess = false;

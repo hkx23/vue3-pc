@@ -14,6 +14,7 @@
                   row-key="id"
                   :hover="false"
                   :stript="false"
+                  :fixed-height="true"
                   :table-column="waitInspectColumns"
                   active-row-type="single"
                   :table-data="waitInspectData"
@@ -26,15 +27,15 @@
                 >
                   <template #title>{{ t('mitemIncomingInspection.工作台') }}</template>
                   <template #button>
-                    <t-button theme="primary" @click="mergeInspection(true)">{{
+                    <!-- <t-button theme="primary" @click="mergeInspection(true)">{{
                       t('mitemIncomingInspection.合并检验')
-                    }}</t-button>
-                    <t-button theme="default" @click="directInspectOk">{{
+                    }}</t-button> -->
+                    <!-- <t-button theme="default" @click="directInspectOk">{{
                       t('mitemIncomingInspection.一键合格')
                     }}</t-button>
                     <t-button theme="default" @click="directInspectNg">{{
                       t('mitemIncomingInspection.一键判退')
-                    }}</t-button>
+                    }}</t-button> -->
                   </template>
                   <template #op="rowData">
                     <t-space>
@@ -71,6 +72,7 @@
                   :stript="false"
                   :table-column="inspectColumns"
                   :show-toolbar="false"
+                  :fixed-height="true"
                   active-row-type="single"
                   :table-data="inspectData"
                   :total="inspectDataTotal"
@@ -407,6 +409,8 @@ const inspectColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('mitemIncomingInspection.供应商'), width: 160, colKey: 'supplierName' },
   { title: t('mitemIncomingInspection.严格度'), width: 100, colKey: 'inspectionStringencyName' },
   { title: t('mitemIncomingInspection.检验数量'), width: 100, colKey: 'pickQty' },
+  { title: t('mitemIncomingInspection.合格数量'), width: 100, colKey: 'okQty' },
+  { title: t('mitemIncomingInspection.不合格数量'), width: 100, colKey: 'ngQty' },
   { title: t('mitemIncomingInspection.单位'), width: 100, colKey: 'uomName' },
   { title: t('mitemIncomingInspection.检验员'), width: 160, colKey: 'displayName' },
   { title: t('mitemIncomingInspection.检验时间'), width: 200, colKey: 'timeCreate' },
@@ -582,123 +586,123 @@ const onShowAndLoadDialog = async (isEdit, rowData) => {
 };
 
 // 合并检验
-const mergeInspection = async (isEdit) => {
-  checkSelected(true).then(async (isRun) => {
-    if (isRun) {
-      const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
-      const { showMergeForm } = formInspectRef.value;
-      await showMergeForm(isEdit, selectKeys);
-    }
-  });
-};
+// const mergeInspection = async (isEdit) => {
+//   checkSelected(true).then(async (isRun) => {
+//     if (isRun) {
+//       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+//       const { showMergeForm } = formInspectRef.value;
+//       await showMergeForm(isEdit, selectKeys);
+//     }
+//   });
+// };
 // 一键合格
-const directInspectOk = async () => {
-  checkSelected(false).then(async (isRun) => {
-    if (isRun) {
-      const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
-      const sumPickQty = selectKeys.reduce((previousValue, currentValue) => previousValue + currentValue.pickQty, 0);
+// const directInspectOk = async () => {
+//   checkSelected(false).then(async (isRun) => {
+//     if (isRun) {
+//       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+//       const sumPickQty = selectKeys.reduce((previousValue, currentValue) => previousValue + currentValue.pickQty, 0);
 
-      const bills = [];
-      selectKeys.forEach((item) => {
-        bills.push({ billNo: item.billNo, billNoDtlId: item.id, iqcBillNo: item.iqcBillNo });
-      });
+//       const bills = [];
+//       selectKeys.forEach((item) => {
+//         bills.push({ billNo: item.billNo, billNoDtlId: item.id, iqcBillNo: item.iqcBillNo });
+//       });
 
-      await apiQuality.iqcInspect.createdIqcInspectAndStockIn({
-        inspectionStringency: selectKeys[0].inspectionStringency,
-        mitemId: selectKeys[0].mitemId,
-        mitemCode: selectKeys[0].mitemCode,
-        mitemCategoryId: selectKeys[0].mitemCategoryId,
-        supplierId: selectKeys[0].supplierId,
-        pickQty: sumPickQty,
-        billNoList: bills,
-        directInspectOk: true,
-        isCreatedIqcInspect: false, // 是否自动创建IQC检验单据
-        isCreatedStockIn: true, // 自动创建入库单
-      });
+//       await apiQuality.iqcInspect.createdIqcInspectAndStockIn({
+//         inspectionStringency: selectKeys[0].inspectionStringency,
+//         mitemId: selectKeys[0].mitemId,
+//         mitemCode: selectKeys[0].mitemCode,
+//         mitemCategoryId: selectKeys[0].mitemCategoryId,
+//         supplierId: selectKeys[0].supplierId,
+//         pickQty: sumPickQty,
+//         billNoList: bills,
+//         directInspectOk: true,
+//         isCreatedIqcInspect: false, // 是否自动创建IQC检验单据
+//         isCreatedStockIn: true, // 自动创建入库单
+//       });
 
-      await fetchTable();
-      MessagePlugin.success(t('mitemIncomingInspection.一键合格成功'));
-    }
-  });
-};
+//       await fetchTable();
+//       MessagePlugin.success(t('mitemIncomingInspection.一键合格成功'));
+//     }
+//   });
+// };
 // 一键判退
-const directInspectNg = async () => {
-  checkSelected(false).then(async (isRun) => {
-    if (isRun) {
-      const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
-      const sumPickQty = selectKeys.reduce((previousValue, currentValue) => previousValue + currentValue.pickQty, 0);
+// const directInspectNg = async () => {
+//   checkSelected(false).then(async (isRun) => {
+//     if (isRun) {
+//       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+//       const sumPickQty = selectKeys.reduce((previousValue, currentValue) => previousValue + currentValue.pickQty, 0);
 
-      const bills = [];
-      selectKeys.forEach((item) => {
-        bills.push({ billNo: item.billNo, billNoDtlId: item.id, iqcBillNo: item.iqcBillNo });
-      });
+//       const bills = [];
+//       selectKeys.forEach((item) => {
+//         bills.push({ billNo: item.billNo, billNoDtlId: item.id, iqcBillNo: item.iqcBillNo });
+//       });
 
-      await apiQuality.iqcInspect.createdIqcInspectAndStockIn({
-        inspectionStringency: selectKeys[0].inspectionStringency,
-        mitemId: selectKeys[0].mitemId,
-        mitemCode: selectKeys[0].mitemCode,
-        mitemCategoryId: selectKeys[0].mitemCategoryId,
-        supplierId: selectKeys[0].supplierId,
-        pickQty: sumPickQty,
-        billNoList: bills,
-        directInspectNg: true,
-        isCreatedIqcInspect: false, // 是否自动创建IQC检验单据
-        isCreatedStockIn: true, // 自动创建入库单
-      });
+//       await apiQuality.iqcInspect.createdIqcInspectAndStockIn({
+//         inspectionStringency: selectKeys[0].inspectionStringency,
+//         mitemId: selectKeys[0].mitemId,
+//         mitemCode: selectKeys[0].mitemCode,
+//         mitemCategoryId: selectKeys[0].mitemCategoryId,
+//         supplierId: selectKeys[0].supplierId,
+//         pickQty: sumPickQty,
+//         billNoList: bills,
+//         directInspectNg: true,
+//         isCreatedIqcInspect: false, // 是否自动创建IQC检验单据
+//         isCreatedStockIn: true, // 自动创建入库单
+//       });
 
-      await fetchTable();
-      MessagePlugin.success(t('mitemIncomingInspection.一键判退成功'));
-    }
-  });
-};
+//       await fetchTable();
+//       MessagePlugin.success(t('mitemIncomingInspection.一键判退成功'));
+//     }
+//   });
+// };
 
-const checkSelected = async (isIqcBillNoVerify) => {
-  if (selectWaitId.value.length <= 0) {
-    MessagePlugin.error(t('mitemIncomingInspection.请选择待检单'));
-    return false;
-  }
+// const checkSelected = async (isIqcBillNoVerify) => {
+//   if (selectWaitId.value.length <= 0) {
+//     MessagePlugin.error(t('mitemIncomingInspection.请选择待检单'));
+//     return false;
+//   }
 
-  const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+//   const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
 
-  if (isIqcBillNoVerify) {
-    for (let index = 0; index < selectKeys.length; index++) {
-      const element = selectKeys[index];
-      if (!_.isEmpty(element.iqcBillNo)) {
-        MessagePlugin.error(t('mitemIncomingInspection.单据不允许重复检验'));
-        return false;
-      }
-    }
-  }
+//   if (isIqcBillNoVerify) {
+//     for (let index = 0; index < selectKeys.length; index++) {
+//       const element = selectKeys[index];
+//       if (!_.isEmpty(element.iqcBillNo)) {
+//         MessagePlugin.error(t('mitemIncomingInspection.单据不允许重复检验'));
+//         return false;
+//       }
+//     }
+//   }
 
-  // 相同供应商
-  const distinctSupplierCode = selectKeys
-    .map((n) => n.supplierCode)
-    .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
-  if (!_.isEmpty(distinctSupplierCode) && distinctSupplierCode.length > 1) {
-    MessagePlugin.error(t('mitemIncomingInspection.只能选择相同供应商的接收单'));
-    return false;
-  }
+//   // 相同供应商
+//   const distinctSupplierCode = selectKeys
+//     .map((n) => n.supplierCode)
+//     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
+//   if (!_.isEmpty(distinctSupplierCode) && distinctSupplierCode.length > 1) {
+//     MessagePlugin.error(t('mitemIncomingInspection.只能选择相同供应商的接收单'));
+//     return false;
+//   }
 
-  // 相同物料
-  const distinctMitemCode = selectKeys
-    .map((n) => n.mitemCode)
-    .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
-  if (!_.isEmpty(distinctMitemCode) && distinctMitemCode.length > 1) {
-    MessagePlugin.error(t('mitemIncomingInspection.只能选择相同物料的接收单'));
-    return false;
-  }
+//   // 相同物料
+//   const distinctMitemCode = selectKeys
+//     .map((n) => n.mitemCode)
+//     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
+//   if (!_.isEmpty(distinctMitemCode) && distinctMitemCode.length > 1) {
+//     MessagePlugin.error(t('mitemIncomingInspection.只能选择相同物料的接收单'));
+//     return false;
+//   }
 
-  // 相同接收时间
-  const distinctDatetimeReceipted = selectKeys
-    .map((n) => dayjs(n.datetimeReceipted).format('YYYY-MM-DD'))
-    .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
-  if (!_.isEmpty(distinctDatetimeReceipted) && distinctDatetimeReceipted.length > 1) {
-    MessagePlugin.error(t('mitemIncomingInspection.只能选择相同日期的接收单'));
-    return false;
-  }
+//   // 相同接收时间
+//   const distinctDatetimeReceipted = selectKeys
+//     .map((n) => dayjs(n.datetimeReceipted).format('YYYY-MM-DD'))
+//     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
+//   if (!_.isEmpty(distinctDatetimeReceipted) && distinctDatetimeReceipted.length > 1) {
+//     MessagePlugin.error(t('mitemIncomingInspection.只能选择相同日期的接收单'));
+//     return false;
+//   }
 
-  return true;
-};
+//   return true;
+// };
 
 onMounted(() => {
   pageInit().then(() => {
@@ -709,5 +713,9 @@ onMounted(() => {
 <style lang="less" scoped>
 :deep .t-table__row--active {
   background-color: var(--td-brand-color-light) !important;
+}
+
+:deep(.not-full-tab .t-tabs__content) {
+  overflow: hidden;
 }
 </style>

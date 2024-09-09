@@ -35,7 +35,7 @@
         <div class="table-title">工作中心列表</div>
         <t-space size="small" :align="'end'">
           <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
-          <t-button theme="default" variant="base">导出</t-button>
+          <!-- <t-button theme="default" variant="base">导出</t-button> -->
         </t-space>
       </t-space>
 
@@ -216,10 +216,6 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'wcObjectName',
     title: '关联设备',
-  },
-  {
-    colKey: 'wcStartRate',
-    title: '开动率',
   },
   {
     colKey: 'wcSeq',

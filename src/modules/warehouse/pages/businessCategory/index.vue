@@ -21,8 +21,9 @@
         <template #title>
           {{ '仓库业务类型列表' }}
         </template>
-        <template #actionSlot>
+        <template #op="item">
           <t-space :size="8">
+            <t-link theme="primary" @click="onEditRow(item)">{{ '编辑' }}</t-link>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
               <t-link theme="primary" @click="onDeleteRow">{{ '删除' }}</t-link>
             </t-popconfirm>
@@ -44,33 +45,42 @@
     <t-form ref="formRef" :rules="rules" :data="businessTabData" label-width="120px" @submit="onBusinessSubmit">
       <!-- 第 1️⃣ 行数据 -->
       <t-form-item label="业务类型代码" name="categoryCode">
-        <t-input v-model="businessTabData.categoryCode"></t-input>
+        <t-input v-model="businessTabData.categoryCode" :disabled="isEdit"></t-input>
       </t-form-item>
       <!-- 第 2️⃣ 行数据 -->
       <t-form-item label="业务类型名称" name="categoryName">
-        <t-input v-model="businessTabData.categoryName"></t-input>
+        <t-input v-model="businessTabData.categoryName" :disabled="isEdit"></t-input>
       </t-form-item>
       <!-- 第 3️⃣ 行数据 -->
       <t-form-item label="业务交易方向" name="businessDirection">
-        <t-select v-model="businessTabData.businessDirection">
+        <t-select v-model="businessTabData.businessDirection" :disabled="isEdit">
           <t-option v-for="item in transactionDropDownList" :key="item.value" :label="item.label" :value="item.value" />
         </t-select>
       </t-form-item>
       <!-- 第 4️⃣ 行数据 -->
       <t-form-item label="业务单据前缀" name="perfix">
-        <t-input v-model="businessTabData.perfix"></t-input>
+        <t-input v-model="businessTabData.perfix" :disabled="isEdit"></t-input>
       </t-form-item>
       <!-- 第 5️⃣ 行数据 -->
       <t-form-item label="转出仓库的类型" name="transferOutType">
-        <t-select v-model="businessTabData.transferOutType">
+        <t-select v-model="businessTabData.transferOutType" :disabled="isEdit">
           <t-option v-for="item in outFlowDropDownList" :key="item.value" :label="item.label" :value="item.value" />
         </t-select>
       </t-form-item>
       <!-- 第 6️⃣ 行数据 -->
       <t-form-item label="转入仓库的类型" name="transferInType">
-        <t-select v-model="businessTabData.transferInType">
+        <t-select v-model="businessTabData.transferInType" :disabled="isEdit">
           <t-option v-for="item in inFlowDropDownList" :key="item.value" :label="item.label" :value="item.value" />
         </t-select>
+      </t-form-item>
+      <t-form-item label="启用交易上传" name="isEnableUploadConvert">
+        <t-switch v-model="businessTabData.isEnableUploadConvert" />
+      </t-form-item>
+      <t-form-item label="ERP事务代码" name="erpCategoryCode">
+        <t-input v-model="businessTabData.erpCategoryCode"></t-input>
+      </t-form-item>
+      <t-form-item label="上传顺序" name="ulSeq">
+        <t-input v-model="businessTabData.ulSeq"></t-input>
       </t-form-item>
     </t-form>
     <template #footer>
@@ -88,6 +98,7 @@ import { api } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
+import common from '@/utils/common';
 
 const tableRef = ref(); // 表格实例
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -102,12 +113,17 @@ const businessTotal = ref(0);
 const businessData = reactive({ list: [] });
 // dialog 弹框数据
 const businessTabData = ref({
+  id: '',
   categoryCode: '', // 业务类型代码
   categoryName: '', // 业务类型名称
   businessDirection: null, // 业务交易方向
   perfix: '', // 业务单位前缀
   transferOutType: '', // 转出仓库的类型
   transferInType: '', // 转入仓库的类型
+  isEnableUpload: 0, // 启用交易上传
+  isEnableUploadConvert: false, // 启用交易上传转换类型
+  erpCategoryCode: '', // 对应ERP业务类型代码
+  ulSeq: 0,
 });
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
@@ -145,6 +161,21 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'perfix',
     title: '业务单据前缀',
     width: '120',
+  },
+  {
+    colKey: 'isEnableTradeUploadName',
+    title: '是否启用交易上传',
+    width: '120',
+  },
+  {
+    colKey: 'erpCategoryCode',
+    title: 'ERP事务代码',
+    width: '120',
+  },
+  {
+    colKey: 'ulSeq',
+    title: '上传顺序',
+    width: '100',
   },
   {
     colKey: 'creatorName',
@@ -225,16 +256,44 @@ const onGetAnomalyTypeData = async () => {
 
 // 新增按钮点击事件
 const onAddClick = () => {
+  reset();
   formRef.value.reset({ type: 'empty' });
+  common.reset(businessTabData.value);
+  businessTabData.value.isEnableUpload = 0;
   formVisible.value = true;
   diaLogTitle.value = '新增仓库业务类型';
 };
 
+const isEdit = ref(false);
+const onEditRow = (item: any) => {
+  reset();
+  formVisible.value = true;
+  diaLogTitle.value = '编辑仓库业务类型';
+  isEdit.value = true;
+  Object.assign(businessTabData.value, item.row);
+  businessTabData.value.isEnableUploadConvert = businessTabData.value.isEnableUpload === 1;
+};
+
+const reset = () => {
+  formRef.value.reset({ type: 'empty' });
+  common.reset(businessTabData.value);
+  isEdit.value = false;
+};
+
 // 新增请求
 const onAddBusinessType = async () => {
+  businessTabData.value.isEnableUpload = businessTabData.value.isEnableUploadConvert === true ? 1 : 0;
   await api.businessCategory.addBusinessCategory(businessTabData.value);
   await onGetAnomalyTypeData(); // 获取 表格 数据
   MessagePlugin.success('新增成功');
+};
+
+// 新增请求
+const onEditBusinessType = async () => {
+  businessTabData.value.isEnableUpload = businessTabData.value.isEnableUploadConvert === true ? 1 : 0;
+  await api.businessCategory.updateBusinessCategory(businessTabData.value);
+  await onGetAnomalyTypeData(); // 获取 表格 数据
+  MessagePlugin.success('修改成功');
 };
 
 // #query 查询参数
@@ -299,7 +358,11 @@ const onDeleteBatches = async () => {
 // 表单提交事件
 const onBusinessSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
-    await onAddBusinessType();
+    if (isEdit.value) {
+      await onEditBusinessType();
+    } else {
+      await onAddBusinessType();
+    }
     formVisible.value = false;
   }
 };

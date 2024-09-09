@@ -1,5 +1,8 @@
 {
   "returnManagement": {
+    "该检验单已存在退货单，请检查":"该检验单已存在退货单，请检查",
+    "订单号":"订单号",
+    "tableOrder":"订单号(接收单/采购单)",
     "billNo_placeholder": "提交后会生成退货单号",
     "tabName1": "采购验退",
     "tabName2": "采购仓退",

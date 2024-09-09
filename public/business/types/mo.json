@@ -74,7 +74,7 @@
         "label": "日期范围",
         "comp": "t-radio-button-group",
         "defaultVal": "0",
-        "flex": "280px",
+        "flex": "320px",
         "options": [
           {
             "value": "0",
@@ -91,6 +91,10 @@
           {
             "value": "3",
             "label": "近一周"
+          },
+          {
+            "value": "4",
+            "label": "明天"
           }
         ],
         "operator": "eq"

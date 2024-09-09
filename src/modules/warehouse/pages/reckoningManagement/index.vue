@@ -73,6 +73,7 @@
         select-on-row-click
         :show-pagination="false"
         empty="没有符合条件的数据"
+        :fixed-height="true"
         :show-toolbar="false"
         :total="dataTotals"
       >
@@ -228,7 +229,7 @@ const onPrintClick = async () => {
         const promiseQuery = getPrintBillInfo(billInfo.billNo, billInfo.billId).then((billInfoData: any) => {
           if (billInfoData) {
             const billDtls = billInfoData.dtls;
-            // printData.value.push([{ dataSource: billInfoData, dataSource1: billDtls }]);
+            // printData.value.push([{ dataSource: billInfoData, datasource1: billDtls }]);
             printData.value.push({
               variable: billInfoData,
               dataSource: { DataBase: billInfoData, BillDetailInfoList: billDtls },
@@ -266,18 +267,24 @@ const getPrintBillInfo = (billNo, billId) => {
 
 //* 表格数据 1
 const fetchTable = async () => {
-  setLoading(false);
-  inventoryManagement.value = [];
-  tableDataReckoning.value = [];
-  queryComponent.value.search();
-  setLoading(false);
+  try {
+    setLoading(true);
+    inventoryManagement.value = [];
+    tableDataReckoning.value = [];
+    queryComponent.value.search();
+  } finally {
+    setLoading(false);
+  }
 };
 
 const handleRowSelectChange = async (billId) => {
-  propsdtlId.value = billId; // 选中后将数据传给作废接口作为参数
-  if (billId.length > 0) {
+  try {
     setLoading(true);
-    fetchTables(billId); // 改变选框时从新请求数据
+    propsdtlId.value = billId; // 选中后将数据传给作废接口作为参数
+    if (billId.length > 0) {
+      fetchTables(billId); // 改变选框时从新请求数据
+    }
+  } finally {
     setLoading(false);
   }
 };
@@ -298,16 +305,19 @@ watch(propsdtlId, (newBillId) => {
 
 //* 表格数据 2
 const fetchTables = async (billId) => {
-  setLoading(true);
-  detailsPageUI.value.page = 1; // 子表默认为第一页数据
-  const data = await api.stockCheckBill.getDtlList({
-    pageNum: detailsPageUI.value.page,
-    pageSize: detailsPageUI.value.rows,
-    billId, // 使用传递的 billId
-  });
-  tableMaterialDetails.value = data.list;
-  dataTotals.value = data.total;
-  setLoading(false);
+  try {
+    setLoading(true);
+    detailsPageUI.value.page = 1; // 子表默认为第一页数据
+    const data = await api.stockCheckBill.getDtlList({
+      pageNum: 1,
+      pageSize: 9999999,
+      billId, // 使用传递的 billId
+    });
+    tableMaterialDetails.value = data.list;
+    dataTotals.value = data.total;
+  } finally {
+    setLoading(false);
+  }
 };
 
 const handleUpdateStatus = async (e) => {
@@ -347,29 +357,32 @@ const documentStatusData = async () => {
 const lastQueryParams = ref({});
 //* 查询
 const onInput = async (data: any) => {
-  firstPageUI.value.page = 1;
-  setLoading(true);
-  const { billNo, status, warehouseId, timeCreate = [] } = data;
+  try {
+    firstPageUI.value.page = 1;
+    setLoading(true);
+    const { billNo, status, warehouseId, timeCreate = [] } = data;
 
-  // 保存当前的查询条件
-  lastQueryParams.value = { billNo, status, warehouseId, timeCreate };
-  const [startDate, endDate] = timeCreate;
+    // 保存当前的查询条件
+    lastQueryParams.value = { billNo, status, warehouseId, timeCreate };
+    const [startDate, endDate] = timeCreate;
 
-  firstPageUI.value.page = 1; // 条件过滤时必须赋值为1
-  if (!data.value) {
-    const data = await api.stockCheckBill.getPdList({
-      pageNum: firstPageUI.value.page,
-      pageSize: firstPageUI.value.rows,
-      dateStart: startDate,
-      dateEnd: endDate,
-      warehouseId,
-      billNo,
-      status,
-    });
-    tableDataReckoning.value = [...data.list];
-    dataTotal.value = data.total;
+    firstPageUI.value.page = 1; // 条件过滤时必须赋值为1
+    if (!data.value) {
+      const data = await api.stockCheckBill.getPdList({
+        pageNum: firstPageUI.value.page,
+        pageSize: firstPageUI.value.rows,
+        dateStart: startDate,
+        dateEnd: endDate,
+        warehouseId,
+        billNo,
+        status,
+      });
+      tableDataReckoning.value = [...data.list];
+      dataTotal.value = data.total;
+    }
+  } finally {
+    setLoading(false);
   }
-  setLoading(false);
 };
 
 //* 重置

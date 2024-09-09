@@ -173,15 +173,18 @@ const onInput = async (data: any) => {
 
 //* 表格数据
 const fetchTable = async () => {
-  setLoading(true);
-  const result = await api.containerType.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    keyword: searchText.value,
-  });
-  tableContainerData1.value = result.list;
-  dataTotal1.value = result.total;
-  setLoading(false);
+  try {
+    setLoading(true);
+    const result = await api.containerType.getList({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      keyword: searchText.value,
+    });
+    tableContainerData1.value = result.list;
+    dataTotal1.value = result.total;
+  } finally {
+    setLoading(false);
+  }
 };
 
 // 校验规则

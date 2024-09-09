@@ -8,8 +8,9 @@
     <!-- cmp-table 表格组件  -->
     <cmp-card :span="12">
       <cmp-table
+        ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="billNo"
+        row-key="id"
         :table-column="tableReckoningManagementColumns"
         :table-data="tableDataReceipt"
         :total="dataTotal"
@@ -30,6 +31,13 @@
         <template #title>
           {{ '单据管理' }}
         </template>
+        <template #button>
+          <t-space :size="8">
+            <t-popconfirm theme="default" content="确认重传吗" @confirm="onFailUploadConfirm()">
+              <t-button theme="primary">失败重传</t-button>
+            </t-popconfirm>
+          </t-space>
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -44,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -78,7 +86,6 @@ const optsReceipt = computed(() => {
       defaultVal: '',
       bind: {
         type: 'businessCategory',
-        showTitle: false,
         isMultiple: true, // 多选
       },
     },
@@ -89,18 +96,7 @@ const optsReceipt = computed(() => {
       defaultVal: '',
       bind: {
         type: 'mitem',
-        showTitle: false,
         labelField: 'mitemCode',
-      },
-    },
-    supplierName: {
-      label: '供应商',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'supplier',
-        showTitle: false,
       },
     },
     billNo: {
@@ -111,6 +107,21 @@ const optsReceipt = computed(() => {
       comp: 't-input',
       defaultVal: '',
     },
+    sourceBillNo: {
+      label: '关联单据号',
+      event: 'input',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    supplierName: {
+      label: '供应商',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'supplier',
+      },
+    },
     timeCreate: {
       label: '创建时间',
       comp: 't-date-range-picker',
@@ -120,11 +131,62 @@ const optsReceipt = computed(() => {
         format: 'YYYY-MM-DD',
       },
     },
+    locationId: {
+      comp: 'bcmp-select-business',
+      placeholder: '请选择源货位',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'location',
+        label: '源货位',
+        title: '源货位',
+      },
+    },
+    toLocationId: {
+      placeholder: '请选择目标货位',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'location',
+        label: '目标货位',
+        title: '目标货位',
+      },
+    },
+    billStatus: {
+      label: '单据状态',
+      comp: 't-select',
+      bind: {
+        options: billStatusOption.value,
+      },
+    },
+    uploadStatus: {
+      label: '上传状态',
+      comp: 't-select',
+      bind: {
+        options: uploadStatusOption.value,
+      },
+    },
   };
 });
+const billStatusOption = ref([
+  { label: '已交接', value: 'RECEIPTED' },
+  { label: '已过账', value: 'TRANSFERRED' },
+]);
+const uploadStatusOption = ref([
+  { label: '等待上传', value: 'W' },
+  { label: '上传成功', value: 'S' },
+  { label: '上传失败', value: 'E' },
+]);
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+    width: 46,
+    fixed: 'left',
+  },
   { title: '事物类型', colKey: 'categoryName', width: 85 },
   { title: '单据号', width: 150, colKey: 'billNo' },
   { title: '关联单号', width: 120, colKey: 'sourceBillNo' },
@@ -134,7 +196,6 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '交易数量', width: 85, colKey: 'pickQty' },
   { title: '单位', width: 85, colKey: 'uomName' },
   { title: 'ERP行号', width: 85, colKey: 'erpLineNo' },
-  { title: '上传状态', width: 85, colKey: 'uploadStatusName' },
   { title: '备注', width: 85, colKey: 'memo' },
   { title: '供应商', width: 85, colKey: 'supplierName' },
   { title: '源仓库', width: 85, colKey: 'warehouseName' },
@@ -144,6 +205,8 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '目标货区', width: 85, colKey: 'toDistrictName' },
   { title: '目标货位', width: 85, colKey: 'toLocationName' },
   { title: '单据状态', width: 85, colKey: 'billStatusName' },
+  { title: '上传状态', width: 85, colKey: 'uploadStatusName' },
+  { title: '上传返回信息', width: 200, colKey: 'uploadMessage' },
   { title: '创建人', width: 85, colKey: 'creator' },
   {
     title: '创建时间',
@@ -189,17 +252,21 @@ onMounted(async () => {
 
 //* 表格数据
 const fetchTable = async (transactionBillNo) => {
-  setLoading(true);
-  selectedReceiptRowKeys.value = [];
-  tableDataReceipt.value = [];
-  const data = await api.billManagement.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    billNo: transactionBillNo.billNo,
-  });
-  tableDataReceipt.value = data.list;
-  dataTotal.value = data.total;
-  setLoading(false);
+  try {
+    setLoading(true);
+    selectedReceiptRowKeys.value = [];
+    tableDataReceipt.value = [];
+    const data = await api.billManagement.getList({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      billNo: transactionBillNo.billNo,
+      sourceBillNo: transactionBillNo.sourceBillNo,
+    });
+    tableDataReceipt.value = data.list;
+    dataTotal.value = data.total;
+  } finally {
+    setLoading(false);
+  }
 };
 
 //* 表格刷新
@@ -225,10 +292,24 @@ const onInput = async (data: any) => {
       dateEnd: timeCreate[1],
       dateStart: timeCreate[0],
       supplierId: supplierName,
+      sourceBillNo: data.sourceBillNo,
+      toLocationId: data.toLocationId,
+      locationId: data.locationId,
+      ...data,
     });
     tableDataReceipt.value = result.list;
     dataTotal.value = result.total;
   }
+};
+const tableRef = ref(); // 表格实例
+const onFailUploadConfirm = async () => {
+  const selectedRowKeys = tableRef.value?.getSelectedRowKeys();
+  const selectedRowList = tableDataReceipt.value.filter((item) => selectedRowKeys.includes(item.id));
+  const failedBillNoList = selectedRowList.map((item) => item.billNo);
+  await api.billManagement.failUpload({ failedBillNoList });
+  fetchTable('');
+  tableRef.value?.setSelectedRowKeys([]);
+  MessagePlugin.success('重传设置成功,请等待后台处理结果');
 };
 </script>
 

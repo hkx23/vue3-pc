@@ -79,7 +79,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '原因', width: 85, colKey: 'reason' },
   { title: '仓库', width: 85, colKey: 'warehouseName' },
   { title: '科目', width: 80, colKey: 'account' },
-  { title: '费用部门', width: 80, colKey: 'costDepartment' },
+  { title: '部门', width: 80, colKey: 'costDepartment' },
   { title: '创建人', width: 74, colKey: 'creatorName' },
   { title: '创建时间', width: 80, colKey: 'timeCreate' },
   { title: '最后更新人', width: 100, colKey: 'modifierName' },

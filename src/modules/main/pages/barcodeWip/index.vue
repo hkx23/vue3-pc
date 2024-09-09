@@ -213,7 +213,7 @@
                   >
                     作废
                   </t-button>
-                  <t-button theme="default"> 导出 </t-button>
+                  <!-- <t-button theme="default"> 导出 </t-button> -->
                 </template>
                 <template #operations="{ row }">
                   <t-link theme="primary" @click.stop="onLogInterface(row)"> 日志 </t-link>
@@ -311,7 +311,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { debounce } from 'lodash';
+import _, { debounce } from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
@@ -701,9 +701,19 @@ const onPrintManager = async () => {
 
     printManagerData.value = [];
     loading.value = true;
-
+    const printDatas = [];
     productSelectedRowKeys.value.forEach((barcodeWipId) => {
       const foundItem = manageTabData.list.find((item) => item.barcodeWipId === barcodeWipId);
+      const excItem = {};
+      Object.assign(excItem, foundItem);
+      // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
+      Object.keys(excItem).forEach((key) => {
+        if (_.isFunction(excItem[key])) {
+          excItem[key] = null;
+        } else if (_.isObject(excItem[key])) {
+          excItem[key] = null;
+        }
+      });
       const DataBase = {
         SERIAL_NUMBER: foundItem.serialNumber,
         TIME_CREATE: new Date(),
@@ -714,11 +724,19 @@ const onPrintManager = async () => {
         WC_NAME: foundItem.workcenterName,
         DATETIME_SCHE: foundItem.datetimeSche,
         ORG_NAME: foundItem.orgName,
+        ...excItem,
       };
-      printManagerData.value.push({
-        variable: DataBase,
-        dataSource: { DataBase },
-      });
+      printDatas.push(DataBase);
+      // 多个对象则打印多页
+      // printManagerData.value.push({
+      //   variable: DataBase,
+      //   dataSource: { DataBase },
+      // });
+    });
+
+    printManagerData.value.push({
+      variable: printDatas,
+      dataSource: printDatas,
     });
 
     await api.barcodeWip.reprintBarcode({
@@ -973,7 +991,7 @@ const inputTimeQtyChange = (value: any, row: any) => {
 // 生成点击事件
 const onGenerate = debounce(async () => {
   if (!generateData?.value?.workcenterId) {
-    MessagePlugin.warning('参数有误，请联系管理员！');
+    MessagePlugin.warning('参数有误，工作中心为空,请联系管理员！');
     return;
   }
   if (!generateData?.value?.moScheduleId) {
@@ -1034,10 +1052,20 @@ const onPrint = async () => {
   try {
     printData.value = [];
     loading.value = true;
-
+    const printDatas = [];
     const moSchedule = printTopTabData.list.find((item) => item.moScheduleId === topPrintID.value);
     selectedRowKeys.value.forEach((barcodeWipId) => {
       const foundItem = printDownTabData.list.find((item) => item.barcodeWipId === barcodeWipId);
+      const excItem = {};
+      Object.assign(excItem, foundItem);
+      // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
+      Object.keys(excItem).forEach((key) => {
+        if (_.isFunction(excItem[key])) {
+          excItem[key] = null;
+        } else if (_.isObject(excItem[key])) {
+          excItem[key] = null;
+        }
+      });
       const DataBase = {
         SERIAL_NUMBER: foundItem.serialNumber,
         TIME_CREATE: new Date(),
@@ -1048,11 +1076,21 @@ const onPrint = async () => {
         WC_NAME: moSchedule.workcenterName,
         DATETIME_SCHE: moSchedule.datetimeSche,
         ORG_NAME: moSchedule.orgName,
+        ...excItem,
       };
-      printData.value.push({
-        variable: DataBase,
-        dataSource: { DataBase },
-      });
+
+      printDatas.push(DataBase);
+
+      // 多个对象则打印多页
+      // printData.value.push({
+      //   variable: DataBase,
+      //   dataSource: { DataBase },
+      // });
+    });
+    // datasource 传入对象数组即可一页连续打印
+    printData.value.push({
+      variable: printDatas,
+      dataSource: printDatas,
     });
 
     await api.barcodeWip.printBarcode({ ids: selectedRowKeys.value });

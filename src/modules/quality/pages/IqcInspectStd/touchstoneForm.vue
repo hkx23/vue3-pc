@@ -192,7 +192,7 @@ const dtlData = ref({
   technicalRequest: '',
   uom: '',
   uomName: '',
-  samplingStandardType: '1',
+  samplingStandardType: 'GB',
   samplingStandardCode: '',
   inspectLevel: '',
   inspectLevelName: '',
@@ -338,7 +338,7 @@ const onConfirmDtl = async () => {
     MessagePlugin.warning('请补充表单信息');
     return false;
   }
-  if (dtlData.value.samplingStandardType === '1') {
+  if (dtlData.value.samplingStandardType === 'GB') {
     if (isEmpty(dtlData.value.inspectLevel)) {
       MessagePlugin.error('请补充表单信息');
       return false;
@@ -375,7 +375,7 @@ const onConfirmDtl = async () => {
   rowData.value = {
     ...dtlData.value,
     fileList,
-    samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
+    samplingStandardTypeName: dtlData.value.samplingStandardType === 'GB' ? '国标' : '企标',
     itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
     inspectTypeName: stdTypeOption.value.find((item) => item.value === dtlData.value.inspectType)?.label,
     unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,

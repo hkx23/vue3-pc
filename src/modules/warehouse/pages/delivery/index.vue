@@ -6,6 +6,7 @@
         <!-- ################# 送货单表格数据 ###################### -->
         <cmp-table
           ref="tableRef"
+          v-model:pagination="pageUI"
           row-key="id"
           active-row-type="single"
           :table-column="tableDeliveryColumns"
@@ -20,6 +21,31 @@
           @cell-click="onEditDeliveryRowClick"
         >
           <template #title> {{ t('delivery.tableSubTilte') }} </template>
+          <template #button>
+            <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
+              <t-option
+                v-for="item in onPrintTemplateList.list"
+                :key="item.id"
+                :label="item.tmplName"
+                :value="item.id"
+              />
+            </t-select>
+            <t-button theme="primary" :disabled="selectRowKeys?.length == 0" @click="onStartDeliveryClick">
+              {{ t('delivery.startDelivery') }}
+            </t-button>
+            <t-button theme="default" :disabled="selectRowKeys?.length == 0" @click="onDeletedClick">
+              {{ t('common.button.delete') }}
+            </t-button>
+            <cmp-print-button
+              :template-id="printMode.printTempId"
+              :show-icon="false"
+              :disabled="selectRowKeys?.length == 0"
+              :data="printData"
+              @before-print="onPrintClick"
+            >
+              {{ t('common.button.rePrint') }}</cmp-print-button
+            >
+          </template>
         </cmp-table>
       </cmp-container>
     </cmp-card>
@@ -33,12 +59,11 @@
           :table-column="tableDeliveryDtlColumns"
           :table-data="tableDataDeliveryDtl"
           :loading="loadingDeliveryDtl"
-          :total="dataTotal"
           :hover="false"
           :fixed-height="true"
           :stripe="false"
           :header-affixed-top="true"
-          @refresh="fetchTable"
+          :show-pagination="false"
         >
           <template #title> {{ t('delivery.tableDtlSubTilte') }} </template>
         </cmp-table>
@@ -49,12 +74,15 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 
+import { api as apiMain } from '@/api/main';
 import { api as apiWarehouse, DeliveryDtlVO, DeliveryVO } from '@/api/warehouse';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import commmon from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -62,8 +90,21 @@ const { t } = useLang();
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
-
 const { loading: loadingDeliveryDtl, setLoading: setLoadingDeliveryDtl } = useLoading();
+const selectRowKeys = computed(() => {
+  return tableRef.value?.getSelectedRowKeys();
+});
+
+// 获取 打印模板 下拉数据
+const printMode = reactive({ printTempId: '' });
+const onPrintTemplateList = reactive({ list: [] });
+const onPrintTemplateData = async () => {
+  const res = await apiMain.printTmpl.getPrintTmplListByCategory({ category: 'DELIVERY' });
+  onPrintTemplateList.list = res;
+  if (res && res.length > 0) {
+    printMode.printTempId = res[0].id;
+  }
+};
 
 // 查询组件值
 const datePlanRangeDefault = ref([
@@ -97,26 +138,41 @@ const opts = computed(() => {
       comp: 'bcmp-select-business',
       defaultVal: '',
       bind: {
-        type: 'supplier',
+        type: 'supplierAuth',
+      },
+    },
+    mitemId: {
+      label: '物料',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'mitem',
+        isMultiple: false,
       },
     },
   };
 });
 
 const tableDeliveryColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
   { title: `${t('delivery.billNo')}`, width: 140, colKey: 'billNo' },
   { title: `${t('delivery.dateDelivery')}`, width: 140, colKey: 'dateDelivery' },
   { title: `${t('delivery.supplierCode')}`, width: 140, colKey: 'supplierCode' },
   { title: `${t('delivery.supplierName')}`, width: 240, colKey: 'supplierName' },
   { title: `${t('delivery.statusName')}`, width: 120, colKey: 'statusName' },
+  { title: `${t('delivery.dateRealDelivery')}`, width: 160, colKey: 'dateRealDelivery' },
 ];
 
 const tableDeliveryDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('delivery.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('delivery.mitemName')}`, width: 120, colKey: 'mitemName' },
   { title: `${t('delivery.lineSeq')}`, width: 120, colKey: 'lineSeq' },
+  { title: `${t('delivery.lineSeq')}`, width: 120, colKey: 'lineSeq' },
+  { title: `${t('delivery.batchLot')}`, width: 120, colKey: 'batchLot' },
   { title: `${t('delivery.qty')}`, width: 120, colKey: 'qty' },
   { title: `${t('delivery.receivedQty')}`, width: 120, colKey: 'receivedQty' },
+  { title: `${t('delivery.memo')}`, width: 120, colKey: 'memo' },
   { title: `${t('delivery.datePo')}`, width: 120, colKey: 'datePo' },
   { title: `${t('delivery.poNo')}`, width: 140, colKey: 'poNo' },
   { title: `${t('delivery.poLineNo')}`, width: 140, colKey: 'poLineNo' },
@@ -142,12 +198,13 @@ const conditionEnter = (data: any) => {
   pageUI.value.page = 1;
   optsValue.value = data;
   selectDeliveryRow.value.id = '';
+  tableRef.value.setSelectedRowKeys([]);
   fetchTable();
 };
 
 // 加载送货单表格
 const fetchTable = async () => {
-  setLoading(true);
+  commmon.loadingPluginFullScreen(true);
   try {
     if (optsValue.value.datePlanRange) {
       if (optsValue.value.datePlanRange[0]) {
@@ -167,7 +224,7 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    commmon.loadingPluginFullScreen(false);
     fetchDeliveryDtlTable();
   }
 };
@@ -199,7 +256,120 @@ const clearDeliveryDtlTable = async () => {
   tableDataDeliveryDtl.value = [];
 };
 
+// 批量删除送货单
+const onDeletedClick = async () => {
+  const ids = [];
+  selectRowKeys.value.forEach((element) => {
+    ids.push(element);
+  });
+  const confirmDia = DialogPlugin({
+    header: t('common.button.delete'),
+    body: t('common.message.confirmDelete'),
+    theme: 'warning',
+    confirmBtn: t('common.button.confirm'),
+    cancelBtn: t('common.button.cancel'),
+    onConfirm: async () => {
+      try {
+        setLoading(true);
+        await apiWarehouse.delivery.deleteDelivery({
+          ids,
+        });
+        fetchTable();
+        confirmDia.hide();
+        MessagePlugin.success(t('common.message.deleteSuccess'));
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        confirmDia.hide();
+      }
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
+  });
+};
+
+// 开始送货
+const onStartDeliveryClick = async () => {
+  const ids = [];
+  selectRowKeys.value.forEach((element) => {
+    ids.push(element);
+  });
+  const confirmDia = DialogPlugin({
+    header: t('delivery.startDelivery'),
+    body: t('delivery.isStartDelivery'),
+    theme: 'warning',
+    confirmBtn: t('common.button.confirm'),
+    cancelBtn: t('common.button.cancel'),
+    onConfirm: async () => {
+      try {
+        await apiWarehouse.delivery.startDelivery({
+          ids,
+        });
+        fetchTable();
+        confirmDia.hide();
+        MessagePlugin.success(t('common.message.saveSuccess'));
+      } catch (e) {
+        confirmDia.hide();
+      }
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
+  });
+};
+
+// 打印
+const printData = ref([]);
+const onPrintClick = async () => {
+  let isSuccess = true;
+  printData.value = [];
+  const promiseAll = [];
+  setLoading(true);
+  try {
+    selectRowKeys.value.forEach((element) => {
+      const billInfo = tableDataDelivery.value.find((item: any) => item.id === element);
+      if (billInfo) {
+        const promiseQuery = getPrintBillInfo(billInfo.billNo).then((billInfoData: any) => {
+          if (billInfoData) {
+            const billDtls = billInfoData.deliveryDtlVOs;
+            printData.value.push({
+              variable: billInfoData,
+              dataSource: { BillInfoList: billInfoData, BillDetailInfoList: billDtls },
+            });
+          }
+        });
+        promiseAll.push(promiseQuery);
+      }
+    });
+    await Promise.all(promiseAll);
+  } catch (e) {
+    console.log(e);
+    isSuccess = false;
+  } finally {
+    setLoading(false);
+  }
+  return isSuccess;
+};
+
+// 获取送货单打印信息
+const getPrintBillInfo = (billNo) => {
+  return new Promise((resolve, reject) => {
+    const billInfoData = apiWarehouse.delivery.getDeliveryInfo({
+      pageNum: 1,
+      pageSize: 9999,
+      billNo,
+    }) as any;
+    if (billInfoData) {
+      resolve(billInfoData);
+    } else {
+      reject();
+    }
+  });
+};
+
 onMounted(() => {
+  onPrintTemplateData(); // 获取 打印模板下拉数据
   fetchTable();
 });
 </script>

@@ -22,7 +22,7 @@
         </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
-          <t-button theme="default">导入</t-button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="w_district" />
         </template>
 
         <template #op="row">
@@ -142,18 +142,21 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 //* 表格数据
 const fetchTable = async () => {
-  setLoading(true);
-  selectedWarehouseRowKeys.value = [];
-  tableDataWarehouse.value = [];
-  const data = await api.district.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    warehouseId: formData.queryData.warehouseId,
-    districtKeyword: formData.queryData.districtKeyword,
-  });
-  tableDataWarehouse.value = data.list;
-  dataTotal.value = data.total;
-  setLoading(false);
+  try {
+    setLoading(true);
+    selectedWarehouseRowKeys.value = [];
+    tableDataWarehouse.value = [];
+    const data = await api.district.getList({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      warehouseId: formData.queryData.warehouseId,
+      districtKeyword: formData.queryData.districtKeyword,
+    });
+    tableDataWarehouse.value = data.list;
+    dataTotal.value = data.total;
+  } finally {
+    setLoading(false);
+  }
 };
 //* 表格刷新
 const tabRefresh = async () => {

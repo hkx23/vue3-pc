@@ -6,7 +6,7 @@
         <span>{{ props.formTitle }}</span>
       </t-space>
     </template>
-    <cmp-container :full="true" style="height: calc(90vh - 56px - 57px)">
+    <cmp-container :full="true">
       <!-- 单据相关详细信息 -->
       <cmp-card v-if="safeSomeData && safeSomeData.billNo">
         <template #title> 单据号{{ safeSomeData.billNo }}相关详细信息 </template>
@@ -23,7 +23,7 @@
           <t-descriptions-item label="事物类型：" name="categoryName">{{
             safeSomeData.categoryName
           }}</t-descriptions-item>
-          <t-descriptions-item label="费用部门：" name="costDepartment">{{
+          <t-descriptions-item label="部门：" name="costDepartment">{{
             safeSomeData.costDepartment
           }}</t-descriptions-item>
           <t-descriptions-item label="原因：" name="reason">{{ safeSomeData.reason }}</t-descriptions-item>
@@ -43,6 +43,7 @@
           :show-pagination="false"
           empty="没有符合条件的数据"
           :show-toolbar="false"
+          max-height="300px"
           :table-data="tableDocumentDetails"
         >
           <!-- <template #indexSlot="{ rowIndex }">
@@ -57,6 +58,7 @@
           row-key="scanBarcode"
           :table-column="tableWarehouseColumns1"
           :show-pagination="false"
+          max-height="600px"
           empty="没有符合条件的数据"
           :show-toolbar="false"
           :table-data="tableLabelDetail"
@@ -95,7 +97,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '目标仓库', width: 100, colKey: 'toWarehouseName' },
   { title: '目标货位', width: 100, colKey: 'toLocationName' },
   { title: '交易数量', width: 100, colKey: 'pickQty' },
-  { title: '需求数量', width: 100, colKey: 'reqQty' },
+  // { title: '需求数量', width: 100, colKey: 'reqQty' },
 ];
 //* 表格标题--标签明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [

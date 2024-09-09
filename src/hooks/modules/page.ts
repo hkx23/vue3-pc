@@ -13,3 +13,11 @@ export const usePage = (initValue = { page: 1, rows: 20 }) => {
     pageUI,
   };
 };
+
+export const useCustomerPage = (initValue = { page: 1, rows: 200 }) => {
+  const pageUI = ref(initValue);
+
+  return {
+    pageUI,
+  };
+};

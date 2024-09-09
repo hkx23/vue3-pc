@@ -294,17 +294,9 @@
   {
     "value": "workstationAuth",
     "name": "工站"
-  },
+  }, 
   {
-    "value": "mould",
-    "name": "模具"
-  },
-  {
-    "value": "repairItem",
-    "name": "维修项目"
-  },
-  {
-    "value": "maintenanceItem",
-    "name": "保养项目"
+    "value": "supplierAuth",
+    "name": "供应商权限"
   }
 ]

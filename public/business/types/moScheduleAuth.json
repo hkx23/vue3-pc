@@ -1,0 +1,57 @@
+{
+  "title": "排产单：",
+  "placeholder": "请选择排产单",
+  "url": "/api/main/moSchedule/items",
+  "httptype": "POST",
+  "category": "",
+  "tableWidth": 850,
+  "columns": [
+    {
+      "title": "生产订单号",
+      "key": "scheCode",
+      "width": "150",
+      "align": "left"
+    },
+    {
+      "title": "产品编码",
+      "key": "mitemCode",
+      "width": "150",
+      "align": "left"
+    },
+    {
+      "title": "产品名称",
+      "key": "mitemName",
+      "width": "150",
+      "align": "left"
+    },
+    {
+      "title": "计划数量",
+      "key": "planQty",
+      "width": "120",
+      "align": "left"
+    },
+    {
+      "title": "计划开始时间",
+      "key": "datetimePlanStart",
+      "width": "160",
+      "align": "left"
+    },
+    {
+      "title": "计划完成时间",
+      "key": "datetimePlanEnd",
+      "width": "160",
+      "align": "left"
+    },
+    {
+      "title": "工作中心",
+      "key": "workCenterName",
+      "width": "160",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "scheCode"
+  }
+}

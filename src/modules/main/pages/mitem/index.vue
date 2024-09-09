@@ -34,7 +34,7 @@
       v-model:visible="formVisible"
       :header="t('common.dialog.header.edit')"
       :on-confirm="onConfirmForm"
-      width="786px"
+      width="900px"
       :close-on-overlay-click="false"
     >
       <t-space direction="vertical">
@@ -82,6 +82,8 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.main.raw'), width: 160, colKey: 'isRawName' },
   { title: t('business.main.product'), width: 160, colKey: 'isInProcessName' },
   { title: t('business.main.inProduct'), width: 160, colKey: 'isProductName' },
+  { title: t('business.main.specificationsQty'), width: 160, colKey: 'specificationsQty' },
+  { title: t('mitem.min_packaging_qty'), width: 160, colKey: 'minPackagingQty' },
   { title: t('common.button.operation'), align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 // 查询按钮
@@ -141,8 +143,8 @@ const fetchTable = async () => {
       keyword: keyword.value,
       mitemCategoryKeyword: mitemCategoryKeyword.value,
       isRaw: mitemTypeSelect.value.find((n) => n === t('business.main.raw')) != null ? 1 : 0,
-      isInProcess: mitemTypeSelect.value.find((n) => n === t('business.main.inProduct')) != null ? 1 : 0,
-      isProduct: mitemTypeSelect.value.find((n) => n === t('business.main.product')) != null ? 1 : 0,
+      isInProcess: mitemTypeSelect.value.find((n) => n === t('business.main.product')) != null ? 1 : 0,
+      isProduct: mitemTypeSelect.value.find((n) => n === t('business.main.inProduct')) != null ? 1 : 0,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       sorts: sortList.value.sorters,
@@ -159,7 +161,7 @@ const fetchTable = async () => {
 
 const onEditRowClick = (value: any) => {
   // const rowData = value.row;
-  formRef.value.getUom();
+  // formRef.value.getUom();
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
   formVisible.value = true;
 };

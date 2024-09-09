@@ -37,7 +37,8 @@
               :disabled="selectRowKeys?.length == 0"
               :data="printData"
               @before-print="onPrintClick"
-            />
+              >打印</cmp-print-button
+            >
           </template>
         </cmp-table>
       </cmp-container>
@@ -107,10 +108,10 @@ const opts = computed(() => {
       placeholder: t('common.placeholder.input', [`${t('returnManagement.billNo')}`]),
     },
     poBillNo: {
-      label: t('returnManagement.poBillNo'),
+      label: t('returnManagement.订单号'),
       comp: 't-input',
       defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('returnManagement.poBillNo')}`]),
+      placeholder: t('common.placeholder.input', [`${t('returnManagement.订单号')}`]),
     },
     supplierCode: {
       label: t('returnManagement.supplierCode'),
@@ -167,7 +168,7 @@ const tableReturnManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('returnManagement.colBillNo')}`, width: 140, colKey: 'billNo' },
   { title: `${t('returnManagement.colBillNoDesc')}`, width: 140, colKey: 'reason' },
   { title: `${t('returnManagement.colIqcBillNo')}`, width: 140, colKey: 'sourceBillNo' },
-  { title: `${t('returnManagement.colPoBillNo')}`, width: 140, colKey: 'erpBillNo' },
+  { title: `${t('returnManagement.tableOrder')}`, width: 140, colKey: 'erpBillNo' },
 
   { title: `${t('returnManagement.colSupplierCode')}`, width: 140, colKey: 'supplierCode' },
   { title: `${t('returnManagement.colSupplierName')}`, width: 140, colKey: 'supplierName' },

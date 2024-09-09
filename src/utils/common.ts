@@ -107,4 +107,19 @@ export default {
   },
 
   // 可以在这里继续添加更多的通用方法。
+
+  // 获取用户的功能操作记录
+  getUserOperate(modulePath: string, operateType: string) {
+    return new Promise((resolve, reject) => {
+      const data = apiMain.moduleUserOperate.getUserOperate({
+        modulePath,
+        operateType,
+      });
+      if (data) {
+        resolve(data);
+      } else {
+        reject();
+      }
+    });
+  },
 };

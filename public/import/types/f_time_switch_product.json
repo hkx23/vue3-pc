@@ -12,7 +12,7 @@
       "field": "perCode"
     },
     {
-      "title": "值类型名称（前）",
+      "title": "值类型名称（前）(必填)",
       "field": "perName"
     },
     {
@@ -20,7 +20,7 @@
       "field": "backCode"
     },
     {
-      "title": "值类型名称（后）",
+      "title": "值类型名称（后）(必填)",
       "field": "backName"
     },
     {
