@@ -28,12 +28,25 @@
             <template #billNo="{ row }">
               <t-link theme="primary" @click="viewBill(row)"> {{ row.billNo || '-' }}</t-link>
             </template>
+
+            <!-- <template #op="slotProps">
+              <t-space :size="8">
+                <t-link theme="primary" @click="onEditRow(slotProps.row)">查看日志</t-link>
+                <t-popconfirm
+                  theme="default"
+                  :content="t('common.message.confirmDelete')"
+                  @confirm="onDeleteRow(slotProps.row)"
+                >
+                  <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+                </t-popconfirm>
+              </t-space>
+            </template> -->
           </cmp-table>
         </cmp-card>
       </cmp-container>
     </cmp-card>
     <cmp-container>
-      <cmp-row>
+      <!-- <cmp-row>
         <cmp-card :ghost="false">
           <bcmp-page-single
             ref="equipmentRelateRef"
@@ -53,7 +66,7 @@
           >
           </bcmp-page-single>
         </cmp-card>
-      </cmp-row>
+      </cmp-row> -->
       <!-- <bcmp-page-single
          
         :page-setting="mitemSetting"
@@ -86,7 +99,7 @@
 </template>
 <script lang="ts">
 export default {
-  name: 'EquipmentmaintenanceBill',
+  name: 'EquipmentRepairBill',
 };
 </script>
 <script setup lang="ts">
@@ -98,8 +111,8 @@ import { usePage } from '@/hooks/modules/page';
 import common from '@/utils/common';
 
 import { useLang } from './lang';
-import billItemSettingJson from './setting/billItemSetting';
-import billItemSparePartSettingJson from './setting/billItemSparePartSetting';
+// import billItemSettingJson from './setting/billItemSetting';
+// import billItemSparePartSettingJson from './setting/billItemSparePartSetting';
 // import relateItem from './relateItem.vue';
 // import mainAddFormJson from './setting/mainAddForm.json';
 // import mainEditFormJson from './setting/mainEditForm.json';
@@ -110,12 +123,12 @@ const { t } = useLang();
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
-const billItemSetting: any = {
-  ...billItemSettingJson,
-};
-const billItemSparePartSetting: any = {
-  ...billItemSparePartSettingJson,
-};
+// const billItemSetting: any = {
+//   ...billItemSettingJson,
+// };
+// const billItemSparePartSetting: any = {
+//   ...billItemSparePartSettingJson,
+// };
 
 const mainSetting: any = {
   ...mainSettingJson,
@@ -138,50 +151,79 @@ const onSelectChange = (value) => {
   selectedRowKeys.value = value;
 };
 const rowMaintenanceBillID = ref(''); // 点击行ID
-const equipmentRelateRef = ref();
+// const equipmentRelateRef = ref();
 const onPlanSelectChange = async ({ row }) => {
   rowMaintenanceBillID.value = row.id || row.ID;
   relateCondition.value = [
     {
-      tableName: 'E_MAINTENANCE_BILL_DTL',
-      field: 'E_MAINTENANCE_BILL_HEAD_ID',
+      tableName: 'E_REPAIR_BILL_DTL',
+      field: 'E_REPAIR_BILL_HEAD_ID',
       operator: 'eq',
       value: rowMaintenanceBillID.value,
     },
   ];
   // 等待 DOM 更新完成
   await nextTick();
-  equipmentRelateRef.value.fetchTable();
+  // equipmentRelateRef.value.fetchTable();
 };
-const equipmentRelateSpartRef = ref();
-const rowMaintenanceBillDtlID = ref(''); // 点击行ID
-const onItemRowClick = async (row) => {
-  rowMaintenanceBillDtlID.value = row.id || row.ID;
-  relateItemCondition.value = [
-    {
-      tableName: 'E_MAINTENANCE_BILL_DTL_SPARE_PART',
-      field: 'E_MAINTENANCE_BILL_DTL_ID',
-      operator: 'eq',
-      value: rowMaintenanceBillDtlID.value,
-    },
-  ];
-  // 等待 DOM 更新完成
-  await nextTick();
-  equipmentRelateSpartRef.value.fetchTable();
-};
+// const equipmentRelateSpartRef = ref();
+// const rowMaintenanceBillDtlID = ref(''); // 点击行ID
+// const onItemRowClick = async (row) => {
+//   rowMaintenanceBillDtlID.value = row.id || row.ID;
+//   relateItemCondition.value = [
+//     {
+//       tableName: 'E_REPAIR_BILL_DTL_SPARE_PART',
+//       field: 'E_REPAIR_BILL_DTL_ID',
+//       operator: 'eq',
+//       value: rowMaintenanceBillDtlID.value,
+//     },
+//   ];
+//   // 等待 DOM 更新完成
+//   await nextTick();
+//   // equipmentRelateSpartRef.value.fetchTable();
+// };
 
 // 查询组件
 // const opts = ref({});
 const opts = computed(() => {
   return {
-    keyWord: {
-      label: t('maintenanceBill.单据编号'),
+    equipmentCode: {
+      label: t('repairBill.设备编码'),
       comp: 't-input',
       defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('maintenanceBill.单据编号')}`]),
+      placeholder: t('common.placeholder.input', [`${t('repairBill.设备编码')}`]),
+    },
+    equipmentName: {
+      label: t('repairBill.设备名称'),
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: t('common.placeholder.input', [`${t('repairBill.设备名称')}`]),
+    },
+    assetTypeId: {
+      label: t('repairBill.设备类型'),
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'assetType',
+        showTitle: false,
+      },
+      placeholder: t('common.placeholder.select', [`${t('repairBill.设备类型')}`]),
+    },
+    repairItemCode: {
+      label: t('repairBill.故障编码'),
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: t('common.placeholder.input', [`${t('repairBill.故障编码')}`]),
+    },
+    repairItemDesc: {
+      label: t('repairBill.故障描述'),
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: t('common.placeholder.input', [`${t('repairBill.故障描述')}`]),
     },
     timeCreate: {
-      label: t('maintenanceBill.创建时间'),
+      label: t('repairBill.报障日期范围'),
       comp: 't-date-range-picker',
       bind: {
         enableTimePicker: true,
@@ -225,7 +267,7 @@ const fetchTable = async () => {
       filters: filterList.value,
       relateType: 'equipment',
     };
-    const res: any = await api.maintenanceBillHead.search(searchCondition);
+    const res: any = await api.repairBillHead.search(searchCondition);
     tableData.value = res.list; // 表格数据赋值
     dataTotal.value = res.total; // 总页数赋值
   } catch (e) {
@@ -237,26 +279,26 @@ const fetchTable = async () => {
 
 // 数据源类型
 const settingObject = ref();
-const datasourceName = ref('E_MAINTENANCE_BILL_HEAD');
+const datasourceName = ref('E_REPAIR_BILL_HEAD');
 const selectedFields = ref([]);
 const searchSettings = ref([]);
 const usePager = ref(true);
 const relateCondition = ref([
   {
-    tableName: 'E_MAINTENANCE_BILL_DTL',
-    field: 'E_MAINTENANCE_BILL_HEAD_ID',
+    tableName: 'E_REPAIR_BILL_DTL',
+    field: 'E_REPAIR_BILL_HEAD_ID',
     operator: 'eq',
     value: '-1',
   },
 ]);
-const relateItemCondition = ref([
-  {
-    tableName: 'E_MAINTENANCE_BILL_DTL_SPARE_PART',
-    field: 'E_MAINTENANCE_BILL_DTL_ID',
-    operator: 'eq',
-    value: '-1',
-  },
-]);
+// const relateItemCondition = ref([
+//   {
+//     tableName: 'E_REPAIR_BILL_DTL_SPARE_PART',
+//     field: 'E_REPAIR_BILL_DTL_ID',
+//     operator: 'eq',
+//     value: '-1',
+//   },
+// ]);
 
 const loadSetting = async () => {
   const res = mainSetting;

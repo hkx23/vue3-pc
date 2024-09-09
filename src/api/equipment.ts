@@ -673,6 +673,7 @@ export interface RepairBillHeadVO {
   repairAcceptGroupName?: string;
   repairItemCode?: string;
   repairItemDesc?: string;
+  repairItemMethod?: string;
   positionPath?: string;
 }
 

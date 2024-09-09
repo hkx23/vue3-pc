@@ -3,15 +3,21 @@
     <cmp-card flex="auto" :ghost="true">
       <t-descriptions :column="4" colon>
         <t-descriptions-item label="单据编号">{{ billItem.billNo }}</t-descriptions-item>
-        <t-descriptions-item label="保养计划编号">{{ billItem.maintenancePlanCode }}</t-descriptions-item>
-        <t-descriptions-item label="保养计划名称">{{ billItem.maintenancePlanName }}</t-descriptions-item>
         <t-descriptions-item label="设备编码">{{ billItem.equipmentCode }}</t-descriptions-item>
         <t-descriptions-item label="设备名称">{{ billItem.equipmentName }}</t-descriptions-item>
-        <t-descriptions-item label="保养人">{{ billItem.userMaintenanceName }}</t-descriptions-item>
-        <t-descriptions-item label="保养时间">{{ billItem.datetimeMaintenance }}</t-descriptions-item>
-        <t-descriptions-item label="验收人">{{ billItem.userAcceptName }}</t-descriptions-item>
-        <t-descriptions-item label="验收时间">{{ billItem.datetimeAccept }}</t-descriptions-item>
-        <t-descriptions-item label="要求完成时间">{{ billItem.datetimeRequireEnd }}</t-descriptions-item>
+        <t-descriptions-item label="报障位置">{{ billItem.positionPath }}</t-descriptions-item>
+        <t-descriptions-item label="报障人">{{ billItem.userCreatorName }}</t-descriptions-item>
+        <t-descriptions-item label="报障时间">{{ billItem.timeCreate }}</t-descriptions-item>
+        <t-descriptions-item label="维修处理组">{{ billItem.repairDealGroupName }}</t-descriptions-item>
+        <t-descriptions-item label="维修验收组">{{ billItem.repairAcceptGroupName }}</t-descriptions-item>
+        <t-descriptions-item label="故障照片">
+          <t-link
+            v-if="billItem.billHeadFiles && billItem.billHeadFiles.length"
+            theme="primary"
+            @click="viewPhoto(billItem.billHeadFiles, '故障照片')"
+            >查看</t-link
+          >
+        </t-descriptions-item>
       </t-descriptions>
     </cmp-card>
     <cmp-card flex="auto" :ghost="true">
@@ -26,10 +32,10 @@
         empty="没有符合条件的数据"
       >
         <template #title>
-          {{ '单据保养项目' }}
+          {{ '单据维修项目' }}
         </template>
         <template #photo="{ row }">
-          <t-link theme="primary" @click="viewPhoto(row)">查看</t-link>
+          <t-link theme="primary" @click="viewPhoto(row.billDtlFiles, '维修照片')">查看</t-link>
         </template>
       </cmp-table>
     </cmp-card>
@@ -51,7 +57,13 @@
     </cmp-card>
   </cmp-container>
   <!-- !上传组件 弹框 -->
-  <t-dialog v-model:visible="photoVisible" :close-on-overlay-click="false" header="保养项目照片" width="50%">
+  <t-dialog
+    v-model:visible="photoVisible"
+    :close-on-overlay-click="false"
+    :confirm-btn="null"
+    :header="imageHeader"
+    width="50%"
+  >
     <cmp-container :full="true">
       <bcmp-upload-content :file-list="fileList" upload-path="maintenanceItem" readonly ghost></bcmp-upload-content>
     </cmp-container>
@@ -72,49 +84,59 @@ const props = defineProps({
     default: '',
   },
 });
+const imageHeader = ref('');
 const billItem: any = ref({});
 const photoVisible = ref(false);
 const fileList: any = ref([]);
 
 const itemColumn: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'maintenanceItemCode', title: '保养项目编码', width: 100, align: 'center' },
-  { colKey: 'maintenanceItemName', title: '保养项目名称', width: 100, align: 'center' },
-  { colKey: 'maintenancePeriodName', title: '保养周期', width: 100, align: 'center' },
-  { colKey: 'maintenanceItemRequire', title: '保养要求', width: 100, align: 'center' },
-  { colKey: 'photo', title: '照片', width: 100, align: 'center' },
+  { colKey: 'repairItemCode', title: '维修项目编码', width: 100, align: 'center' },
+  { colKey: 'repairItemDesc', title: '维修项目描述', width: 100, align: 'center' },
+  { colKey: 'repairItemMethod', title: '维修方法', width: 100, align: 'center' },
+  { colKey: 'solveItemMethod', title: '解决方法', width: 100, align: 'center' },
+  { colKey: 'photo', title: '维修照片', width: 100, align: 'center' },
   { colKey: 'memo', title: '备注', width: 100, align: 'center' },
 ];
 const itemList: any = ref([]);
-const selectItemId = ref([]); // 待添加的保养项目
-const getItemList = async () => {
-  selectItemId.value = [];
-  if (!props.billId) return;
-  const billId = [props.billId];
+const selectItemId = ref([]); // 待添加的维修项目
+// const getItemList = async () => {
+//   selectItemId.value = [];
+//   if (!props.billId) return;
+//   const billId = [props.billId];
 
-  const itemListData = await api.maintenanceBillDtl.getItemsByBillId(billId);
-  itemList.value = itemListData;
-};
+//   const itemListData = await api.maintenanceBillDtl.getItemsByBillId(billId);
+//   itemList.value = itemListData;
+// };
 
-const viewPhoto = async (row: any) => {
+const viewPhoto = async (file: any, headerName: string) => {
+  imageHeader.value = headerName;
   fileList.value = [];
-  const dtlId = [row.id];
-  const fileListData = await api.maintenanceBillDtlFile.getFilesByDtlIds(dtlId);
-  fileList.value = fileListData || [];
+  // const dtlId = [row.id];
+  // const fileListData = await api.maintenanceBillDtlFile.getFilesByDtlIds(dtlId);
+  fileList.value = file || [];
   photoVisible.value = true;
 };
 
 const getBillItem = async () => {
   if (!props.billId) return;
   const searchCondition = {
-    pageNum: 1,
-    pageSize: 1,
-    selectedField: 'id',
-    selectedValue: props.billId,
-    relateType: 'equipment',
+    // pageNum: 1,
+    // pageSize: 1,
+    // selectedField: 'id',
+    // selectedValue: props.billId,
+    // relateType: 'equipment',
+    id: props.billId,
   };
-  const res: any = await api.maintenanceBillHead.search(searchCondition);
-  if (res.list && res.list.length > 0) {
-    [billItem.value] = res.list;
+  // const res: any = await api.repairBillHead.search(searchCondition);
+  // if (res.list && res.list.length > 0) {
+  //   [billItem.value] = res.list;
+  // }
+
+  const res: any = await api.repairBillHead.getEquipmentBillInfoById(searchCondition);
+  billItem.value = res;
+  if (res.billDetails && res.billDetails.length) {
+    itemList.value = res.billDetails;
+    itemSparePartList.value = res.billDetails[0].billDtlSpareParts || [];
   }
 };
 
@@ -125,33 +147,35 @@ const itemSparePartColumn: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'uom', title: '单位', width: 100, align: 'center' },
 ];
 const itemSparePartList: any = ref([]);
-const getBillItemSparePart = async () => {
-  selectItemId.value = [];
-  if (!props.billId) return;
-  const billId = [props.billId];
+// const getBillItemSparePart = async () => {
+//   selectItemId.value = [];
+//   if (!props.billId) return;
+//   const billId = [props.billId];
 
-  const itemListData = await api.maintenanceBillDtlSparePart.getItemsByBillId(billId);
-  itemSparePartList.value = itemListData;
-};
+//   const itemListData = await api.maintenanceBillDtlSparePart.getItemsByBillId(billId);
+//   itemSparePartList.value = itemListData;
+// };
 watch(
   () => props.billId,
   (val) => {
     if (val) {
       getBillItem();
-      getItemList();
-      getBillItemSparePart();
+      // getItemList();
+      // getBillItemSparePart();
     }
   },
 );
 onMounted(() => {
-  getItemList();
+  getBillItem();
+  // getItemList();
 });
 
 const getSelectItems = () => {
   return selectItemId.value;
 };
 
-defineExpose({ getSelectItems, getItemList });
+// defineExpose({ getSelectItems, getItemList });
+defineExpose({ getSelectItems });
 // import TSelectTable from '../select-table/index.vue';
 </script>
 <style lang="less" scoped>
