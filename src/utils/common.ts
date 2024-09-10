@@ -58,22 +58,21 @@ export default {
     });
   },
   toLowerCamelCase(str) {
-    str = str.toLowerCase();
-    // 检查字符串是否以字母开头且紧接着是下划线
-    if (/^[a-zA-Z]_/.test(str)) {
-      // 移除第一个字符和下划线
-      str = str.substring(2);
-    }
-    // 判断字符串是否包含下划线
-    // if (str.includes('_')) {
-    //   // 包含的话,先转成小写字母
-    //   str = str.toLowerCase();
-    // }
+    // 检查字符串是否以单个字母加下划线开头，并移除这两个字符
+    str = str.replace(/^[a-zA-Z]_/, '');
 
-    return str
-      .split('_')
-      .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-      .join('');
+    // 将字符串分割成数组，然后映射每个单词
+    return str.split('_').reduce((acc, word, index) => {
+      // 如果是第一个单词
+      if (index === 0) {
+        // 如果第一个单词是全大写，则转换为小写
+        acc += word === word.toUpperCase() ? word.toLowerCase() : word;
+      } else {
+        // 对于其他单词，首字母大写，其余部分小写
+        acc += word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      }
+      return acc;
+    }, '');
   },
 
   // 显示LOADING页面,默认至少显示0.5秒
