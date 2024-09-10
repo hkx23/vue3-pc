@@ -79,12 +79,17 @@
       </bcmp-page-single> -->
       <!-- <relate-item ref="equipmentRelateRef" :ghost="true" :relate-condition="relateCondition"> </relate-item> -->
     </cmp-container>
+
+    <!-- 弹出层 <router-view>class属性找不到根节点console警告问题=>弹出层移至内层，组件出现根节点 -->
+    <t-dialog v-model:visible="viewFormVisible" :header="formTitle" width="80%" :confirm-btn="null" cancel-btn="关闭">
+      <view-form ref="viewFormRef" :bill-id="currentBillId" />
+    </t-dialog>
   </cmp-container>
 
   <!-- 弹出层 -->
-  <t-dialog v-model:visible="viewFormVisible" :header="formTitle" width="80%" :confirm-btn="null" cancel-btn="关闭">
+  <!-- <t-dialog v-model:visible="viewFormVisible" :header="formTitle" width="80%" :confirm-btn="null" cancel-btn="关闭">
     <view-form ref="viewFormRef" :bill-id="currentBillId" />
-  </t-dialog>
+  </t-dialog> -->
   <!-- <t-dialog v-model:visible="formVisible" :header="formTitle" :on-confirm="onFormSubmit" :width="calculateFormWidth">
     <bcmp-dynamic-form
       ref="formRef"
