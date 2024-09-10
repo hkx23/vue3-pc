@@ -77,14 +77,14 @@ const onConfirmForm = async () => {
       MessagePlugin.error('请选择资产类型');
       return;
     }
-    if (_.isEmpty(formData.assetBrandId)) {
-      MessagePlugin.error('请选择资产品牌');
-      return;
-    }
-    if (_.isEmpty(formData.assetModelId)) {
-      MessagePlugin.error('请选择资产型号');
-      return;
-    }
+    // if (_.isEmpty(formData.assetBrandId)) {
+    //   MessagePlugin.error('请选择资产品牌');
+    //   return;
+    // }
+    // if (_.isEmpty(formData.assetModelId)) {
+    //   MessagePlugin.error('请选择资产型号');
+    //   return;
+    // }
 
     if (isEdit.value) {
       await apiEquimpent.inspectItemInEquipment.update({
