@@ -660,8 +660,19 @@ export interface RepairBillHeadVO {
   userAcceptName?: string;
   mouldCode?: string;
   mouldName?: string;
+  mouldType?: string;
+  mouldTypeName?: string;
   equipmentCode?: string;
   equipmentName?: string;
+  assetModelId?: string;
+  assetModelCode?: string;
+  assetModelName?: string;
+  assetBrandId?: string;
+  assetBrandCode?: string;
+  assetBrandName?: string;
+  assetTypeId?: string;
+  assetTypeCode?: string;
+  assetTypeName?: string;
   positionName?: string;
   billHeadFiles?: RepairBillHeadFile[];
   billDetails?: RepairBillDtlVO[];
@@ -674,6 +685,7 @@ export interface RepairBillHeadVO {
   repairItemCode?: string;
   repairItemDesc?: string;
   repairItemMethod?: string;
+  solveItemMethod?: string;
   positionPath?: string;
 }
 
