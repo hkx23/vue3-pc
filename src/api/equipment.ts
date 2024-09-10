@@ -1118,7 +1118,7 @@ export interface MaintenanceBillDtlSparePartVO {
   oid?: string;
   maintenanceBillDtlId?: string;
   sparePartId?: string;
-  changeCount?: string;
+  changeCount?: number;
   sparePartName?: string;
   sparePartCode?: string;
   sparePartModel?: string;
@@ -1495,6 +1495,9 @@ export interface InspectItemInEquipmentVO {
   assetTypeId?: string;
   assetBrandId?: string;
   assetModelId?: string;
+  mouldId?: string;
+  /** 模具类型 */
+  mouldType?: string;
   /** 点检项目代码 */
   inspectItemCode?: string;
   /** 点检项目名称 */
@@ -1508,6 +1511,14 @@ export interface InspectItemInEquipmentVO {
   /** 资产型号 */
   assetModelCode?: string;
   assetModelName?: string;
+  /** 模具类型名称 */
+  mouldTypeName?: string;
+  /** 模具 */
+  mouldCode?: string;
+  mouldName?: string;
+  mouldDesc?: string;
+  /** 关联类型 */
+  relateType?: string;
 }
 
 export interface InspectItemInEquipmentSearch {
@@ -1535,6 +1546,7 @@ export interface InspectItemInEquipmentSearch {
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
   inspectItemId?: string;
+  relateType?: string;
 }
 
 /** 响应数据 */
