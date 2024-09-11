@@ -66,6 +66,9 @@
         <template #title>
           {{ '资产列表' }}
         </template>
+        <template #mouldCode="{ row }">{{ row.mouldCode || '-' }}</template>
+        <template #mouldName="{ row }">{{ row.mouldName || '-' }}</template>
+        <template #mouldTypeName="{ row }">{{ row.mouldTypeName || '-' }}</template>
         <template #op="{ row }">
           <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelItemConfirm(row)">
             <t-link theme="primary" @click="onDelItemRow">{{ t('common.button.delete') }}</t-link>
