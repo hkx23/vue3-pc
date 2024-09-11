@@ -529,6 +529,7 @@ const onRowStateChange = async (row: any) => {
 const rowClick = ref(null); // 点击行ID
 const onSelectChange = async ({ row }) => {
   rowClick.value = row;
+  delItemRowKeys.value = [];
   await getEquipmentInspectItemList();
 };
 
