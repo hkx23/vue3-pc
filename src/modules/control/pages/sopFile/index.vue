@@ -390,6 +390,7 @@ const onConfirmForm = async () => {
   formRef.value.submit().then((data: any) => {
     if (data) {
       formVisible.value = false;
+      onGetTreeData();
       fetchData();
     }
   });
@@ -398,6 +399,7 @@ const onConfirmFormAdd = async () => {
   formRefAdd.value.submit().then((data: any) => {
     if (data) {
       formVisibleAdd.value = false;
+      onGetTreeData();
       onRefresh();
     }
   });
