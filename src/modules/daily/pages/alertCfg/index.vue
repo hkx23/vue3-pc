@@ -40,7 +40,7 @@
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddCfgData"> 新增 </t-button>
-            <t-button theme="default"> 导入 </t-button>
+            <bcmp-import-auto-button theme="default" button-text="导入" type="a_alert_cfg"></bcmp-import-auto-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
               <t-button theme="default"> 批量删除 </t-button>
             </t-popconfirm>
@@ -302,18 +302,20 @@ const onDelConfirm = async () => {
 
 // // 批量删除
 const deleteBatches = async () => {
+  if (selectedRowKeys.value.length === 0) {
+    MessagePlugin.warning('请选择要删除的数据');
+    return;
+  }
   // 步骤 1: 检查删除前的数据总量
   const initialLength = alertCfgData.list.length;
   // 步骤 2: 执行删除操作
   await api.alertCfg.removeAlertCfgBatch({ ids: selectedRowKeys.value });
+
+  pageUI.value.page = 1;
+  await onGetAlertCfgTypeData(); // 渲染表格
+  selectedRowKeys.value = [];
+  MessagePlugin.success('批量删除成功');
   // 步骤 3: 检查当前页是否还有数据
-  if (initialLength === selectedRowKeys.value.length && pageUI.value.page > 1) {
-    // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
-    pageUI.value.page--;
-    await onGetAlertCfgTypeData(); // 渲染表格
-    selectedRowKeys.value = [];
-    MessagePlugin.success('批量删除成功');
-  }
 };
 
 // // 表单提交事件
