@@ -1,35 +1,34 @@
 <template>
-  <cmp-container :full="true" :full-sub-index="[0, 1]">
-    <cmp-card>
-      <cmp-container :full="true">
-        <cmp-query :opts="opts" label-width="100" :bool-enter="true" :loading="loading" @submit="conditionEnter" />
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" label-width="100" :bool-enter="true" :loading="loading" @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        :title="tableTitle"
+        row-key="id"
+        :table-column="tableColumns"
+        :table-data="tableData"
+        :loading="loading"
+        :show-pagination="usePager"
+        :total="dataTotal"
+        :fixed-height="true"
+        :selected-row-keys="selectedRowKeys"
+        @row-click="onPlanSelectChange"
+        @select-change="onSelectChange"
+        @refresh="fetchTable"
+      >
+        <!-- 头部按钮区 -->
 
-        <cmp-card :ghost="true">
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="pageUI"
-            :title="tableTitle"
-            row-key="id"
-            :table-column="tableColumns"
-            :table-data="tableData"
-            :loading="loading"
-            :show-pagination="usePager"
-            :total="dataTotal"
-            :fixed-height="true"
-            :selected-row-keys="selectedRowKeys"
-            @row-click="onPlanSelectChange"
-            @select-change="onSelectChange"
-            @refresh="fetchTable"
-          >
-            <!-- 头部按钮区 -->
+        <!-- 行按钮区 -->
 
-            <!-- 行按钮区 -->
+        <template #billNo="{ row }">
+          <t-link theme="primary" @click="viewBill(row)"> {{ row.billNo || '-' }}</t-link>
+        </template>
 
-            <template #billNo="{ row }">
-              <t-link theme="primary" @click="viewBill(row)"> {{ row.billNo || '-' }}</t-link>
-            </template>
-
-            <!-- <template #op="slotProps">
+        <!-- <template #op="slotProps">
               <t-space :size="8">
                 <t-link theme="primary" @click="onEditRow(slotProps.row)">查看日志</t-link>
                 <t-popconfirm
@@ -41,12 +40,17 @@
                 </t-popconfirm>
               </t-space>
             </template> -->
-          </cmp-table>
-        </cmp-card>
-      </cmp-container>
+      </cmp-table>
     </cmp-card>
-    <cmp-container>
-      <!-- <cmp-row>
+  </cmp-container>
+
+  <!-- 弹出层 -->
+  <t-dialog v-model:visible="viewFormVisible" :header="formTitle" width="80%" :confirm-btn="null" cancel-btn="关闭">
+    <view-form ref="viewFormRef" :bill-id="currentBillId" />
+  </t-dialog>
+  <!-- </cmp-container> -->
+
+  <!-- <cmp-row>
         <cmp-card :ghost="false">
           <bcmp-page-single
             ref="equipmentRelateRef"
@@ -67,7 +71,7 @@
           </bcmp-page-single>
         </cmp-card>
       </cmp-row> -->
-      <!-- <bcmp-page-single
+  <!-- <bcmp-page-single
          
         :page-setting="mitemSetting"
         :ghost="true"
@@ -77,14 +81,7 @@
           <bcmp-import-auto-button theme="default" button-text="导入" type="m_equipment_in_mitem"></bcmp-import-auto-button>
         </template>
       </bcmp-page-single> -->
-      <!-- <relate-item ref="equipmentRelateRef" :ghost="true" :relate-condition="relateCondition"> </relate-item> -->
-
-      <!-- 弹出层 <router-view>class属性找不到根节点console警告问题=>弹出层移至内层，组件出现根节点 -->
-      <t-dialog v-model:visible="viewFormVisible" :header="formTitle" width="80%" :confirm-btn="null" cancel-btn="关闭">
-        <view-form ref="viewFormRef" :bill-id="currentBillId" />
-      </t-dialog>
-    </cmp-container>
-  </cmp-container>
+  <!-- <relate-item ref="equipmentRelateRef" :ghost="true" :relate-condition="relateCondition"> </relate-item> -->
 
   <!-- 弹出层 -->
   <!-- <t-dialog v-model:visible="viewFormVisible" :header="formTitle" width="80%" :confirm-btn="null" cancel-btn="关闭">
