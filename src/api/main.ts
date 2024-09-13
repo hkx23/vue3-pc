@@ -1038,8 +1038,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2424,8 +2424,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -2989,8 +2989,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5438,6 +5438,7 @@ export interface MitemInSupplierVO {
   dateExemptionExpiredStr?: string;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
+  isForceInspectionName?: string;
   isForceInspectionChecked?: boolean;
   isState?: boolean;
 }
@@ -6856,6 +6857,20 @@ export type AddFileTypeVO = {
   id?: string;
 } | null;
 
+/** 上传控件文件VO */
+export type AddFileTypeVO = {
+  serialNumber?: string;
+  fullFileName?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+  id?: string;
+} | null;
+
 /** 通用响应类 */
 export interface ResultAddFileTypeVO {
   /**
@@ -7190,6 +7205,77 @@ export interface ResultPagingDataEquipmentVo {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEquipmentVo;
+}
+
+/** 设备 */
+export interface Equipment {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetModelId?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保联系人 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
 }
 
 /** 设备 */
@@ -8538,8 +8624,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -9844,6 +9930,7 @@ export interface BarcodePkgVO {
   reason?: string;
   barcodePkgId?: string;
   ruleDtlId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -10246,6 +10333,144 @@ export interface ResultPagingDataAssetModelVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataAssetModelVO;
+}
+
+export interface AssetLedgerSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  equipmentId?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  /** 排除设备ID */
+  expectedEquipmentIds?: string[];
+}
+
+export interface AssetLedgerVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetModelId?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保联系人 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
+  /** 资产型号名称 */
+  modelName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 管理状态名称 */
+  stateName?: string;
+  assetBrandId?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  assetTypeId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 单据类型 */
+  billCategory?: string;
+  /** 单据类型名称 */
+  billCategoryName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 位置名称 */
+  positionName?: string;
+  /** 保管部门名称 */
+  departmentOwnerName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAssetLedgerVO = {
+  list?: AssetLedgerVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetLedgerVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetLedgerVO;
 }
 
 export interface AssetLedgerSearch {
@@ -11401,6 +11626,10 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
   /** 拒绝是否不可编辑 */
@@ -11973,9 +12202,9 @@ export interface ResultListProcessTmpl {
 }
 
 export interface IdentityLinkInfo {
+  groupId?: string;
   type?: string;
   scopeId?: string;
-  groupId?: string;
   taskId?: string;
   userId?: string;
   scopeDefinitionId?: string;
@@ -12005,7 +12234,7 @@ export type Task = {
   owner?: string;
   suspended?: boolean;
   description?: string;
-  tenantId?: string;
+  assignee?: string;
   /** @format date-time */
   dueDate?: string;
   assignee?: string;
@@ -12024,7 +12253,6 @@ export type Task = {
   caseVariables?: Record<string, object>;
   /** @format date-time */
   suspendedTime?: string;
-  claimedBy?: string;
   suspendedBy?: string;
   /** @format date-time */
   claimTime?: string;
@@ -12049,9 +12277,9 @@ export type Task = {
 /** 响应数据 */
 export type IdentityLink = {
   processDefinitionId?: string;
+  groupId?: string;
   type?: string;
   scopeId?: string;
-  groupId?: string;
   taskId?: string;
   userId?: string;
   scopeDefinitionId?: string;

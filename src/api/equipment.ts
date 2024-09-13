@@ -1358,6 +1358,96 @@ export interface MouldMaintenanceCreateJobParam {
   orgCode?: string;
 }
 
+export interface InspectPlanSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  dynamicTableName?: string;
+  dynamicBusinessDomain?: string;
+  dynamicKeywordFields?: string[];
+  isKeyWordEqSearch?: boolean;
+  dynamicDefaultSortFiled?: string;
+  dynamicSortType?: string;
+  selectedFields?: DatasourceField[];
+  datasourceSetting?: DatasourceSetting[];
+  ids?: string[];
+  relateType?: string;
+}
+
+export interface InspectPlanItemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetTypeId?: string;
+  equipmentId?: string;
+  /**
+   * 点检周期(天)
+   * @format int32
+   */
+  dayInspectPeriod?: number;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  datetimeEffect?: string;
+  /** 模具类型 */
+  mouldType?: string;
+  mouldId?: string;
+  inspectItemId?: string;
+  /** 点检项目代码 */
+  inspectItemCode?: string;
+  /** 点检项目名称 */
+  inspectItemName?: string;
+  /** 点检标准 */
+  inspectItemStandard?: string;
+  /** 点检方式或方法 */
+  inspectMethod?: string;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 单位 */
+  uom?: string;
+  /** 点检类型 */
+  inspectItemType?: string;
+  /**
+   * 是否拍照
+   * @format int32
+   */
+  isPhoto?: number;
+}
+
 /** 设备点检计划表 */
 export interface InspectPlanVO {
   id?: string;
@@ -1395,75 +1485,46 @@ export interface InspectPlanVO {
    * @format date-time
    */
   datetimeEffect?: string;
-  /** 资产类型编码 */
-  assetTypeCode?: string;
-  /** 资产类型名称 */
-  assetTypeName?: string;
-  /** 设备编码 */
+  /** 模具类型 */
+  mouldType?: string;
+  mouldId?: string;
+  insertEquipmentIds?: string;
+  /** 设备 */
   equipmentCode?: string;
-  /** 设备名称 */
   equipmentName?: string;
-}
-
-/** 通用响应类 */
-export interface ResultBoolean {
+  /** 位置名称 */
+  positionName?: string;
+  /** 保管部门名称 */
+  departmentOwnerName?: string;
+  inspectDealId?: string;
+  /** 点检处理组名称 */
+  inspectDealName?: string;
+  inspectAcceptId?: string;
+  /** 点检验收组名称 */
+  inspectAcceptName?: string;
+  /** 资产类型 */
+  assetTypeCode?: string;
+  assetTypeName?: string;
+  /** 资产品牌 */
+  assetBrandCode?: string;
+  assetBrandName?: string;
+  /** 资产型号 */
+  assetModelCode?: string;
+  assetModelName?: string;
+  /** 模具类型名称 */
+  mouldTypeName?: string;
+  /** 模具 */
+  mouldCode?: string;
+  mouldName?: string;
+  mouldDesc?: string;
+  /** 关联类型 */
+  relateType?: string;
   /**
-   * 响应代码
-   * @format int32
+   * 下次点检日期
+   * @format date-time
    */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
-}
-
-export interface InspectPlanSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-  customerConditions?: Filter[];
-  dynamicTableName?: string;
-  dynamicBusinessDomain?: string;
-  dynamicKeywordFields?: string[];
-  isKeyWordEqSearch?: boolean;
-  dynamicDefaultSortFiled?: string;
-  dynamicSortType?: string;
-  selectedFields?: DatasourceField[];
-  datasourceSetting?: DatasourceSetting[];
-  assetTypeId?: string;
-  equipmentId?: string;
-  ids?: string[];
-}
-
-/** 响应数据 */
-export type PagingDataInspectPlanVO = {
-  list?: InspectPlanVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataInspectPlanVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataInspectPlanVO;
+  datetimeNextInspect?: string;
+  planItems?: InspectPlanItemVO[];
 }
 
 /** 设备与点检项目关系表 */
@@ -1502,6 +1563,23 @@ export interface InspectItemInEquipmentVO {
   inspectItemCode?: string;
   /** 点检项目名称 */
   inspectItemName?: string;
+  /** 点检标准 */
+  inspectItemStandard?: string;
+  /** 点检方式或方法 */
+  inspectMethod?: string;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 单位 */
+  uom?: string;
+  /** 点检类型 */
+  inspectItemType?: string;
+  /**
+   * 是否拍照
+   * @format int32
+   */
+  isPhoto?: number;
   /** 资产类型 */
   assetTypeCode?: string;
   assetTypeName?: string;
@@ -1519,6 +1597,19 @@ export interface InspectItemInEquipmentVO {
   mouldDesc?: string;
   /** 关联类型 */
   relateType?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
 }
 
 export interface InspectItemInEquipmentSearch {
@@ -1915,6 +2006,11 @@ export interface AssetLedgerSearch {
   /** 模糊关键词 */
   keyword?: string;
   equipmentId?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  /** 排除设备ID */
+  expectedEquipmentIds?: string[];
 }
 
 export interface AssetLedgerVO {
@@ -2056,6 +2152,19 @@ export interface ResultMaintenanceBillHeadVO {
   /** 提示信息 */
   message?: string;
   data?: MaintenanceBillHeadVO;
+}
+
+/** 通用响应类 */
+export interface ResultInspectPlanVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 设备点检计划表 */
+  data?: InspectPlanVO;
 }
 
 /** 通用响应类 */
@@ -2961,22 +3070,37 @@ export const api = {
         body: data as any,
       }),
   },
-  inspectPlan: {
+  inspectPlanItem: {
     /**
      * No description
      *
-     * @tags 设备点检计划表
-     * @name Update
-     * @summary 编辑点检项目
-     * @request POST:/inspectPlan/update
+     * @tags 设备点检计划项目表
+     * @name Search
+     * @request POST:/inspectPlanItem/items
      * @secure
      */
-    update: (data: InspectPlanVO) =>
-      http.request<ResultBoolean['data']>(`/api/equipment/inspectPlan/update`, {
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectPlanItem/items`, {
         method: 'POST',
         body: data as any,
       }),
 
+    /**
+     * No description
+     *
+     * @tags 设备点检计划项目表
+     * @name GetItemsByPlanId
+     * @summary 获取设备点检计划项目表
+     * @request POST:/inspectPlanItem/getItemsByPlanId
+     * @secure
+     */
+    getItemsByPlanId: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectPlanItem/getItemsByPlanId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectPlan: {
     /**
      * No description
      *
@@ -2986,7 +3110,7 @@ export const api = {
      * @secure
      */
     search: (data: InspectPlanSearch) =>
-      http.request<ResultPagingDataInspectPlanVO['data']>(`/api/equipment/inspectPlan/items`, {
+      http.request<ResultObject['data']>(`/api/equipment/inspectPlan/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2995,13 +3119,13 @@ export const api = {
      * No description
      *
      * @tags 设备点检计划表
-     * @name Insert
-     * @summary 新增点检项目
-     * @request POST:/inspectPlan/insert
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/inspectPlan/items/remove
      * @secure
      */
-    insert: (data: InspectPlanVO[]) =>
-      http.request<ResultBoolean['data']>(`/api/equipment/inspectPlan/insert`, {
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectPlan/items/remove`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3010,13 +3134,13 @@ export const api = {
      * No description
      *
      * @tags 设备点检计划表
-     * @name GetList
-     * @summary 获得主界面数据
-     * @request POST:/inspectPlan/getList
+     * @name UpdateItemByCode
+     * @summary 修改
+     * @request POST:/inspectPlan/items/modify
      * @secure
      */
-    getList: (data: InspectPlanSearch) =>
-      http.request<ResultPagingDataInspectPlanVO['data']>(`/api/equipment/inspectPlan/getList`, {
+    updateItemByCode: (data: InspectPlanVO) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectPlan/items/modify`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3025,15 +3149,51 @@ export const api = {
      * No description
      *
      * @tags 设备点检计划表
-     * @name BatchUpdateState
-     * @summary 批量删除点检项目
-     * @request POST:/inspectPlan/batchUpdateState
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/inspectPlan/items/add
      * @secure
      */
-    batchUpdateState: (data: InspectPlanSearch) =>
-      http.request<ResultBoolean['data']>(`/api/equipment/inspectPlan/batchUpdateState`, {
+    addItem: (data: InspectPlanVO) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectPlan/items/add`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name GetMouldInspectPlanById
+     * @summary 根据ID,获取模具点检计划
+     * @request GET:/inspectPlan/getMouldInspectPlanByID
+     * @secure
+     */
+    getMouldInspectPlanById: (query?: {
+      /** @default "0" */
+      id?: string;
+    }) =>
+      http.request<ResultInspectPlanVO['data']>(`/api/equipment/inspectPlan/getMouldInspectPlanByID`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检计划表
+     * @name GetEquipmentInspectPlanById
+     * @summary 根据ID,获取设备点检计划
+     * @request GET:/inspectPlan/getEquipmentInspectPlanByID
+     * @secure
+     */
+    getEquipmentInspectPlanById: (query?: {
+      /** @default "0" */
+      id?: string;
+    }) =>
+      http.request<ResultInspectPlanVO['data']>(`/api/equipment/inspectPlan/getEquipmentInspectPlanByID`, {
+        method: 'GET',
+        params: query,
       }),
   },
   inspectItemInEquipment: {
