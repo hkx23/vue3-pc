@@ -32,7 +32,7 @@
             <template #op="{ row }">
               <t-space :size="8">
                 <t-link theme="primary" :disabled="loading" @click="onEidt(row)">{{ t('common.button.edit') }}</t-link>
-                <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDel">
+                <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDel(row)">
                   <t-link theme="primary" :disabled="loading">{{ t('common.button.delete') }}</t-link>
                 </t-popconfirm>
               </t-space>
@@ -114,7 +114,7 @@ const onEidt = (row) => {
 };
 
 const onDel = async (row) => {
-  await apiMain.notice.delById(row.id);
+  await apiMain.notice.delById(row.noticeId);
   MessagePlugin.success(t('common.message.deleteSuccess'));
   onFetchData();
 };

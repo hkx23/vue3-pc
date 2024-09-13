@@ -122,8 +122,8 @@ const Init = async () => {
 
   if (!mainform.value.workStationId) {
     NotifyPlugin.error({
-      title: t('wipCollect.tip'),
-      content: t('wipCollect.tipsetting'),
+      title: t('sopFileShow.tip'),
+      content: t('sopFileShow.tipsetting'),
       duration: 2000,
       closeBtn: true,
     });

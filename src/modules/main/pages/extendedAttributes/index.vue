@@ -175,7 +175,7 @@
         </t-col>
         <t-col :span="6">
           <t-form-item label="分类" name="classifyData">
-            <t-select v-model="classifyData" @change="onObjectCodeChange">
+            <t-select v-model="dialogFormData.list.classifyData" @change="onObjectCodeChange">
               <t-option v-for="item in selsectData.list" :key="item.id" :label="item.categoryName" :value="item" />
             </t-select>
           </t-form-item>
@@ -190,7 +190,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="数据来源">
+          <t-form-item label="数据来源" name="dataSource">
             <t-select v-model="dialogFormData.list.dataSource" name="dataSource">
               <t-option key="DEFAULT" label="DEFAULT" value="DEFAULT" />
               <t-option key="PARAM" label="PARAM" value="PARAM"></t-option>
@@ -305,6 +305,7 @@ const dialogFormData = reactive({
     dataSourcePath: '', // @对话框类型
     memo: '', //	@备注
     isDataMultiple: 0, // @是否数据源多选
+    classifyData: '',
   },
 });
 // Dialog弹框表单数据 副本
@@ -324,6 +325,7 @@ const dialogFormDataCopy = reactive({
     dataSourcePath: '', // @对话框类型
     memo: '', //	@备注
     isDataMultiple: 0, // @是否数据源多选
+    classifyData: '',
   },
 });
 
@@ -405,6 +407,9 @@ const rules: FormRules<Data> = {
     { required: true, message: '显示顺序不能为空', type: 'error', trigger: 'blur' },
     { validator: validateNumber, trigger: 'blur' },
   ],
+  dataSource: [{ required: true, message: '数据来源不能为空', type: 'error', trigger: 'change' }],
+  classifyData: [{ required: true, message: '分类不能为空', type: 'error', trigger: 'change' }],
+  propertyValueType: [{ required: true, message: '属性值类型不能为空', type: 'error', trigger: 'change' }],
 };
 
 function validateNumber(value: any): boolean | CustomValidateResolveType {
@@ -569,6 +574,7 @@ const onEditRow = (row: any) => {
   editSubmitFalg.value = false;
   dataType.value = row.getParamGroupName; // @对话框类型名称
   classifyData.value = row.categoryName; // @	分类 名称
+  dialogFormData.list.classifyData = row.categoryName; // @ 分类 ID
   dialogFormData.list.categoryId = row.categoryId; // @ 分类 ID
   dialogFormData.list.propertyCode = row.propertyCode; // @ 属性代码
   dialogFormData.list.propertyValueType = row.propertyValueType; // @属性值类型

@@ -1,6 +1,6 @@
 <!-- 企业信息 -->
 <template>
-  <cmp-container :full="false">
+  <cmp-container :full="true">
     <cmp-card>
       <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"> </cmp-query>
     </cmp-card>
