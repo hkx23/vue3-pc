@@ -212,7 +212,8 @@ const fetchTable = async () => {
     const searchCondition = {
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      filters: filterList.value,
+      filters: filterList.value.filter((item: any) => item.field !== 'keyWord'),
+      keyWord: filterList.value.find((item: any) => item.field === 'keyWord')?.value || '',
     };
     const res: any = await api.mould.search(searchCondition);
     tableData.value = res.list; // 表格数据赋值
