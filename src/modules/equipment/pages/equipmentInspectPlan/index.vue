@@ -309,13 +309,13 @@ const inspectItemTabData = reactive({
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'typeCode',
+    colKey: 'assetTypeCode',
     title: '设备类型编码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'typeName',
+    colKey: 'assetTypeName',
     title: '设备类型名称',
     align: 'center',
     width: '110',
@@ -333,19 +333,19 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'inspectItemTypeName',
+    colKey: 'departmentOwnerName',
     title: '所属部门',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'maxValue',
+    colKey: 'positionName',
     title: '设备存放位置',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'inspectDealGroup',
+    colKey: 'inspectDealName',
     title: '点检执行组',
     align: 'center',
     width: '110',
@@ -357,7 +357,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'uomName',
+    colKey: 'datetimeNextInspect',
     title: '下一次点检日期',
     align: 'center',
     width: '110',
@@ -540,6 +540,7 @@ const fetchTable = async () => {
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       filters: filterList.value,
+      relateType: 'equipment',
     });
 
     inspectItemData.list = res.list;
