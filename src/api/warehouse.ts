@@ -617,10 +617,10 @@ export interface TransferDtlBarcodeVO {
   /** ERP单据明细号 */
   erpLineNo?: string;
   transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
-  /** 单据状态名称 */
-  billStatusName?: string;
   /** 标签类型名称 */
   barcodeTypeName?: string;
+  /** 单据状态名称 */
+  billStatusName?: string;
 }
 
 /** 交易单身表 */
@@ -3115,14 +3115,14 @@ export interface DeliveryDtlVO {
   /** 箱数 */
   boxQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
-  /** 待扫箱数 */
-  boxWaitScanQty?: number;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 待扫箱数 */
+  boxWaitScanQty?: number;
   /** 已扫箱数 */
   boxScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -3316,10 +3316,10 @@ export interface PurchaseOrderDtlVO {
   /** 本次生成数量 */
   curQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   /** 是否已确认 */
   isConfirmName?: string;
 }
@@ -4238,10 +4238,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 /** 库存转移头表 */
@@ -4518,10 +4518,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 export interface OnhandQtyBatchVO {
@@ -6760,23 +6760,23 @@ export interface MaterialRequisitionDtlVO {
    * @format int32
    */
   centerCompletedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
-   * 最小包装计算需要-用需求数量(LineMoRequestQty)-申请中数量-已领用量
+   * 需求数量-源工单BOM需求数量
    * @format int32
    */
-  calMinPackagingQty?: number;
+  originMoRequestQty?: number;
   /**
    * 需求数量-源工单BOM需求数量-考虑线边库存和工单占用
    * @format int32
    */
   lineMoRequestQty?: number;
   /**
-   * 需求数量-源工单BOM需求数量
+   * 最小包装计算需要-用需求数量(LineMoRequestQty)-申请中数量-已领用量
    * @format int32
    */
-  originMoRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
+  calMinPackagingQty?: number;
   /**
    * 工作中心对应的工单在制用量
    * @format int32
@@ -8901,8 +8901,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
