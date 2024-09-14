@@ -222,6 +222,7 @@ const conditionEnter = (data: any) => {
   pageUI.value.page = 1;
   optsValue.value = data;
   selectMaterialRow.value.id = '';
+  tableRef.value.setSelectedRowKeys([]);
   fetchTable();
 };
 

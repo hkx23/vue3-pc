@@ -17,7 +17,7 @@
           @row-click="onSelectChange"
           @select-change="rehandleSelectChange"
         >
-          <template #title>{{ '设备列表' }}</template>
+          <template #title>{{ '模具列表' }}</template>
           <template #actionSlot="{ row }">
             <t-space :size="8">
               <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
@@ -133,31 +133,30 @@
     <t-form ref="formRef" :data="inspectItemTabData.list" label-width="120px" @submit="onSubmit">
       <t-descriptions :column="2">
         <t-descriptions-item>
-          <t-form-item label="点检设备类型" name="assetTypeId" required-mark>
-            <bcmp-select-business
+          <t-form-item label="点检模具类型" name="mouldType" required-mark>
+            <bcmp-select-param
               v-if="!isEdit"
-              v-model="inspectItemTabData.list.assetTypeId"
-              :disabled="isEdit"
-              type="assetType"
-              placeholder="请选择点检设备类型"
+              v-model="inspectItemTabData.list.mouldType"
+              param-group="E_MOULD_TYPE"
+              placeholder="请选择点检模具类型"
               :show-title="false"
-              @change="(val: any) => fetchDialogTable(val, true)"
+              @selection-change="(val: any) => fetchDialogTable(val, true)"
             />
             <span v-else>{{ inspectItemTabData.list.assetTypeName }}</span>
           </t-form-item>
         </t-descriptions-item>
         <t-descriptions-item>
-          <t-form-item label="点检设备" name="inspectItemName" required-mark>
+          <t-form-item label="点检模具" name="inspectItemName" required-mark>
             <t-tagInput
               v-if="!isEdit"
-              v-model="inspectItemTabData.list.equipmentLabel"
+              v-model="inspectItemTabData.list.mouldLabel"
               readonly
-              placeholder="请选择点检设备"
+              placeholder="请选择点检模具"
               @click="onAddItemData"
             />
             <!-- <bcmp-select-business  v-model="inspectItemTabData.list.equipmentName" type="equipment" /> -->
             <!-- :is-multiple="true" -->
-            <span v-else>{{ inspectItemTabData.list.equipmentName }}</span>
+            <span v-else>{{ inspectItemTabData.list.mouldName }}</span>
           </t-form-item>
         </t-descriptions-item>
         <t-descriptions-item>
@@ -213,7 +212,7 @@
           <template #button>
             <t-space :size="8">
               <t-button
-                :disabled="_.isEmpty(inspectItemTabData.list.assetTypeId)"
+                :disabled="_.isEmpty(inspectItemTabData.list.mouldType)"
                 theme="primary"
                 @click="(val) => fetchDialogTable(val, false)"
                 >加载全部项目</t-button
@@ -274,7 +273,7 @@ const delItemRowKeys = ref([]);
 
 const formData = ref({
   equipmentCode: '',
-  assetTypeId: '',
+  mouldType: '',
   positionId: '',
   departmentOwnerId: '',
   inspectDealId: '',
@@ -293,15 +292,15 @@ const inspectItemData = reactive({ list: [] });
 const inspectItemTabData = reactive({
   list: {
     id: '',
-    assetTypeId: '',
+    mouldType: '',
+    mouldId: '',
     assetTypeName: '',
-    equipmentId: '',
-    equipmentName: '',
+    mouldName: '',
     equipmentList: [],
     datetimeEffect: '',
     dayInspectPeriod: 1,
-    equipmentLabel: [],
-    insertEquipmentIds: [],
+    mouldLabel: [],
+    insertMouldIds: [],
     inspectItemList: [],
     planItems: [],
   },
@@ -309,26 +308,26 @@ const inspectItemTabData = reactive({
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'assetTypeCode',
-    title: '设备类型编码',
+    colKey: 'mouldType',
+    title: '模具类型编码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'assetTypeName',
-    title: '设备类型名称',
+    colKey: 'mouldTypeName',
+    title: '模具类型名称',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'equipmentCode',
-    title: '设备编码',
+    colKey: 'mouldCode',
+    title: '模具编码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'equipmentName',
-    title: '设备名称',
+    colKey: 'mouldName',
+    title: '模具名称',
     align: 'center',
     width: '110',
   },
@@ -340,7 +339,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'positionName',
-    title: '设备存放位置',
+    title: '模具存放位置',
     align: 'center',
     width: '110',
   },
@@ -387,8 +386,8 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 
 const changeEquipment = (list: any[], ids: any[]) => {
   // console.log(ids);
-  inspectItemTabData.list.equipmentLabel = list.map((item: { equipmentName: any }) => item.equipmentName);
-  inspectItemTabData.list.insertEquipmentIds = ids;
+  inspectItemTabData.list.mouldLabel = list.map((item: { mouldName: any }) => item.mouldName);
+  inspectItemTabData.list.insertMouldIds = ids;
 };
 
 onMounted(async () => {
@@ -397,7 +396,7 @@ onMounted(async () => {
 
 const onAddData = () => {
   formRef.value.reset({ type: 'empty' }); // 清除formRef数据
-  inspectItemTabData.list.equipmentLabel = [];
+  inspectItemTabData.list.mouldLabel = [];
   const { initDialog } = formItemRef.value;
   initDialog();
   // inspectItemTabData.list.isPhoto = 1;
@@ -416,12 +415,12 @@ const onAddData = () => {
 
 const onAddRequest = async () => {
   try {
-    if (_.isEmpty(inspectItemTabData.list.assetTypeId)) {
-      MessagePlugin.error('请选择点检设备类型');
+    if (_.isEmpty(inspectItemTabData.list.mouldType)) {
+      MessagePlugin.error('请选择点检模具类型');
       return false;
     }
-    if (_.isEmpty(inspectItemTabData.list.insertEquipmentIds)) {
-      MessagePlugin.error('请选择点检设备');
+    if (_.isEmpty(inspectItemTabData.list.insertMouldIds)) {
+      MessagePlugin.error('请选择点检模具');
       return false;
     }
     if (!inspectItemTabData.list.dayInspectPeriod) {
@@ -438,11 +437,11 @@ const onAddRequest = async () => {
     }
 
     await apiEquimpent.inspectPlan.addItem({
-      assetTypeId: inspectItemTabData.list.assetTypeId,
-      insertEquipmentIds: inspectItemTabData.list.insertEquipmentIds?.join(','),
+      mouldType: inspectItemTabData.list.mouldType,
+      insertMouldIds: inspectItemTabData.list.insertMouldIds?.join(','),
       dayInspectPeriod: inspectItemTabData.list.dayInspectPeriod,
       datetimeEffect: inspectItemTabData.list.datetimeEffect,
-      relateType: 'equipment',
+      relateType: 'mould',
       planItems:
         inspectItemTabData.list.inspectItemList?.map((item) => {
           return { inspectItemId: item.inspectItemId };
@@ -460,22 +459,20 @@ const onAddRequest = async () => {
 // #query 查询参数
 const opts = computed(() => {
   return {
-    equipmentCode: {
-      label: '设备编码',
+    mouldCode: {
+      label: '模具编码',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
       operator: 'like',
     },
-    assetTypeId: {
-      label: '设备类型',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
+    mouldType: {
+      label: '模具类型',
+      comp: 'bcmp-select-param',
       operator: 'eq',
+      defaultVal: '',
       bind: {
-        type: 'assetType',
-        showTitle: false,
+        paramGroup: 'E_MOULD_TYPE',
       },
     },
     positionId: {
@@ -539,8 +536,8 @@ const fetchTable = async () => {
     const res: any = await apiEquimpent.inspectPlan.search({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
+      relateType: 'mould',
       filters: filterList.value,
-      relateType: 'equipment',
     });
 
     inspectItemData.list = res.list;
@@ -562,10 +559,10 @@ const onSecondarySubmit = () => {
 // 右侧表格编辑按钮
 const onEditRow = async (row: any) => {
   isEdit.value = true;
-  const data = await apiEquimpent.inspectPlan.getEquipmentInspectPlanById({ id: row.id });
+  const data = await apiEquimpent.inspectPlan.getMouldInspectPlanById({ id: row.id });
   Object.assign(inspectItemTabData.list, data);
   inspectItemTabData.list.inspectItemList = data.planItems;
-  console.log('inspectItemTabData.list.planItems', inspectItemTabData.list.planItems);
+  // console.log('inspectItemTabData.list.planItems', inspectItemTabData.list.planItems);
   // incidentID.value = row.id; // 编辑回填 ID
   // submitFalg.value = false;
   formVisible.value = true;
@@ -606,11 +603,11 @@ const onUpdateRequest = async () => {
     }
 
     await apiEquimpent.inspectPlan.updateItemByCode({
-      assetTypeId: inspectItemTabData.list.assetTypeId,
-      equipmentId: inspectItemTabData.list.equipmentId,
+      mouldType: inspectItemTabData.list.mouldType,
+      mouldId: inspectItemTabData.list.mouldId,
       dayInspectPeriod: inspectItemTabData.list.dayInspectPeriod,
       datetimeEffect: inspectItemTabData.list.datetimeEffect,
-      relateType: 'equipment',
+      relateType: 'mould',
       planItems:
         inspectItemTabData.list.inspectItemList?.map((item) => {
           return { inspectItemId: item.inspectItemId };
@@ -915,13 +912,13 @@ const onAddItemData = async () => {
   //   return;
   // }
   // if (!rowClick.value) {
-  if (_.isEmpty(inspectItemTabData.list.assetTypeId)) {
-    MessagePlugin.warning('请先选择点检设备类型！');
+  if (_.isEmpty(inspectItemTabData.list.mouldType)) {
+    MessagePlugin.warning('请先选择点检模具类型！');
     return;
   }
 
   const { showForm } = formItemRef.value;
-  await showForm(false, inspectItemTabData.list.assetTypeId);
+  await showForm(false, inspectItemTabData.list.mouldType);
 };
 const onItemSelectChange = async (value: any[]) => {
   delItemRowKeys.value = value;
@@ -950,9 +947,9 @@ const delDialogItem = (index: number) => {
 
 const fetchDialogTable = async (val: any, isBcmpSelect: boolean) => {
   // pageUI.value.page = 1;
-  // console.log('vallll', val);
+  console.log('vallll', val, inspectItemTabData.list);
   if (isBcmpSelect) {
-    inspectItemTabData.list.equipmentLabel = [];
+    inspectItemTabData.list.mouldLabel = [];
     const { initDialog } = formItemRef.value;
     initDialog();
   }
@@ -964,12 +961,12 @@ const fetchDialogTable = async (val: any, isBcmpSelect: boolean) => {
       pageSize: 99999,
       filters: [
         {
-          field: 'assetTypeId',
+          field: 'mouldType',
           operator: 'EQ',
-          value: inspectItemTabData.list.assetTypeId,
+          value: inspectItemTabData.list.mouldType,
         },
       ],
-      relateType: 'equipment',
+      relateType: 'mould',
     });
     inspectItemTabData.list.inspectItemList = res.list;
     isLoading.value = false;

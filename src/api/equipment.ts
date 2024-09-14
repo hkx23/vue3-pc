@@ -241,6 +241,7 @@ export interface RepairItemInEquipmentSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -387,6 +388,7 @@ export interface CommonSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -449,6 +451,7 @@ export interface RepairBillHeadSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -710,6 +713,7 @@ export interface MaintenancePlanItemSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -791,6 +795,7 @@ export interface MaintenancePlanSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -899,6 +904,7 @@ export interface MaintenanceItemInEquipmentSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -1297,6 +1303,7 @@ export interface MaintenanceBillHeadSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -1373,6 +1380,7 @@ export interface InspectPlanSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -1488,6 +1496,7 @@ export interface InspectPlanVO {
   /** 模具类型 */
   mouldType?: string;
   mouldId?: string;
+  insertMouldIds?: string;
   insertEquipmentIds?: string;
   /** 设备 */
   equipmentCode?: string;
@@ -1627,6 +1636,7 @@ export interface InspectItemInEquipmentSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -1790,6 +1800,7 @@ export interface InspectItemSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];

@@ -53,6 +53,7 @@
                   placeholder="请选择地点"
                   :min-collapsed-num="3"
                   param-group="P_WORKCENTER_LOCATION"
+                  @selection-change="resetMocodes"
                 ></bcmp-select-param></t-form-item
             ></t-col>
             <t-col :span="4">
@@ -66,7 +67,17 @@
                   @change="resetMocodes"
                 ></bcmp-select-business></t-form-item
             ></t-col>
-
+            <t-col :span="4">
+              <t-form-item :label="t('materialRequisition.物料分类')" name="mitemCategoryId">
+                <bcmp-select-business
+                  v-model="formData.mitemCategoryId"
+                  :multiple="false"
+                  :disabled="formData.isLock"
+                  type="mitemCategory"
+                  :show-title="false"
+                  @change="resetMocodes"
+                ></bcmp-select-business></t-form-item
+            ></t-col>
             <t-col :span="4">
               <t-form-item :label="t('materialRequisition.moScheCodes')" name="moScheCodes">
                 <bcmp-select-business
@@ -228,6 +239,14 @@ const filterConditions = computed(() => {
     });
   }
 
+  if (formData.mitemCategoryId) {
+    arrFilter.push({
+      field: 'mitemCategoryId',
+      operator: 'EQ',
+      value: formData.mitemCategoryId,
+    });
+  }
+
   return arrFilter;
 });
 
@@ -254,6 +273,7 @@ interface FormMaterialRequisition extends MaterialRequisitionDTO {
   datetimePlanStart: string;
   datetimePlanEnd: string;
   wcLocation: string[];
+  mitemCategoryId: string;
 }
 
 const formData: FormMaterialRequisition = reactive({
@@ -273,6 +293,7 @@ const formData: FormMaterialRequisition = reactive({
   datetimePlanStart: '',
   datetimePlanEnd: '',
   wcLocation: [],
+  mitemCategoryId: '',
 });
 
 const tableMaterialSumColumns: PrimaryTableCol<TableRowData>[] = [

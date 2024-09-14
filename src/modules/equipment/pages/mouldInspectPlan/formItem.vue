@@ -29,7 +29,7 @@
           <template #operate>
             <cmp-query :opts="optsAdd" :bool-enter="true" :show-button="false" @submit="onInputAdd"></cmp-query>
           </template>
-          <template #title> 选择设备 </template>
+          <template #title> 选择模具 </template>
         </cmp-table>
       </t-col>
       <!-- 删除 表格数据 -->
@@ -52,7 +52,7 @@
           <template #operate>
             <cmp-query :opts="optsDel" :bool-enter="true" :show-button="false" @submit="onInputDel"></cmp-query>
           </template>
-          <template #title> 已选设备 </template>
+          <template #title> 已选模具 </template>
         </cmp-table></t-col
       >
     </t-row>
@@ -102,7 +102,7 @@ import utils from '@/utils/common';
 
 const Emit = defineEmits(['parent-refresh-event', 'form-close-event', 'change-equipment']);
 
-const assetTypeId = ref('');
+const mouldType = ref('');
 const formVisible = ref(false);
 const { pageUI: addPage } = usePage();
 const { pageUI: delPage } = usePage();
@@ -127,20 +127,20 @@ const formData = reactive({
 // ####人员新增 表头
 const addPersonColumns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'equipmentCode',
-    title: '设备编码',
+    colKey: 'mouldCode',
+    title: '模具编码',
     align: 'center',
     width: '70',
   },
   {
-    colKey: 'equipmentName',
-    title: '设备名称',
+    colKey: 'mouldName',
+    title: '模具名称',
     align: 'center',
     width: '70',
   },
   {
-    colKey: 'positionName',
-    title: '存放位置',
+    colKey: 'warehouseName',
+    title: '存放仓库',
     align: 'center',
     width: '70',
   },
@@ -156,20 +156,20 @@ const addPersonColumns: PrimaryTableCol<TableRowData>[] = [
 // ####人员删除 表头
 const delPersonColumns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'equipmentCode',
-    title: '设备编码',
+    colKey: 'mouldCode',
+    title: '模具编码',
     align: 'center',
     width: '70',
   },
   {
-    colKey: 'equipmentName',
-    title: '设备名称',
+    colKey: 'mouldName',
+    title: '模具名称',
     align: 'center',
     width: '70',
   },
   {
-    colKey: 'positionName',
-    title: '存放位置',
+    colKey: 'warehouseName',
+    title: '存放仓库',
     align: 'center',
     width: '70',
   },
@@ -266,10 +266,17 @@ watch(
 // const addPersonTotal = ref(null);
 const onAddPersonTabData = async () => {
   console.log('arrPersonID', arrPersonID);
-  const res = await api.assetLedger.getList({
+  const res: any = await api.mould.search({
     // supportGroupId: rowGroupId.value,
-    assetTypeId: assetTypeId.value,
-    expectedEquipmentIds: arrPersonID.value,
+    // mouldType: mouldType.value,
+    filters: [
+      {
+        field: 'mouldType',
+        operator: 'EQ',
+        value: mouldType.value,
+      },
+    ],
+    exceptIds: arrPersonID.value,
     pageNum: addPage.value.page,
     pageSize: addPage.value.rows,
   });
@@ -303,11 +310,11 @@ const optsAdd = computed(() => {
 // 上侧搜索提交事件
 const onInputAdd = async () => {
   addPage.value.page = 1;
-  const res = await api.assetLedger.getList({
+  const res: any = await api.mould.search({
     pageNum: addPage.value.page,
     pageSize: addPage.value.rows,
-    assetTypeId: assetTypeId.value,
-    expectedEquipmentIds: arrPersonID.value,
+    // mouldType: mouldType.value,
+    exceptIds: arrPersonID.value,
     // equipmentName: data.equipmentName,
     // userKeyword: data.categoryName,
     // supportGroupId: rowGroupId.value,
@@ -326,12 +333,12 @@ const optsDel = computed(() => {
 // 上侧搜索提交事件
 const onInputDel = async () => {
   delPage.value.page = 1;
-  const res = await api.assetLedger.getList({
+  const res: any = await api.mould.search({
     pageNum: delPage.value.page,
     pageSize: delPage.value.rows,
     // equipmentName: data.equipmentName,
-    assetTypeId: assetTypeId.value,
-    expectedEquipmentIds: arrPersonID.value,
+    // mouldType: mouldType.value,
+    exceptIds: arrPersonID.value,
     // supportGroupId: rowGroupId.value,
   });
   onDelPersonTabList.list = res.list;
@@ -421,12 +428,12 @@ const onConfirmForm = async () => {
 //   }
 // };
 const showForm = async (edit, id) => {
-  const oldAssetTypeId = assetTypeId.value;
+  const oldMouldType = mouldType.value;
   formVisible.value = true;
   isEdit.value = edit;
-  assetTypeId.value = id;
-  arrPersonID.value = oldAssetTypeId === assetTypeId.value ? arrPersonID.value : [];
-  onDelPersonTabList.list = oldAssetTypeId === assetTypeId.value ? onDelPersonTabList.list : [];
+  mouldType.value = id;
+  arrPersonID.value = oldMouldType === mouldType.value ? arrPersonID.value : [];
+  onDelPersonTabList.list = oldMouldType === mouldType.value ? onDelPersonTabList.list : [];
   utils.reset(formData);
   onAddPersonTabData();
   // formData.inspectItemId = row.id;

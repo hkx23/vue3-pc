@@ -2990,8 +2990,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -5440,11 +5440,12 @@ export interface MitemInSupplierVO {
   containerTypeName?: string;
   isState?: boolean;
   stateName?: string;
-  isForceInspectionName?: string;
+  isState?: boolean;
   dateExemptionExpiredStr?: string;
-  isExemptionInspectionChecked?: boolean;
+  isForceInspectionName?: string;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5663,15 +5664,15 @@ export interface MitemVO {
   /** 配送卡规格数量 */
   specificationsQty?: number;
   minPackagingQty?: string;
-  isState?: boolean;
   stateName?: string;
-  isInProcessChecked?: boolean;
+  isState?: boolean;
   isProductChecked?: boolean;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
+  isInProcessChecked?: boolean;
   isRawChecked?: boolean;
+  isRawName?: string;
+  isBatchName?: string;
   isProductName?: string;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -6073,6 +6074,8 @@ export interface LabelVO {
   oldQty?: number;
   /** 检验状态--配送卡使用 */
   checkStatus?: string;
+  /** 领料单 */
+  sourceBillNo?: string;
 }
 
 /** 标签供应商批次批量实体 */
@@ -6209,6 +6212,8 @@ export interface LabelSearch {
   inspectResult?: string;
   /** 来料接收单号 */
   incomingReceiveNo?: string;
+  /** 物料标签集合 */
+  barcodeList?: string[];
 }
 
 /** 响应数据 */
@@ -8022,6 +8027,8 @@ export interface DeliveryCardSearch {
   groupLabelVOS?: GroupLabelVO[];
   /** 排产表id集合 */
   moScheduleIdList?: string[];
+  /** 配送卡集合 */
+  barcodeList?: string[];
 }
 
 /** 配送卡输出类 */
@@ -8544,8 +8551,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -11409,12 +11416,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11984,10 +11991,10 @@ export interface IdentityLinkInfo {
   groupId?: string;
   taskId?: string;
   userId?: string;
+  scopeType?: string;
+  subScopeId?: string;
   scopeDefinitionId?: string;
   processInstanceId?: string;
-  subScopeId?: string;
-  scopeType?: string;
 }
 
 /** 通用响应类 */
@@ -12016,40 +12023,40 @@ export type Task = {
   dueDate?: string;
   assignee?: string;
   category?: string;
-  localizedName?: string;
   formKey?: string;
+  localizedName?: string;
   localizedDescription?: string;
-  parentTaskId?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
   id?: string;
   state?: string;
   scopeId?: string;
+  identityLinks?: IdentityLinkInfo[];
   /** @format date-time */
   createTime?: string;
-  processDefinitionId?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  executionId?: string;
   taskDefinitionId?: string;
   taskDefinitionKey?: string;
-  identityLinks?: IdentityLinkInfo[];
-  caseVariables?: Record<string, object>;
+  executionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  processDefinitionId?: string;
+  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  taskLocalVariables?: Record<string, object>;
   /** @format date-time */
   inProgressStartDueDate?: string;
   inProgressStartedBy?: string;
   processVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  taskLocalVariables?: Record<string, object>;
-  propagatedStageInstanceId?: string;
-  suspendedBy?: string;
-  claimedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
+  scopeDefinitionId?: string;
+  processInstanceId?: string;
+  caseVariables?: Record<string, object>;
   /** @format date-time */
   claimTime?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  claimedBy?: string;
 } | null;
 
 /** 响应数据 */
@@ -12060,10 +12067,10 @@ export type IdentityLink = {
   groupId?: string;
   taskId?: string;
   userId?: string;
+  scopeType?: string;
+  subScopeId?: string;
   scopeDefinitionId?: string;
   processInstanceId?: string;
-  subScopeId?: string;
-  scopeType?: string;
 } | null;
 
 /** 通用响应类 */
@@ -15308,22 +15315,28 @@ export const api = {
      * No description
      *
      * @tags 员工表
-     * @name GetList
+     * @name Getlist
      * @summary 获取员工信息
-     * @request GET:/person/getList
+     * @request GET:/person/getlist
      * @secure
      */
-    getList: (query: {
-      keyword: string;
+    getlist: (query: {
+      personcode: string;
+      personname: string;
       /** @format int32 */
       state: number;
-      adminOrgId: string;
       /** @format int32 */
-      pageNum: number;
+      adminorgid: number;
+      sortfield: string;
+      sorttype: string;
+      filterfield: string;
+      filter: string;
       /** @format int32 */
-      pageSize: number;
+      pagenum: number;
+      /** @format int32 */
+      pagesize: number;
     }) =>
-      http.request<ResultPagingDataPersonVO['data']>(`/api/main/person/getList`, {
+      http.request<ResultObject['data']>(`/api/main/person/getlist`, {
         method: 'GET',
         params: query,
       }),
