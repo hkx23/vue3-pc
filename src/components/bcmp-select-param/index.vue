@@ -30,6 +30,7 @@ const onSelectionChange = (val: any, context: any) => {
   modelValue.value = val;
   console.log(context);
   emits('update:modelValue', val);
+  emits('change', val);
 };
 
 // 初始化远程数据
