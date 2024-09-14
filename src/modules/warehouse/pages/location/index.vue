@@ -210,12 +210,15 @@ const onEditRowClick = async (value: any) => {
 
 //* 删除
 const onStateRowClick = async (row: { row: any }) => {
-  await api.location.removeLocation({ id: row.row.id });
-  if (tableDataLocation.value.length <= 1 && pageUI.value.page > 1) {
-    pageUI.value.page--;
+  const checkResult = await api.location.checkLocationDelete({ locationId: row.row.id });
+  if (checkResult) {
+    await api.location.removeLocation({ id: row.row.id });
+    if (tableDataLocation.value.length <= 1 && pageUI.value.page > 1) {
+      pageUI.value.page--;
+    }
+    await fetchTable(); // *获取 货区 数据
+    MessagePlugin.success('删除成功');
   }
-  await fetchTable(); // *获取 货区 数据
-  MessagePlugin.success('删除成功');
 };
 
 const onConfirmForm = async () => {

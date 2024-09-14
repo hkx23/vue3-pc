@@ -115,6 +115,7 @@ export interface CommonSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -264,6 +265,7 @@ export interface UserWarehouseSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -348,6 +350,7 @@ export interface UserWarehouseWithTransferConstraintSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -459,6 +462,7 @@ export interface TransferHeadSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -597,6 +601,7 @@ export interface TransferDtlBarcodeVO {
   moCode?: string;
   workshopId?: string;
   workcenterId?: string;
+  isSplitLabel?: string;
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
@@ -614,6 +619,8 @@ export interface TransferDtlBarcodeVO {
   transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
   /** 单据状态名称 */
   billStatusName?: string;
+  /** 标签类型名称 */
+  barcodeTypeName?: string;
 }
 
 /** 交易单身表 */
@@ -879,6 +886,12 @@ export interface TransferDtlBarcodeSearch {
   erpLineNo?: string;
   /** 来源单行号 */
   sourceLineNo?: string;
+  /** 查询关键字 */
+  keyword?: string;
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
 }
 
 /** 通用响应类 */
@@ -1022,7 +1035,7 @@ export type LabelVO = {
   supplierLotNo?: string;
   /** 来料接收单号 */
   incomingReceiveNo?: string;
-  /** 检验结果 */
+  /** 检验结果(合格:OK 不合格:NG) */
   inspectResult?: string;
   /** 送货单 */
   billNo?: string;
@@ -1136,6 +1149,8 @@ export type LabelVO = {
   oldQty?: number;
   /** 检验状态--配送卡使用 */
   checkStatus?: string;
+  /** 领料单 */
+  sourceBillNo?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1149,6 +1164,26 @@ export interface ResultListLabelVO {
   message?: string;
   /** 响应数据 */
   data?: LabelVO[] | null;
+}
+
+/** 响应数据 */
+export type PagingDataTransferDtlBarcodeVO = {
+  list?: TransferDtlBarcodeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataTransferDtlBarcodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataTransferDtlBarcodeVO;
 }
 
 /** 品质控制-物料标签 */
@@ -1246,7 +1281,7 @@ export interface LabelQcHoldVO {
   supplierLotNo?: string;
   /** 来料接收单号 */
   incomingReceiveNo?: string;
-  /** 检验结果 */
+  /** 检验结果(合格:OK 不合格:NG) */
   inspectResult?: string;
   /** 工单号 */
   scheCode?: string;
@@ -2380,6 +2415,7 @@ export interface SaleOrderSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -2497,10 +2533,10 @@ export interface SaleOrderDtlVO {
   saleDeliveryBillNo?: string;
   /** 发货单明细行号 */
   saleDeliveryLineSeq?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2581,6 +2617,7 @@ export interface SaleDeliveryDtlSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -2768,6 +2805,7 @@ export interface SaleDeliverySearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -2861,6 +2899,7 @@ export interface ReturnStockOutDtlBarcodeVO {
   moCode?: string;
   workshopId?: string;
   workcenterId?: string;
+  isSplitLabel?: string;
 }
 
 /** 退货出库 */
@@ -3076,14 +3115,14 @@ export interface DeliveryDtlVO {
   /** 箱数 */
   boxQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
-  /** 已扫箱数 */
-  boxScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
   /** 待扫箱数 */
   boxWaitScanQty?: number;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
+  /** 已扫箱数 */
+  boxScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -3277,12 +3316,12 @@ export interface PurchaseOrderDtlVO {
   /** 本次生成数量 */
   curQty?: number;
   transferDtlId?: string;
-  /** 是否已确认 */
-  isConfirmName?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
+  /** 是否已确认 */
+  isConfirmName?: string;
 }
 
 /** 退货管理VO */
@@ -3318,6 +3357,7 @@ export interface WarehouseSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -3432,6 +3472,7 @@ export interface ReturnManagementSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -3620,6 +3661,7 @@ export interface MitemSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -3734,6 +3776,7 @@ export interface PurchaseOrderSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -4085,6 +4128,7 @@ export interface OnhandTransferSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -4194,10 +4238,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 /** 库存转移头表 */
@@ -4474,10 +4518,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4563,6 +4607,7 @@ export interface OnhandQtySearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -4761,7 +4806,7 @@ export interface Label {
   supplierLotNo?: string;
   /** 来料接收单号 */
   incomingReceiveNo?: string;
-  /** 检验结果 */
+  /** 检验结果(合格:OK 不合格:NG) */
   inspectResult?: string;
 }
 
@@ -4950,10 +4995,10 @@ export interface MoIssuanceDtlVO {
    */
   moRequestQty?: number;
   flpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
 }
 
 export interface MoIssuanceVO {
@@ -5351,6 +5396,7 @@ export interface MitemReceiptSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -5795,6 +5841,7 @@ export interface MiscellaneousManageSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -6504,6 +6551,8 @@ export interface MaterialRequisitionVO {
   mergeMitemDtls?: MaterialRequisitionExecuteMergeDtlVO[];
   /** 是否存在可以提交的数据-是否能提交 */
   isCanSubmit?: boolean;
+  /** 可提交的执行单据 */
+  zxBillNo?: string;
   /** 单据状态名称 */
   statusName?: string;
 }
@@ -6717,22 +6766,22 @@ export interface MaterialRequisitionDtlVO {
    */
   calMinPackagingQty?: number;
   /**
-   * 需求数量-源工单BOM需求数量
-   * @format int32
-   */
-  originMoRequestQty?: number;
-  /**
    * 需求数量-源工单BOM需求数量-考虑线边库存和工单占用
    * @format int32
    */
   lineMoRequestQty?: number;
   /**
+   * 需求数量-源工单BOM需求数量
+   * @format int32
+   */
+  originMoRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
+  /**
    * 工作中心对应的工单在制用量
    * @format int32
    */
   centerMoUsingQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -6906,6 +6955,7 @@ export interface LocationInMitemSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -7398,6 +7448,8 @@ export interface LabelSearch {
   inspectResult?: string;
   /** 来料接收单号 */
   incomingReceiveNo?: string;
+  /** 物料标签集合 */
+  barcodeList?: string[];
 }
 
 /** 通用响应类 */
@@ -7576,6 +7628,19 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** 定时删除暂存的交易单据JOB参数 */
+export interface DeleteInvalidTimeoutBillJobParam {
+  /** 集团编码 */
+  epCode?: string;
+  /** 组织编码 */
+  orgCode?: string;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  timeoutHour?: number;
+  businessCodes?: string;
+}
+
 /** DemoJOB参数 */
 export interface DemoJobParam {
   /** 集团编码 */
@@ -7597,6 +7662,8 @@ export interface JobCommonDTO {
   sapDownloadJobParams?: SapDownloadJobParam[];
   /** SAP下载数据JOB参数 */
   tranUploadJobParams?: TranUploadJobParam[];
+  /** 定时删除暂存的交易单据JOB参数 */
+  deleteInvalidTimeoutBillJobParams?: DeleteInvalidTimeoutBillJobParam[];
 }
 
 /** 公共JOB参数 */
@@ -8011,6 +8078,7 @@ export interface DistrictInMitemSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  exceptIds?: string[];
   dynamicTableName?: string;
   dynamicBusinessDomain?: string;
   dynamicKeywordFields?: string[];
@@ -9140,6 +9208,67 @@ export interface ResultListLong {
 }
 
 /** 通用响应类 */
+export interface ResultListTransferDtlBarcode {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: TransferDtlBarcode[] | null;
+}
+
+/** 交易明细标签表 */
+export type TransferDtlBarcode = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  transferDtlId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  supplierId?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 到货批次 */
+  batchLot?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 工单号 */
+  moCode?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  isSplitLabel?: string;
+} | null;
+
+/** 通用响应类 */
 export interface ResultBigDecimal {
   /**
    * 响应代码
@@ -9977,6 +10106,24 @@ export const api = {
      * No description
      *
      * @tags 交易明细标签表
+     * @name GetSplitLabelList
+     * @summary 获取单据拆标标签列表
+     * @request POST:/transferDtlBarcode/getSplitLabelList
+     * @secure
+     */
+    getSplitLabelList: (data: TransferDtlBarcodeSearch) =>
+      http.request<ResultPagingDataTransferDtlBarcodeVO['data']>(
+        `/api/warehouse/transferDtlBarcode/getSplitLabelList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 交易明细标签表
      * @name GetQcHoldLabelList
      * @summary 标签列表-应用于品质控制查询-仅工单领料类型
      * @request POST:/transferDtlBarcode/getQcHoldLabelList
@@ -10047,6 +10194,24 @@ export const api = {
         method: 'GET',
         params: query,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 交易明细标签表
+     * @name GetSplitLabelListByBillNo
+     * @summary 根据单据号获取单据拆标标签列表
+     * @request GET:/transferDtlBarcode/getSplitLabelListByBillNo
+     * @secure
+     */
+    getSplitLabelListByBillNo: (query: { BillNo: string }) =>
+      http.request<ResultListTransferDtlBarcode['data']>(
+        `/api/warehouse/transferDtlBarcode/getSplitLabelListByBillNo`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
 
     /**
      * No description
@@ -12861,6 +13026,36 @@ export const api = {
         method: 'GET',
         params: query,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name CheckLocationDelete
+     * @summary 校验货位是否可以删除
+     * @request GET:/location/checkLocationDelete
+     * @secure
+     */
+    checkLocationDelete: (query: { locationId: string }) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/location/checkLocationDelete`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name CheckDistrictDelete
+     * @summary 校验货区是否可以删除
+     * @request GET:/location/checkDistrictDelete
+     * @secure
+     */
+    checkDistrictDelete: (query: { districtId: string }) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/location/checkDistrictDelete`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   lineWarehouseWaterLevel: {
     /**
@@ -13083,12 +13278,27 @@ export const api = {
      *
      * @tags 标签表
      * @name GetLabelManageList
-     * @summary 获取管理页标签数据
+     * @summary 获取管理页标签数据- 有权限管理
      * @request POST:/label/getLabelManageList
      * @secure
      */
     getLabelManageList: (data: LabelSearch) =>
       http.request<ResultPagingDataLabelVO['data']>(`/api/warehouse/label/getLabelManageList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelListByCodes
+     * @summary 根据条码集合获取标签数据-无权限管理
+     * @request POST:/label/getLabelListByCodes
+     * @secure
+     */
+    getLabelListByCodes: (data: LabelSearch) =>
+      http.request<ResultListLabelVO['data']>(`/api/warehouse/label/getLabelListByCodes`, {
         method: 'POST',
         body: data as any,
       }),
@@ -13269,6 +13479,21 @@ export const api = {
      */
     demoJob: (data: JobCommonDTO) =>
       http.request<ResultObject['data']>(`/api/warehouse/jobCommon/demoJob`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 公用JOB业务组件接口
+     * @name DeleteInvalidTimeoutBillJob
+     * @summary 定时删除暂存的交易单据
+     * @request POST:/jobCommon/deleteInvalidTimeoutBillJob
+     * @secure
+     */
+    deleteInvalidTimeoutBillJob: (data: JobCommonDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/jobCommon/deleteInvalidTimeoutBillJob`, {
         method: 'POST',
         body: data as any,
       }),

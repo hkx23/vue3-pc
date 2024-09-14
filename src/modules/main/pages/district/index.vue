@@ -71,6 +71,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/main';
+import { api as warehouseApi } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue'; //* 查询组件
 import CmpTable from '@/components/cmp-table/index.vue'; //* 表格组件
 import { useLoading } from '@/hooks/modules/loading';
@@ -195,12 +196,15 @@ const onEditRowClick = async (value: any) => {
 
 //* 删除
 const onStateRowClick = async (row: { row: any }) => {
-  await api.district.removeDistrict({ id: row.row.id });
-  if (tableDataWarehouse.value.length <= 1 && pageUI.value.page > 1) {
-    pageUI.value.page--;
+  const checkResult = await warehouseApi.location.checkDistrictDelete({ districtId: row.row.id });
+  if (checkResult) {
+    await api.district.removeDistrict({ id: row.row.id });
+    if (tableDataWarehouse.value.length <= 1 && pageUI.value.page > 1) {
+      pageUI.value.page--;
+    }
+    await fetchTable(); // *获取 货区 数据
+    MessagePlugin.success('删除成功');
   }
-  await fetchTable(); // *获取 货区 数据
-  MessagePlugin.success('删除成功');
 };
 
 const onConfirmForm = async () => {
