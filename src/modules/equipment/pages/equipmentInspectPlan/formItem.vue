@@ -301,14 +301,14 @@ const optsAdd = computed(() => {
   };
 });
 // 上侧搜索提交事件
-const onInputAdd = async (data: any) => {
+const onInputAdd = async () => {
   addPage.value.page = 1;
   const res = await api.assetLedger.getList({
     pageNum: addPage.value.page,
     pageSize: addPage.value.rows,
     assetTypeId: assetTypeId.value,
     expectedEquipmentIds: arrPersonID.value,
-    equipmentName: data.equipmentName,
+    // equipmentName: data.equipmentName,
     // userKeyword: data.categoryName,
     // supportGroupId: rowGroupId.value,
   });
@@ -324,12 +324,12 @@ const optsDel = computed(() => {
 });
 
 // 上侧搜索提交事件
-const onInputDel = async (data: any) => {
+const onInputDel = async () => {
   delPage.value.page = 1;
   const res = await api.assetLedger.getList({
     pageNum: delPage.value.page,
     pageSize: delPage.value.rows,
-    equipmentName: data.equipmentName,
+    // equipmentName: data.equipmentName,
     assetTypeId: assetTypeId.value,
     expectedEquipmentIds: arrPersonID.value,
     // supportGroupId: rowGroupId.value,

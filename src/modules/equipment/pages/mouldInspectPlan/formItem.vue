@@ -308,14 +308,14 @@ const optsAdd = computed(() => {
   };
 });
 // 上侧搜索提交事件
-const onInputAdd = async (data: any) => {
+const onInputAdd = async () => {
   addPage.value.page = 1;
-  const res = await api.mould.search({
+  const res: any = await api.mould.search({
     pageNum: addPage.value.page,
     pageSize: addPage.value.rows,
-    mouldType: mouldType.value,
-    expectedEquipmentIds: arrPersonID.value,
-    equipmentName: data.equipmentName,
+    // mouldType: mouldType.value,
+    exceptIds: arrPersonID.value,
+    // equipmentName: data.equipmentName,
     // userKeyword: data.categoryName,
     // supportGroupId: rowGroupId.value,
   });
@@ -331,14 +331,14 @@ const optsDel = computed(() => {
 });
 
 // 上侧搜索提交事件
-const onInputDel = async (data: any) => {
+const onInputDel = async () => {
   delPage.value.page = 1;
-  const res = await api.mould.search({
+  const res: any = await api.mould.search({
     pageNum: delPage.value.page,
     pageSize: delPage.value.rows,
-    equipmentName: data.equipmentName,
-    mouldType: mouldType.value,
-    expectedEquipmentIds: arrPersonID.value,
+    // equipmentName: data.equipmentName,
+    // mouldType: mouldType.value,
+    exceptIds: arrPersonID.value,
     // supportGroupId: rowGroupId.value,
   });
   onDelPersonTabList.list = res.list;
