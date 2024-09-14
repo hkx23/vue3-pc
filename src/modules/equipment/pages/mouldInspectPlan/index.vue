@@ -140,7 +140,7 @@
               param-group="E_MOULD_TYPE"
               placeholder="请选择点检模具类型"
               :show-title="false"
-              @change="(val: any) => fetchDialogTable(val, true)"
+              @selection-change="(val: any) => fetchDialogTable(val, true)"
             />
             <span v-else>{{ inspectItemTabData.list.assetTypeName }}</span>
           </t-form-item>
