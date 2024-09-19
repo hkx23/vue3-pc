@@ -24,7 +24,7 @@
     :value-key="keywords.value"
     :input-value="selectSearch"
     :filterable="filterable"
-    :loading="loading"
+    :loading="loading && pageIndex === 1"
     @input-change="onInputChange"
     @clear="onClear"
     @tag-change="onTagChange"
@@ -32,10 +32,10 @@
   >
     <template #panel>
       <div class="container">
-        <div v-show="loading" style="padding: 12px; text-align: center; width: 100%">
+        <div v-show="loading && pageIndex === 1" style="padding: 12px; text-align: center; width: 100%">
           <t-loading></t-loading>
         </div>
-        <t-row v-show="!loading" class="body">
+        <t-row v-show="!loading || pageIndex > 1" class="body">
           <t-col flex="1" :class="['content left', { bottom: !props.multiple }]">
             <p class="header">
               {{ props.name }}列表

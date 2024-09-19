@@ -1039,8 +1039,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2990,8 +2990,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5438,13 +5438,13 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   /** 容器类型名称 */
   containerTypeName?: string;
-  stateName?: string;
   isState?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
-  isForceInspectionName?: string;
+  stateName?: string;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5663,14 +5663,14 @@ export interface MitemVO {
   /** 配送卡规格数量 */
   specificationsQty?: number;
   minPackagingQty?: string;
-  stateName?: string;
   isState?: boolean;
-  isProductName?: string;
+  stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isBatchName?: string;
-  isInProcessName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
   isRawName?: string;
 }
 
@@ -8550,8 +8550,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -11415,10 +11415,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -11987,13 +11987,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   processInstanceId?: string;
+  scopeDefinitionId?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
-  scopeType?: string;
-  subScopeId?: string;
 }
 
 /** 通用响应类 */
@@ -12015,47 +12015,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
+  formKey?: string;
+  localizedName?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
+  localizedDescription?: string;
   suspended?: boolean;
   description?: string;
   tenantId?: string;
+  assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  assignee?: string;
   category?: string;
-  localizedName?: string;
-  formKey?: string;
-  localizedDescription?: string;
-  parentTaskId?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
   id?: string;
   state?: string;
   scopeId?: string;
-  executionId?: string;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
-  /** @format date-time */
-  createTime?: string;
-  identityLinks?: IdentityLinkInfo[];
-  processDefinitionId?: string;
-  scopeType?: string;
   subScopeId?: string;
-  processVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  inProgressStartedBy?: string;
-  taskLocalVariables?: Record<string, object>;
+  scopeType?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
   propagatedStageInstanceId?: string;
-  caseVariables?: Record<string, object>;
-  suspendedBy?: string;
-  claimedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
   /** @format date-time */
   claimTime?: string;
+  caseVariables?: Record<string, object>;
+  /** @format date-time */
+  suspendedTime?: string;
+  claimedBy?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  taskLocalVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  processVariables?: Record<string, object>;
+  inProgressStartedBy?: string;
+  processDefinitionId?: string;
+  /** @format date-time */
+  createTime?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
 } | null;
 
 /** 响应数据 */
@@ -12063,13 +12063,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   processInstanceId?: string;
+  scopeDefinitionId?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
-  scopeType?: string;
-  subScopeId?: string;
 } | null;
 
 /** 通用响应类 */
