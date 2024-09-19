@@ -847,7 +847,16 @@ watch(
   (_val) => {
     // console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
     isHandleSelectionChange.value = false;
+    pageIndex.value = 1;
     remoteLoad('');
+  },
+  { deep: true },
+);
+
+watch(
+  () => props.customConditions,
+  (_val) => {
+    pageIndex.value = 1;
   },
   { deep: true },
 );
