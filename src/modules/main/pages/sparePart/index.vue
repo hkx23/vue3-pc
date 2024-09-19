@@ -175,6 +175,7 @@
               v-model="sparePartData.list.uom"
               label=""
               type="uom"
+              value-field="uom"
               :clearable="true"
               :disabled="isDisabled"
             ></bcmp-select-business>

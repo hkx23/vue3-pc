@@ -96,7 +96,7 @@ const opts = computed(() => {
       },
     },
     msgDomainCategory: {
-      label: 'MES领域分类',
+      label: '领域分类',
       comp: 't-select',
       defaultVal: [],
       bind: {
@@ -123,7 +123,7 @@ const opts = computed(() => {
       },
     },
     billNo: {
-      label: 'MES/业务单据号',
+      label: '业务单据号',
       comp: 't-input',
       defaultVal: '',
       bind: {
@@ -165,8 +165,8 @@ const statusOption = ref([
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '接口分类', colKey: 'msgCategoryName', width: 110 },
-  { title: 'MES领域分类', width: 130, colKey: 'msgDomainCategoryName' },
-  { title: 'MES业务单号', width: 120, colKey: 'billNo' },
+  { title: '领域分类', width: 130, colKey: 'msgDomainCategoryName' },
+  { title: '业务单号', width: 120, colKey: 'billNo' },
   { title: '事务类型', width: 85, colKey: 'businessCategoryName' },
   { title: 'ERP凭据单号', width: 110, colKey: 'erpBillNo' },
   {
