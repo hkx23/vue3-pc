@@ -110,7 +110,8 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'mitemCategory',
-        showTitle: false,
+        showTitle: true,
+        title: '标题使用',
       },
     },
     dateValue: {

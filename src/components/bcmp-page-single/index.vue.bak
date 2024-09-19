@@ -55,11 +55,11 @@
             <template v-for="(item, index) in rowButtons" :key="index">
               <template v-if="item.actionType === 'delete'">
                 <t-popconfirm content="确认删除吗" @confirm="onRowClick(slotProps, item)">
-                  <t-link :theme="item.buttonTheme">{{ item.buttonName }}</t-link>
+                  <t-link theme="primary">{{ item.buttonName }}</t-link>
                 </t-popconfirm>
               </template>
               <template v-else>
-                <t-link :theme="item.buttonTheme" @click="onRowClick(slotProps, item)">
+                <t-link theme="primary" @click="onRowClick(slotProps, item)">
                   {{ item.buttonName }}
                 </t-link>
               </template>
@@ -112,7 +112,7 @@ const props = defineProps({
     },
   },
 });
-const emit = defineEmits(['select-change', 'row-click', 'jump-link']);
+const emit = defineEmits(['select-change', 'row-click']);
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 // 表格数据总数
@@ -170,8 +170,6 @@ const fetchTable = async () => {
       dynamicTableName: datasourceName.value,
       dynamicBusinessDomain: domainCategory.value,
       selectedFields: selectedFields.value,
-      dynamicDefaultSortFiled: dynamicDefaultSortFiled.value,
-      dynamicSortType: dynamicSortType.value,
       datasourceSetting: settingObject.value.domainParmSetting.datasourceSetting,
     };
     const postUrl = `/api/${domainCategory.value.toLowerCase()}/dynamicManage/dynamicQueryDataSql`;
@@ -197,8 +195,7 @@ const searchSettings = ref([]);
 const usePager = ref(true);
 const isAutoLoad = ref(true);
 const currentFormAction = ref('');
-const dynamicDefaultSortFiled = ref('');
-const dynamicSortType = ref('DESC');
+
 // 按钮列表
 const tableHeaderButtons = ref<any[]>([]);
 const rowButtons = ref<any[]>([]);
@@ -210,8 +207,6 @@ const loadSetting = async () => {
   settingObject.value = res;
   // 获取主要信息
   tableTitle.value = res.domainParamName;
-  dynamicDefaultSortFiled.value = res.domainParmSetting.tableSetting.sortField;
-  dynamicSortType.value = res.domainParmSetting.tableSetting.sortType;
   domainCategory.value = res.domainCategory;
   datasourceCategory.value = res.datasourceCategory;
   datasourceName.value = res.datasourceName;
@@ -374,14 +369,14 @@ const generateComponentConfig = async (setting) => {
     case 'bcmp-select-business':
       optItem.bind = {
         type: setting.componentParam,
-        multiple: setting.isMultiple || false,
+        multiple: setting.isMultiple,
         autoSelect: setting.autoSelect,
       };
       break;
     case 'bcmp-select-param':
       optItem.bind = {
         paramGroup: setting.componentParam,
-        multiple: setting.isMultiple || false,
+        multiple: setting.isMultiple,
       };
       break;
     case 't-select':
@@ -404,9 +399,6 @@ const generateComponentConfig = async (setting) => {
         options: optionsData,
         multiple: setting.isMultiple,
       };
-      if (setting.isMultiple) {
-        optItem.bind.multiple = true;
-      }
       break;
 
     default:
@@ -466,7 +458,6 @@ const onRowClick = async (rowValue, buttonSetting) => {
       // link原数据为 /main#/moRelease?id={id}
       // 需要把{id} 替换为当前行formValue.id
       jumpLink = replacePlaceholders(jumpLink, formValue);
-      emit('jump-link', jumpLink);
       // openPage(jumpLink);
       break;
     case 'customApi':
@@ -545,7 +536,6 @@ const onHeaderClick = async (buttonSetting) => {
       break;
     case 'link':
       jumpLink = buttonSetting.jumpLink;
-      emit('jump-link', jumpLink);
       // openPage(jumpLink);
       break;
     case 'customApi':

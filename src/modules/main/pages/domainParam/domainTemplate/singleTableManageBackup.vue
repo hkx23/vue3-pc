@@ -1,9 +1,9 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card v-if="opts && Object.keys(opts).length > 0" :span="12" :ghost="ghost">
+    <cmp-card v-if="opts && Object.keys(opts).length > 0" :span="12">
       <cmp-query :opts="opts" label-width="100" :loading="loading" @submit="conditionEnter" />
     </cmp-card>
-    <cmp-card :span="12" :ghost="ghost">
+    <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -18,7 +18,6 @@
         :show-pagination="usePager"
         :total="dataTotal"
         :fixed-height="true"
-        @row-click="onTableRowClick"
         @select-change="rehandleSelectChange"
         @refresh="fetchTable"
       >
@@ -45,7 +44,6 @@
                 </t-button>
               </template>
             </template>
-            <slot name="headerButton"></slot>
           </t-space>
         </template>
 
@@ -81,38 +79,21 @@
 </template>
 <script lang="ts">
 export default {
-  name: 'BcmpPageSingle',
+  name: 'SingleTableManage',
 };
 </script>
 <script setup lang="ts">
 import { cloneDeep, isEqual } from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
+import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-// import { openPage } from '@/router';
+import { openPage } from '@/router';
 
 const selectedRowKeys = ref([]); // 全选控制存入字段
-// / 00-组件属性定义
-const props = defineProps({
-  // 组件展示类型
-  pageSetting: {
-    type: [Object],
-    default: null,
-  },
-  ghost: {
-    type: [Boolean],
-    default: false,
-  },
-  relateCondition: {
-    type: [Array],
-    default() {
-      return [];
-    },
-  },
-});
-const emit = defineEmits(['select-change', 'row-click', 'jump-link']);
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 // 表格数据总数
@@ -131,6 +112,7 @@ const tableTitle = ref('');
 const conditionEnter = (data: any) => {
   pageUI.value.page = 1;
   filterList.value = [];
+
   for (const key in data) {
     if (data[key] != null && data[key] !== '') {
       const addFilter = {
@@ -146,27 +128,21 @@ const conditionEnter = (data: any) => {
 
   fetchTable();
 };
-const onTableRowClick = async ({ row }) => {
-  emit('row-click', row);
-};
+
 // 全选
 const rehandleSelectChange = (value: any) => {
   selectedRowKeys.value = value;
-  emit('select-change', selectedRowKeys.value);
-  console.log('selectChange:', selectedRowKeys.value);
+  console.log(selectedRowKeys.value);
 };
 // 加载角色数据表格
 const fetchTable = async () => {
   setLoading(true);
   try {
-    const finalFilterList: any = [];
-    finalFilterList.push(...(props.relateCondition || []));
-    finalFilterList.push(...(filterList.value || []));
     // 查询条件
     const searchCondition = {
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      filters: finalFilterList,
+      filters: filterList.value,
       dynamicTableName: datasourceName.value,
       dynamicBusinessDomain: domainCategory.value,
       selectedFields: selectedFields.value,
@@ -203,104 +179,112 @@ const dynamicSortType = ref('DESC');
 const tableHeaderButtons = ref<any[]>([]);
 const rowButtons = ref<any[]>([]);
 
-const loadSetting = async () => {
+const loadSetting = () => {
   // 渲染表格列配置
-
-  const res = props.pageSetting;
-  settingObject.value = res;
-  // 获取主要信息
-  tableTitle.value = res.domainParamName;
-  dynamicDefaultSortFiled.value = res.domainParmSetting.tableSetting.sortField;
-  dynamicSortType.value = res.domainParmSetting.tableSetting.sortType;
-  domainCategory.value = res.domainCategory;
-  datasourceCategory.value = res.datasourceCategory;
-  datasourceName.value = res.datasourceName;
-  usePager.value = res.domainParmSetting.tableSetting.usePage;
-  isAutoLoad.value = res.domainParmSetting.tableSetting.isAutoLoad !== false;
-  // 获取表格里面的field字段
-  selectedFields.value = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
-    tableName: column.tableName.toUpperCase(), // 假设column对象中有tableName属性
-    fieldName: column.columnName.toUpperCase(), // 或者是fieldName，取决于你的实际属性名
-  }));
-  if (usePager.value) {
-    pageUI.value.rows = res.domainParmSetting.tableSetting.pageSize || 20;
-  } else {
-    pageUI.value.rows = 99999;
+  const route = useRoute();
+  const { domainParamId } = route.query;
+  if (!domainParamId) {
+    return;
   }
-
-  // 获取按钮信息，配置
-  const allButtonSetting = res.domainParmSetting.buttonSetting;
-  tableHeaderButtons.value = allButtonSetting.filter(
-    (button) => (button.buttonPosition === 'tableHeader' || button.buttonPosition === 'both') && button.isEnabled,
-  );
-  rowButtons.value = allButtonSetting.filter(
-    (button) => (button.buttonPosition === 'row' || button.buttonPosition === 'both') && button.isEnabled,
-  );
-
-  // 获取表格列，配置
-  const tableColumnSetting = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
-    colKey: column.columnName.toUpperCase(), // 列绑定的字段名
-    title: column.columnDesc || column.columnName.toUpperCase(), // 列显示的标题，默认使用columnDesc，不存在则使用columnName
-    align: column.align, // 对齐方式
-    width: column.isAutoWidth ? 'auto' : column.columnWidth, // 列宽
-    fixed: determineFixed(column.isLeftFixed, column.isRightFixed), // 是否固定列
-    showOverflowTooltip: !column.isAutoWidth, // 是否开启文本溢出 tooltip，如果autoWidth为true，则可能不需要此配置
-    isShow: column.isVisible, // 是否显示该列
-    componentSource: column.componentSource,
-  }));
-  if (rowButtons.value.length > 0) {
-    // 根据所有按钮的内容计算宽度
-    const charWidth = 20;
-    let labelSumWidth = 0;
-    for (let index = 0; index < rowButtons.value.length; index++) {
-      labelSumWidth += rowButtons.value[index].buttonName.length * charWidth;
+  api.domainParam.getItemById({ id: domainParamId.toString() }).then(async (res: any) => {
+    settingObject.value = res;
+    // 获取主要信息
+    // tableTitle.value = res.domainParamName;
+    domainCategory.value = res.domainCategory;
+    datasourceCategory.value = res.datasourceCategory;
+    datasourceName.value = res.datasourceName;
+    usePager.value = res.domainParmSetting.tableSetting.usePage;
+    isAutoLoad.value = res.domainParmSetting.tableSetting.isAutoLoad !== false;
+    tableTitle.value = res.domainParmSetting.tableSetting.tableTitle;
+    dynamicDefaultSortFiled.value = res.domainParmSetting.tableSetting.sortField;
+    dynamicSortType.value = res.domainParmSetting.tableSetting.sortType;
+    // 获取表格里面的field字段
+    selectedFields.value = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
+      tableName: column.tableName.toUpperCase(), // 假设column对象中有tableName属性
+      fieldName: column.columnName.toUpperCase(), // 或者是fieldName，取决于你的实际属性名
+    }));
+    if (usePager.value) {
+      pageUI.value.rows = res.domainParmSetting.tableSetting.pageSize || 20;
+    } else {
+      pageUI.value.rows = 99999;
     }
-    // 添加一些额外的空间作为缓冲
-    const totalWidth = labelSumWidth + 10 * rowButtons.value.length;
-    tableColumnSetting.push({
-      colKey: 'op',
-      title: '操作',
-      align: 'center',
-      fixed: 'right',
-      width: totalWidth,
-      isShow: true,
-      showOverflowTooltip: true,
-    });
-  }
-  if (tableHeaderButtons.value.filter((column) => column.name !== 'add').length > 0) {
-    tableColumnSetting.unshift({
-      colKey: 'checked',
-      type: 'multiple',
-      width: '80',
-      isShow: true,
-    });
-  }
-  // 过滤isShow为true的数据,作为表格的列配置
 
-  tableColumnSetting.forEach((column) => {
-    if (column.colKey !== 'op' && column.colKey !== 'checked') {
-      if (column.componentSource) {
-        column.cell = (h, { row }) => {
-          // 如果 row[column.colKey] 为 null 或 undefined，则直接返回默认值
-          const value = row[column.colKey] ?? '';
-          // 查找对应字典中的条目
-          const dictItem = column.componentSource.customDict.dicData.find((item) => item.value === value.toString());
-
-          // 如果找到了对应的字典条目，则使用该条目的 label，否则使用默认值
-          const label = dictItem ? dictItem.label : value;
-
-          return h('span', {}, label);
-        };
+    // 获取按钮信息，配置
+    const allButtonSetting = res.domainParmSetting.buttonSetting;
+    tableHeaderButtons.value = allButtonSetting.filter(
+      (button) => (button.buttonPosition === 'tableHeader' || button.buttonPosition === 'both') && button.isEnabled,
+    );
+    rowButtons.value = allButtonSetting.filter(
+      (button) => (button.buttonPosition === 'row' || button.buttonPosition === 'both') && button.isEnabled,
+    );
+    // 获取表格列，配置
+    const tableColumnSetting = res.domainParmSetting.tableSetting.columnSetting.map((column) => ({
+      colKey: column.columnName.toUpperCase(), // 列绑定的字段名
+      title: column.columnDesc || column.columnName.toUpperCase(), // 列显示的标题，默认使用columnDesc，不存在则使用columnName
+      align: column.align, // 对齐方式
+      width: column.isAutoWidth ? 'auto' : column.columnWidth, // 列宽
+      fixed: determineFixed(column.isLeftFixed, column.isRightFixed), // 是否固定列
+      showOverflowTooltip: !column.isAutoWidth, // 是否开启文本溢出 tooltip，如果autoWidth为true，则可能不需要此配置
+      isShow: column.isVisible, // 是否显示该列
+      componentSource: column.componentSource,
+    }));
+    if (rowButtons.value.length > 0) {
+      // 根据所有按钮的内容计算宽度
+      const charWidth = 20;
+      let labelSumWidth = 0;
+      for (let index = 0; index < rowButtons.value.length; index++) {
+        labelSumWidth += rowButtons.value[index].buttonName.length * charWidth;
       }
+      // 添加一些额外的空间作为缓冲
+      const totalWidth = labelSumWidth + 10 * rowButtons.value.length;
+      tableColumnSetting.push({
+        colKey: 'op',
+        title: '操作',
+        align: 'center',
+        fixed: 'right',
+        width: totalWidth,
+        isShow: true,
+        showOverflowTooltip: true,
+      });
+    }
+    if (tableHeaderButtons.value.filter((column) => column.name !== 'add').length > 0) {
+      tableColumnSetting.unshift({
+        colKey: 'checked',
+        type: 'multiple',
+        width: '80',
+        isShow: true,
+      });
+    }
+
+    // 过滤isShow为true的数据,作为表格的列配置
+
+    tableColumnSetting.forEach((column) => {
+      if (column.colKey !== 'op' && column.colKey !== 'checked') {
+        if (column.componentSource) {
+          column.cell = (h, { row }) => {
+            // 如果 row[column.colKey] 为 null 或 undefined，则直接返回默认值
+            const value = row[column.colKey] ?? '';
+            // 查找对应字典中的条目
+            const dictItem = column.componentSource.customDict.dicData.find((item) => item.value === value.toString());
+
+            // 如果找到了对应的字典条目，则使用该条目的 label，否则使用默认值
+            const label = dictItem ? dictItem.label : value;
+
+            return h('span', {}, label);
+          };
+        }
+      }
+    });
+
+    tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
+    // 获取查询信息，配置
+    searchSettings.value = res.domainParmSetting.searchSetting;
+    const genOptsResult = await genOpts(res.domainParmSetting.searchSetting);
+    opts.value = genOptsResult;
+    if (isAutoLoad.value) {
+      conditionEnter(null);
     }
   });
-  // 过滤isShow为true的数据,作为表格的列配置
-  tableColumns.value = tableColumnSetting.filter((column) => column.isShow);
-  // 获取查询信息，配置
-  searchSettings.value = res.domainParmSetting.searchSetting;
-  const genOptsResult = await genOpts(res.domainParmSetting.searchSetting);
-  opts.value = genOptsResult;
-  conditionEnter(null);
 };
 const determineFixed = (isLeftFixed, isRightFixed) => {
   if (isLeftFixed) return 'left';
@@ -308,13 +292,12 @@ const determineFixed = (isLeftFixed, isRightFixed) => {
   return '';
 };
 const genOpts = async (searchSetting) => {
-  const optSetting: any = {};
+  const optSetting = {};
   const promises = []; // 用于存储所有generateComponentConfig的Promise
-
   searchSetting.forEach((settingConfig) => {
     // 将每个异步调用放入promises数组中
     promises.push(
-      generateComponentConfig(settingConfig).then((optSettingItem: any) => {
+      generateComponentConfig(settingConfig).then((optSettingItem) => {
         optSetting[settingConfig.field.toUpperCase()] = optSettingItem;
       }),
     );
@@ -400,9 +383,9 @@ const generateComponentConfig = async (setting) => {
             break;
         }
       }
+
       optItem.bind = {
         options: optionsData,
-        multiple: setting.isMultiple,
       };
       if (setting.isMultiple) {
         optItem.bind.multiple = true;
@@ -466,8 +449,7 @@ const onRowClick = async (rowValue, buttonSetting) => {
       // link原数据为 /main#/moRelease?id={id}
       // 需要把{id} 替换为当前行formValue.id
       jumpLink = replacePlaceholders(jumpLink, formValue);
-      emit('jump-link', jumpLink);
-      // openPage(jumpLink);
+      openPage(jumpLink);
       break;
     case 'customApi':
       customApi = buttonSetting.customApi;
@@ -479,7 +461,6 @@ const onRowClick = async (rowValue, buttonSetting) => {
       break;
   }
 };
-
 const replacePlaceholders = (url, params) => {
   return url.replace(/\{(\w+)\}/gi, (match, key) => {
     const paramKey = key.toLowerCase();
@@ -491,7 +472,6 @@ const onHeaderClick = async (buttonSetting) => {
   let deleteTypeUrl = 'dynamicDeleteDataSql';
   let jumpLink = '';
   let customApi = '';
-  const formValue = {};
   // :todo:这里的应该是要做成批量删除-根据选中行删除
   const deleteModel = {
     tableName: datasourceName.value,
@@ -508,8 +488,7 @@ const onHeaderClick = async (buttonSetting) => {
       return;
     }
   }
-  const relateConditons = cloneDeep(props.relateCondition);
-  const formData = {};
+
   // 判断是否编辑动作
   switch (buttonSetting.actionType) {
     case 'delete':
@@ -521,7 +500,6 @@ const onHeaderClick = async (buttonSetting) => {
         deleteTypeUrl = 'dynamicLogicDeleteDataSql';
         // 调用接口
       }
-
       await http.post<any>(`/api/${domainCategory.value.toLowerCase()}/dynamicManage/${deleteTypeUrl}`, deleteModel);
       MessagePlugin.success('删除成功');
       fetchTable();
@@ -529,24 +507,13 @@ const onHeaderClick = async (buttonSetting) => {
     case 'form-add':
       currentFormAction.value = 'add';
       currentFormSetting.value = buttonSetting;
-
-      // 将field 属性转换为小写驼峰形式
-      relateConditons.forEach((item: any) => {
-        item.field = item.field.toUpperCase();
-      });
-
-      // formData 添加 relateConditons的属性值
-      relateConditons.forEach((condition: any) => {
-        formData[condition.field] = condition.value;
-      });
-      currentFormData.value = formData;
+      currentFormData.value = {};
       formVisible.value = true;
 
       break;
     case 'link':
       jumpLink = buttonSetting.jumpLink;
-      emit('jump-link', jumpLink);
-      // openPage(jumpLink);
+      openPage(jumpLink);
       break;
     case 'customApi':
       customApi = buttonSetting.customApi;
@@ -560,24 +527,11 @@ const onHeaderClick = async (buttonSetting) => {
   }
 };
 const formVisible = ref(false);
-const currentFormSetting: any = ref([]);
+
+const currentFormSetting: any = ref({});
 const currentFullFormSetting = ref([]);
 const currentFormData = ref({});
 // 计算窗口宽度
-// const calculateFormWidth = computed(() => {
-//   const inputWidth = 270; // 假设调整后的输入框宽度
-//   const labelWidth = 120;
-//   const margin = 16;
-//   const gap = 2;
-//   const columnGap = 12;
-//   if (currentFormSetting.value.length < 6) {
-//     return `${inputWidth + labelWidth + margin * 2 + gap}px`;
-//   }
-//   if (currentFormSetting.value.length >= 6 && currentFormSetting.value.length < 16) {
-//     return `${inputWidth * 2 + labelWidth * 2 + margin * 2 + columnGap + gap}px`;
-//   }
-//   return '90%';
-// });
 const calculateFormWidth = computed(() => {
   const inputWidth = 270; // 假设调整后的输入框宽度
   const labelWidth = 120;
@@ -585,7 +539,7 @@ const calculateFormWidth = computed(() => {
   const gap = 2;
   const columnGap = 12;
   const formSetting: any = cloneDeep(currentFormSetting.value);
-  if (!isEqual(formSetting, {}) && !isEqual(formSetting, [])) {
+  if (!isEqual(formSetting, {})) {
     const currentColumns = formSetting.formColumnSetting.filter((column) => column.isVisible);
 
     if (currentColumns.length < 6) {
@@ -661,25 +615,10 @@ const onFormSubmit = async () => {
   });
 };
 
-// const convertToBoolean = (value) => {
-//   // 将值转换为小写字符串，以便进行比较
-//   const lowerCaseValue = value.toString().toLowerCase();
-
-//   // 检查值是否为 "1"、"true" 或数字 1
-//   if (lowerCaseValue === '1' || lowerCaseValue === 'true' || value === 1) {
-//     return true;
-//   }
-
-//   // 如果不是上述情况，则返回 false
-//   return false;
-// };
 // 渲染函数
 onMounted(() => {
   loadSetting();
 });
-
-// 暴露方法出去
-defineExpose({ fetchTable, conditionEnter });
 </script>
 <style lang="less" scoped>
 :deep(.t-form__controls-content) {
