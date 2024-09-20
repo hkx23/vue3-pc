@@ -47,10 +47,14 @@
               threshold: 10,
               type: 'virtual',
             }"
+            :check-strictly="true"
+            :load="loadMitem"
+            value-mode="all"
             @click="treeClick"
           >
             <template #icon="{ node }">
-              <icon :name="node.expanded ? 'folder-open' : 'folder'" />
+              <icon v-if="node.loading" name="loading" />
+              <icon v-else :name="node.expanded ? 'folder-open' : 'folder'" />
             </template>
             <template #label="{ node }">
               <div class="no-wrap" :title="node.label">{{ node.label }}</div>
@@ -161,11 +165,12 @@ export default {
 <script setup lang="ts">
 import _ from 'lodash';
 import { AddRectangleIcon, Icon, LoginIcon, MultiplyIcon, SearchIcon } from 'tdesign-icons-vue-next';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData, TreeProps } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
+import { api as mainApi } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import BcmpUploadContent from '@/components/bcmp-upload-content/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -240,11 +245,11 @@ const uploadfail = (file: AddFileType) => {
 };
 
 // 树状数据 TS 类型
-interface TreeNode {
-  id?: string;
-  label: string;
-  children?: TreeNode[]; // 可选属性，表示子节点数组
-}
+// interface TreeNode {
+//   id?: string;
+//   label: string;
+//   children?: TreeNode[]; // 可选属性，表示子节点数组
+// }
 const formVisible = ref(false);
 const formVisibleFile = ref(false);
 const formVisibleAdd = ref(false);
@@ -253,7 +258,7 @@ const formRefAdd = ref(null);
 const formTitle = ref('');
 const treeRef = ref(null); // 树组件实例
 const treeArr = ref<TreeLabelData | null>(null); // 组件挂载获取树组件名称数组
-const treeData = ref<TreeNode[]>([]); // 树组件数据
+const treeData = ref<any[]>([]); // 树组件数据
 const tabListData = ref(1); // 多端选中数据
 const clickNodeId = ref({
   mitemCategoryId: '',
@@ -450,18 +455,18 @@ function simplifyObject(obj: {
     id: obj.id ? obj.id : obj.mitemId,
     categoryId: obj.id ? obj.id : obj.categoryId,
     label: obj.id ? `${obj.categoryCode} ${obj.categoryName}` : `${obj.mitemCode} ${obj.mitemName}`,
-    children: [],
+    children: true,
   };
   // 检查是否存在 list 字段，如果存在则处理子级对象
-  if (obj.list && Array.isArray(obj.list)) {
-    // 递归处理每个子对象
-    simplified.children = obj.list.map((child: any) => simplifyObject(child));
-  }
-  // 检查是否存在 children 字段，如果存在则处理子级对象
-  else if (obj.children && Array.isArray(obj.children)) {
-    // 递归处理每个子对象
-    simplified.children = obj.children.map((child: any) => simplifyObject(child));
-  }
+  // if (obj.list && Array.isArray(obj.list)) {
+  //   // 递归处理每个子对象
+  //   simplified.children = obj.list.map((child: any) => simplifyObject(child));
+  // }
+  // // 检查是否存在 children 字段，如果存在则处理子级对象
+  // else if (obj.children && Array.isArray(obj.children)) {
+  //   // 递归处理每个子对象
+  //   simplified.children = obj.children.map((child: any) => simplifyObject(child));
+  // }
   return simplified;
 }
 
@@ -477,6 +482,42 @@ const onGetTreeData = async () => {
   totals.value = res.total;
   const filteredLabels = filterLabels(treeData.value); // 转化数组
   treeArr.value = filteredLabels;
+};
+const loadMitem: TreeProps['load'] = async (node: any) => {
+  const data = (await mainApi.mitem.getListByMitemCategory({
+    keyword: '',
+    mitemcategoryid: node.categoryId,
+    pagenum: 1,
+    pagesize: 999,
+  })) as any;
+  const mitemData = data.list;
+  const nodes = mitemData.map((item) => ({
+    label: `${item.mitemCode} ${item.mitemName}`,
+    value: item.id,
+    id: item.id,
+    children: false,
+  }));
+  return nodes;
+  // return new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     let nodes: any[] = [];
+
+  //     nodes = [
+  //       {
+  //         label: `${node.label}.1`,
+  //         value: `${node.value}.1`,
+  //         children: true,
+  //       },
+  //       {
+  //         label: `${node.label}.2`,
+  //         value: `${node.value}.2`,
+  //         children: true,
+  //       },
+  //     ];
+
+  //     resolve(nodes);
+  //   }, 1000);
+  // });
 };
 
 // 获取表格数据

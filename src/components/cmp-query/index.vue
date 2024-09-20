@@ -577,7 +577,7 @@ const onExpandSwitch = () => {
 };
 
 useResizeObserver(QueryRef, (entries) => {
-  loading.value = true;
+  // loading.value = true;
 
   const entry = entries[0];
   console.debug(entry);
