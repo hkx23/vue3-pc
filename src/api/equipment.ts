@@ -571,8 +571,8 @@ export interface RepairBillDtlVO {
   memo?: string;
   billDtlFiles?: RepairBillDtlFile[];
   billDtlSpareParts?: RepairBillDtlSparePartVO[];
-  repairItemId?: string;
   repairItemFiles?: RepairItemFile[];
+  repairItemId?: string;
 }
 
 /** 设备维修单据文件表 */
@@ -2339,6 +2339,7 @@ export interface InspectBillDtlVo {
   /** 点检结果 */
   inspectResult?: string;
   billDtlFiles?: InspectBillDtlFile[];
+  inspectItemId?: string;
 }
 
 /** 响应数据 */
@@ -3734,6 +3735,22 @@ export const api = {
       http.request<ResultInspectBillHeadVo['data']>(`/api/equipment/inspectBillHead/getEquipmentInspectByID`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  inspectBillDtlFile: {
+    /**
+     * No description
+     *
+     * @tags 设备点检明细文件表
+     * @name GetFilesByDtlIds
+     * @summary 获取设备点检
+     * @request POST:/inspectBillDtlFile/getFilesByDtlIds
+     * @secure
+     */
+    getFilesByDtlIds: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectBillDtlFile/getFilesByDtlIds`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   inspectBillDtl: {

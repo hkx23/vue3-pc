@@ -259,7 +259,13 @@ const fetchTable = async () => {
   setLoading(true);
   try {
     const finalFilterList: any = [];
-    const relateConditons = _.cloneDeep(props.relateCondition);
+    const relateConditons: any = _.cloneDeep(props.relateCondition);
+    // 增加初始化
+    if (relateConditons[0] && relateConditons[0].value === '-1') {
+      tableData.value = [];
+      dataTotal.value = 0;
+      return;
+    }
     // 将field 属性转换为小写驼峰形式
     relateConditons.forEach((item: any) => {
       item.field = common.toLowerCamelCase(item.field);
