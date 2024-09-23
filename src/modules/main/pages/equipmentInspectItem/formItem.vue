@@ -18,7 +18,7 @@
           <t-descriptions-item label="关联资产类型">
             <bcmp-select-business v-model="formData.assetTypeId" type="assetType" :show-title="false" />
           </t-descriptions-item>
-          <t-descriptions-item label="关联资产品牌">
+          <!-- <t-descriptions-item label="关联资产品牌">
             <bcmp-select-business
               v-model="formData.assetBrandId"
               type="assetBrand"
@@ -33,7 +33,7 @@
               :parent-id="formData.assetBrandId"
               :show-title="false"
             />
-          </t-descriptions-item>
+          </t-descriptions-item> -->
         </t-descriptions>
       </cmp-card>
     </cmp-container>

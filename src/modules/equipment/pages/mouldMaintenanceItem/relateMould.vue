@@ -132,11 +132,11 @@ const opts = computed(() => {
         paramGroup: 'E_MOULD_TYPE',
       },
     },
-    keyWord: {
-      label: t('maintenanceItem.模具'),
-      comp: 't-input',
-      defaultVal: '',
-    },
+    // keyWord: {
+    //   label: t('maintenanceItem.模具'),
+    //   comp: 't-input',
+    //   defaultVal: '',
+    // },
   };
 });
 // 查询条件处理数据

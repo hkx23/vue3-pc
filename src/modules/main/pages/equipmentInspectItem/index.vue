@@ -111,7 +111,7 @@
         </t-descriptions-item>
         <t-descriptions-item>
           <t-form-item label="点检类型" name="inspectItemType" required-mark>
-            <bcmp-select-param v-model="inspectItemTabData.list.inspectItemType" param-group="Q_INSPECT_ITEM_TYPE" />
+            <bcmp-select-param v-model="inspectItemTabData.list.inspectItemType" param-group="E_INSPECT_TYPE" />
           </t-form-item>
         </t-descriptions-item>
         <t-descriptions-item>
@@ -129,12 +129,12 @@
             />
           </t-form-item>
         </t-descriptions-item>
-        <t-descriptions-item>
+        <t-descriptions-item v-if="inspectItemTabData.list.inspectItemType === 'QUANTITATIVE'">
           <t-form-item label="参数上限" name="maxValue">
             <t-input-number v-model="inspectItemTabData.list.maxValue" style="width: 100%" min="0" />
           </t-form-item>
         </t-descriptions-item>
-        <t-descriptions-item>
+        <t-descriptions-item v-if="inspectItemTabData.list.inspectItemType === 'QUANTITATIVE'">
           <t-form-item label="参数下限" name="minValue">
             <t-input-number v-model="inspectItemTabData.list.minValue" style="width: 100%" min="0" />
           </t-form-item>
@@ -574,28 +574,34 @@ const itemColumns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'inspectItemName',
-    title: '点检项目编码',
+    title: '点检项目名称',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'assetTypeName',
+    colKey: 'assetTypeCode',
     title: '资产类型编码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'assetBrandName',
-    title: '资产品牌编码',
+    colKey: 'assetTypeName',
+    title: '资产类型名称',
     align: 'center',
     width: '110',
   },
-  {
-    colKey: 'assetModelName',
-    title: '资产型号编码',
-    align: 'center',
-    width: '110',
-  },
+  // {
+  //   colKey: 'assetBrandName',
+  //   title: '资产品牌编码',
+  //   align: 'center',
+  //   width: '110',
+  // },
+  // {
+  //   colKey: 'assetModelName',
+  //   title: '资产型号编码',
+  //   align: 'center',
+  //   width: '110',
+  // },
   {
     colKey: 'op',
     title: '操作',

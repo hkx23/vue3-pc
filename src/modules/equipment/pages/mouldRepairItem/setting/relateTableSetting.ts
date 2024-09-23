@@ -8,7 +8,32 @@ export default {
 
         canDelete: false,
         columnDefault: null,
-        columnDesc: '模具类型',
+        columnDesc: '模具类型编码',
+        columnKey: null,
+        columnName: 'mouldType',
+        columnType: 'varchar(240)',
+        columnWidth: 100,
+
+        id: '6108779929920755712',
+        isAutoWidth: true,
+        isDataDefault: false,
+        isDatabaseField: false,
+        isHandAdd: true,
+        isLeftFixed: false,
+        isRightFixed: false,
+        isVisible: true,
+
+        nullable: null,
+
+        seq: -4,
+        tableName: 'm_mould_20240731165220',
+      },
+      {
+        align: 'center',
+
+        canDelete: false,
+        columnDefault: null,
+        columnDesc: '模具类型名称',
         columnKey: null,
         columnName: 'mouldTypeName',
         columnType: 'varchar(240)',
@@ -46,7 +71,7 @@ export default {
         isHandAdd: true,
         isLeftFixed: false,
         isRightFixed: false,
-        isVisible: true,
+        isVisible: false,
 
         nullable: null,
 
@@ -71,7 +96,7 @@ export default {
         isHandAdd: true,
         isLeftFixed: false,
         isRightFixed: false,
-        isVisible: true,
+        isVisible: false,
 
         nullable: null,
 

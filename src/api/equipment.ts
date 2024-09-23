@@ -761,11 +761,11 @@ export interface MaintenancePlanItemVO {
   oid?: string;
   maintenancePlanId?: string;
   maintenanceItemId?: string;
-  /** 保养项目代码 */
+  /** 保养项目编码 */
   maintenanceItemCode?: string;
   /** 保养项目名称 */
   maintenanceItemName?: string;
-  /** 保养项目要求 */
+  /** 保养要求 */
   maintenanceItemRequire?: string;
   /** 保养周期 */
   maintenancePeriod?: string;
@@ -950,7 +950,7 @@ export interface MaintenanceItemInEquipmentVO {
   /** 模具类型 */
   mouldType?: string;
   mouldId?: string;
-  /** 保养项目代码 */
+  /** 保养项目编码 */
   maintenanceItemCode?: string;
   /** 保养项目名称 */
   maintenanceItemName?: string;
@@ -1043,11 +1043,11 @@ export interface MaintenanceItemVo {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 保养项目代码 */
+  /** 保养项目编码 */
   maintenanceItemCode?: string;
   /** 保养项目名称 */
   maintenanceItemName?: string;
-  /** 保养项目要求 */
+  /** 保养要求 */
   maintenanceItemRequire?: string;
   /** 保养周期 */
   maintenancePeriod?: string;
@@ -1162,7 +1162,7 @@ export interface MaintenanceBillDtlVO {
   maintenanceItemCode?: string;
   /** 保养项目名称 */
   maintenanceItemName?: string;
-  /** 保养项目要求 */
+  /** 保养要求 */
   maintenanceItemRequire?: string;
   /**
    * 是否拍照

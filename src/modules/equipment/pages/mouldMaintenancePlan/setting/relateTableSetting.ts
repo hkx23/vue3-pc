@@ -8,7 +8,7 @@ export default {
 
         canDelete: false,
         columnDefault: null,
-        columnDesc: '保养项目代码',
+        columnDesc: '保养项目编码',
         columnKey: null,
         columnName: 'maintenance_item_code',
         columnType: 'varchar(80)',
@@ -60,7 +60,7 @@ export default {
 
         canDelete: false,
         columnDefault: null,
-        columnDesc: '保养项目要求',
+        columnDesc: '保养要求',
         columnKey: null,
         columnName: 'maintenance_item_require',
         columnType: 'varchar(2000)',

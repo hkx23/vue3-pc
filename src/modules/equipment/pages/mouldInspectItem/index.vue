@@ -64,7 +64,7 @@
         @refresh="onFetchItemData"
       >
         <template #title>
-          {{ '资产列表' }}
+          {{ '模具关联列表' }}
         </template>
         <template #mouldCode="{ row }">{{ row.mouldCode || '-' }}</template>
         <template #mouldName="{ row }">{{ row.mouldName || '-' }}</template>
@@ -76,9 +76,9 @@
         </template>
         <template #button>
           <t-space :size="8">
-            <t-button theme="primary" @click="onAddItemData"> 新增资产 </t-button>
+            <t-button theme="primary" @click="onAddItemData"> 新增模具类型关联 </t-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onItemDeleteBatches()">
-              <t-button theme="default"> 资产批量删除 </t-button>
+              <t-button theme="default"> 模具类型删除 </t-button>
             </t-popconfirm>
           </t-space>
         </template>
@@ -114,7 +114,7 @@
         </t-descriptions-item>
         <t-descriptions-item>
           <t-form-item label="点检类型" name="inspectItemType" required-mark>
-            <bcmp-select-param v-model="inspectItemTabData.list.inspectItemType" param-group="Q_INSPECT_ITEM_TYPE" />
+            <bcmp-select-param v-model="inspectItemTabData.list.inspectItemType" param-group="E_INSPECT_TYPE" />
           </t-form-item>
         </t-descriptions-item>
         <t-descriptions-item>
@@ -132,12 +132,12 @@
             />
           </t-form-item>
         </t-descriptions-item>
-        <t-descriptions-item>
+        <t-descriptions-item v-if="inspectItemTabData.list.inspectItemType === 'QUANTITATIVE'">
           <t-form-item label="参数上限" name="maxValue">
             <t-input-number v-model="inspectItemTabData.list.maxValue" style="width: 100%" min="0" />
           </t-form-item>
         </t-descriptions-item>
-        <t-descriptions-item>
+        <t-descriptions-item v-if="inspectItemTabData.list.inspectItemType === 'QUANTITATIVE'">
           <t-form-item label="参数下限" name="minValue">
             <t-input-number v-model="inspectItemTabData.list.minValue" style="width: 100%" min="0" />
           </t-form-item>
@@ -579,7 +579,7 @@ const itemColumns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'inspectItemName',
-    title: '点检项目编码',
+    title: '点检项目名称',
     align: 'center',
     width: '110',
   },
@@ -589,18 +589,18 @@ const itemColumns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '110',
   },
-  {
-    colKey: 'mouldCode',
-    title: '模具代码',
-    align: 'center',
-    width: '110',
-  },
-  {
-    colKey: 'mouldName',
-    title: '模具名称',
-    align: 'center',
-    width: '110',
-  },
+  // {
+  //   colKey: 'mouldCode',
+  //   title: '模具代码',
+  //   align: 'center',
+  //   width: '110',
+  // },
+  // {
+  //   colKey: 'mouldName',
+  //   title: '模具名称',
+  //   align: 'center',
+  //   width: '110',
+  // },
   {
     colKey: 'op',
     title: '操作',

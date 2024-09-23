@@ -1,8 +1,8 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12" :ghost="ghost">
+    <!-- <cmp-card :span="12" :ghost="ghost">
       <cmp-query :opts="opts" label-width="100" :bool-enter="true" :loading="loading" @submit="conditionEnter" />
-    </cmp-card>
+    </cmp-card> -->
     <cmp-card :ghost="ghost">
       <cmp-table
         ref="tableRef"
@@ -32,13 +32,13 @@
           {{ row.assetTypeName || '-' }}
         </template>
 
-        <template #assetBrandName="{ row }">
+        <!-- <template #assetBrandName="{ row }">
           {{ row.assetBrandName || '-' }}
         </template>
 
         <template #assetModelName="{ row }">
           {{ row.assetModelName || '-' }}
-        </template>
+        </template> -->
 
         <!-- 行按钮区 -->
         <template #op="slotProps">
@@ -124,24 +124,24 @@ const onSelectChange = (value) => {
 };
 // 查询组件
 // const opts = ref({});
-const opts = computed(() => {
-  return {
-    // equipmentType: {
-    //   label: t('repairItem.模具类型'),
-    //   comp: 'bcmp-select-param',
-    //   defaultVal: '',
-    //   placeholder: t('common.placeholder.input', [`${t('repairItem.模具类型')}`]),
-    //   bind: {
-    //     paramGroup: 'E_MOULD_TYPE',
-    //   },
-    // },
-    // equipmentCode: {
-    //   label: t('repairItem.模具'),
-    //   comp: 't-input',
-    //   defaultVal: '',
-    // },
-  };
-});
+// const opts = computed(() => {
+//   return {
+// equipmentType: {
+//   label: t('repairItem.模具类型'),
+//   comp: 'bcmp-select-param',
+//   defaultVal: '',
+//   placeholder: t('common.placeholder.input', [`${t('repairItem.模具类型')}`]),
+//   bind: {
+//     paramGroup: 'E_MOULD_TYPE',
+//   },
+// },
+// equipmentCode: {
+//   label: t('repairItem.模具'),
+//   comp: 't-input',
+//   defaultVal: '',
+// },
+//   };
+// });
 // 查询条件处理数据
 const filterList = ref([]) as any;
 // 表格标题
@@ -355,4 +355,3 @@ defineExpose({ fetchTable, conditionEnter });
   }
 }
 </style>
-./setting/relateTableSetting./setting/relateAddForm

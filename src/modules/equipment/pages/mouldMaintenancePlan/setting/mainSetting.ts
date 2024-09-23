@@ -271,7 +271,7 @@ export default {
         isHandAdd: true,
         isLeftFixed: false,
         isRightFixed: false,
-        isVisible: true,
+        isVisible: false,
 
         nullable: null,
 
@@ -297,7 +297,7 @@ export default {
         isHandAdd: true,
         isLeftFixed: false,
         isRightFixed: false,
-        isVisible: true,
+        isVisible: false,
 
         nullable: null,
 

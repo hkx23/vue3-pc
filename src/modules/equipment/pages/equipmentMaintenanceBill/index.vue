@@ -34,7 +34,7 @@
     </cmp-card>
     <cmp-container>
       <cmp-row>
-        <cmp-card :ghost="false">
+        <cmp-card :ghost="false" style="flex: 1">
           <bcmp-page-single
             ref="equipmentRelateRef"
             :page-setting="billItemSetting"
@@ -44,7 +44,7 @@
           >
           </bcmp-page-single>
         </cmp-card>
-        <cmp-card :ghost="false">
+        <cmp-card :ghost="false" style="flex: 1">
           <bcmp-page-single
             ref="equipmentRelateSpartRef"
             :page-setting="billItemSparePartSetting"

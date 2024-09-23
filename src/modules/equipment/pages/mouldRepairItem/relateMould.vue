@@ -25,17 +25,19 @@
             <t-button theme="primary" @click="onAddClick()"> 新增 </t-button>
           </t-space>
         </template>
-
+        <template #mouldTypeCode="{ row }">
+          {{ row.mouldTypeCode || '-' }}
+        </template>
         <template #mouldTypeName="{ row }">
           {{ row.mouldTypeName || '-' }}
         </template>
 
-        <template #mouldCode="{ row }">
+        <!-- <template #mouldCode="{ row }">
           {{ row.mouldCode || '-' }}
         </template>
         <template #mouldName="{ row }">
           {{ row.mouldName || '-' }}
-        </template>
+        </template> -->
 
         <!-- 行按钮区 -->
         <template #op="slotProps">
@@ -132,11 +134,11 @@ const opts = computed(() => {
         paramGroup: 'E_MOULD_TYPE',
       },
     },
-    mouldCode: {
-      label: t('repairItem.模具'),
-      comp: 't-input',
-      defaultVal: '',
-    },
+    // mouldCode: {
+    //   label: t('repairItem.模具'),
+    //   comp: 't-input',
+    //   defaultVal: '',
+    // },
   };
 });
 // 查询条件处理数据

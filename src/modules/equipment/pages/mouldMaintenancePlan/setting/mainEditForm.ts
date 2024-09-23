@@ -191,10 +191,10 @@ export default {
               label: '关联模具类型',
               value: 'mouldType',
             },
-            {
-              label: '关联模具',
-              value: 'mould',
-            },
+            // {
+            //   label: '关联模具',
+            //   value: 'mould',
+            // },
           ],
         },
         dataTable: {

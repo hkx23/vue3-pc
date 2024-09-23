@@ -109,6 +109,24 @@
           :placeholder="t('common.placeholder.input', [t('domainParam.datasourceName')])"
         ></t-input> -->
           </t-form-item>
+
+          <t-form-item :label="t('domainParam.datasourceName')" name="datasourceName">
+            <t-select
+              v-model="formData.datasourceName"
+              :clearable="true"
+              filterable
+              :placeholder="t('common.placeholder.select', [t('domainParam.datasourceName')])"
+              @change="changeTable"
+            >
+              <t-option
+                v-for="item in tableList"
+                :key="item.tableName"
+                :label="item.tableDescription + ' (' + item.tableName + ')'"
+                :name="item.tableDescription"
+                :value="item.tableName"
+              />
+            </t-select>
+          </t-form-item>
         </t-form>
       </cmp-card>
       <!-- #endregion 基础信息配置模块代码 -->
@@ -228,6 +246,22 @@
                       </t-form-item>
                       <t-form-item :label="t('domainParam.isPaging')" name="isPaging">
                         <t-switch v-model="tableFormData.usePage"></t-switch>
+                      </t-form-item>
+                      <t-form-item label="row-Key" name="rowKey">
+                        <t-select
+                          v-model="tableFormData.rowKey"
+                          :clearable="true"
+                          filterable
+                          :placeholder="t('common.placeholder.select', ['rowkey'])"
+                        >
+                          <t-option
+                            v-for="item in columnsData"
+                            :key="item.columnName.toLowerCase()"
+                            :label="item.columnDesc + ' (' + item.columnName.toLowerCase() + ')'"
+                            :value="item.columnName.toLowerCase()"
+                            :name="item.columnDesc"
+                          />
+                        </t-select>
                       </t-form-item>
                       <t-form-item :label="t('domainParam.sortField')" name="sortField">
                         <t-select
@@ -2027,6 +2061,7 @@ const tableFormData = reactive({
   pageSize: 20,
   sortField: '',
   sortType: 'desc',
+  rowKey: 'id',
 });
 // #表格基础信息配置-验证规则
 // :todo 待补充
