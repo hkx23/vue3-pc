@@ -617,10 +617,10 @@ export interface TransferDtlBarcodeVO {
   /** ERP单据明细号 */
   erpLineNo?: string;
   transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
-  /** 标签类型名称 */
-  barcodeTypeName?: string;
   /** 单据状态名称 */
   billStatusName?: string;
+  /** 标签类型名称 */
+  barcodeTypeName?: string;
 }
 
 /** 交易单身表 */
@@ -773,6 +773,8 @@ export interface TransferHeadVO {
    * @format int32
    */
   isWarehouseTransfer?: number;
+  /** 单据类型 ALLOCATION_OUT(调拨出库),ALLOCATION_ORG(跨组织调拨) ,ALLOCATION_IN_OUT(调拨出入库) */
+  billType?: string;
   /** 状态 */
   status?: string;
   /** 状态名称 */
@@ -3117,10 +3119,10 @@ export interface DeliveryDtlVO {
   transferDtlId?: string;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
-  /** 待扫箱数 */
-  boxWaitScanQty?: number;
   /** 已扫箱数 */
   boxScanQty?: number;
+  /** 待扫箱数 */
+  boxWaitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
 }
@@ -3602,6 +3604,8 @@ export type ReturnStockOutHeadVO = {
    * @format int32
    */
   isWarehouseTransfer?: number;
+  /** 单据类型 ALLOCATION_OUT(调拨出库),ALLOCATION_ORG(跨组织调拨) ,ALLOCATION_IN_OUT(调拨出入库) */
+  billType?: string;
   /** 状态 */
   status?: string;
   /** 状态名称 */
@@ -4302,6 +4306,8 @@ export type OnhandTransferHeadVO = {
    * @format int32
    */
   isWarehouseTransfer?: number;
+  /** 单据类型 ALLOCATION_OUT(调拨出库),ALLOCATION_ORG(跨组织调拨) ,ALLOCATION_IN_OUT(调拨出入库) */
+  billType?: string;
   /** 状态 */
   status?: string;
   /** 状态名称 */
@@ -4995,10 +5001,10 @@ export interface MoIssuanceDtlVO {
    */
   moRequestQty?: number;
   flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  bfpickQty?: number;
+  tlpickQty?: number;
 }
 
 export interface MoIssuanceVO {
@@ -5917,6 +5923,8 @@ export type MiscellaneousManageHeadVO = {
    * @format int32
    */
   isWarehouseTransfer?: number;
+  /** 单据类型 ALLOCATION_OUT(调拨出库),ALLOCATION_ORG(跨组织调拨) ,ALLOCATION_IN_OUT(调拨出入库) */
+  billType?: string;
   /** 状态 */
   status?: string;
   /** 状态名称 */
@@ -6046,6 +6054,8 @@ export interface MiscellaneousManageVO {
    * @format int32
    */
   isWarehouseTransfer?: number;
+  /** 单据类型 ALLOCATION_OUT(调拨出库),ALLOCATION_ORG(跨组织调拨) ,ALLOCATION_IN_OUT(调拨出入库) */
+  billType?: string;
   /** 单据状态 */
   billNoStatusName?: string;
   /** 编码 */
@@ -6760,8 +6770,11 @@ export interface MaterialRequisitionDtlVO {
    * @format int32
    */
   centerCompletedQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
+  /**
+   * 最小包装计算需要-用需求数量(LineMoRequestQty)-申请中数量-已领用量
+   * @format int32
+   */
+  calMinPackagingQty?: number;
   /**
    * 需求数量-源工单BOM需求数量
    * @format int32
@@ -6772,11 +6785,8 @@ export interface MaterialRequisitionDtlVO {
    * @format int32
    */
   lineMoRequestQty?: number;
-  /**
-   * 最小包装计算需要-用需求数量(LineMoRequestQty)-申请中数量-已领用量
-   * @format int32
-   */
-  calMinPackagingQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 工作中心对应的工单在制用量
    * @format int32
@@ -8845,6 +8855,481 @@ export interface ResultLong {
   data?: string;
 }
 
+/** 调拨执行提交模型 */
+export interface AllocationExecuteDTO {
+  /** 调拨单号 */
+  sourceBillNo?: string;
+  /** 调拨执行单号 */
+  billNo?: string;
+  toWarehouseId?: string;
+  /** 提交的模型-明细信息-仅需要存在数量的明细项-包括条码管理和批次管理的明细 */
+  submitList?: AllocationExecuteDtlVO[];
+  /** 提交的模型-明细信息 */
+  submitTotalList?: AllocationExecuteDtlVO[];
+  /** 条码类型 */
+  labelCategory?: string;
+  /** 条码信息或批次号码 */
+  labelNo?: string;
+  /**
+   * 是否启用先进先出
+   * @format int32
+   */
+  isFifo?: number;
+  /** 重新加载数据库最新的的单据信息 */
+  dtlInfo?: AllocationExecuteDtlVO;
+  /** 扫码自动匹配成功的明细行集合 */
+  matchDtlList?: AllocationExecuteDtlVO[];
+  /** 批次数量 */
+  batchQty?: number;
+  /** 批次表ID */
+  onHandBatchId?: string;
+  tranDlId?: string;
+  /** 重新加载数据库最新的的单据信息 */
+  latestDtlList?: AllocationExecuteDtlVO[];
+  businessCategoryId?: string;
+  businessCategoryCode?: string;
+  businessCategoryName?: string;
+  billType?: string;
+}
+
+/** 重新加载数据库最新的的单据信息 */
+export interface AllocationExecuteDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  /** 原因 */
+  reason?: string;
+  /** 相关凭证号 */
+  voucherLineNo?: string;
+  /** 通知凭证 */
+  noticeVoucherLineNo?: string;
+  /** 到货批次 */
+  batchLot?: string;
+  /** 采购订单号 */
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 来源单据行号 */
+  sourceBillLineNo?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  uomName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  /**
+   * 是否来源仓库启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  /**
+   * 是否来源仓库先进先出
+   * @format int32
+   */
+  isFifo?: number;
+  districtCode?: string;
+  districtName?: string;
+  locationCode?: string;
+  locationName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  /**
+   * 是否目标仓库启用货位管理
+   * @format int32
+   */
+  isToEnableLocation?: number;
+  /**
+   * 是否目标仓库先进先出
+   * @format int32
+   */
+  isToFifo?: number;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  /** 库存可用量 */
+  handQty?: number;
+  /**
+   * 是否原材料,1：是；0：否
+   * @format int32
+   */
+  isRaw?: number;
+  /**
+   * 是否半成品,1：是；0：否
+   * @format int32
+   */
+  isInProcess?: number;
+  /**
+   * 是否成品，1：是；0：否
+   * @format int32
+   */
+  isProduct?: number;
+  /**
+   * 已扫描数量和已领用量--按物料
+   * @format double
+   */
+  mitemScanQty?: number;
+  /**
+   * 待扫数量和待领用量--按物料
+   * @format double
+   */
+  mitemWaitingScanQty?: number;
+  /** 需求总量--按物料 */
+  mitemSumReqQty?: number;
+  /** 交易单标签表-查询时加载 */
+  transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /** 交易单标签表-扫码时存储-用于新增 */
+  addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
+  /** 自动推荐货位列表 */
+  recommendOutLocationList?: LocationVO[];
+  isLoadingFinish?: boolean;
+  /**
+   * 已扫描数量和已领用量--按工单按物料
+   * @format double
+   */
+  scanQty?: number;
+  /**
+   * 待扫数量和待领用量--按工单按物料
+   * @format double
+   */
+  waitingScanQty?: number;
+}
+
+/** 扫描后返回条码信息 */
+export type AllocationExecuteScanLabelVO = {
+  mitemId?: string;
+  /** 信息提醒 */
+  message?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultAllocationExecuteScanLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 扫描后返回条码信息 */
+  data?: AllocationExecuteScanLabelVO;
+}
+
+export interface AllocationVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  businessCategoryId?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 打印次数
+   * @format int32
+   */
+  printCount?: number;
+  /**
+   * 最后打印时间
+   * @format date-time
+   */
+  datetimeLastPrint?: string;
+  userLastPrintId?: string;
+  /**
+   * 批准时间
+   * @format date-time
+   */
+  datetimeApproved?: string;
+  userApprovedId?: string;
+  /**
+   * 驳回时间
+   * @format date-time
+   */
+  datetimeRejected?: string;
+  userRejectedId?: string;
+  /**
+   * 取消时间
+   * @format date-time
+   */
+  datetimeCanceled?: string;
+  userCanceledId?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
+  userTransferId?: string;
+  /**
+   * 作业完成时间
+   * @format date-time
+   */
+  datetimePicked?: string;
+  userPickedId?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  userReceiptedId?: string;
+  /** 上传状态(E:上传失败, S:上传成功 W:等待上传) */
+  uploadStatus?: string;
+  /** 上传返回信息 */
+  uploadMessage?: string;
+  warehouseId?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  toWarehouseId?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 目标组织编号 */
+  toOrgCode?: string;
+  /** 目标组织名称 */
+  toOrgName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /**
+   * 修改人时间
+   * @format date-time
+   */
+  modifiedTime?: string;
+  /** 排产单逗号隔开 */
+  moSheCodes?: string;
+  /** 物料编码逗号隔开 */
+  mitemCodes?: string;
+  /** 物料名称逗号隔开 */
+  mitemNames?: string;
+  /** 单据类型 */
+  billType?: string;
+  /** 调拨明细-物料维度 */
+  dtls?: AllocationExecuteDtlVO[];
+  /** 单据状态名称 */
+  statusName?: string;
+  /** 单据类型名称 */
+  billTypeName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAllocationVO = {
+  list?: AllocationVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAllocationVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAllocationVO;
+}
+
+/** 调拨制单提交模型 */
+export interface AllocationDTO {
+  /** 完成的单据id集合 */
+  completeIds?: string[];
+  /** 作废的单据id集合 */
+  cancelledIds?: string[];
+  /** 新增界面-单据类型 */
+  billType?: string;
+  /** 新增界面-获取明细按物料 */
+  mitemIds?: string[];
+  /** 新增界面-目标组织ID */
+  toOrgId?: string;
+  warehouseId?: string;
+  toWarehouseId?: string;
+  /** 新增界面-原因 */
+  remark?: string;
+  /** 查询库存模型 */
+  onHandInfo?: OnHandVO;
+  /** 新增界面-提交的模型-明细信息 */
+  submitList?: AllocationDtlVO[];
+}
+
+/** 新增界面-提交的模型-明细信息 */
+export interface AllocationDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  /** 原因 */
+  reason?: string;
+  /** 相关凭证号 */
+  voucherLineNo?: string;
+  /** 通知凭证 */
+  noticeVoucherLineNo?: string;
+  /** 到货批次 */
+  batchLot?: string;
+  /** 采购订单号 */
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 来源单据行号 */
+  sourceBillLineNo?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  uomName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  districtCode?: string;
+  districtName?: string;
+  locationCode?: string;
+  locationName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  workshopId?: string;
+  /** 库存可用量 */
+  handQty?: number;
+}
+
+/** 通用响应类 */
+export interface ResultListAllocationDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AllocationDtlVO[] | null;
+}
+
+/** 调拨单搜索条件 */
+export interface AllocationSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** 单据号 */
+  billNo?: string;
+  /** 状态机 */
+  statusList?: string;
+  warehouseId?: string;
+  toWarehouseId?: string;
+  /** 开始时间 */
+  datetimeStart?: string;
+  /** 开始时间 */
+  datetimeEnd?: string;
+  /** 单据类型 */
+  billType?: string;
+  mitemId?: string;
+}
+
 export interface AcceptSendSaveReportSearch {
   /**
    * 页码
@@ -9702,6 +10187,31 @@ export interface WipCompletionBillVO {
   creatorDisplay?: string;
   /** 是否自己的单据 */
   self?: boolean;
+}
+
+/** 通用响应类 */
+export interface ResultAllocationExecuteDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 重新加载数据库最新的的单据信息 */
+  data?: AllocationExecuteDtlVO;
+}
+
+/** 通用响应类 */
+export interface ResultAllocationVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: AllocationVO;
 }
 
 /** 通用响应类 */
@@ -14306,6 +14816,251 @@ export const api = {
      */
     getDtl: (query: { billNo: string }) =>
       http.request<ResultListBillManagementVO['data']>(`/api/warehouse/billManagement/getDtl`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  allocationExecute: {
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name Submit
+     * @summary 调拨执行-提交
+     * @request POST:/allocationExecute/submit
+     * @secure
+     */
+    submit: (data: AllocationExecuteDTO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/allocationExecute/submit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name ScanMitemOutLabel
+     * @summary 扫描物料标签--调拨出库扫描
+     * @request POST:/allocationExecute/scanMitemOutLabel
+     * @secure
+     */
+    scanMitemOutLabel: (data: AllocationExecuteDTO) =>
+      http.request<ResultAllocationExecuteScanLabelVO['data']>(`/api/warehouse/allocationExecute/scanMitemOutLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name ScanMitemInLabel
+     * @summary 扫描物料标签--调拨入库扫描
+     * @request POST:/allocationExecute/scanMitemInLabel
+     * @secure
+     */
+    scanMitemInLabel: (data: AllocationExecuteDTO) =>
+      http.request<ResultAllocationExecuteScanLabelVO['data']>(`/api/warehouse/allocationExecute/scanMitemInLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name ScanBatchNo
+     * @summary 扫描批次信息
+     * @request POST:/allocationExecute/scanBatchNo
+     * @secure
+     */
+    scanBatchNo: (data: AllocationExecuteDTO) =>
+      http.request<ResultString['data']>(`/api/warehouse/allocationExecute/scanBatchNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name GetAllocationOutList
+     * @summary 调拨执行-获取调拨出库制单列表----公共弹框控件
+     * @request POST:/allocationExecute/getAllocationOutList
+     * @secure
+     */
+    getAllocationOutList: (data: CommonSearch) =>
+      http.request<ResultPagingDataAllocationVO['data']>(`/api/warehouse/allocationExecute/getAllocationOutList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name GetAllocationInList
+     * @summary 调拨执行-获取调拨入库制单列表----公共弹框控件
+     * @request POST:/allocationExecute/getAllocationInList
+     * @secure
+     */
+    getAllocationInList: (data: CommonSearch) =>
+      http.request<ResultPagingDataAllocationVO['data']>(`/api/warehouse/allocationExecute/getAllocationInList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name DeleteTransBarcodeByIds
+     * @summary 根据单据号和标签信息，删除标签
+     * @request POST:/allocationExecute/deleteBarcodeByIds
+     * @secure
+     */
+    deleteTransBarcodeByIds: (data: TransferHeadSearch) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/allocationExecute/deleteBarcodeByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name GetTotalBarcodesBySourceLineNo
+     * @summary 根据调拨单明细行获取所有调拨执行单的条码
+     * @request GET:/allocationExecute/getTotalBarcodesBySourceLineNo
+     * @secure
+     */
+    getTotalBarcodesBySourceLineNo: (query: { sourceBillNo: string; mitemId: string; businessCategoryCode: string }) =>
+      http.request<ResultListTransferDtlBarcodeVO['data']>(
+        `/api/warehouse/allocationExecute/getTotalBarcodesBySourceLineNo`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name GetAllocationDtl
+     * @summary 调拨执行-获取调拨单明细列表行信息
+     * @request GET:/allocationExecute/getAllocationDtl
+     * @secure
+     */
+    getAllocationDtl: (query: { billNo: string; trandtlId: string; businessCategoryCode: string }) =>
+      http.request<ResultAllocationExecuteDtlVO['data']>(`/api/warehouse/allocationExecute/getAllocationDtl`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨执行
+     * @name GetAllocationByBillNo
+     * @summary 调拨执行-根据单据号获取调拨单
+     * @request GET:/allocationExecute/getAllocationByBillNo
+     * @secure
+     */
+    getAllocationByBillNo: (query: { billNo: string; isNeedCheck: boolean; businessCategoryCode: string }) =>
+      http.request<ResultAllocationVO['data']>(`/api/warehouse/allocationExecute/getAllocationByBillNo`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  allocation: {
+    /**
+     * No description
+     *
+     * @tags 调拨制单
+     * @name SaveData
+     * @summary 新增调拨单界面-提交
+     * @request POST:/allocation/saveData
+     * @secure
+     */
+    saveData: (data: AllocationDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/allocation/saveData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨制单
+     * @name GetReqDtls
+     * @summary 新增调拨单界面-获取调拨明细
+     * @request POST:/allocation/getReqDtls
+     * @secure
+     */
+    getReqDtls: (data: AllocationDTO) =>
+      http.request<ResultListAllocationDtlVO['data']>(`/api/warehouse/allocation/getReqDtls`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨制单
+     * @name GetAllocationList
+     * @summary 主界面-获取调拨制单列表
+     * @request POST:/allocation/getAllocationList
+     * @secure
+     */
+    getAllocationList: (data: AllocationSearch) =>
+      http.request<ResultPagingDataAllocationVO['data']>(`/api/warehouse/allocation/getAllocationList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨制单
+     * @name AllocationComplete
+     * @summary 主界面-调拨单作废
+     * @request POST:/allocation/allocationComplete
+     * @secure
+     */
+    allocationComplete: (data: AllocationDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/allocation/allocationComplete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨制单
+     * @name AllocationCanceled
+     * @summary 主界面-调拨单作废
+     * @request POST:/allocation/allocationCanceled
+     * @secure
+     */
+    allocationCanceled: (data: AllocationDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/allocation/allocationCanceled`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 调拨制单
+     * @name Tree
+     * @summary 主界面-获取调拨单明细
+     * @request GET:/allocation/tree
+     * @secure
+     */
+    tree: (query: { billNo: string }) =>
+      http.request<ResultListAllocationDtlVO['data']>(`/api/warehouse/allocation/tree`, {
         method: 'GET',
         params: query,
       }),

@@ -1039,8 +1039,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -1359,6 +1359,78 @@ export interface UserRoleDTO {
 export interface RoleUserDTO {
   roleId?: string;
   userIds?: string[];
+}
+
+/** 组织基础实体 */
+export interface OrgVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /** 组织层级代码 */
+  levelCode?: string;
+  /**
+   * 是否生效，1是，0否
+   * @format int32
+   */
+  isActive?: number;
+  /** 组织路径 */
+  orgPath?: string;
+  /** 组织编码 */
+  code?: string;
+  /** 组织名称 */
+  name?: string;
+  /**
+   * 组织层级ID
+   * @format int32
+   */
+  levelSeq?: number;
+}
+
+/** 响应数据 */
+export type PagingDataOrgVO = {
+  list?: OrgVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOrgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOrgVO;
 }
 
 /** 用户组织操作实体 */
@@ -2990,8 +3062,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4133,6 +4205,8 @@ export interface MouldVo {
   workcenterName?: string;
   workshopName?: string;
   positionPath?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 用户功能操作记录表 */
@@ -5438,13 +5512,13 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   /** 容器类型名称 */
   containerTypeName?: string;
-  isState?: boolean;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
   stateName?: string;
-  dateExemptionExpiredStr?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isState?: boolean;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5663,15 +5737,15 @@ export interface MitemVO {
   /** 配送卡规格数量 */
   specificationsQty?: number;
   minPackagingQty?: string;
-  isState?: boolean;
   stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isRawChecked?: boolean;
+  isState?: boolean;
   isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
-  isRawName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5814,8 +5888,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8550,8 +8624,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -10848,58 +10922,6 @@ export type CurrentUserVO = {
   timeModified?: string;
 } | null;
 
-/** 组织基础实体 */
-export interface OrgVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 组织编号 */
-  orgCode?: string;
-  /** 组织名称 */
-  orgName?: string;
-  /** 组织描述 */
-  orgDesc?: string;
-  parentOrgId?: string;
-  /** 组织层级代码 */
-  levelCode?: string;
-  /**
-   * 是否生效，1是，0否
-   * @format int32
-   */
-  isActive?: number;
-  /** 组织路径 */
-  orgPath?: string;
-  /** 组织编码 */
-  code?: string;
-  /** 组织名称 */
-  name?: string;
-  /**
-   * 组织层级ID
-   * @format int32
-   */
-  levelSeq?: number;
-}
-
 /** 通用响应类 */
 export interface ResultCurrentUserVO {
   /**
@@ -11415,12 +11437,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11987,13 +12009,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
 }
 
 /** 通用响应类 */
@@ -12015,47 +12037,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
-  formKey?: string;
-  localizedName?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  parentTaskId?: string;
-  localizedDescription?: string;
   suspended?: boolean;
   description?: string;
   tenantId?: string;
-  assignee?: string;
   /** @format date-time */
   dueDate?: string;
+  assignee?: string;
   category?: string;
+  localizedDescription?: string;
+  localizedName?: string;
+  parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  formKey?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  subScopeId?: string;
+  /** @format date-time */
+  createTime?: string;
+  inProgressStartedBy?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  taskLocalVariables?: Record<string, object>;
+  processVariables?: Record<string, object>;
+  claimedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  claimTime?: string;
+  caseVariables?: Record<string, object>;
+  processDefinitionId?: string;
+  executionId?: string;
   scopeType?: string;
+  subScopeId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
   taskDefinitionId?: string;
   taskDefinitionKey?: string;
-  propagatedStageInstanceId?: string;
-  /** @format date-time */
-  claimTime?: string;
-  caseVariables?: Record<string, object>;
-  /** @format date-time */
-  suspendedTime?: string;
-  claimedBy?: string;
-  suspendedBy?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  taskLocalVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  processVariables?: Record<string, object>;
-  inProgressStartedBy?: string;
-  processDefinitionId?: string;
-  /** @format date-time */
-  createTime?: string;
-  executionId?: string;
   identityLinks?: IdentityLinkInfo[];
+  propagatedStageInstanceId?: string;
 } | null;
 
 /** 响应数据 */
@@ -12063,13 +12085,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -13706,6 +13728,21 @@ export const api = {
      * No description
      *
      * @tags 仓库
+     * @name ItemsByOrdId
+     * @summary 根据组织信息获取仓库-跨组织调拨场景
+     * @request POST:/warehouse/itemsByOrdId
+     * @secure
+     */
+    itemsByOrdId: (data: CommonSearch) =>
+      http.request<ResultPagingDataWarehouse['data']>(`/api/main/warehouse/itemsByOrdId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
      * @name StateChange
      * @summary 修改状态
      * @request GET:/warehouse/items/{id}
@@ -13926,6 +13963,21 @@ export const api = {
       }),
   },
   userInOrg: {
+    /**
+     * No description
+     *
+     * @tags 用户组织关系表
+     * @name Search
+     * @summary 获取用户所属的组织列表
+     * @request POST:/userInOrg/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataOrgVO['data']>(`/api/main/userInOrg/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

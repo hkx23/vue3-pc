@@ -24,7 +24,7 @@
         >
           <t-row :gutter="[0, 12]">
             <t-col :span="4">
-              <t-form-item :label="t('materialRequisition.计划开始时间')" name="workCenterId">
+              <t-form-item :label="t('materialRequisition.计划开始时间')" name="datetimePlanStart">
                 <t-date-range-picker
                   v-model="range1"
                   :disabled="formData.isLock"
@@ -35,7 +35,7 @@
                   @change="onDateChange" /></t-form-item
             ></t-col>
             <t-col :span="4">
-              <t-form-item :label="t('materialRequisition.车间')" name="workCenterId">
+              <t-form-item :label="t('materialRequisition.车间')" name="workshopId">
                 <bcmp-select-business
                   v-model="formData.workshopId"
                   :disabled="formData.isLock"
