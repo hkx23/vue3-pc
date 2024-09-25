@@ -5514,12 +5514,11 @@ export interface MitemInSupplierVO {
   containerTypeName?: string;
   stateName?: string;
   isState?: boolean;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5739,14 +5738,14 @@ export interface MitemVO {
   specificationsQty?: number;
   minPackagingQty?: string;
   stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
+  isState?: boolean;
+  isProductName?: string;
   isBatchName?: string;
   isRawName?: string;
-  isProductName?: string;
-  isState?: boolean;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5889,8 +5888,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -9929,8 +9928,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -11438,12 +11437,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
@@ -12015,10 +12012,10 @@ export interface IdentityLinkInfo {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  scopeDefinitionId?: string;
   processInstanceId?: string;
+  scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
 }
 
 /** 通用响应类 */
@@ -12048,39 +12045,39 @@ export type Task = {
   assignee?: string;
   category?: string;
   formKey?: string;
-  localizedDescription?: string;
-  parentTaskId?: string;
   localizedName?: string;
+  parentTaskId?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
+  localizedDescription?: string;
   id?: string;
   state?: string;
   scopeId?: string;
   /** @format date-time */
   createTime?: string;
-  executionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  inProgressStartedBy?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
-  scopeDefinitionId?: string;
-  processInstanceId?: string;
   taskDefinitionId?: string;
   taskDefinitionKey?: string;
   processDefinitionId?: string;
-  claimedBy?: string;
-  caseVariables?: Record<string, object>;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  propagatedStageInstanceId?: string;
+  suspendedBy?: string;
   /** @format date-time */
   claimTime?: string;
+  claimedBy?: string;
   /** @format date-time */
   suspendedTime?: string;
-  suspendedBy?: string;
-  identityLinks?: IdentityLinkInfo[];
-  propagatedStageInstanceId?: string;
+  caseVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  taskLocalVariables?: Record<string, object>;
+  inProgressStartedBy?: string;
 } | null;
 
 /** 响应数据 */
@@ -12091,10 +12088,10 @@ export type IdentityLink = {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  scopeDefinitionId?: string;
   processInstanceId?: string;
+  scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
 } | null;
 
 /** 通用响应类 */
