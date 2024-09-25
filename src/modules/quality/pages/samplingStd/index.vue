@@ -18,6 +18,9 @@
         @refresh="fetchTable"
       >
         <template #title> 企业抽样标准列表 </template>
+        <template #button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="q_sampling_std"></bcmp-import-auto-button>
+        </template>
         <template #stateSwitch="{ row }">
           <t-switch
             v-model="row.state"
