@@ -25,6 +25,11 @@
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onWholeAdd">
             <t-button theme="default">批量删除</t-button>
           </t-popconfirm>
+          <bcmp-import-auto-button
+            theme="default"
+            button-text="导入"
+            type="m_defect_deal_method"
+          ></bcmp-import-auto-button>
         </template>
         <template #op="{ row }">
           <t-space :size="8">

@@ -19,6 +19,7 @@
         <template #title> 工序列表 </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="p_process"></bcmp-import-auto-button>
         </template>
         <template #op="slotProps">
           <t-link theme="primary" @click="onEditRowClick(slotProps)"> 编辑 </t-link>

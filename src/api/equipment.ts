@@ -1062,6 +1062,7 @@ export interface MaintenanceItemVo {
   deleteFileList?: MaintenanceItemFile[];
   maintenancePeriodName?: string;
   memo?: string;
+  userCreatorName?: string;
 }
 
 /** 设备保养明细文件表 */
@@ -1463,10 +1464,14 @@ export interface InspectPlanItemVO {
   inspectMethod?: string;
   /** 最大值 */
   maxValue?: number;
+  /** 最大值 */
+  maxValueUse?: number;
   /** 最小值 */
   minValue?: number;
   /** 单位 */
   uom?: string;
+  /** 单位 */
+  uomName?: string;
   /** 点检类型 */
   inspectItemType?: string;
   /**
@@ -1474,6 +1479,10 @@ export interface InspectPlanItemVO {
    * @format int32
    */
   isPhoto?: number;
+  /** 点检方式或方法 */
+  inspectMethodName?: string;
+  /** 点检类型 */
+  inspectItemTypeName?: string;
 }
 
 /** 设备点检计划表 */
@@ -1598,6 +1607,8 @@ export interface InspectItemInEquipmentVO {
   inspectMethod?: string;
   /** 最大值 */
   maxValue?: number;
+  /** 最大值 */
+  maxValueUse?: number;
   /** 最小值 */
   minValue?: number;
   /** 单位 */
@@ -1857,6 +1868,177 @@ export interface ResultPagingDataInspectItemVO {
   data?: PagingDataInspectItemVO;
 }
 
+/** 设备点检明细文件表 */
+export interface InspectBillDtlFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectBillDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+  /** 文件类型 */
+  fileCategory?: string;
+}
+
+export interface InspectBillDtlVo {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  inspectBillHeadId?: string;
+  /** 点检项目代码 */
+  inspectItemCode?: string;
+  /** 点检项目名称 */
+  inspectItemName?: string;
+  /** 点检标准 */
+  inspectItemStandard?: string;
+  /** 点检方法 */
+  inspectItemMethod?: string;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 点检实际值 */
+  inspectValue?: number;
+  /** 单位 */
+  uom?: string;
+  /** 点检项目类型 */
+  inspectItemType?: string;
+  /**
+   * 是否拍照
+   * @format int32
+   */
+  isPhoto?: number;
+  /** 点检结果 */
+  inspectResult?: string;
+  /** 点检方式或方法 */
+  inspectMethodName?: string;
+  /** 点检类型 */
+  inspectItemTypeName?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+  billDtlFiles?: InspectBillDtlFile[];
+  inspectItemId?: string;
+}
+
+export interface InspectBillHeadVo {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  equipmentId?: string;
+  /** 点检结果 */
+  inspectResult?: string;
+  userInspectId?: string;
+  /**
+   * 点检开始时间
+   * @format date-time
+   */
+  datetimeInspectStart?: string;
+  /**
+   * 点检完成时间
+   * @format date-time
+   */
+  datetimeInspectEnd?: string;
+  /** 维修单据号 */
+  repairBillNo?: string;
+  /** 状态 */
+  status?: string;
+  mouldId?: string;
+  /**
+   * 下次点检开始时间
+   * @format date-time
+   */
+  datetimeInspectNext?: string;
+  /**  单据创建来源:JOB;HAND; */
+  billSource?: string;
+  /** 点检执行人 */
+  userInspectName?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备类型 */
+  equipmentTypeName?: string;
+  /** 存放位置 */
+  workCenterName?: string;
+  /** 管理部门 */
+  workshopName?: string;
+  /** 模具名称 */
+  mouldName?: string;
+  /** 模具代码 */
+  mouldCode?: string;
+  /** 模具类型 */
+  mouldType?: string;
+  equipmentInspectDealId?: string;
+  mouldInspectDealId?: string;
+  billDetails?: InspectBillDtlVo[];
+}
+
 export interface InspectBillHeadSearch {
   /** @format int32 */
   pageNum?: number;
@@ -1883,6 +2065,10 @@ export interface InspectBillHeadSearch {
   datasourceSetting?: DatasourceSetting[];
   ids?: string[];
   relateType?: string;
+}
+
+export interface InspectBillHeadAdd {
+  code?: string;
 }
 
 export interface InspectBillDtlSearch {
@@ -2254,168 +2440,6 @@ export interface ResultInspectPlanVO {
   data?: InspectPlanVO;
 }
 
-/** 设备点检明细文件表 */
-export interface InspectBillDtlFile {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  inspectBillDtlId?: string;
-  /** 文件名称 */
-  fileName?: string;
-  /** 文件地址 */
-  filePath?: string;
-  /** 文件类型 */
-  fileCategory?: string;
-}
-
-export interface InspectBillDtlVo {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 单据号 */
-  billNo?: string;
-  inspectBillHeadId?: string;
-  /** 点检项目代码 */
-  inspectItemCode?: string;
-  /** 点检项目名称 */
-  inspectItemName?: string;
-  /** 点检标准 */
-  inspectItemStandard?: string;
-  /** 点检方法 */
-  inspectItemMethod?: string;
-  /** 最大值 */
-  maxValue?: number;
-  /** 最小值 */
-  minValue?: number;
-  /** 单位 */
-  uom?: string;
-  /** 点检项目类型 */
-  inspectItemType?: string;
-  /**
-   * 是否拍照
-   * @format int32
-   */
-  isPhoto?: number;
-  /** 点检结果 */
-  inspectResult?: string;
-  billDtlFiles?: InspectBillDtlFile[];
-  inspectItemId?: string;
-}
-
-/** 响应数据 */
-export type InspectBillHeadVo = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 单据号 */
-  billNo?: string;
-  equipmentId?: string;
-  /** 点检结果 */
-  inspectResult?: string;
-  userInspectId?: string;
-  /**
-   * 点检开始时间
-   * @format date-time
-   */
-  datetimeInspectStart?: string;
-  /**
-   * 点检完成时间
-   * @format date-time
-   */
-  datetimeInspectEnd?: string;
-  /** 维修单据号 */
-  repairBillNo?: string;
-  /** 状态 */
-  status?: string;
-  mouldId?: string;
-  /**
-   * 下次点检开始时间
-   * @format date-time
-   */
-  datetimeInspectNext?: string;
-  /**  单据创建来源:JOB;HAND; */
-  billSource?: string;
-  /** 点检执行人 */
-  userInspectName?: string;
-  /** 设备名称 */
-  equipmentName?: string;
-  /** 设备编码 */
-  equipmentCode?: string;
-  /** 设备类型 */
-  equipmentTypeName?: string;
-  /** 存放位置 */
-  workCenterName?: string;
-  /** 管理部门 */
-  workshopName?: string;
-  /** 模具名称 */
-  mouldName?: string;
-  /** 模具代码 */
-  mouldCode?: string;
-  /** 模具类型 */
-  mouldType?: string;
-  billDetails?: InspectBillDtlVo[];
-} | null;
-
 /** 通用响应类 */
 export interface ResultInspectBillHeadVo {
   /**
@@ -2425,7 +2449,6 @@ export interface ResultInspectBillHeadVo {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: InspectBillHeadVo;
 }
 
@@ -3690,13 +3713,103 @@ export const api = {
      * No description
      *
      * @tags 设备点检单据头表
+     * @name SubmitInspect
+     * @summary 点检单据提交
+     * @request POST:/inspectBillHead/submitInspect
+     * @secure
+     */
+    submitInspect: (data: InspectBillHeadVo) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectBillHead/submitInspect`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检单据头表
+     * @name PendingInspect
+     * @summary 点检单据暂存
+     * @request POST:/inspectBillHead/pendingInspect
+     * @secure
+     */
+    pendingInspect: (data: InspectBillHeadVo) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectBillHead/pendingInspect`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检单据头表
      * @name Search
-     * @summary 设备点检单据
+     * @summary 设备点检单据列表
      * @request POST:/inspectBillHead/items
      * @secure
      */
     search: (data: InspectBillHeadSearch) =>
       http.request<ResultObject['data']>(`/api/equipment/inspectBillHead/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检单据头表
+     * @name GetCurrentUserMouldInspectBills
+     * @summary 根据当前的登录用户获取待处理的模具点检单据(带分页,带查询条件)
+     * @request POST:/inspectBillHead/getCurrentUserMouldInspectBills
+     * @secure
+     */
+    getCurrentUserMouldInspectBills: (data: InspectBillHeadSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectBillHead/getCurrentUserMouldInspectBills`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检单据头表
+     * @name GetCurrentUserEquipmentInspectBills
+     * @summary 根据当前的登录用户获取待处理的设备点检单据(带分页,带查询条件)
+     * @request POST:/inspectBillHead/getCurrentUserEquipmentInspectBills
+     * @secure
+     */
+    getCurrentUserEquipmentInspectBills: (data: InspectBillHeadSearch) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectBillHead/getCurrentUserEquipmentInspectBills`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检单据头表
+     * @name CreateMouldBill
+     * @summary 根据模具Id创建点检单
+     * @request POST:/inspectBillHead/createMouldBill
+     * @secure
+     */
+    createMouldBill: (data: InspectBillHeadAdd) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectBillHead/createMouldBill`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备点检单据头表
+     * @name CreateInspectBill
+     * @summary 根据设备Id创建点检单
+     * @request POST:/inspectBillHead/createInspectBill
+     * @secure
+     */
+    createInspectBill: (data: InspectBillHeadAdd) =>
+      http.request<ResultObject['data']>(`/api/equipment/inspectBillHead/createInspectBill`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3759,6 +3872,7 @@ export const api = {
      *
      * @tags 设备点检单据明细表
      * @name Search
+     * @summary 获取点检单据明细表列表
      * @request POST:/inspectBillDtl/items
      * @secure
      */

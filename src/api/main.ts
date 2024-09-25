@@ -5513,12 +5513,12 @@ export interface MitemInSupplierVO {
   /** 容器类型名称 */
   containerTypeName?: string;
   stateName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   isState?: boolean;
-  isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5740,12 +5740,12 @@ export interface MitemVO {
   stateName?: string;
   isState?: boolean;
   isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isBatchName?: string;
-  isProductChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5888,8 +5888,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -9928,8 +9928,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -11437,10 +11437,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
@@ -12012,10 +12012,10 @@ export interface IdentityLinkInfo {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  scopeType?: string;
-  subScopeId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
 }
 
 /** 通用响应类 */
@@ -12044,40 +12044,40 @@ export type Task = {
   dueDate?: string;
   assignee?: string;
   category?: string;
-  localizedDescription?: string;
+  formKey?: string;
   localizedName?: string;
   parentTaskId?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
-  formKey?: string;
+  localizedDescription?: string;
   id?: string;
   state?: string;
   scopeId?: string;
   /** @format date-time */
   createTime?: string;
-  inProgressStartedBy?: string;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
-  claimedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
+  processDefinitionId?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  propagatedStageInstanceId?: string;
   suspendedBy?: string;
   /** @format date-time */
   claimTime?: string;
+  claimedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
   caseVariables?: Record<string, object>;
-  processDefinitionId?: string;
-  executionId?: string;
-  scopeType?: string;
-  subScopeId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
-  identityLinks?: IdentityLinkInfo[];
-  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  taskLocalVariables?: Record<string, object>;
+  inProgressStartedBy?: string;
 } | null;
 
 /** 响应数据 */
@@ -12088,10 +12088,10 @@ export type IdentityLink = {
   groupId?: string;
   taskId?: string;
   userId?: string;
-  scopeType?: string;
-  subScopeId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
 } | null;
 
 /** 通用响应类 */

@@ -9,14 +9,14 @@
             <t-button size="small">
               <add-rectangle-icon @click="onAddMitemCategory" />
             </t-button>
-            <t-popconfirm content="继续会删除该产品相应的工艺文件，是否继续？" @confirm="onDel">
-              <t-button variant="outline" size="small">
+            <t-popconfirm content="请确认是否删除选中产品分类？" @confirm="onDel">
+              <t-button variant="outline" size="small" :disabled="clickNodeId.isProduct">
                 <multiply-icon />
               </t-button>
             </t-popconfirm>
-            <t-button variant="outline" size="small">
+            <!-- <t-button variant="outline" size="small">
               <login-icon @click="demo1Input" />
-            </t-button>
+            </t-button> -->
             <t-input
               v-model="treeKey"
               style="width: 190px; margin-left: 5px"
@@ -164,7 +164,7 @@ export default {
 </script>
 <script setup lang="ts">
 import _ from 'lodash';
-import { AddRectangleIcon, Icon, LoginIcon, MultiplyIcon, SearchIcon } from 'tdesign-icons-vue-next';
+import { AddRectangleIcon, Icon, MultiplyIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin, PrimaryTableCol, TableRowData, TreeProps } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
@@ -227,6 +227,7 @@ const uploadSuccess = (file: AddFileType) => {
   MessagePlugin.info(`上传文件成功`);
   fileList.value.push(file);
   formRefAdd.value.init();
+  // debugger;
   formRefAdd.value.formData.fileName = file.fileName;
   formRefAdd.value.formData.opType = 'add';
   formRefAdd.value.formData.mitemId = clickNodeId.value.mitemId;
@@ -267,6 +268,7 @@ const clickNodeId = ref({
   pageSize: 10,
   status: 'ALL',
   keyword: '',
+  isProduct: true,
 });
 const tabTotal = ref(0); // 表格数据总页数
 const moduleData = ref([]); // 表格数据
@@ -290,12 +292,13 @@ const formDataTwo = ref({
 });
 
 const onDel = async () => {
-  if (!clickNodeId.value.mitemId) {
-    MessagePlugin.warning('请选择产品');
+  if (!clickNodeId.value.mitemCategoryId) {
+    MessagePlugin.warning('请选择产品分类');
     return;
   }
-  await api.sopProduct.onDelBatch(clickNodeId.value);
+  await api.sopProduct.deleteMitemCategory(clickNodeId.value);
   MessagePlugin.success('操作成功');
+  onGetTreeData();
 };
 
 // 侦听 formDataTwo.iconPath 的变化
@@ -455,6 +458,7 @@ function simplifyObject(obj: {
     id: obj.id ? obj.id : obj.mitemId,
     categoryId: obj.id ? obj.id : obj.categoryId,
     label: obj.id ? `${obj.categoryCode} ${obj.categoryName}` : `${obj.mitemCode} ${obj.mitemName}`,
+    isProduct: false,
     children: true,
   };
   // 检查是否存在 list 字段，如果存在则处理子级对象
@@ -486,7 +490,7 @@ const onGetTreeData = async () => {
 const loadMitem: TreeProps['load'] = async (node: any) => {
   const data = (await mainApi.mitem.getListByMitemCategory({
     keyword: '',
-    mitemcategoryid: node.categoryId,
+    mitemcategoryid: node.data.categoryId,
     pagenum: 1,
     pagesize: 999,
   })) as any;
@@ -495,6 +499,9 @@ const loadMitem: TreeProps['load'] = async (node: any) => {
     label: `${item.mitemCode} ${item.mitemName}`,
     value: item.id,
     id: item.id,
+    mitemId: item.id,
+    categoryId: item.mitemCategoryId,
+    isProduct: true,
     children: false,
   }));
   return nodes;
@@ -533,6 +540,7 @@ const onGetTabData = async () => {
 // 树节点的点击事件，获取点击节点的文本
 const treeClick = async ({ node }: { node: any }) => {
   clickNodeId.value.mitemId = '';
+  clickNodeId.value.mitemCategoryId = '';
   // 检查节点是否有子节点，如果有则返回不操作
   if (node.data.children && node.data.children.length > 0) {
     return;
@@ -540,9 +548,10 @@ const treeClick = async ({ node }: { node: any }) => {
 
   // 执行其他操作
   pageUI.value.page = 1;
-  clickNodeId.value.mitemId = node[`__tdesign_tree-node__`]?.data?.id; // 保存当前点击节点的 ID
+  clickNodeId.value.mitemId = node[`__tdesign_tree-node__`]?.data?.mitemId; // 保存当前点击节点的 ID
   clickNodeId.value.mitemCategoryId = node[`__tdesign_tree-node__`]?.data?.categoryId; // 保存当前点击节点的 ID
-  await onGetTabData();
+  clickNodeId.value.isProduct = node[`__tdesign_tree-node__`]?.data?.isProduct; // 保存当前点击节点的 ID
+  if (node.data.isProduct) await onGetTabData();
 };
 const demo1Filter = ref(null);
 const demo1Input = (state: any) => {

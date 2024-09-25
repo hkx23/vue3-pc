@@ -28,6 +28,7 @@
 
         <template #button>
           <t-button variant="base" @click="onHandelAdd">新增</t-button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="p_workstation"></bcmp-import-auto-button>
         </template>
         <!-- <template #state="{ row }">
           <span>{{ row.state === 1 ? '启用' : '禁用' }}</span>

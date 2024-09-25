@@ -41,7 +41,12 @@
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="onTeamDeleteBatches()">
                   <t-button theme="default"> 班组批量删除 </t-button>
                 </t-popconfirm>
-                <t-button theme="default"> 班组导入 </t-button>
+                <bcmp-import-auto-button
+                  theme="default"
+                  button-text="导入"
+                  type="m_workgroup"
+                ></bcmp-import-auto-button>
+                <!-- <t-button theme="default"> 班组导入 </t-button> -->
               </t-space>
             </template>
           </cmp-table>
