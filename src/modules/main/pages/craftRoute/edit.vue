@@ -272,23 +272,26 @@ const close = () => {
   formData.desc = null;
 };
 watch(visible, (value: boolean) => {
-  if (value && props.id) {
-    // @ts-ignore
-    apiMain.routing.item(props.id).then((data) => {
-      // 复制不需要赋值form表单
-      if (!props.isCopy) {
-        formData.routingCode = data.routingCode;
-        formData.routingName = data.routingName;
-        formData.routingType = data.routingType;
-        formData.version = data.routingVersion;
-        formData.enableDate = data.enableDate;
-        formData.invailDate = data.invailDate;
-        formData.desc = data.routingDesc;
-      }
-      if (data.routingGraphStr) {
-        lf.renderRawData(JSON.parse(data.routingGraphStr));
-      }
-    });
+  if (value) {
+    if (props.id) {
+      apiMain.routing.item(props.id).then((data) => {
+        // 复制不需要赋值form表单
+        if (!props.isCopy) {
+          formData.routingCode = data.routingCode;
+          formData.routingName = data.routingName;
+          formData.routingType = data.routingType;
+          formData.version = data.routingVersion;
+          formData.enableDate = data.enableDate;
+          formData.invailDate = data.invailDate;
+          formData.desc = data.routingDesc;
+        }
+        if (data.routingGraphStr) {
+          lf.renderRawData(JSON.parse(data.routingGraphStr));
+        }
+      });
+    } else {
+      lf.render();
+    }
   }
 });
 // Form表单

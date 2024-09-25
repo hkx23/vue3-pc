@@ -247,42 +247,22 @@ const onEditRowClick = async (value: any) => {
 onMounted(async () => {
   const transactionBillNo = router.currentRoute.value.query;
   queryComponent.value.setFromValue('billNo', transactionBillNo.billNo);
-  await fetchTable(transactionBillNo);
+  optsValue.value.billNo = transactionBillNo.billNo;
+  optsValue.value.sourceBillNo = transactionBillNo.sourceBillNo;
+  await fetchTable();
 });
 
 //* 表格数据
-const fetchTable = async (transactionBillNo) => {
+const fetchTable = async () => {
   try {
     setLoading(true);
     selectedReceiptRowKeys.value = [];
     tableDataReceipt.value = [];
-    const data = await api.billManagement.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      billNo: transactionBillNo.billNo,
-      sourceBillNo: transactionBillNo.sourceBillNo,
-    });
-    tableDataReceipt.value = data.list;
-    dataTotal.value = data.total;
-  } finally {
-    setLoading(false);
-  }
-};
+    const { categoryName, mitemCode, supplierName, billNo, timeCreate } = optsValue.value;
+    // 提取categoryName数组中每个元素的label，合并成一个数组
+    const businessCategoryIds =
+      categoryName === '' || categoryName === null ? [] : categoryName.split(',').map((item) => item.trim());
 
-//* 表格刷新
-const tabRefresh = async () => {
-  const transactionBillNo = '';
-  await fetchTable(transactionBillNo);
-};
-
-//* 查询
-const onInput = async (data: any) => {
-  pageUI.value.page = 1;
-  const { categoryName, mitemCode, supplierName, billNo, timeCreate } = data;
-  // 提取categoryName数组中每个元素的label，合并成一个数组
-  const businessCategoryIds =
-    categoryName === '' || categoryName === null ? [] : categoryName.split(',').map((item) => item.trim());
-  if (!data.value) {
     const result = await api.billManagement.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -292,14 +272,27 @@ const onInput = async (data: any) => {
       dateEnd: timeCreate[1],
       dateStart: timeCreate[0],
       supplierId: supplierName,
-      sourceBillNo: data.sourceBillNo,
-      toLocationId: data.toLocationId,
-      locationId: data.locationId,
-      ...data,
+      ...optsValue.value,
     });
     tableDataReceipt.value = result.list;
     dataTotal.value = result.total;
+  } finally {
+    setLoading(false);
   }
+};
+
+//* 表格刷新
+const tabRefresh = async () => {
+  await fetchTable();
+};
+// 查询组件值
+const optsValue = ref({}) as any;
+//* 查询
+const onInput = async (data: any) => {
+  pageUI.value.page = 1;
+  pageUI.value.page = 1;
+  optsValue.value = data;
+  fetchTable();
 };
 const tableRef = ref(); // 表格实例
 const onFailUploadConfirm = async () => {
@@ -307,7 +300,7 @@ const onFailUploadConfirm = async () => {
   const selectedRowList = tableDataReceipt.value.filter((item) => selectedRowKeys.includes(item.id));
   const failedBillNoList = selectedRowList.map((item) => item.billNo);
   await api.billManagement.failUpload({ failedBillNoList });
-  fetchTable('');
+  fetchTable();
   tableRef.value?.setSelectedRowKeys([]);
   MessagePlugin.success('重传设置成功,请等待后台处理结果');
 };
