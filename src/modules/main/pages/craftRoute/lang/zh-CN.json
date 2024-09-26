@@ -43,6 +43,7 @@
     "notEndNode": "没有结束节点",
     "notProcessNode": "没有工序节点",
     "typeNotRepeat": "已有该类型，不能重复添加",
+    "mitemNotRepeat": "已有该物料，不能重复添加",
     "disableHasCount": "当前还有{0}支工单引用了该工艺路线，禁用后不会更改这些工单的工艺路线，是否继续？",
     "disableNotCount": "工单不可绑定禁用的工艺路线，是否继续？",
     "productRelationKeyword": "产品/工作中心",

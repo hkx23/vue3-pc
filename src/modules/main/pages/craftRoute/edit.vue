@@ -150,54 +150,119 @@
           </div>
         </template>
       </t-drawer>
-      <t-dialog v-model:visible="bomVisible" :header="t('craftRoute.processBom')" width="80%" @confirm="confirmBom">
-        <t-row>
-          <t-col :span="3" class="bom-catory">
-            <t-input v-model="bomSearchKeyword" :placeholder="t('common.placeholder.search')" @enter="getMitem">
-              <template #suffixIcon>
-                <search-icon :style="{ cursor: 'pointer' }" @click="getMitem" />
-              </template>
-            </t-input>
-            <t-table
-              row-key="id"
-              :data="bomData.list"
-              :columns="mitemColumn"
-              :bordered="false"
-              :show-header="false"
-              :pagination="mitemPagination"
-              hover
-              size="small"
-              table-layout="fixed"
-              class="table"
-            >
-              <template #op="{ row }">
-                <t-button variant="text" shape="square" @click="addBom(row)"><add-icon /></t-button>
-              </template>
-            </t-table>
-          </t-col>
-          <t-col :span="9">
-            <cmp-table
-              v-model:selected-row-keys="bomSelectKeys"
-              row-key="id"
-              :table-column="bomColumn"
-              :table-data="bomList"
-              :show-pagination="false"
-              max-height="575px"
-            >
-              <template #button>
-                <t-button theme="default" @click="batchDeleteBom">{{ t('common.button.batchDelete') }}</t-button>
-              </template>
-              <template #isKeyPart="{ row }">
-                <t-switch :value="row.isKeyPart" @change="keyPartChange($event, row.id)" />
-              </template>
-              <template #op="{ row }">
-                <t-button variant="text" theme="primary" @click="deleteBom(row)">{{
-                  t('common.button.delete')
-                }}</t-button>
-              </template>
-            </cmp-table>
-          </t-col>
-        </t-row>
+      <t-dialog
+        v-model:visible="bomVisible"
+        :header="t('craftRoute.processBom')"
+        top="100px"
+        width="80%"
+        @confirm="confirmBom"
+      >
+        <t-tabs :default-value="1">
+          <t-tab-panel :value="1" label="关联物料" :destroy-on-hide="false">
+            <t-row>
+              <t-col :span="3" class="bom-catory">
+                <t-input v-model="bomSearchKeyword" :placeholder="t('common.placeholder.search')" @enter="getMitem">
+                  <template #suffixIcon>
+                    <search-icon :style="{ cursor: 'pointer' }" @click="getMitem" />
+                  </template>
+                </t-input>
+                <t-table
+                  row-key="id"
+                  :data="bomData.list"
+                  :columns="mitemColumn"
+                  :bordered="false"
+                  :show-header="false"
+                  :pagination="mitemPagination"
+                  hover
+                  size="small"
+                  table-layout="fixed"
+                  class="table"
+                >
+                  <template #op="{ row }">
+                    <t-button variant="text" shape="square" @click="addBom(row)"><add-icon /></t-button>
+                  </template>
+                </t-table>
+              </t-col>
+              <t-col :span="9">
+                <cmp-table
+                  v-model:selected-row-keys="bomSelectKeys"
+                  row-key="id"
+                  :table-column="bomColumn"
+                  :table-data="bomMitemList"
+                  :show-pagination="false"
+                  max-height="575px"
+                >
+                  <template #button>
+                    <t-button theme="default" @click="batchDeleteBom">{{ t('common.button.batchDelete') }}</t-button>
+                  </template>
+                  <template #isKeyPart="{ row }">
+                    <t-switch :value="row.isKeyPart" @change="keyPartChange($event, row.id)" />
+                  </template>
+                  <template #op="{ row }">
+                    <t-button variant="text" theme="primary" @click="deleteBom(row)">{{
+                      t('common.button.delete')
+                    }}</t-button>
+                  </template>
+                </cmp-table>
+              </t-col>
+            </t-row>
+          </t-tab-panel>
+          <t-tab-panel :value="2" label="关联物料分类" :destroy-on-hide="false">
+            <t-row>
+              <t-col :span="3" class="bom-catory">
+                <t-input
+                  v-model="bomCategorySearchKeyword"
+                  :placeholder="t('common.placeholder.search')"
+                  @enter="getMitemCategory"
+                >
+                  <template #suffixIcon>
+                    <search-icon :style="{ cursor: 'pointer' }" @click="getMitemCategory" />
+                  </template>
+                </t-input>
+                <t-table
+                  row-key="id"
+                  :data="bomCategoryData.list"
+                  :columns="mitemCategoryColumn"
+                  :bordered="false"
+                  :show-header="false"
+                  :pagination="mitemCategoryPagination"
+                  hover
+                  size="small"
+                  table-layout="fixed"
+                  class="table"
+                >
+                  <template #op="{ row }">
+                    <t-button variant="text" shape="square" @click="addBomCategory(row)"><add-icon /></t-button>
+                  </template>
+                </t-table>
+              </t-col>
+              <t-col :span="9">
+                <cmp-table
+                  v-model:selected-row-keys="bomCategorySelectKeys"
+                  row-key="id"
+                  :table-column="bomMitemCategoryColumn"
+                  :table-data="bomMitemCategoryList"
+                  :show-pagination="false"
+                  max-height="575px"
+                >
+                  <template #button>
+                    <t-button theme="default" @click="batchDeleteBomCategory">{{
+                      t('common.button.batchDelete')
+                    }}</t-button>
+                  </template>
+                  <template #isKeyPart="{ row }">
+                    <t-switch :value="row.isKeyPart" @change="keyPartCategoryChange($event, row.id)" />
+                  </template>
+                  <template #op="{ row }">
+                    <t-button variant="text" theme="primary" @click="deleteBomCategory(row)">{{
+                      t('common.button.delete')
+                    }}</t-button>
+                  </template>
+                </cmp-table>
+              </t-col>
+            </t-row>
+          </t-tab-panel>
+        </t-tabs>
       </t-dialog>
     </div>
   </t-dialog>
@@ -261,6 +326,7 @@ const visible = computed({
     emit('update:modelValue', val);
   },
 });
+// const activeTab = ref('tab1'); // 默认页签
 const loading = ref(false);
 const close = () => {
   lf.clearData();
@@ -633,29 +699,51 @@ const getMitem = () => {
 const bomSelectKeys = ref([]);
 const showBom = () => {
   getMitem();
+  getMitemCategory();
   // 要用clone，直接复制会把对象路径赋值过去
   bomList.value = clone(propertiesForm.bomList);
   bomVisible.value = true;
 };
+// 物料Tab过滤
+const bomMitemList = computed(() => {
+  return bomList.value.filter((bomItem) => {
+    // 假设这里有一些过滤逻辑
+    // 例如：根据某个条件过滤物料
+    return bomItem.relateType === 'MITEM'; // 替换为实际的过滤条件
+  });
+});
+
+// 物料分类Tab过滤
+const bomMitemCategoryList = computed(() => {
+  return bomList.value.filter((bomItem) => {
+    // 假设这里有一些过滤逻辑
+    // 例如：根据某个条件过滤物料分类
+    return bomItem.relateType === 'CATEGORY'; // 替换为实际的过滤条件
+  });
+});
+
+// 导
+
 const addBom = (row: any) => {
-  const index = findIndex(bomList.value, ['id', row.id]);
+  const index = findIndex(bomMitemList.value, ['id', row.id]);
   if (index > -1) {
-    MessagePlugin.error(t('craftRoute.typeNotRepeat'));
+    MessagePlugin.error(t('craftRoute.mitemNotRepeat'));
   } else {
     row.isKeyPart = true;
+    row.relateType = 'MITEM';
     bomList.value.push(row);
   }
 };
 const deleteBom = (row: any) => {
-  remove(bomList.value, (o) => o.id === row.id);
+  remove(bomList.value, (o) => o.id === row.id && o.relateType === 'MITEM');
 };
 const batchDeleteBom = () => {
-  remove(bomList.value, (o) => bomSelectKeys.value.indexOf(o.id) > -1);
+  remove(bomList.value, (o) => bomSelectKeys.value.indexOf(o.id) > -1 && o.relateType === 'MITEM');
   bomSelectKeys.value = [];
 };
 // 数组是动态获取的，直接v-model不会改变源数据，需要用change的方法处理源数据
 const keyPartChange = ($event: any, id: any) => {
-  const row = find(bomList.value, (o) => o.id === id);
+  const row = find(bomList.value, (o) => o.id === id && o.relateType === 'MITEM');
   if (row) {
     row.isKeyPart = $event;
   }
@@ -663,6 +751,77 @@ const keyPartChange = ($event: any, id: any) => {
 const confirmBom = () => {
   propertiesForm.bomList = clone(bomList.value);
   bomVisible.value = false;
+};
+// #endregion
+
+// #region 工序bom
+const mitemCategoryColumn: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'categoryCode', align: 'left', width: 40 },
+  { colKey: 'categoryName', align: 'left', width: 40 },
+  { colKey: 'op', align: 'right', width: 30 },
+];
+const mitemCategoryPagination = reactive({
+  size: 'small',
+  current: 1,
+  pageSize: 10,
+  showPageNumber: false,
+  showPageSize: false,
+  total: 0,
+  onChange({ current }) {
+    mitemCategoryPagination.current = current;
+    getMitem();
+  },
+});
+const bomMitemCategoryColumn = [
+  { colKey: 'row-select', type: 'multiple' },
+  { colKey: 'categoryCode', title: t('craftRoute.categoryCode'), align: 'center' },
+  { colKey: 'categoryName', title: t('craftRoute.categoryName'), align: 'center' },
+  { colKey: 'isKeyPart', title: t('craftRoute.isKeyPart'), align: 'center', width: 140 },
+  { colKey: 'op', title: t('common.button.operation'), align: 'center' },
+];
+const bomCategorySearchKeyword = ref();
+const bomCategoryData = reactive({
+  list: [],
+  total: 0,
+});
+const bomCategoryList = ref([]);
+const getMitemCategory = () => {
+  apiMain.mitemCategory
+    .search({
+      pageNum: mitemCategoryPagination.current,
+      pageSize: mitemCategoryPagination.pageSize,
+      keyword: bomCategorySearchKeyword.value,
+    })
+    .then((data) => {
+      bomCategoryData.list = data.list;
+      bomCategoryData.total = data.total;
+      mitemCategoryPagination.total = data.total;
+    });
+};
+const bomCategorySelectKeys = ref([]);
+const addBomCategory = (row: any) => {
+  const index = findIndex(bomCategoryList.value, ['id', row.id]);
+  if (index > -1) {
+    MessagePlugin.error(t('craftRoute.typeNotRepeat'));
+  } else {
+    row.isKeyPart = true;
+    row.relateType = 'CATEGORY';
+    bomList.value.push(row);
+  }
+};
+const deleteBomCategory = (row: any) => {
+  remove(bomList.value, (o) => o.id === row.id && o.relateType === 'CATEGORY');
+};
+const batchDeleteBomCategory = () => {
+  remove(bomList.value, (o) => bomCategorySelectKeys.value.indexOf(o.id) > -1 && o.relateType === 'CATEGORY');
+  bomCategorySelectKeys.value = [];
+};
+// 数组是动态获取的，直接v-model不会改变源数据，需要用change的方法处理源数据
+const keyPartCategoryChange = ($event: any, id: any) => {
+  const row = find(bomList.value, (o) => o.id === id && o.relateType === 'CATEGORY');
+  if (row) {
+    row.isKeyPart = $event;
+  }
 };
 // #endregion
 </script>
