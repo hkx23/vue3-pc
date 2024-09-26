@@ -192,7 +192,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '关联单号', width: 120, colKey: 'sourceBillNo' },
   { title: '物料编码', width: 120, colKey: 'mitemCode' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
-  { title: '需求数量', width: 85, colKey: 'reqQty' },
+  // { title: '需求数量', width: 85, colKey: 'reqQty' },
   { title: '交易数量', width: 85, colKey: 'pickQty' },
   { title: '单位', width: 85, colKey: 'uomName' },
   { title: 'ERP行号', width: 85, colKey: 'erpLineNo' },
