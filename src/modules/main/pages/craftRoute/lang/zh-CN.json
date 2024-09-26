@@ -16,6 +16,8 @@
     "invalid": "无效",
     "enableDate": "启用日期",
     "invailDate": "失效日期",
+    "mitemCode": "物料编码",
+    "mitemName": "物料名称",
     "categoryCode": "类别编码",
     "categoryName": "类别名称",
     "isKeyPart": "是否按单体管理",
