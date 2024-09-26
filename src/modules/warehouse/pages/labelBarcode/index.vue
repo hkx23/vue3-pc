@@ -884,7 +884,12 @@ const onPrintTemplateData = async () => {
     // 获取用户的功能操作记录
     const userOperate = (await commmon.getUserOperate(printModulePth, 'PRINT')) as any;
     if (userOperate) {
-      printMode.value.printTempId = userOperate.operateContent;
+      const printInfo = onPrintTemplateList.list.find((item) => item.id === userOperate.operateContent);
+      if (printInfo) {
+        printMode.value.printTempId = userOperate.operateContent;
+      } else {
+        printMode.value.printTempId = res[0].id;
+      }
     } else {
       printMode.value.printTempId = res[0].id;
     }
