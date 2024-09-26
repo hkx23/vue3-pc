@@ -153,18 +153,18 @@
       <t-dialog v-model:visible="bomVisible" :header="t('craftRoute.processBom')" width="80%" @confirm="confirmBom">
         <t-row>
           <t-col :span="3" class="bom-catory">
-            <t-input v-model="bomSearchKeyword" :placeholder="t('common.placeholder.search')" @enter="getMitemCategory">
+            <t-input v-model="bomSearchKeyword" :placeholder="t('common.placeholder.search')" @enter="getMitem">
               <template #suffixIcon>
-                <search-icon :style="{ cursor: 'pointer' }" @click="getMitemCategory" />
+                <search-icon :style="{ cursor: 'pointer' }" @click="getMitem" />
               </template>
             </t-input>
             <t-table
               row-key="id"
               :data="bomData.list"
-              :columns="categoryColumn"
+              :columns="mitemColumn"
               :bordered="false"
               :show-header="false"
-              :pagination="categoryPagination"
+              :pagination="mitemPagination"
               hover
               size="small"
               table-layout="fixed"
@@ -182,6 +182,7 @@
               :table-column="bomColumn"
               :table-data="bomList"
               :show-pagination="false"
+              max-height="575px"
             >
               <template #button>
                 <t-button theme="default" @click="batchDeleteBom">{{ t('common.button.batchDelete') }}</t-button>
@@ -586,12 +587,12 @@ const processConfirm = () => {
 // #endregion
 // #region 工序bom
 const bomVisible = ref(false);
-const categoryColumn: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'categoryCode', align: 'left', width: 40 },
-  { colKey: 'categoryName', align: 'left', width: 40 },
+const mitemColumn: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'mitemCode', align: 'left', width: 40 },
+  { colKey: 'mitemName', align: 'left', width: 40 },
   { colKey: 'op', align: 'right', width: 30 },
 ];
-const categoryPagination = reactive({
+const mitemPagination = reactive({
   size: 'small',
   current: 1,
   pageSize: 10,
@@ -599,14 +600,14 @@ const categoryPagination = reactive({
   showPageSize: false,
   total: 0,
   onChange({ current }) {
-    categoryPagination.current = current;
-    getMitemCategory();
+    mitemPagination.current = current;
+    getMitem();
   },
 });
 const bomColumn = [
   { colKey: 'row-select', type: 'multiple' },
-  { colKey: 'categoryCode', title: t('craftRoute.categoryCode'), align: 'center' },
-  { colKey: 'categoryName', title: t('craftRoute.categoryName'), align: 'center' },
+  { colKey: 'mitemCode', title: t('craftRoute.mitemCode'), align: 'center' },
+  { colKey: 'mitemName', title: t('craftRoute.mitemName'), align: 'center' },
   { colKey: 'isKeyPart', title: t('craftRoute.isKeyPart'), align: 'center', width: 140 },
   { colKey: 'op', title: t('common.button.operation'), align: 'center' },
 ];
@@ -616,22 +617,22 @@ const bomData = reactive({
   total: 0,
 });
 const bomList = ref([]);
-const getMitemCategory = () => {
-  apiMain.mitemCategory
+const getMitem = () => {
+  apiMain.mitem
     .search({
-      pageNum: categoryPagination.current,
-      pageSize: categoryPagination.pageSize,
+      pageNum: mitemPagination.current,
+      pageSize: mitemPagination.pageSize,
       keyword: bomSearchKeyword.value,
     })
     .then((data) => {
       bomData.list = data.list;
       bomData.total = data.total;
-      categoryPagination.total = data.total;
+      mitemPagination.total = data.total;
     });
 };
 const bomSelectKeys = ref([]);
 const showBom = () => {
-  getMitemCategory();
+  getMitem();
   // 要用clone，直接复制会把对象路径赋值过去
   bomList.value = clone(propertiesForm.bomList);
   bomVisible.value = true;
