@@ -481,6 +481,8 @@ onMounted(async () => {
 
 // 获取树组件数据
 const onGetTreeData = async () => {
+  fileList.value = [];
+  clickNodeId.value = {};
   const res = await api.sopProduct.getMitemCategoryList({ keyword: treeKey.value, ...queryCompnent.value }); // 获取节点数据
   treeData.value = res.list.map(simplifyObject); // 转化数据保存
   totals.value = res.total;
