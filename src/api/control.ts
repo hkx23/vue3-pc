@@ -716,6 +716,40 @@ export interface ResultListWipRepairDtlVO {
   data?: WipRepairDtlVO[] | null;
 }
 
+/** 产品维修明细附件表 */
+export interface WipRepairDtlFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  wipRepairDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+  /** 文件类型 */
+  fileCategory?: string;
+}
+
 /** 维修单 */
 export type WipRepairDtlVO = {
   id?: string;
@@ -749,6 +783,7 @@ export type WipRepairDtlVO = {
   defectBlame?: string;
   /** 不合格数量 */
   ngQty?: number;
+  responsibleUserId?: string;
   /**
    * 维修次数
    * @format int32
@@ -773,6 +808,7 @@ export type WipRepairDtlVO = {
   defectDealMethodCode?: string;
   /** 缺陷处理方法 */
   defectDealMethodName?: string;
+  wipRepairDtlFileList?: WipRepairDtlFile[];
 } | null;
 
 /** 维修单查询 */
@@ -973,8 +1009,9 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
+  wipRepairDtlVoList?: WipRepairDtlVO[];
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -2078,8 +2115,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2650,6 +2687,7 @@ export type ProductWipRepairDtlVO = {
   defectBlame?: string;
   /** 不合格数量 */
   ngQty?: number;
+  responsibleUserId?: string;
   /**
    * 维修次数
    * @format int32
@@ -2982,15 +3020,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
   workshopId?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3035,8 +3073,8 @@ export interface WipKeyPartCollectVO {
   keyPartList?: WipKeypart[];
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
+  isScanFinish?: boolean;
 }
 
 /** 在制品关键件采集表 */
@@ -3167,8 +3205,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3401,9 +3439,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   defectCodeStr?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3555,16 +3593,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
   workshopId?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  stateName?: string;
   defectCodeStr?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
 }
 
 /** 缺陷代码 */
@@ -3778,7 +3816,7 @@ export interface PkgRelationDTO {
   workstationId?: string;
   workcenterId?: string;
   workshopId?: string;
-  pkgRuleId?: string;
+  packRuleId?: string;
 }
 
 export interface PkgRelationSearch {
@@ -5240,17 +5278,17 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
-  stateName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
   workshopId?: string;
   isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  stateName?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
 }
 
 /** 工序 */
@@ -5514,6 +5552,8 @@ export type WipPkgInfoVO = {
   packQty?: number;
   /** 包装单位 */
   packUom?: string;
+  /** 父级包装类型 */
+  parentPackType?: string;
 } | null;
 
 /** 响应数据 */
@@ -5809,8 +5849,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6539,6 +6579,21 @@ export const api = {
       }),
   },
   wipRepair: {
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name SubmitRepair
+     * @summary 提交缺陷采集
+     * @request POST:/wipRepair/submitRepair
+     * @secure
+     */
+    submitRepair: (data: WipRepairVO) =>
+      http.request<ResultObject['data']>(`/api/control/wipRepair/submitRepair`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

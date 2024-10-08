@@ -6,16 +6,21 @@
           <!-- 扫描区 -->
           <cmp-card>
             <bcmp-workstation-info @change="workChange" />
-            <t-row class="padding-top-line-8" style="padding-bottom: 8px">
+            <t-row :gutter="4" class="padding-top-line-8" style="padding-bottom: 8px">
               <t-col flex="auto">
                 <cmp-scan-input v-model="scanLabel" :placeholder="scanPlaceholder" @enter="scan"></cmp-scan-input>
               </t-col>
-              <t-col v-if="labelList.length > 0" flex="150px" style="text-align: right">
+              <t-col v-if="labelList.length > 0" flex="120px" style="text-align: right">
                 <t-space :size="8" align="center" class="qty-info">
                   <div class="label-qty">{{ allQty }}</div>
                   <div>/{{ pkgInfo.packQty }}</div>
                   <div class="label-uom">{{ pkgInfo.uom }}/{{ pkgInfo.packUom }}</div>
                 </t-space>
+              </t-col>
+              <t-col v-if="isOnlinePrint" flex="200px">
+                <t-select v-model="barcodeRuleId" label="条码规则">
+                  <t-option v-for="item in barcodeRuleList" :key="item.id" :label="item.ruleName" :value="item.id" />
+                </t-select>
               </t-col>
               <t-col flex="120px" style="text-align: right">
                 <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
@@ -166,6 +171,8 @@ const allQty = computed(() => {
 });
 const pkgInfo = ref<WipPkgInfoVO>();
 const labelList = ref<WipPkgInfoVO[]>([]);
+const barcodeRuleId = ref();
+const barcodeRuleList = ref([]);
 const scanTypeChange = (val: any) => {
   if (val === 'delete') {
     pushMessage('info', t('productPacking.plsScanDelLabel'));
@@ -173,6 +180,19 @@ const scanTypeChange = (val: any) => {
     pushMessage('info', t('productPacking.plsScanLabel'));
   }
   isScanPkg.value = false;
+};
+const getBarcodeRuleList = (moScheId: string, packType: string) => {
+  apiMain.barcodePkg
+    .getBarcodeRuleList({
+      moScheId,
+      packType,
+    })
+    .then((data) => {
+      barcodeRuleList.value = data.list;
+      if (data.list.length > 0) {
+        barcodeRuleId.value = data.list[0].id;
+      }
+    });
 };
 const scan = () => {
   if (!isProcessConsistent.value) {
@@ -263,6 +283,11 @@ const scan = () => {
         if (allQty.value === pkgInfo.value.packQty) {
           preparePack();
         }
+
+        // 在线打印时，没有选择条码规则需要获取对应的条码规则列表
+        if (isOnlinePrint.value && !barcodeRuleId.value) {
+          getBarcodeRuleList(data.moScheId, data.parentPackType);
+        }
       })
       .catch((err) => {
         pushMessage('error', err.message);
@@ -310,6 +335,8 @@ const packing = () => {
       workshopId: userStore.currUserOrgInfo.workShopId,
       workcenterId: userStore.currUserOrgInfo.workCenterId,
       workstationId: userStore.currUserOrgInfo.workStationId,
+      packRuleId: val.packRuleId,
+      barcodeRuleId: barcodeRuleId.value,
     });
   });
   apiControl.pkgRelation
