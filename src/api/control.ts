@@ -293,6 +293,10 @@ export interface WorkgroupSearch {
   workgroupKeyword?: string;
   /** 员工模糊关键词 */
   personKeyword?: string;
+  /** 员工编码 */
+  personCode?: string;
+  /** 姓名 */
+  personName?: string;
   workgroupId?: string;
   /** 多个ID */
   personIds?: string[];
@@ -1589,8 +1593,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface TimeSwitchProductVO {
@@ -3020,15 +3024,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  workshopId?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3071,10 +3075,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
-  keyPartCodeStr?: string;
-  isScanFinish?: boolean;
 }
 
 /** 在制品关键件采集表 */
@@ -3439,9 +3443,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3593,16 +3597,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
-  isState?: boolean;
-  stateName?: string;
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
+  isState?: boolean;
+  stateName?: string;
+  workshopId?: string;
 }
 
 /** 缺陷代码 */
@@ -3817,6 +3821,9 @@ export interface PkgRelationDTO {
   workcenterId?: string;
   workshopId?: string;
   packRuleId?: string;
+  barcodeRuleId?: string;
+  /** 条码数量 */
+  barcodeQty?: number;
 }
 
 export interface PkgRelationSearch {
@@ -5278,17 +5285,17 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   moHold?: number;
-  workshopId?: string;
-  isState?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  stateName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  stateName?: string;
+  workshopId?: string;
 }
 
 /** 工序 */
@@ -7601,7 +7608,7 @@ export const api = {
      * @secure
      */
     save: (data: PkgRelationDTO[]) =>
-      http.request<ResultObject['data']>(`/api/control/pkgRelation/save`, {
+      http.request<ResultString['data']>(`/api/control/pkgRelation/save`, {
         method: 'POST',
         body: data as any,
       }),

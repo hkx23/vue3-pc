@@ -17,16 +17,23 @@
                   <div class="label-uom">{{ pkgInfo.uom }}/{{ pkgInfo.packUom }}</div>
                 </t-space>
               </t-col>
-              <t-col v-if="isOnlinePrint" flex="200px">
-                <t-select v-model="barcodeRuleId" label="条码规则">
-                  <t-option v-for="item in barcodeRuleList" :key="item.id" :label="item.ruleName" :value="item.id" />
-                </t-select>
-              </t-col>
               <t-col flex="120px" style="text-align: right">
                 <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
                   <t-radio-button value="normal">{{ t('productPacking.normal') }}</t-radio-button>
                   <t-radio-button value="delete">{{ t('common.button.delete') }}</t-radio-button>
                 </t-radio-group>
+              </t-col>
+            </t-row>
+            <t-row v-if="isOnlinePrint" :gutter="4" class="padding-top-line-8" style="padding-bottom: 8px">
+              <t-col flex="240px">
+                <t-select v-model="barcodeRuleId" :label="t('productPacking.barcodeRule')">
+                  <t-option v-for="item in barcodeRuleList" :key="item.id" :label="item.ruleName" :value="item.id" />
+                </t-select>
+              </t-col>
+              <t-col flex="240px">
+                <t-select v-model="printTempId" :label="t('productPacking.printTemplate')">
+                  <t-option v-for="item in printTempList" :key="item.id" :label="item.tmplName" :value="item.id" />
+                </t-select>
               </t-col>
             </t-row>
             <t-form
@@ -92,14 +99,16 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { findIndex, remove, sumBy } from 'lodash';
+import { find, findIndex, remove, sumBy } from 'lodash';
 import { CloseIcon, QrcodeIcon } from 'tdesign-icons-vue-next';
-import { DialogPlugin } from 'tdesign-vue-next';
+import { DialogPlugin, LoadingPlugin } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
 
 import { api as apiControl, PkgExtendVO, WipPkgInfoVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
+import { printByHiPrint } from '@/components/cmp-print-button/hiPrint';
+import { printByStimulsoft } from '@/components/cmp-print-button/stimulsoft';
 import { useUserStore } from '@/store';
 
 import { useLang } from './lang';
@@ -173,6 +182,8 @@ const pkgInfo = ref<WipPkgInfoVO>();
 const labelList = ref<WipPkgInfoVO[]>([]);
 const barcodeRuleId = ref();
 const barcodeRuleList = ref([]);
+const printTempId = ref();
+const printTempList = ref([]);
 const scanTypeChange = (val: any) => {
   if (val === 'delete') {
     pushMessage('info', t('productPacking.plsScanDelLabel'));
@@ -191,6 +202,19 @@ const getBarcodeRuleList = (moScheId: string, packType: string) => {
       barcodeRuleList.value = data.list;
       if (data.list.length > 0) {
         barcodeRuleId.value = data.list[0].id;
+      }
+    });
+};
+const getPrintTempList = (moScheId: string, packType: string) => {
+  apiMain.barcodePkg
+    .getPrintTmplList({
+      moScheId,
+      packType,
+    })
+    .then((data) => {
+      printTempList.value = data.list;
+      if (data.list.length > 0) {
+        printTempId.value = data.list[0].id;
       }
     });
 };
@@ -284,9 +308,14 @@ const scan = () => {
           preparePack();
         }
 
-        // 在线打印时，没有选择条码规则需要获取对应的条码规则列表
-        if (isOnlinePrint.value && !barcodeRuleId.value) {
-          getBarcodeRuleList(data.moScheId, data.parentPackType);
+        // 在线打印，需要选择条码规则和打印模板
+        if (isOnlinePrint.value) {
+          if (!barcodeRuleId.value) {
+            getBarcodeRuleList(data.moScheId, data.parentPackType);
+          }
+          if (!printTempId.value) {
+            getPrintTempList(data.moScheId, data.parentPackType);
+          }
         }
       })
       .catch((err) => {
@@ -331,26 +360,93 @@ const packing = () => {
       pkgBarcode: val.barcode,
       pkgBarcodeType: val.barcodeType,
       parentPkgBarcode: pkgLabel.value ? pkgLabel.value.pkgBarcode : null,
-      parentPkgType: pkgLabel.value ? pkgLabel.value.pkgBarcodeType : null,
+      parentPkgType: pkgLabel.value ? pkgLabel.value.pkgBarcodeType : val.parentPackType,
       workshopId: userStore.currUserOrgInfo.workShopId,
       workcenterId: userStore.currUserOrgInfo.workCenterId,
       workstationId: userStore.currUserOrgInfo.workStationId,
       packRuleId: val.packRuleId,
+      barcodeQty: val.barcodeQty,
       barcodeRuleId: barcodeRuleId.value,
     });
   });
+  const instance = LoadingPlugin({
+    loading: true,
+    text: t('productPacking.saving'),
+  });
   apiControl.pkgRelation
     .save(postData)
-    .then(() => {
+    .then((data) => {
+      instance.hide();
       pushMessage('success', t('productPacking.saveSuccess'));
       labelList.value = [];
       scanLabel.value = null;
       isScanPkg.value = false;
+      // 在线打印需要触发打印
+      if (isOnlinePrint.value) {
+        print(data);
+      }
     })
     .catch(() => {
+      instance.hide();
       pushMessage('error', t('productPacking.saveFailed'));
       scanLabel.value = null;
     });
+};
+
+// 打印
+const print = async (barcode: string) => {
+  if (!printTempId.value) {
+    pushMessage('error', t('productPacking.plsSelectPrintTemplate'));
+    return;
+  }
+  const instance = LoadingPlugin({
+    loading: true,
+    text: t('productPacking.printing'),
+  });
+  try {
+    // 获取条码相关信息
+    const pkgInfo = await apiMain.barcodePkg.getByBarcode({ barcode });
+    if (!pkgInfo) {
+      pushMessage('error', t('productPacking.tipsNotFindPkgInfo'));
+      return;
+    }
+    // 保存打印日志
+    await apiMain.barcodePkg.printByBarcode({ pkgBarcode: barcode });
+    // 组装打印数据
+    const dataBase = [
+      {
+        PKG_BARCODE: pkgInfo.pkgBarcode,
+        QTY: pkgInfo.qty,
+        MITEM_CODE: pkgInfo.mitemCode,
+        MITEM_NAME: pkgInfo.mitemName,
+      },
+    ];
+    const printData = [
+      {
+        variable: dataBase,
+        dataSource: dataBase,
+      },
+    ];
+    // 获取打印模板
+    const templateBody = await apiMain.printTmpl.getTmplByIdOrCode({ id: printTempId.value, code: null });
+    // 获取模板类型
+    const printTemp = find(printTempList.value, ['id', printTempId.value]);
+    // 打印
+    if (printTemp.tmplType === 'hiprint') {
+      printByHiPrint(templateBody, printData);
+    } else {
+      printByStimulsoft(templateBody, printData);
+    }
+    pushMessage('success', t('productPacking.printSuccess'));
+  } catch {
+    pushMessage('error', t('productPacking.printFailed'));
+  } finally {
+    instance.hide();
+    barcodeRuleId.value = null;
+    barcodeRuleList.value = [];
+    printTempId.value = null;
+    printTempList.value = [];
+  }
 };
 
 // 消息

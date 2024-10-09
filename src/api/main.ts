@@ -2501,8 +2501,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3430,8 +3430,12 @@ export interface PersonVO {
   /** 关联设备 */
   devices?: PersonInDevice[];
   postId?: string;
+  /** 岗位名称 */
+  postName?: string;
   /** 人员类型 */
   personType?: string;
+  /** 人员类型名称 */
+  personTypeName?: string;
 }
 
 /** 通用响应类 */
@@ -5526,11 +5530,11 @@ export interface MitemInSupplierVO {
   containerTypeName?: string;
   stateName?: string;
   isState?: boolean;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5749,15 +5753,15 @@ export interface MitemVO {
   /** 配送卡规格数量 */
   specificationsQty?: number;
   minPackagingQty?: string;
-  stateName?: string;
-  isState?: boolean;
+  isProductName?: string;
   isProductChecked?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   isInProcessChecked?: boolean;
   isRawName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
   isBatchName?: string;
-  isRawChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -6161,6 +6165,12 @@ export interface LabelVO {
   checkStatus?: string;
   /** 领料单 */
   sourceBillNo?: string;
+  /** 容器编码 */
+  containerCode?: string;
+  /** 容器名称 */
+  containerName?: string;
+  fromOrgId?: string;
+  toOrgId?: string;
 }
 
 /** 标签供应商批次批量实体 */
@@ -9964,6 +9974,23 @@ export interface ResultPagingDataBarcodePkgVO {
   data?: PagingDataBarcodePkgVO;
 }
 
+export interface GenerateDTO {
+  moScheduleId?: string;
+  barcodeRuleId?: string;
+  /**
+   * 生成数量
+   * @format int32
+   */
+  createNum?: number;
+  /**
+   * 生成规格
+   * @format int32
+   */
+  packQty?: number;
+  /** 包装类型 */
+  packType?: string;
+}
+
 /** 出勤模式 */
 export interface AttendanceMode {
   id?: string;
@@ -11449,12 +11476,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12025,8 +12052,8 @@ export interface IdentityLinkInfo {
   scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
-  groupId?: string;
   taskId?: string;
+  groupId?: string;
   userId?: string;
 }
 
@@ -12049,47 +12076,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
-  suspended?: boolean;
+  parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  localizedName?: string;
+  formKey?: string;
   description?: string;
   tenantId?: string;
+  assignee?: string;
   /** @format date-time */
   dueDate?: string;
-  assignee?: string;
   category?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  parentTaskId?: string;
-  formKey?: string;
   localizedDescription?: string;
-  localizedName?: string;
+  suspended?: boolean;
   id?: string;
   state?: string;
   scopeId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
+  identityLinks?: IdentityLinkInfo[];
+  caseVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  inProgressStartedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  taskLocalVariables?: Record<string, object>;
+  processVariables?: Record<string, object>;
+  processDefinitionId?: string;
+  executionId?: string;
   subScopeId?: string;
   scopeType?: string;
   /** @format date-time */
-  createTime?: string;
-  caseVariables?: Record<string, object>;
-  suspendedBy?: string;
-  claimedBy?: string;
-  /** @format date-time */
   claimTime?: string;
+  claimedBy?: string;
+  suspendedBy?: string;
   /** @format date-time */
-  suspendedTime?: string;
-  processDefinitionId?: string;
+  createTime?: string;
   propagatedStageInstanceId?: string;
   /** @format date-time */
-  inProgressStartTime?: string;
-  /** @format date-time */
   inProgressStartDueDate?: string;
-  inProgressStartedBy?: string;
-  processVariables?: Record<string, object>;
-  taskLocalVariables?: Record<string, object>;
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
 } | null;
 
 /** 响应数据 */
@@ -12101,8 +12128,8 @@ export type IdentityLink = {
   scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
-  groupId?: string;
   taskId?: string;
+  groupId?: string;
   userId?: string;
 } | null;
 
@@ -12300,6 +12327,19 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeSegmentDTO;
+}
+
+/** 通用响应类 */
+export interface ResultBarcodePkgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示包装条码管理 */
+  data?: BarcodePkgVO;
 }
 
 /** APP底座表 */
@@ -17168,6 +17208,21 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name UpdateLabelStatusAndOnHandIdByCrossOrg
+     * @summary 跨组织批量更新标签状态和库存ID
+     * @request POST:/label/updateLabelStatusAndOnHandIdByCrossOrg
+     * @secure
+     */
+    updateLabelStatusAndOnHandIdByCrossOrg: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/label/updateLabelStatusAndOnHandIdByCrossOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name UpdateLabelStatusAndLotNo
      * @summary 更新条码状态和入库批次
      * @request POST:/label/updateLabelStatusAndLotNo
@@ -18734,6 +18789,21 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
+     * @name UpdateDeliveryCardStatusAndOnHandIdByCrossOrg
+     * @summary 跨组织批量更新标签状态和库存ID
+     * @request POST:/deliveryCard/updateDeliveryCardStatusAndOnHandIdByCrossOrg
+     * @secure
+     */
+    updateDeliveryCardStatusAndOnHandIdByCrossOrg: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/deliveryCard/updateDeliveryCardStatusAndOnHandIdByCrossOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
      * @name SplitBarcodes
      * @summary 配送卡拆分- 一个条码拆分多个
      * @request POST:/deliveryCard/splitBarcodes
@@ -19578,6 +19648,21 @@ export const api = {
      * No description
      *
      * @tags 在制品条码表
+     * @name UpdateBarcodeStatusAndOnHandIdByCrossOrg
+     * @summary 跨组织批量更新标签状态和库存ID
+     * @request POST:/barcodeWip/updateBarcodeStatusAndOnHandIdByCrossOrg
+     * @secure
+     */
+    updateBarcodeStatusAndOnHandIdByCrossOrg: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWip/updateBarcodeStatusAndOnHandIdByCrossOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
      * @name SplitBarcode
      * @summary 拆分条码
      * @request POST:/barcodeWip/splitBarcode
@@ -20066,6 +20151,21 @@ export const api = {
      * No description
      *
      * @tags 包装条码表
+     * @name PrintByBarcode
+     * @summary 打印指定条码
+     * @request POST:/barcodePkg/printByBarcode
+     * @secure
+     */
+    printByBarcode: (data: BarcodePkgSearch) =>
+      http.request<ResultObject['data']>(`/api/main/barcodePkg/printByBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 包装条码表
      * @name PrintBarcode
      * @summary 打印条码
      * @request POST:/barcodePkg/printBarcode
@@ -20161,8 +20261,8 @@ export const api = {
      * @request POST:/barcodePkg/generateBarcode
      * @secure
      */
-    generateBarcode: (data: BarcodePkgSearch) =>
-      http.request<ResultObject['data']>(`/api/main/barcodePkg/generateBarcode`, {
+    generateBarcode: (data: GenerateDTO) =>
+      http.request<ResultListString['data']>(`/api/main/barcodePkg/generateBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -20193,6 +20293,21 @@ export const api = {
      */
     getPrintTmplList: (query: { moScheId: string; packType: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/main/barcodePkg/getPrintTmplList`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 包装条码表
+     * @name GetByBarcode
+     * @summary 根据条码查询包装相关信息
+     * @request GET:/barcodePkg/getByBarcode
+     * @secure
+     */
+    getByBarcode: (query: { barcode: string }) =>
+      http.request<ResultBarcodePkgVO['data']>(`/api/main/barcodePkg/getByBarcode`, {
         method: 'GET',
         params: query,
       }),
