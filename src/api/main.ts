@@ -30,6 +30,10 @@ export interface Graph {
 
 export interface GraphBom {
   id?: string;
+  relateType?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
   categoryCode?: string;
   categoryName?: string;
   categoryDesc?: string;
@@ -1039,8 +1043,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -3250,6 +3254,8 @@ export interface Post {
   postName?: string;
   /** 岗位描述 */
   postDesc?: string;
+  /** 岗位系数 */
+  postRate?: number;
 }
 
 /** 通用响应类 */
@@ -3423,6 +3429,9 @@ export interface PersonVO {
   certificates?: PersonInCertificateVO[];
   /** 关联设备 */
   devices?: PersonInDevice[];
+  postId?: string;
+  /** 人员类型 */
+  personType?: string;
 }
 
 /** 通用响应类 */
@@ -3476,6 +3485,9 @@ export type Person = {
   /** 手机号 */
   mobilePhone?: string;
   adminOrgId?: string;
+  postId?: string;
+  /** 人员类型 */
+  personType?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5514,11 +5526,11 @@ export interface MitemInSupplierVO {
   containerTypeName?: string;
   stateName?: string;
   isState?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5739,13 +5751,13 @@ export interface MitemVO {
   minPackagingQty?: string;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isRawName?: string;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -9928,8 +9940,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -11437,12 +11449,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12009,13 +12021,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  scopeType?: string;
-  subScopeId?: string;
 }
 
 /** 通用响应类 */
@@ -12044,40 +12056,40 @@ export type Task = {
   dueDate?: string;
   assignee?: string;
   category?: string;
-  formKey?: string;
-  localizedName?: string;
-  parentTaskId?: string;
   delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
+  formKey?: string;
   localizedDescription?: string;
+  localizedName?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  /** @format date-time */
-  createTime?: string;
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
-  processDefinitionId?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
   processInstanceId?: string;
   scopeDefinitionId?: string;
-  scopeType?: string;
   subScopeId?: string;
-  propagatedStageInstanceId?: string;
-  suspendedBy?: string;
+  scopeType?: string;
   /** @format date-time */
-  claimTime?: string;
+  createTime?: string;
+  caseVariables?: Record<string, object>;
+  suspendedBy?: string;
   claimedBy?: string;
   /** @format date-time */
+  claimTime?: string;
+  /** @format date-time */
   suspendedTime?: string;
-  caseVariables?: Record<string, object>;
+  processDefinitionId?: string;
+  propagatedStageInstanceId?: string;
   /** @format date-time */
   inProgressStartTime?: string;
-  processVariables?: Record<string, object>;
   /** @format date-time */
   inProgressStartDueDate?: string;
-  taskLocalVariables?: Record<string, object>;
   inProgressStartedBy?: string;
+  processVariables?: Record<string, object>;
+  taskLocalVariables?: Record<string, object>;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
 } | null;
 
 /** 响应数据 */
@@ -12085,13 +12097,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
   groupId?: string;
   taskId?: string;
   userId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  scopeType?: string;
-  subScopeId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -15228,6 +15240,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultProcess['data']>(`/api/main/process/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序
+     * @name GetProcessByMoScheduleId
+     * @summary 根据排产单获取对应工序列表
+     * @request POST:/process/getProcessByMoScheduleId
+     * @secure
+     */
+    getProcessByMoScheduleId: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/process/getProcessByMoScheduleId`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**

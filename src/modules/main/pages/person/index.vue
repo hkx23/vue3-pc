@@ -68,14 +68,24 @@
     @confirm="onEditConfirm"
   >
     <t-space direction="vertical" style="width: 98%">
-      <t-form :data="formData">
-        <t-form-item label="员工编码" required-mark>
+      <t-form ref="formRef" :data="formData" :rules="currentFormRules">
+        <t-form-item label="员工编码" name="personCode">
           <t-input v-model="formData.personcode" disabled />
         </t-form-item>
-        <t-form-item label="姓名" required-mark>
+        <t-form-item label="岗位" name="postId">
+          <bcmp-select-business v-model="formData.postId" type="post" :show-title="false"></bcmp-select-business>
+        </t-form-item>
+        <t-form-item label="用工类型" name="personType">
+          <t-select v-model="formData.personType" placeholder="请选择用工类型">
+            <t-option v-for="(item, index) in personTypeList" :key="index" :value="item.value" :label="item.label">
+              {{ item.label }}
+            </t-option>
+          </t-select>
+        </t-form-item>
+        <t-form-item label="姓名" name="personName">
           <t-input v-model="formData.personname" placeholder="请输入内容" />
         </t-form-item>
-        <t-form-item label="性别" required-mark>
+        <t-form-item label="性别" name="gender">
           <t-select v-model="formData.gender" placeholder="请选择性别">
             <t-option v-for="(item, index) in userGenderList" :key="index" :value="item.value" :label="item.label">
               {{ item.label }}
@@ -88,6 +98,7 @@
         <t-form-item label="邮箱">
           <t-input v-model="formData.email" placeholder="请输入内容" />
         </t-form-item>
+
         <t-form-item label="启用">
           <t-switch v-model="formData.state" />
         </t-form-item>
@@ -118,8 +129,8 @@ export default {
 
 <script setup lang="ts">
 import { isEmpty } from 'lodash';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -140,10 +151,18 @@ const userGenderList = ref([
   { label: '女', value: 0 },
 ]);
 
+const personTypeList = ref([
+  { label: '正式工', value: '1' },
+  { label: '临时工', value: '2' },
+  { label: '调度', value: '3' },
+]);
+
 // 编辑的form
 const formData = ref({
   id: '',
   personcode: '',
+  postId: '',
+  personType: '',
   personname: '',
   gender: 0,
   email: '',
@@ -170,6 +189,8 @@ const columnsParam: PrimaryTableCol<TableRowData>[] = [
   { title: '性别', colKey: 'genderName' },
   { title: '手机号', colKey: 'mobilePhone' },
   { title: '邮箱', colKey: 'email' },
+  { title: '用工类型', colKey: 'personTypeName' },
+  { title: '岗位', colKey: 'postName' },
   {
     colKey: 'state',
     title: '状态',
@@ -219,7 +240,14 @@ const conditionEnter = (data: any) => {
 // #endregion
 
 // #region 按钮逻辑
-
+// 表单验证规则
+const currentFormRules: FormRules = {
+  personCode: [{ required: true, message: '员工编码不能为空', trigger: 'blur' }],
+  personName: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
+  personType: [{ required: true, message: '用工类型不能为空', trigger: 'blur' }],
+  postId: [{ required: true, message: '岗位不能为空', trigger: 'change' }],
+  gender: [{ required: true, message: '性别不能为空', trigger: 'change' }],
+};
 // 编辑按钮
 const onEditConfirm = async () => {
   dataLoading.value = true;
@@ -237,6 +265,8 @@ const onEditConfirm = async () => {
       mobilePhone: formData.value.mobilePhone,
       email: formData.value.email,
       state: formData.value.state ? 1 : 0,
+      personType: formData.value.personType,
+      postId: formData.value.postId,
     });
     MessagePlugin.success('编辑成功');
 
@@ -386,16 +416,20 @@ const rowKey = 'id';
 
 // const router = useRouter();
 
+const formRef: Ref<FormInstanceFunctions> = ref(null);
 const handleClickDetail = (value: any) => {
   // router.push('/detail/base');
   formData.value.id = value.row.id;
   formData.value.email = value.row.email;
   formData.value.gender = value.row.gender;
   formData.value.mobilePhone = value.row.mobilePhone;
+  formData.value.personType = value.row.personType;
+  formData.value.postId = value.row.postId;
   formData.value.personcode = value.row.personCode;
   formData.value.personname = value.row.personName;
   formData.value.state = value.row.isState;
   onShowEditVisible.value = true;
+  formRef.value.clearValidate();
 };
 
 onMounted(() => {

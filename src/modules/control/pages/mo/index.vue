@@ -40,6 +40,7 @@
         </template>
         <template #title> 工单列表</template>
         <template #button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="c_mo"></bcmp-import-auto-button>
           <t-button theme="primary" :disabled="true" @click="onUpdateMoStatus('CREATED')">创建</t-button>
           <t-button theme="default" @click="onUpdateMoStatus('CANCELLED')">取消</t-button>
           <t-button theme="default" @click="onUpdateMoStatus('RELEASED')">释放</t-button>
