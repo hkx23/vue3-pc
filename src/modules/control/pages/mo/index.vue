@@ -222,6 +222,7 @@ const initMoType = async () => {
     const res = (await apimain.param.getListByGroupCode({
       parmGroupCode: 'C_MO_STATUS',
     })) as any;
+    moStatusOption.value = [];
     const checkall = { label: '全选', value: '', checkAll: true };
     moStatusOption.value = res;
     moStatusOption.value.unshift(checkall);
