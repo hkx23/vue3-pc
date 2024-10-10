@@ -264,6 +264,7 @@ import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+const lotNoCreateRule = ref('1844200132197044226');
 // 表单定义规则
 function validateNumberOne(value: any): boolean | CustomValidateResolveType {
   if (Number.isNaN(Number(value))) {
@@ -379,6 +380,29 @@ const onSelectMinPkgQty = async () => {
     stockInData.value.supplierCode = res.supplierCode;
     stockInData.value.minPkgQty = res.minPkgQty;
   }
+  refreshLotNo();
+};
+// 根据条码规则刷新大批次
+const refreshLotNo = async () => {
+  // 判断物料是否选中
+  if (!stockInData.value.mitemId) {
+    return;
+  }
+  // 判断供应商是否选中
+  if (!stockInData.value.supplierId) {
+    return;
+  }
+  // 判断大批次代码生成规则是否存在
+  if (lotNoCreateRule.value === '') {
+    return;
+  }
+  const lotNoGenData = {
+    mitemId: stockInData.value.mitemId,
+    supplierId: stockInData.value.supplierId,
+    barcodeRuleId: lotNoCreateRule.value,
+  };
+  const res = await apiMain.label.generateLotNoByBarcodeRule(lotNoGenData);
+  stockInData.value.lotNo = res;
 };
 const onNumberChange = async () => {
   const { minPkgQty } = stockInData.value;
@@ -400,6 +424,19 @@ const onNumberChange = async () => {
   const remainder = thisNumber % minPkgQty;
   stockInData.value.createNumber = remainder === 0 ? quotient : quotient + 1;
 };
+
+const loadLotNoBarcodeRule = async () => {
+  const res = await apiMain.barcodeRule.getBarcodeRuleList({
+    pageNum: 1,
+    pageSize: 1,
+    selectKeyword: 'LOT_NO', // 下拉模糊查询关键词
+  });
+  const lotNoRule = res.list;
+  if (lotNoRule.length > 0) {
+    lotNoCreateRule.value = lotNoRule[0].id;
+  }
+};
+
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
@@ -1027,6 +1064,7 @@ onMounted(async () => {
   await onReprintSelextData(); // 获取补打原因列表
   await onsplitelextData(); // 获取拆分原因列表
   await onCancellationSelextData(); // 获取作废原因列表
+  await loadLotNoBarcodeRule(); // 获取大批次编码规则
 });
 </script>
 

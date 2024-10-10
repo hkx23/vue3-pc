@@ -11,6 +11,7 @@
         :is-fixed-height="isFixedHeight"
         :loading="loading"
         :total="data.total"
+        :remote-sorter="false"
         :export-function="exportFunction"
         @refresh="fetchData"
       >

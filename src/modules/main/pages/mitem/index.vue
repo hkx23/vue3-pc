@@ -10,6 +10,7 @@
         v-model:filters="filterList"
         v-model:sorters="sortList"
         row-key="id"
+        :remote-sorter="false"
         :table-column="tableMitemColumns"
         :table-data="tableDataMitem"
         :loading="loading"
@@ -37,9 +38,16 @@
       width="900px"
       :close-on-overlay-click="false"
     >
-      <t-space direction="vertical">
-        <mitem-form ref="formRef"></mitem-form>
-      </t-space>
+      <t-tabs :default-value="1">
+        <t-tab-panel :value="1" label="物料信息" :destroy-on-hide="false" style="padding: 8px">
+          <mitem-form ref="formRef"></mitem-form>
+        </t-tab-panel>
+
+        <t-tab-panel :value="2" label="扩展属性" :destroy-on-hide="false" style="padding: 8px">
+          <bcmp-extend ref="extendForm" :object-id="currentEditId" object-code="mitem"> </bcmp-extend>
+        </t-tab-panel>
+      </t-tabs>
+      <t-space direction="vertical"> </t-space>
     </t-dialog>
   </div>
 </template>
@@ -76,7 +84,7 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.main.mitemCode'), width: 160, colKey: 'mitemCode' },
   { title: t('business.main.mitemName'), width: 160, colKey: 'mitemName' },
   { title: t('business.main.mitemDesc'), width: 160, colKey: 'mitemDesc' },
-  { title: t('business.main.mitemCategoryCode'), width: 160, colKey: 'mitemCategoryCode' },
+  { title: t('business.main.mitemCategoryCode'), width: 160, colKey: 'mitemCategoryCode', sorter: true },
   { title: t('business.main.mitemCategoryName'), width: 160, colKey: 'mitemCategoryName' },
   { title: t('business.main.uom'), width: 160, colKey: 'uom' },
   { title: t('business.main.raw'), width: 160, colKey: 'isRawName' },
@@ -158,10 +166,11 @@ const fetchTable = async () => {
     setLoading(false);
   }
 };
-
+const currentEditId = ref('');
 const onEditRowClick = (value: any) => {
   // const rowData = value.row;
   // formRef.value.getUom();
+  currentEditId.value = value.row.id;
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
   formVisible.value = true;
 };
