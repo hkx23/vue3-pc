@@ -121,18 +121,20 @@ const isOnlinePrint = ref(false);
 const isProcessConsistent = ref(false);
 const processCategory = ref();
 const isWorckstationIsHold = ref(false);
-// 获取是否在线打印配置
-apiMain.profileValue
-  .getValueByProfileCode({
+
+const init = async () => {
+  // 获取是否在线打印配置
+  const profile = await apiMain.profileValue.getValueByProfileCode({
     code: 'ONLINE_PRINT',
     orgId: fw.getOrgId(),
-  })
-  .then((val) => {
-    if (val === '1' || val === 'Y') {
-      isOnlinePrint.value = true;
-    }
+    workshopId: userStore.currUserOrgInfo.workShopId,
+    workcenterId: userStore.currUserOrgInfo.workCenterId,
+    workstationId: userStore.currUserOrgInfo.workStationId,
   });
-const init = async () => {
+  if (profile === '1' || profile === 'Y') {
+    isOnlinePrint.value = true;
+  }
+
   // 判断工站对应的工序是否正确
   const category = await apiMain.workstation.getProcessCategory({
     workstationId: userStore.currUserOrgInfo.workStationId,
