@@ -10,6 +10,8 @@
     "packingList": "装箱清单",
     "tailPacking": "尾数封箱",
     "packingLog": "装箱记录",
+    "barcodeRule": "条码规则",
+    "printTemplate": "打印模板",
     "plsScanPackLabel": "请扫描箱标签",
     "plsContinueScanPackLabel": "请继续扫描要装箱的标签",
     "plsScanLabel": "请先扫描需要装箱的标签",
@@ -22,9 +24,15 @@
     "tipsQtyUpperLimite": "数量超出上限",
     "tipsCompletedTail": "是否完成尾数封箱",
     "tipsQtyFailed": "包装的数量大于箱数量",
+    "saving": "正在保存",
     "saveSuccess": "保存成功",
     "saveFailed": "保存失败",
     "tipsProcessCategoryInconsistent": "工序对应的采集类型[{0}]与当前页面类型[包装]不一致，请检查！",
-    "tipsWorkstationIsHold": "当前工站被锁定，请检查!"
+    "tipsWorkstationIsHold": "当前工站被锁定，请检查!",
+    "plsSelectPrintTemplate": "请选择打印模板",
+    "tipsNotFindPkgInfo": "没有找到对应的包装条码",
+    "printing": "正在打印",
+    "printSuccess": "打印成功",
+    "printFailed": "打印失败"
   }
 }
