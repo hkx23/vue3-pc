@@ -98,11 +98,21 @@
         </div>
       </div>
       <div ref="flowRef" class="flow"></div>
-      <t-dialog v-model:visible="edgeVisible" :header="false" :footer="false" destroy-on-close>
-        <t-select v-model="edgeText" @change="resultChange">
-          <t-option value="OK" />
-          <t-option value="NG" />
-        </t-select>
+      <t-dialog v-model:visible="edgeVisible" :header="false" destroy-on-close @confirm="edgeConfirm">
+        <t-space style="width: 100%" direction="vertical">
+          <t-select v-model="edgeText">
+            <t-option value="OK" />
+            <t-option value="NG" />
+          </t-select>
+          <t-input-number
+            v-model="edgeStandTime"
+            :decimal-places="0"
+            style="width: 100%"
+            theme="normal"
+            label="静置时间"
+            suffix="秒"
+          ></t-input-number>
+        </t-space>
       </t-dialog>
       <t-drawer v-model:visible="propertiesVisible" :header="t('craftRoute.processProperties')" destroy-on-close>
         <t-form ref="propertiesFormRef" :data="propertiesForm" :rules="propertiesRules" label-width="80px">
@@ -548,6 +558,7 @@ onMounted(() => {
   lf.on('edge:click', ({ data }) => {
     selectedEdage = data;
     edgeText.value = data.text.value;
+    edgeStandTime.value = data.properties.standTime;
     edgeVisible.value = true;
   });
 });
@@ -590,9 +601,13 @@ const dragInNode = (type: string, text: string) => {
 // #region 边属性
 const edgeVisible = ref(false);
 const edgeText = ref();
+const edgeStandTime = ref();
 let selectedEdage = null;
-const resultChange = (val: any) => {
-  lf.updateText(selectedEdage.id, val);
+const edgeConfirm = () => {
+  lf.setProperties(selectedEdage.id, {
+    standTime: edgeStandTime.value,
+  });
+  lf.updateText(selectedEdage.id, edgeText.value);
   edgeVisible.value = false;
 };
 // #endregion
