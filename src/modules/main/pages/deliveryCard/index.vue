@@ -807,6 +807,7 @@ const generateData = ref({
   workcenterId: null, // 工作中心 Id
   moScheduleId: null, // 行 Id
   workshopCode: '',
+  moCode: '',
   createNum: null, // 变化后的数字
   createSize: 0, // 生成规格
   mitemId: null, // 物料ID
@@ -1243,6 +1244,7 @@ const onGenerate = debounce(async () => {
     if (isCheckOK) {
       const currentRowData = item;
       if (currentRowData) {
+        generateData.value.moCode = currentRowData.moCode; // 工作中心 Id
         generateData.value.createNum = currentRowData.thisTimeQty;
         generateData.value.createSize = currentRowData.specificationQuantity;
         generateData.value.workcenterId = currentRowData.workcenterId; // 工作中心 Id
