@@ -231,8 +231,14 @@ const scan = () => {
   }
   if (isScanPkg.value) {
     apiControl.barcodePkg
-      .getByBarcode({
-        barcode: scanLabel.value,
+      .scanPkgBarcode({
+        pkgBarcode: scanLabel.value,
+        pkgBarcodeType: labelList.value[0].parentPackType,
+        subPkgBarcodeType: labelList.value[0].barcodeType,
+        moScheId: labelList.value[0].moScheId,
+        moCode: labelList.value[0].moCode,
+        packRuleId: labelList.value[0].packRuleId,
+        qty: allQty.value,
       })
       .then((data) => {
         if (data.packRuleId !== labelList.value[0].packRuleId) {
