@@ -125,7 +125,9 @@ export default {
       isBatchNo: 0, // 是否启用批次
       specificationsQty: 0,
       minPackagingQty: 0,
+      properties: [],
     }) as any;
+    const properties = ref([]);
     const formRef = ref(null);
 
     onMounted(() => {
@@ -141,7 +143,7 @@ export default {
       formData.value.isRaw = formData.value.isRawChecked ? 1 : 0;
       formData.value.isProduct = formData.value.isProductChecked ? 1 : 0;
       formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
-
+      formData.value.properties = properties.value;
       await api.mitem.edit(formData.value);
       MessagePlugin.success(t('common.message.success'));
     };
@@ -170,6 +172,7 @@ export default {
       getUom,
       onWarehouseChange,
       formData,
+      properties,
       uomOptions,
       supplyCategoryOptions,
       isBatchNoOptions,

@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -166,6 +166,7 @@ const fetchTable = async () => {
     setLoading(false);
   }
 };
+const extendForm = ref(null);
 const currentEditId = ref('');
 const onEditRowClick = (value: any) => {
   // const rowData = value.row;
@@ -176,6 +177,19 @@ const onEditRowClick = (value: any) => {
 };
 
 const onConfirmForm = async () => {
+  const rlt = await extendForm.value.getComponentData();
+  if (!rlt.success) {
+    MessagePlugin.error('扩展属性校验不通过');
+    return;
+  }
+  const properties = [];
+  for (const key in rlt.data) {
+    properties.push({
+      objectPropertyId: key,
+      propertyValue: rlt.data[key],
+    });
+  }
+  formRef.value.properties = properties;
   await formRef.value.submit().then(() => {
     formVisible.value = false;
   });
