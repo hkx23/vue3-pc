@@ -575,11 +575,18 @@ const onExpandSwitch = () => {
   //   computedTableContentSize();
   // });
 };
-
+const lastQueryBottom = ref(0);
+const lastQueryTop = ref(0);
 useResizeObserver(QueryRef, (entries) => {
-  // loading.value = true;
-
+  if (lastQueryBottom.value === 0 && lastQueryTop.value === 0) {
+    loading.value = true;
+  }
   const entry = entries[0];
+  const { bottom } = entry.contentRect;
+  const { top } = entry.contentRect;
+  lastQueryBottom.value = bottom;
+  lastQueryTop.value = top;
+
   console.debug(entry);
   debounceFunction();
 });
@@ -628,15 +635,15 @@ const computedTableContentSize = () => {
         }
       }
       searchItemtWidth.value = targetWidth;
-
       // 已经算出了一行应该有多少个默认长度的控件了，可以循环检查第一行最后一个控件应该是哪一个
       buttonItemWidth.value = targetWidth;
       let totalComLengthSum = 0;
       let leftSpace = _.cloneDeep(rowItemCount.value);
       let isFirstRowLastProcessing = true;
       if (cOpts.value[999]) {
-        for (let i = 0; i < cOpts.value[999].length; i++) {
-          const item = cOpts.value[999][i];
+        const optItems = cOpts.value[999].filter((item) => item.isHide !== true);
+        for (let i = 0; i < optItems.length; i++) {
+          const item = optItems[i];
           if (item.comLength) {
             totalComLengthSum += item.comLength;
           } else {
@@ -650,13 +657,13 @@ const computedTableContentSize = () => {
             isFirstRowLastProcessing = false;
           }
           const compareResultCount = totalComLengthSum - rowItemCount.value;
-          if (compareResultCount > 0 && isFirstRowLastProcessing && cOpts.value[999][i - 1]) {
+          if (compareResultCount > 0 && isFirstRowLastProcessing && optItems[i - 1]) {
             totalComLengthSum += totalComLengthSum;
-            if (cOpts.value[999][i - 1].comLength > 1 && leftSpace > 0) {
-              buttonItemWidth.value = (cOpts.value[999][i - 1].comLength + leftSpace) * searchItemtWidth.value + 8;
+            if (optItems[i - 1].comLength > 1 && leftSpace > 0) {
+              buttonItemWidth.value = (optItems[i - 1].comLength + leftSpace) * searchItemtWidth.value + 8;
               isFirstRowLastProcessing = false;
             } else {
-              buttonItemWidth.value = cOpts.value[999][i - 1].comLength * searchItemtWidth.value + 8;
+              buttonItemWidth.value = optItems[i - 1].comLength * searchItemtWidth.value + 8;
               isFirstRowLastProcessing = false;
             }
           }

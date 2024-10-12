@@ -49,6 +49,12 @@ export interface GraphEdge {
   pointsList?: GraphPoint[];
   text?: GraphText;
   type?: string;
+  properties?: GraphEdgeProperties;
+}
+
+export interface GraphEdgeProperties {
+  /** @format int32 */
+  standTime?: number;
 }
 
 export interface GraphNode {
@@ -1043,8 +1049,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -5528,10 +5534,10 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   /** 容器类型名称 */
   containerTypeName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
   stateName?: string;
   isState?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
@@ -5756,14 +5762,14 @@ export interface MitemVO {
   /** 扩展属性 */
   properties?: MouldPropertyVO[];
   stateName?: string;
-  isState?: boolean;
-  isProductName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isBatchName?: string;
-  isInProcessChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isState?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5906,8 +5912,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5991,12 +5997,17 @@ export interface BarcodeWip {
   /** 泄密实际值 */
   gasTightnessValue?: number;
   /**
-   * 入库时间
+   * 泄密采集时间
    * @format date-time
    */
   datetimeGasTightness?: string;
   /** 保压实际值 */
   pressureValue?: number;
+  /**
+   * 保压采集时间
+   * @format date-time
+   */
+  datetimePressure?: string;
 }
 
 /** 显示产品条码管理 */
@@ -8100,6 +8111,8 @@ export interface DeliveryCardSearch {
   scheStatus?: string;
   /** 是否仅显示已打印 */
   isFinishDisplay?: boolean;
+  /** 生产订单 */
+  moCode?: string;
   /** 是否仅显示已生成 */
   isCreated?: boolean;
   moScheduleId?: string;
@@ -8200,6 +8213,8 @@ export type DeliveryCardVO = {
   moScheduleId?: string;
   /** 排产单编码 */
   scheCode?: string;
+  /** 生产订单编码 */
+  moCode?: string;
   /**
    * 计划生产日期
    * @format date-time
@@ -9799,6 +9814,45 @@ export interface ResultListDeliveryDtlInBarcodeDTO {
   message?: string;
   /** 响应数据 */
   data?: DeliveryDtlInBarcodeDTO[] | null;
+}
+
+/** 包装条码表 */
+export interface BarcodePkg {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 包装条码 */
+  pkgBarcode?: string;
+  /** 包装条码类型 */
+  pkgBarcodeType?: string;
+  /** 子包装条码类型 */
+  subPkgBarcodeType?: string;
+  moScheId?: string;
+  packRuleId?: string;
+  /** 数量 */
+  qty?: number;
+  /** 状态 */
+  status?: string;
 }
 
 export interface BarcodePkgSearch {
@@ -11498,14 +11552,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否可用 */
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12070,15 +12124,15 @@ export interface ResultListProcessTmpl {
 }
 
 export interface IdentityLinkInfo {
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  userId?: string;
-  taskId?: string;
   groupId?: string;
-  scopeType?: string;
+  taskId?: string;
+  userId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   subScopeId?: string;
+  scopeType?: string;
 }
 
 /** 通用响应类 */
@@ -12096,65 +12150,65 @@ export interface ResultTask {
 
 /** 响应数据 */
 export type Task = {
-  formKey?: string;
-  localizedName?: string;
-  localizedDescription?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  parentTaskId?: string;
-  suspended?: boolean;
   /** @format int32 */
   priority?: number;
   name?: string;
   owner?: string;
+  suspended?: boolean;
   description?: string;
   tenantId?: string;
+  localizedDescription?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
   /** @format date-time */
   dueDate?: string;
   assignee?: string;
   category?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  processDefinitionId?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
-  caseVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
-  taskLocalVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  inProgressStartedBy?: string;
-  propagatedStageInstanceId?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  suspendedBy?: string;
-  /** @format date-time */
-  claimTime?: string;
-  claimedBy?: string;
+  formKey?: string;
+  localizedName?: string;
   id?: string;
   state?: string;
   scopeId?: string;
+  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  inProgressStartTime?: string;
+  taskLocalVariables?: Record<string, object>;
+  inProgressStartedBy?: string;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  /** @format date-time */
+  claimTime?: string;
+  claimedBy?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
   /** @format date-time */
   createTime?: string;
-  scopeType?: string;
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
+  processDefinitionId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   subScopeId?: string;
+  scopeType?: string;
+  executionId?: string;
+  identityLinks?: IdentityLinkInfo[];
+  caseVariables?: Record<string, object>;
 } | null;
 
 /** 响应数据 */
 export type IdentityLink = {
   processDefinitionId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  userId?: string;
-  taskId?: string;
   groupId?: string;
-  scopeType?: string;
+  taskId?: string;
+  userId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   subScopeId?: string;
+  scopeType?: string;
 } | null;
 
 /** 通用响应类 */
@@ -20171,6 +20225,21 @@ export const api = {
       }),
   },
   barcodePkg: {
+    /**
+     * No description
+     *
+     * @tags 包装条码表
+     * @name Save
+     * @summary 插入条码
+     * @request POST:/barcodePkg/save
+     * @secure
+     */
+    save: (data: BarcodePkg) =>
+      http.request<ResultObject['data']>(`/api/main/barcodePkg/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

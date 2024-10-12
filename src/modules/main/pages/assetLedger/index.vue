@@ -72,10 +72,10 @@
           >
             <t-row :gutter="[32, 16]">
               <t-col :span="6">
-                <t-form-item label="设备类型" name="assetType">
+                <t-form-item label="设备类型" name="assetTypeId">
                   <bcmp-select-business
                     v-model="equipmentData.list.assetTypeId"
-                    label=""
+                    :show-title="false"
                     type="assetType"
                     :clearable="true"
                     :disabled="isDisabled"
@@ -83,10 +83,10 @@
                 </t-form-item>
               </t-col>
               <t-col :span="6">
-                <t-form-item label="设备品牌" name="assetBrand">
+                <t-form-item label="设备品牌" name="assetBrandId">
                   <bcmp-select-business
                     v-model="equipmentData.list.assetBrandId"
-                    label=""
+                    :show-title="false"
                     type="assetBrand"
                     :parent="equipmentData.list.assetTypeId"
                     :clearable="true"
@@ -95,10 +95,10 @@
                 </t-form-item>
               </t-col>
               <t-col :span="6">
-                <t-form-item label="设备型号" name="assetModel">
+                <t-form-item label="设备型号" name="assetModelId">
                   <bcmp-select-business
                     v-model="equipmentData.list.assetModelId"
-                    label=""
+                    :show-title="false"
                     type="assetModel"
                     :parent="equipmentData.list.assetBrandId"
                     :clearable="true"
@@ -497,15 +497,15 @@ const rules: FormRules = {
   assetTypeId: [{ required: true, message: '资产类型不能为空', trigger: 'change' }],
   assetBrandId: [{ required: true, message: '资产品牌不能为空', trigger: 'change' }],
   assetModelId: [{ required: true, message: '资产型号不能为空', trigger: 'change' }],
-  assetCode: [{ required: true, message: '设备资产编号不能为空', trigger: 'blur' }],
+  // assetCode: [{ required: true, message: '设备资产编号不能为空', trigger: 'blur' }],
   equipmentCode: [{ required: true, message: '设备编码不能为空', trigger: 'blur' }],
   equipmentName: [{ required: true, message: '设备名称不能为空', trigger: 'blur' }],
-  equipmentDesc: [{ required: true, message: '设备描述不能为空', trigger: 'blur' }],
+  // equipmentDesc: [{ required: true, message: '设备描述不能为空', trigger: 'blur' }],
   position: [{ required: true, message: '设备存放位置不能为空', trigger: 'change' }],
   departmentOwner: [{ required: true, message: '保管部门不能为空', trigger: 'change' }],
-  equipmentSupplier: [{ required: true, message: '设备供应商不能为空', trigger: 'change' }],
-  dateEffective: [{ required: true, message: '生效日期不能为空', trigger: 'change' }],
-  dateInvalid: [{ required: true, message: '失效日期不能为空', trigger: 'change' }],
+  // equipmentSupplier: [{ required: true, message: '设备供应商不能为空', trigger: 'change' }],
+  // dateEffective: [{ required: true, message: '生效日期不能为空', trigger: 'change' }],
+  // dateInvalid: [{ required: true, message: '失效日期不能为空', trigger: 'change' }],
   status: [{ required: true, message: '状态不能为空', trigger: 'change' }],
 };
 // 表格列表数据
