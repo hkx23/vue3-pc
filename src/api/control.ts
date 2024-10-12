@@ -9,6 +9,15 @@
  * ---------------------------------------------------------------
  */
 
+/** 完工入库标提交实体 */
+export interface WipCompletionDTO {
+  id?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  labelList?: WipCompletionLabelDTO[];
+}
+
 /** 完工入库标签实体 */
 export interface WipCompletionLabelDTO {
   dtlBarcodeId?: string;
@@ -1646,12 +1655,17 @@ export interface BarcodeWipCollectVO {
   /** 泄密实际值 */
   gasTightnessValue?: number;
   /**
-   * 入库时间
+   * 泄密采集时间
    * @format date-time
    */
   datetimeGasTightness?: string;
   /** 保压实际值 */
   pressureValue?: number;
+  /**
+   * 保压采集时间
+   * @format date-time
+   */
+  datetimePressure?: string;
   /** 扫码类型(SCANTEXT,KEYPART) */
   uom?: string;
   uomName?: string;
@@ -1735,17 +1749,22 @@ export interface BarcodeWipCollectVO {
   weightMin?: number;
   /** 称重最大值 */
   weightMax?: number;
-  datetimeScheStr?: string;
+  /**
+   * 生产数量
+   * @format int32
+   */
+  productQty?: number;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  workshopId?: string;
   stateName?: string;
-  isState?: boolean;
 }
 
 /** 工序 */
@@ -1890,8 +1909,8 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
 }
@@ -3447,12 +3466,17 @@ export interface ProductReworkVO {
   /** 泄密实际值 */
   gasTightnessValue?: number;
   /**
-   * 入库时间
+   * 泄密采集时间
    * @format date-time
    */
   datetimeGasTightness?: string;
   /** 保压实际值 */
   pressureValue?: number;
+  /**
+   * 保压采集时间
+   * @format date-time
+   */
+  datetimePressure?: string;
   uom?: string;
   uomName?: string;
   keypartCode?: string;
@@ -3507,15 +3531,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  workshopId?: string;
 }
 
 /** 通用响应类 */
@@ -3603,8 +3627,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3837,9 +3861,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3964,12 +3988,17 @@ export interface BarcodeWipVO {
   /** 泄密实际值 */
   gasTightnessValue?: number;
   /**
-   * 入库时间
+   * 泄密采集时间
    * @format date-time
    */
   datetimeGasTightness?: string;
   /** 保压实际值 */
   pressureValue?: number;
+  /**
+   * 保压采集时间
+   * @format date-time
+   */
+  datetimePressure?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
@@ -4007,16 +4036,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  defectCodeStr?: string;
   workshopId?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 缺陷代码 */
@@ -5909,8 +5938,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6198,11 +6227,11 @@ export const api = {
      * @tags 完工入库
      * @name Submit
      * @summary 根据单据ID提交单据状态
-     * @request PUT:/wipCompletion/submit/{id}
+     * @request PUT:/wipCompletion/submit
      * @secure
      */
-    submit: (id: string, data: WipCompletionLabelDTO[]) =>
-      http.request<ResultObject['data']>(`/api/control/wipCompletion/submit/${id}`, {
+    submit: (data: WipCompletionDTO) =>
+      http.request<ResultObject['data']>(`/api/control/wipCompletion/submit`, {
         method: 'PUT',
         body: data as any,
       }),
@@ -8427,7 +8456,7 @@ export const api = {
      * @request POST:/barcodeWip/getWipPkgInfo
      * @secure
      */
-    getWipPkgInfo: (query: { barcode: string }) =>
+    getWipPkgInfo: (query: { barcode: string; curProcessId: string }) =>
       http.request<ResultWipPkgInfoVO['data']>(`/api/control/barcodeWip/getWipPkgInfo`, {
         method: 'POST',
         params: query,

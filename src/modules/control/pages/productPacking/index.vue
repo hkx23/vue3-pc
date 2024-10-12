@@ -277,6 +277,7 @@ const scan = () => {
     apiControl.barcodeWip
       .getWipPkgInfo({
         barcode: scanLabel.value,
+        curProcessId: userStore.currUserOrgInfo.processId,
       })
       .then((data) => {
         // 当前数量是否超出规格
