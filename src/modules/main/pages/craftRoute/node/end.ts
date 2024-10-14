@@ -36,7 +36,7 @@ class EndView extends CircleNode {
         cy: y,
         r,
         fill,
-        stroke: 'var(--td-brand-color-active)',
+        stroke: 'var(--td-brand-color)',
         strokeWidth,
       }),
       this.getLabelShape(),
@@ -48,7 +48,7 @@ class EndView extends CircleNode {
     return h(
       'svg',
       {
-        fill: 'var(--td-brand-color-active)',
+        fill: 'var(--td-brand-color)',
         x: x - (1 / 2) * width,
         y: y - (1 / 2) * height,
         viewBox: '0 0 24 24',

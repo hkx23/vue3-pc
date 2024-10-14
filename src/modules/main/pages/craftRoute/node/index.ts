@@ -2,6 +2,7 @@ import LogicFlow from '@logicflow/core';
 
 import end from './end';
 import process from './process';
+import properties from './properties';
 import sequence from './sequence';
 import start from './start';
 
@@ -9,6 +10,7 @@ import start from './start';
 export const registerCustomElement = (lf: LogicFlow) => {
   lf.register(end);
   lf.register(process);
+  lf.register(properties);
   lf.register(sequence);
   lf.register(start);
 };
