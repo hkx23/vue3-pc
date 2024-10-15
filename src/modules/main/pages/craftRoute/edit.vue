@@ -69,7 +69,11 @@
       </t-form-item>
     </t-form>
     <div class="card">
-      <div class="toolbar">
+      <t-space class="toolbar">
+        <t-select v-model="defaultEdgeType" label="连线类型" auto-width @change="defaultEdgeTypeChange">
+          <t-option value="sequence" label="工艺流程" />
+          <t-option value="properties" label="流程属性" />
+        </t-select>
         <t-button theme="default" @click="toolAction('zoomIn')">
           <zoom-in-icon />
         </t-button>
@@ -82,7 +86,7 @@
         <t-button theme="default" @click="toolAction('redo')">
           <rollfront-icon />
         </t-button>
-      </div>
+      </t-space>
       <div class="sidebar">
         <div class="sidebar-item" @mousedown="dragInNode('start', t('craftRoute.start'))">
           <play-circle-icon size="large" />
@@ -100,17 +104,22 @@
       <div ref="flowRef" class="flow"></div>
       <t-dialog v-model:visible="edgeVisible" :header="false" destroy-on-close @confirm="edgeConfirm">
         <t-space style="width: 100%" direction="vertical">
-          <t-select v-model="edgeText">
+          <t-select v-model="edgeType" label="连线类型">
+            <t-option value="sequence" label="工艺流程" />
+            <t-option value="properties" label="流程属性" />
+          </t-select>
+          <t-select v-if="edgeType === 'sequence'" v-model="edgeText" label="流程结果">
             <t-option value="OK" />
             <t-option value="NG" />
           </t-select>
           <t-input-number
+            v-if="edgeType === 'properties'"
             v-model="edgeStandTime"
             :decimal-places="0"
             style="width: 100%"
             theme="normal"
             label="静置时间"
-            suffix="秒"
+            suffix="分"
           ></t-input-number>
         </t-space>
       </t-dialog>
@@ -523,7 +532,7 @@ onMounted(() => {
   });
   registerCustomElement(lf);
   // 设置默认边类型为自定义类型
-  lf.setDefaultEdgeType('sequence');
+  lf.setDefaultEdgeType(defaultEdgeType.value);
   lf.extension.menu.setMenuConfig({
     nodeMenu: [
       {
@@ -557,7 +566,12 @@ onMounted(() => {
   });
   lf.on('edge:click', ({ data }) => {
     selectedEdage = data;
-    edgeText.value = data.text.value;
+    edgeType.value = data.type;
+    if (data.type === 'sequence') {
+      edgeText.value = data.text.value;
+    } else {
+      edgeText.value = 'OK';
+    }
     edgeStandTime.value = data.properties.standTime;
     edgeVisible.value = true;
   });
@@ -599,15 +613,25 @@ const dragInNode = (type: string, text: string) => {
 };
 // #endregion
 // #region 边属性
+const defaultEdgeType = ref('sequence');
 const edgeVisible = ref(false);
+const edgeType = ref();
 const edgeText = ref();
 const edgeStandTime = ref();
 let selectedEdage = null;
+const defaultEdgeTypeChange = (value: string) => {
+  lf.setDefaultEdgeType(value);
+};
 const edgeConfirm = () => {
-  lf.setProperties(selectedEdage.id, {
-    standTime: edgeStandTime.value,
-  });
-  lf.updateText(selectedEdage.id, edgeText.value);
+  lf.changeEdgeType(selectedEdage.id, edgeType.value);
+  if (edgeType.value === 'sequence') {
+    lf.updateText(selectedEdage.id, edgeText.value);
+  } else if (edgeType.value === 'properties') {
+    lf.setProperties(selectedEdage.id, {
+      standTime: edgeStandTime.value,
+    });
+  }
+
   edgeVisible.value = false;
 };
 // #endregion
