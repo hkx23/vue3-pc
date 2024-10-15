@@ -230,107 +230,122 @@ const scan = () => {
     return;
   }
   if (isScanPkg.value) {
-    apiControl.barcodePkg
-      .scanPkgBarcode({
-        pkgBarcode: scanLabel.value,
-        pkgBarcodeType: labelList.value[0].parentPackType,
-        subPkgBarcodeType: labelList.value[0].barcodeType,
-        moScheId: labelList.value[0].moScheId,
-        moCode: labelList.value[0].moCode,
-        packRuleId: labelList.value[0].packRuleId,
-        qty: allQty.value,
-      })
-      .then((data) => {
-        if (data.packRuleId !== labelList.value[0].packRuleId) {
-          pushMessage('error', t('productPacking.tipsPkgRuleInconsistent'));
-          return;
-        }
-        if (data.moCode !== labelList.value[0].moCode) {
-          pushMessage('error', t('productPacking.tipsMoInconsistent'));
-          return;
-        }
-        if (data.subPkgBarcodeType !== labelList.value[0].barcodeType) {
-          pushMessage('error', t('productPacking.tipsPkgTypeInconsistent'));
-          return;
-        }
-        if (allQty.value > data.qty) {
-          pushMessage('error', t('productPacking.tipsQtyFailed'));
-          return;
-        }
-        pkgLabel.value = data;
-        packing();
-      })
-      .catch((err) => {
-        pushMessage('error', err.message);
-      });
+    scanPkg();
     return;
   }
   if (scanType.value === 'delete') {
     removeLabel(scanLabel.value);
     scanLabel.value = null;
   } else {
-    // 判断是否重复扫描
-    if (findIndex(labelList.value, ['barcode', scanLabel.value]) > -1) {
-      pushMessage('error', t('productPacking.tipsBarcodeRepeat'));
+    scanWip();
+  }
+};
+const scanPkg = async () => {
+  try {
+    const data = await apiControl.barcodePkg.scanPkgBarcode({
+      pkgBarcode: scanLabel.value,
+      pkgBarcodeType: labelList.value[0].parentPackType,
+      subPkgBarcodeType: labelList.value[0].barcodeType,
+      moScheId: labelList.value[0].moScheId,
+      moCode: labelList.value[0].moCode,
+      packRuleId: labelList.value[0].packRuleId,
+      qty: allQty.value,
+    });
+    if (data.packRuleId !== labelList.value[0].packRuleId) {
+      pushMessage('error', t('productPacking.tipsPkgRuleInconsistent'));
       return;
     }
-    apiControl.barcodeWip
-      .getWipPkgInfo({
-        barcode: scanLabel.value,
-        curProcessId: userStore.currUserOrgInfo.processId,
-      })
-      .then((data) => {
-        // 当前数量是否超出规格
-        if (data.barcodeQty > data.packQty) {
-          pushMessage('error', t('productPacking.tipsQtyUpperLimite'));
-          return;
-        }
-        if (labelList.value.length > 0) {
-          // 判断包装规则是否一致
-          if (data.packRuleId !== labelList.value[0].packRuleId) {
-            pushMessage('error', t('productPacking.tipsPkgRuleInconsistent'));
-            return;
-          }
-          // 判断条码类型是否一致
-          if (data.barcodeType !== labelList.value[0].barcodeType) {
-            pushMessage('error', t('productPacking.tipsBarcodeTypeInconsistent'));
-            return;
-          }
-          if (data.moCode !== labelList.value[0].moCode) {
-            pushMessage('error', t('productPacking.tipsMoInconsistent'));
-            return;
-          }
-          // 判断累加的数量是否超出规格
-          if (allQty.value + data.barcodeQty > pkgInfo.value.packQty) {
-            pushMessage('error', t('productPacking.tipsQtyUpperLimite'));
-            return;
-          }
-        }
+    if (data.moCode !== labelList.value[0].moCode) {
+      pushMessage('error', t('productPacking.tipsMoInconsistent'));
+      return;
+    }
+    if (data.subPkgBarcodeType !== labelList.value[0].barcodeType) {
+      pushMessage('error', t('productPacking.tipsPkgTypeInconsistent'));
+      return;
+    }
+    if (allQty.value > data.qty) {
+      pushMessage('error', t('productPacking.tipsQtyFailed'));
+      return;
+    }
+    pkgLabel.value = data;
+    packing();
+  } catch (err) {
+    pushMessage('error', err.message);
+  }
+};
+const scanWip = async () => {
+  // 判断是否重复扫描
+  if (findIndex(labelList.value, ['barcode', scanLabel.value]) > -1) {
+    pushMessage('error', t('productPacking.tipsBarcodeRepeat'));
+    return;
+  }
+  try {
+    // 走原子校验
+    const res = await apiControl.barcodeWipCollect.scanBarcodeWipCollect({
+      serialNumber: scanLabel.value,
+      workcenterId: userStore.currUserOrgInfo.workCenterId,
+      workCenterCode: userStore.currUserOrgInfo.workCenterCode,
+      workCenterName: userStore.currUserOrgInfo.workCenterName,
+      workstationId: userStore.currUserOrgInfo.workStationId,
+      processId: userStore.currUserOrgInfo.processId,
+      scanType: 'SCANTEXT',
+    });
+    if (!res.scanSuccess) {
+      pushMessage('error', res.scanMessage);
+      return;
+    }
 
-        pkgInfo.value = data;
-        labelList.value.push(data);
-        pushMessage('success', t('productPacking.plsContinueScanPackLabel'));
-        scanLabel.value = null;
+    const data = await apiControl.barcodeWip.getWipPkgInfo({
+      barcode: scanLabel.value,
+    });
+    // 当前数量是否超出规格
+    if (data.barcodeQty > data.packQty) {
+      pushMessage('error', t('productPacking.tipsQtyUpperLimite'));
+      return;
+    }
+    if (labelList.value.length > 0) {
+      // 判断包装规则是否一致
+      if (data.packRuleId !== labelList.value[0].packRuleId) {
+        pushMessage('error', t('productPacking.tipsPkgRuleInconsistent'));
+        return;
+      }
+      // 判断条码类型是否一致
+      if (data.barcodeType !== labelList.value[0].barcodeType) {
+        pushMessage('error', t('productPacking.tipsBarcodeTypeInconsistent'));
+        return;
+      }
+      if (data.moCode !== labelList.value[0].moCode) {
+        pushMessage('error', t('productPacking.tipsMoInconsistent'));
+        return;
+      }
+      // 判断累加的数量是否超出规格
+      if (allQty.value + data.barcodeQty > pkgInfo.value.packQty) {
+        pushMessage('error', t('productPacking.tipsQtyUpperLimite'));
+        return;
+      }
+    }
 
-        // 判断累恰好等于箱包数量，自动装箱
-        if (allQty.value === pkgInfo.value.packQty) {
-          preparePack();
-        }
+    pkgInfo.value = data;
+    labelList.value.push(data);
+    pushMessage('success', t('productPacking.plsContinueScanPackLabel'));
+    scanLabel.value = null;
 
-        // 在线打印，需要选择条码规则和打印模板
-        if (isOnlinePrint.value) {
-          if (!barcodeRuleId.value) {
-            getBarcodeRuleList(data.moScheId, data.parentPackType);
-          }
-          if (!printTempId.value) {
-            getPrintTempList(data.moScheId, data.parentPackType);
-          }
-        }
-      })
-      .catch((err) => {
-        pushMessage('error', err.message);
-        scanLabel.value = null;
-      });
+    // 判断累恰好等于箱包数量，自动装箱
+    if (allQty.value === pkgInfo.value.packQty) {
+      preparePack();
+    }
+
+    // 在线打印，需要选择条码规则和打印模板
+    if (isOnlinePrint.value) {
+      if (!barcodeRuleId.value) {
+        getBarcodeRuleList(data.moScheId, data.parentPackType);
+      }
+      if (!printTempId.value) {
+        getPrintTempList(data.moScheId, data.parentPackType);
+      }
+    }
+  } catch (err) {
+    pushMessage('error', err.message);
   }
 };
 const removeLabel = (barcode: string) => {
@@ -366,6 +381,7 @@ const packing = () => {
   labelList.value.forEach((val) => {
     postData.push({
       moScheId: val.moScheId,
+      moCode: val.moCode,
       pkgBarcode: val.barcode,
       pkgBarcodeType: val.barcodeType,
       parentPkgBarcode: pkgLabel.value ? pkgLabel.value.pkgBarcode : null,
@@ -428,6 +444,10 @@ const print = async (barcode: string) => {
         QTY: pkgInfo.qty,
         MITEM_CODE: pkgInfo.mitemCode,
         MITEM_NAME: pkgInfo.mitemName,
+        MITEM_DESC: pkgInfo.mitemDesc,
+        MO_CODE: pkgInfo.moCode,
+        PLANT_QTY: pkgInfo.planQty,
+        TIME_CREATE: new Date(),
       },
     ];
     const printData = [
