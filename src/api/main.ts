@@ -5535,12 +5535,12 @@ export interface MitemInSupplierVO {
   /** 容器类型名称 */
   containerTypeName?: string;
   stateName?: string;
-  isState?: boolean;
-  dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
-  isExemptionInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  isState?: boolean;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5762,14 +5762,14 @@ export interface MitemVO {
   /** 扩展属性 */
   properties?: MouldPropertyVO[];
   stateName?: string;
-  isRawName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   isBatchName?: string;
   isProductName?: string;
-  isInProcessName?: string;
+  isRawName?: string;
   isRawChecked?: boolean;
+  isInProcessName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -8111,8 +8111,6 @@ export interface DeliveryCardSearch {
   scheStatus?: string;
   /** 是否仅显示已打印 */
   isFinishDisplay?: boolean;
-  /** 生产订单 */
-  moCode?: string;
   /** 是否仅显示已生成 */
   isCreated?: boolean;
   moScheduleId?: string;
@@ -8213,8 +8211,6 @@ export type DeliveryCardVO = {
   moScheduleId?: string;
   /** 排产单编码 */
   scheCode?: string;
-  /** 生产订单编码 */
-  moCode?: string;
   /**
    * 计划生产日期
    * @format date-time
@@ -10028,8 +10024,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -11554,10 +11550,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -12124,15 +12120,15 @@ export interface ResultListProcessTmpl {
 }
 
 export interface IdentityLinkInfo {
+  userId?: string;
   type?: string;
   scopeId?: string;
-  groupId?: string;
   taskId?: string;
-  userId?: string;
+  groupId?: string;
+  scopeType?: string;
+  subScopeId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
 }
 
 /** 通用响应类 */
@@ -12154,61 +12150,61 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
-  suspended?: boolean;
   description?: string;
   tenantId?: string;
-  localizedDescription?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  parentTaskId?: string;
   /** @format date-time */
   dueDate?: string;
   assignee?: string;
   category?: string;
-  formKey?: string;
+  parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  localizedDescription?: string;
   localizedName?: string;
+  formKey?: string;
+  suspended?: boolean;
   id?: string;
   state?: string;
   scopeId?: string;
+  /** @format date-time */
+  createTime?: string;
+  caseVariables?: Record<string, object>;
+  processDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
   propagatedStageInstanceId?: string;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  taskLocalVariables?: Record<string, object>;
-  inProgressStartedBy?: string;
-  processVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartDueDate?: string;
   /** @format date-time */
   claimTime?: string;
   claimedBy?: string;
-  suspendedBy?: string;
   /** @format date-time */
   suspendedTime?: string;
+  suspendedBy?: string;
   /** @format date-time */
-  createTime?: string;
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
-  processDefinitionId?: string;
+  inProgressStartTime?: string;
+  processVariables?: Record<string, object>;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
+  inProgressStartedBy?: string;
+  taskLocalVariables?: Record<string, object>;
   processInstanceId?: string;
   scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  executionId?: string;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
   identityLinks?: IdentityLinkInfo[];
-  caseVariables?: Record<string, object>;
+  executionId?: string;
 } | null;
 
 /** 响应数据 */
 export type IdentityLink = {
   processDefinitionId?: string;
+  userId?: string;
   type?: string;
   scopeId?: string;
-  groupId?: string;
   taskId?: string;
-  userId?: string;
+  groupId?: string;
+  scopeType?: string;
+  subScopeId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
 } | null;
 
 /** 通用响应类 */
@@ -14667,6 +14663,21 @@ export const api = {
      * No description
      *
      * @tags 供应商
+     * @name RemoveById
+     * @summary 删除数据
+     * @request POST:/supplier/remove
+     * @secure
+     */
+    removeById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/supplier/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
      * @name Search
      * @request POST:/supplier/items
      * @secure
@@ -14730,6 +14741,21 @@ export const api = {
      */
     edit: (data: Supplier) =>
       http.request<ResultObject['data']>(`/api/main/supplier/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
+     * @name Add
+     * @summary 供应商新增
+     * @request POST:/supplier/add
+     * @secure
+     */
+    add: (data: Supplier) =>
+      http.request<ResultObject['data']>(`/api/main/supplier/add`, {
         method: 'POST',
         body: data as any,
       }),

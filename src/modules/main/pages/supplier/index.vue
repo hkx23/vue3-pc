@@ -18,27 +18,34 @@
         @refresh="fetchTable"
       >
         <template #title> 供应商列表 </template>
-        <!-- <template #op="slotProps">
-              <t-space>
-                <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-              </t-space>
-            </template> -->
+        <template #button>
+          <t-button theme="primary" @click="onAddMeasuring">{{ t('common.button.add') }}</t-button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="m_supplier"></bcmp-import-auto-button>
+        </template>
+        <template #op="{ row }">
+          <t-space :size="8">
+            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+            <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDeleteRow(row)">
+              <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
+          </t-space>
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
 
   <t-dialog
     v-model:visible="formVisible"
-    header="供应商编辑"
+    :header="diaTitle"
     :on-confirm="onConfirmForm"
     :close-on-overlay-click="false"
   >
-    <mitem-form ref="formRef"></mitem-form>
+    <supplier-form ref="formRef" :edit-form-data="editFormData"></supplier-form>
   </t-dialog>
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -46,8 +53,10 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-// import SupplierForm from './form.vue';
+import SupplierForm from './form.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const dataTotal = ref(0);
@@ -59,13 +68,15 @@ const sortlist = ref([]);
 const filterlist = ref([]);
 const formVisible = ref(false);
 const formRef = ref(null);
+const diaTitle = ref('新增');
+const editFormData = ref(null);
 
 const tableSupplierColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '供应商代码', width: 160, colKey: 'supplierCode' },
   { title: '供应商名称', width: 160, colKey: 'supplierName' },
   { title: '供应商联系人', width: 160, colKey: 'contactPerson' },
   { title: '供应商联系电话', width: 160, colKey: 'contactTel' },
-  // { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op' },
 ];
 // 查询组件
 const opts = computed(() => {
@@ -93,7 +104,24 @@ const onRefresh = () => {
 // const onReset = () => {
 //   keyword.value = '';
 // };
-
+// 点击新增逻辑
+const onAddMeasuring = () => {
+  diaTitle.value = '新增';
+  editFormData.value = {};
+  formVisible.value = true;
+};
+// 点击编辑逻辑
+const onEditRow = (row: TableRow) => {
+  diaTitle.value = '编辑';
+  editFormData.value = row;
+  formVisible.value = true;
+};
+// 单个数据实现删除逻辑
+const onDeleteRow = async (row) => {
+  await api.supplier.removeById([row.id]);
+  MessagePlugin.success('删除成功');
+  onRefresh();
+};
 const fetchTable = async () => {
   setLoading(true);
   try {
@@ -122,9 +150,11 @@ const fetchTable = async () => {
 // };
 
 const onConfirmForm = async () => {
-  formRef.value.submit().then(() => {
-    formVisible.value = false;
-    fetchTable();
+  formRef.value.submit().then((res) => {
+    if (res) {
+      formVisible.value = false;
+      fetchTable();
+    }
   });
 };
 
