@@ -111,7 +111,7 @@ const onAddMeasuring = () => {
   formVisible.value = true;
 };
 // 点击编辑逻辑
-const onEditRow = (row: TableRow) => {
+const onEditRow = (row) => {
   diaTitle.value = '编辑';
   editFormData.value = row;
   formVisible.value = true;

@@ -30,6 +30,14 @@ import { nextTick, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 
+interface FormData {
+  id?: string;
+  supplierCode?: string;
+  supplierName?: string;
+  contactPerson?: string;
+  contactTel?: string;
+  [key: string]: any;
+}
 const props = defineProps({
   editFormData: {
     type: Object,
@@ -38,13 +46,7 @@ const props = defineProps({
 });
 const isEdit = ref(false);
 
-const formData = ref({
-  id: '',
-  supplierCode: '',
-  supplierName: '',
-  contactPerson: '',
-  contactTel: '',
-});
+const formData = ref<FormData>({});
 watch(
   () => props.editFormData,
   (newVal) => {
