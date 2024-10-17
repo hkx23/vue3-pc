@@ -280,23 +280,10 @@ const scanWip = async () => {
     return;
   }
   try {
-    // 走原子校验
-    const res = await apiControl.barcodeWipCollect.scanBarcodeWipCollect({
-      serialNumber: scanLabel.value,
-      workcenterId: userStore.currUserOrgInfo.workCenterId,
-      workCenterCode: userStore.currUserOrgInfo.workCenterCode,
-      workCenterName: userStore.currUserOrgInfo.workCenterName,
-      workstationId: userStore.currUserOrgInfo.workStationId,
-      processId: userStore.currUserOrgInfo.processId,
-      scanType: 'SCANTEXT',
-    });
-    if (!res.scanSuccess) {
-      pushMessage('error', res.scanMessage);
-      return;
-    }
-
     const data = await apiControl.barcodeWip.getWipPkgInfo({
       barcode: scanLabel.value,
+      curWorkstationId: userStore.currUserOrgInfo.workStationId,
+      curProcessId: userStore.currUserOrgInfo.processId,
     });
     // 当前数量是否超出规格
     if (data.barcodeQty > data.packQty) {
@@ -444,8 +431,6 @@ const print = async (barcode: string) => {
         QTY: pkgInfo.qty,
         MITEM_CODE: pkgInfo.mitemCode,
         MITEM_NAME: pkgInfo.mitemName,
-        MITEM_DESC: pkgInfo.mitemDesc,
-        MO_CODE: pkgInfo.moCode,
         PLANT_QTY: pkgInfo.planQty,
         TIME_CREATE: new Date(),
       },

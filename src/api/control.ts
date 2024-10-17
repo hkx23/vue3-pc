@@ -1762,17 +1762,17 @@ export interface BarcodeWipCollectVO {
   pressureMin?: number;
   /** 保压最大值 */
   pressureMax?: number;
-  isState?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  workshopId?: string;
-  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  isState?: boolean;
+  stateName?: string;
+  workshopId?: string;
 }
 
 /** 工序 */
@@ -1917,10 +1917,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  /** @format int32 */
-  requestQty?: number;
   isScanFinish?: boolean;
   keyPartCodeStr?: string;
+  /** @format int32 */
+  requestQty?: number;
 }
 
 /** 在制品关键件采集表 */
@@ -2087,8 +2087,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface TimeSwitchProductVO {
@@ -3539,15 +3539,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  workshopId?: string;
 }
 
 /** 通用响应类 */
@@ -3869,9 +3869,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -4044,16 +4044,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
-  workshopId?: string;
-  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
-  defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
+  isState?: boolean;
+  stateName?: string;
+  workshopId?: string;
 }
 
 /** 缺陷代码 */
@@ -5653,6 +5653,8 @@ export type WipPkgInfoVO = {
   packUom?: string;
   /** 父级包装类型 */
   parentPackType?: string;
+  workstationId?: string;
+  processId?: string;
 } | null;
 
 export interface PkgExtendVO {
@@ -8464,7 +8466,7 @@ export const api = {
      * @request POST:/barcodeWip/getWipPkgInfo
      * @secure
      */
-    getWipPkgInfo: (query: { barcode: string }) =>
+    getWipPkgInfo: (query: { barcode: string; curWorkstationId: string; curProcessId: string }) =>
       http.request<ResultWipPkgInfoVO['data']>(`/api/control/barcodeWip/getWipPkgInfo`, {
         method: 'POST',
         params: query,
