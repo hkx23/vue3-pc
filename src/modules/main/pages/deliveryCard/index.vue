@@ -806,8 +806,6 @@ const generateData = ref({
   barcodeRuleId: '', // select ID
   workcenterId: null, // 工作中心 Id
   moScheduleId: null, // 行 Id
-  workshopCode: '',
-  moCode: '',
   createNum: null, // 变化后的数字
   createSize: 0, // 生成规格
   mitemId: null, // 物料ID
@@ -1244,11 +1242,9 @@ const onGenerate = debounce(async () => {
     if (isCheckOK) {
       const currentRowData = item;
       if (currentRowData) {
-        generateData.value.moCode = currentRowData.moCode; // 工作中心 Id
         generateData.value.createNum = currentRowData.thisTimeQty;
         generateData.value.createSize = currentRowData.specificationQuantity;
         generateData.value.workcenterId = currentRowData.workcenterId; // 工作中心 Id
-        generateData.value.workshopCode = currentRowData.workshopCode; // 工作中心 Id
         generateData.value.moScheduleId = currentRowData.moScheduleId; // 行 Id
         generateData.value.mitemId = currentRowData.mitemId; // 物料 Id
       }
@@ -1360,7 +1356,7 @@ const onPrint = async () => {
         }
       });
 
-      const moSchedule = printTopTabData.list.find((item) => foundItem.moScheduleId === item.moScheduleId);
+      const moSchedule = printTopTabData.list.find((item) => foundItem.moScheId === item.moScheduleId);
       const DataBase = {
         DELIVERY_CARD_NO: foundItem.deliveryCardNo,
         TIME_CREATE: foundItem.timeCreate,
