@@ -26,12 +26,12 @@ class ProcessView extends RectNode {
   getShape() {
     const { model } = this.props;
     const { x, y, width, height } = model;
-    const { fill } = model.getNodeStyle();
+    const { fill, strokeWidth } = model.getNodeStyle();
     return h('g', {}, [
       h('rect', {
         fill,
-        stroke: 'var(--td-brand-color-active)',
-        strokeWidth: 1,
+        stroke: 'var(--td-brand-color)',
+        strokeWidth,
         x: x - width / 2,
         y: y - height / 2,
         width,
@@ -46,7 +46,7 @@ class ProcessView extends RectNode {
     return h(
       'svg',
       {
-        fill: 'var(--td-brand-color-active)',
+        fill: 'var(--td-brand-color)',
         x: x - width / 2 + 5,
         y: y - height / 2 + 5,
         viewBox: '0 0 24 24',

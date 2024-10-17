@@ -1652,17 +1652,17 @@ export interface BarcodeWipCollectVO {
    * @format date-time
    */
   datetimeWeight?: string;
-  /** 泄密实际值 */
+  /** 泄密值 */
   gasTightnessValue?: number;
   /**
-   * 泄密采集时间
+   * 泄密时间
    * @format date-time
    */
   datetimeGasTightness?: string;
-  /** 保压实际值 */
+  /** 保压值 */
   pressureValue?: number;
   /**
-   * 保压采集时间
+   * 保压时间
    * @format date-time
    */
   datetimePressure?: string;
@@ -1754,17 +1754,25 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   productQty?: number;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  /** 泄密最小值 */
+  gasTightnessMin?: number;
+  /** 泄密最大值 */
+  gasTightnessMax?: number;
+  /** 保压最小值 */
+  pressureMin?: number;
+  /** 保压最大值 */
+  pressureMax?: number;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
-  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  isState?: boolean;
   stateName?: string;
+  workshopId?: string;
 }
 
 /** 工序 */
@@ -3531,15 +3539,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  workshopId?: string;
 }
 
 /** 通用响应类 */
@@ -3861,8 +3869,8 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -4036,16 +4044,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
-  workshopId?: string;
   isState?: boolean;
   stateName?: string;
+  workshopId?: string;
 }
 
 /** 缺陷代码 */
@@ -5645,6 +5653,8 @@ export type WipPkgInfoVO = {
   packUom?: string;
   /** 父级包装类型 */
   parentPackType?: string;
+  workstationId?: string;
+  processId?: string;
 } | null;
 
 export interface PkgExtendVO {
@@ -8456,7 +8466,7 @@ export const api = {
      * @request POST:/barcodeWip/getWipPkgInfo
      * @secure
      */
-    getWipPkgInfo: (query: { barcode: string; curProcessId: string }) =>
+    getWipPkgInfo: (query: { barcode: string; curWorkstationId: string; curProcessId: string }) =>
       http.request<ResultWipPkgInfoVO['data']>(`/api/control/barcodeWip/getWipPkgInfo`, {
         method: 'POST',
         params: query,
@@ -8491,6 +8501,37 @@ export const api = {
       http.request<ResultPkgInfoRelationVO['data']>(`/api/control/barcodePkg/getPkgInfoRelation`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  airtightCollect: {
+    /**
+     * No description
+     *
+     * @tags 气密性采集
+     * @name Submit
+     * @summary 气密性采集提交--pc
+     * @request POST:/airtightCollect/submit
+     * @secure
+     */
+    submit: (data: BarcodeWipCollectVO) =>
+      http.request<ResultBarcodeWipCollectVO['data']>(`/api/control/airtightCollect/submit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 气密性采集
+     * @name ScanWeightCollect
+     * @summary 气密性采集扫码--pc
+     * @request POST:/airtightCollect/scanAirtightCollect
+     * @secure
+     */
+    scanWeightCollect: (data: BarcodeWipCollectVO) =>
+      http.request<ResultBarcodeWipCollectVO['data']>(`/api/control/airtightCollect/scanAirtightCollect`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   workCalenarDtl: {

@@ -1049,8 +1049,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2507,8 +2507,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3072,8 +3072,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5534,13 +5534,13 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   /** 容器类型名称 */
   containerTypeName?: string;
-  stateName?: string;
   isState?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
-  isExemptionInspectionName?: string;
+  stateName?: string;
   isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionName?: string;
   isForceInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5761,15 +5761,15 @@ export interface MitemVO {
   minPackagingQty?: string;
   /** 扩展属性 */
   properties?: MouldPropertyVO[];
-  stateName?: string;
+  isProductName?: string;
+  isProductChecked?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
   isRawName?: string;
   isBatchName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8685,8 +8685,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -10028,8 +10028,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -11554,12 +11554,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12126,13 +12126,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  groupId?: string;
-  taskId?: string;
-  userId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
+  userId?: string;
+  groupId?: string;
+  taskId?: string;
 }
 
 /** 通用响应类 */
@@ -12154,47 +12154,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
-  suspended?: boolean;
-  description?: string;
-  tenantId?: string;
-  localizedDescription?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
   parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  localizedName?: string;
+  formKey?: string;
+  category?: string;
   /** @format date-time */
   dueDate?: string;
   assignee?: string;
-  category?: string;
-  formKey?: string;
-  localizedName?: string;
+  tenantId?: string;
+  description?: string;
+  localizedDescription?: string;
+  suspended?: boolean;
   id?: string;
   state?: string;
   scopeId?: string;
-  propagatedStageInstanceId?: string;
+  caseVariables?: Record<string, object>;
   /** @format date-time */
   inProgressStartTime?: string;
-  taskLocalVariables?: Record<string, object>;
   inProgressStartedBy?: string;
-  processVariables?: Record<string, object>;
   /** @format date-time */
-  inProgressStartDueDate?: string;
+  suspendedTime?: string;
+  taskLocalVariables?: Record<string, object>;
+  processVariables?: Record<string, object>;
+  taskDefinitionId?: string;
+  taskDefinitionKey?: string;
+  identityLinks?: IdentityLinkInfo[];
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  processDefinitionId?: string;
+  subScopeId?: string;
+  scopeType?: string;
+  executionId?: string;
   /** @format date-time */
   claimTime?: string;
   claimedBy?: string;
   suspendedBy?: string;
   /** @format date-time */
-  suspendedTime?: string;
-  /** @format date-time */
   createTime?: string;
-  taskDefinitionKey?: string;
-  taskDefinitionId?: string;
-  processDefinitionId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  executionId?: string;
-  identityLinks?: IdentityLinkInfo[];
-  caseVariables?: Record<string, object>;
+  propagatedStageInstanceId?: string;
+  /** @format date-time */
+  inProgressStartDueDate?: string;
 } | null;
 
 /** 响应数据 */
@@ -12202,13 +12202,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  groupId?: string;
-  taskId?: string;
-  userId?: string;
   processInstanceId?: string;
   scopeDefinitionId?: string;
   subScopeId?: string;
   scopeType?: string;
+  userId?: string;
+  groupId?: string;
+  taskId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -14667,6 +14667,21 @@ export const api = {
      * No description
      *
      * @tags 供应商
+     * @name RemoveById
+     * @summary 删除数据
+     * @request POST:/supplier/remove
+     * @secure
+     */
+    removeById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/supplier/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
      * @name Search
      * @request POST:/supplier/items
      * @secure
@@ -14730,6 +14745,21 @@ export const api = {
      */
     edit: (data: Supplier) =>
       http.request<ResultObject['data']>(`/api/main/supplier/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
+     * @name Add
+     * @summary 供应商新增
+     * @request POST:/supplier/add
+     * @secure
+     */
+    add: (data: Supplier) =>
+      http.request<ResultObject['data']>(`/api/main/supplier/add`, {
         method: 'POST',
         body: data as any,
       }),

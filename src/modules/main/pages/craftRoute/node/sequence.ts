@@ -12,7 +12,7 @@ class SequenceModel extends PolylineEdgeModel {
     if (result === 'NG') {
       style.stroke = 'var(--td-error-color)';
     } else {
-      style.stroke = 'var(--td-brand-color-active)';
+      style.stroke = 'var(--td-brand-color)';
     }
     return style;
   }
@@ -23,7 +23,7 @@ class SequenceModel extends PolylineEdgeModel {
     if (result === 'NG') {
       style.stroke = 'var(--td-error-color)';
     } else {
-      style.stroke = 'var(--td-brand-color-active)';
+      style.stroke = 'var(--td-brand-color)';
     }
     return style;
   }
