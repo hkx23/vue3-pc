@@ -302,9 +302,11 @@ interface MoItem extends MoVO {
 const loading = ref(false);
 const isUpdatedGanttData = ref(false);
 const updateListMap = new Map<string, MoItem>();
+const allUpdateListMap = new Map<string, MoItem>();
 const pushUpdateData = (item: MoItem) => {
   if (!updateListMap.has(item.id)) {
     updateListMap.set(item.id, item);
+    allUpdateListMap.set(item.id, item);
     isUpdatedGanttData.value = true;
   }
 };
@@ -325,11 +327,13 @@ const onHistory = async () => {
 const onRelease = async () => {
   loading.value = true;
   await api.moSchedule.confirmSend({
-    moList: Array.from(updateListMap.values()),
+    moList: Array.from(allUpdateListMap.values()),
     ...queryParams.value,
   });
   MessagePlugin.success('排产下发成功');
   loading.value = false;
+  await fetchGanttData(queryParams.value);
+  allUpdateListMap.clear();
 };
 
 let ganttDataList: MoItem[] = [];
