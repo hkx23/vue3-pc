@@ -281,8 +281,8 @@ const onInput = async (data) => {
 const showGantt = ref(false);
 const clearAllTask = ref(false);
 const onDragEnd = (task, parent) => {
+  const item = ganttDataList.value.find((t) => t.id === task.id);
   if (!parent) {
-    const item = ganttDataList.value.find((t) => t.id === task.id);
     const startDate = dayjs(task.start_date);
     if (item.workCenterId !== parent) {
       item.workCenterId = parent;
@@ -292,6 +292,8 @@ const onDragEnd = (task, parent) => {
     clearAllTask.value = false;
     pushUpdateData(item);
     formatGanttData(ganttDataList.value, item.id);
+  } else {
+    pushUpdateData(item);
   }
 };
 
@@ -394,7 +396,7 @@ const formatGanttData = (data, watchId = '') => {
         const previousItem = null;
         let previousEndDate = dayjs(arr[0].datetimePlanEnd);
 
-        for (let i = 1; i < arr.length; i++) {
+        for (let i = 0; i < arr.length; i++) {
           const item = arr[i];
           let startDate = dayjs(item.datetimePlanStart);
           let endDate = dayjs(item.datetimePlanEnd);
