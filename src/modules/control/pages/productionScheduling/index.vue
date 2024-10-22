@@ -178,7 +178,7 @@ onMounted(async () => {
 // 监听 activeTab 的变化
 watch(activeTab, (newValue, oldValue) => {
   if (newValue !== oldValue) {
-    if (newValue === 'tab1' && ganttDataList.length > 0) {
+    if (newValue === 'tab1' && ganttDataList.value.length > 0) {
       return;
     }
     queryRef.value.search();
@@ -282,7 +282,7 @@ const showGantt = ref(false);
 const clearAllTask = ref(false);
 const onDragEnd = (task, parent) => {
   if (!parent) {
-    const item = ganttDataList.find((t) => t.id === task.id);
+    const item = ganttDataList.value.find((t) => t.id === task.id);
     const startDate = dayjs(task.start_date);
     if (item.workCenterId !== parent) {
       item.workCenterId = parent;
@@ -291,7 +291,7 @@ const onDragEnd = (task, parent) => {
     item.datetimePlanEnd = startDate.add(item?.duration, 'minute').format('YYYY-MM-DD HH:mm:ss');
     clearAllTask.value = false;
     pushUpdateData(item);
-    formatGanttData(ganttDataList, item.id);
+    formatGanttData(ganttDataList.value, item.id);
   }
 };
 
@@ -310,33 +310,43 @@ const pushUpdateData = (item: MoItem) => {
     isUpdatedGanttData.value = true;
   }
 };
-const onRefresh = async () => {
+const onRefresh = () => {
   loading.value = true;
-  await api.moSchedule.refresh({
-    moList: Array.from(updateListMap.values()),
-    ...queryParams.value,
-  });
-  await fetchGanttData(queryParams.value);
-  loading.value = false;
+  api.moSchedule
+    .refresh({
+      moList: Array.from(updateListMap.values()),
+      ...queryParams.value,
+    })
+    .then(() => {
+      fetchGanttData(queryParams.value);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 const onHistory = async () => {
   openPage('/main#/moRelease');
 };
 
-const onRelease = async () => {
+const onRelease = () => {
   loading.value = true;
-  await api.moSchedule.confirmSend({
-    moList: Array.from(allUpdateListMap.values()),
-    ...queryParams.value,
-  });
-  MessagePlugin.success('排产下发成功');
-  loading.value = false;
-  await fetchGanttData(queryParams.value);
-  allUpdateListMap.clear();
+  api.moSchedule
+    .confirmSend({
+      moList: Array.from(allUpdateListMap.values()),
+      ...queryParams.value,
+    })
+    .then(() => {
+      MessagePlugin.success('排产下发成功');
+      fetchGanttData(queryParams.value);
+      allUpdateListMap.clear();
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
-let ganttDataList: MoItem[] = [];
+let ganttDataList = ref<MoItem[]>([]);
 const groupData = {};
 const formatGanttData = (data, watchId = '') => {
   let taskData = [];
@@ -437,7 +447,7 @@ const fetchGanttData = async (params) => {
   clearAllTask.value = true;
   isUpdatedGanttData.value = false;
   updateListMap.clear();
-  ganttDataList = data;
+  ganttDataList.value = data;
   if (!(data && data.length > 0)) {
     MessagePlugin.warning('没有待排产的工单');
   }
