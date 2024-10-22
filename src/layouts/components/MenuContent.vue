@@ -38,11 +38,14 @@
 import { isEmpty } from 'lodash';
 import type { PropType } from 'vue';
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { getActive } from '@/router';
 import { renderMenuTitle } from '@/router/locale';
 import { useSettingStore } from '@/store';
 import type { MenuRoute } from '@/types/interface';
+
+const route = useRoute();
 
 const showAutoIcon = computed(() => {
   const setting = useSettingStore();
@@ -58,7 +61,7 @@ const props = defineProps({
   },
 });
 
-const active = computed(() => getActive());
+const active = computed(() => getActive(route));
 
 const list = computed(() => {
   const { navData } = props;

@@ -92,7 +92,7 @@ import {
 } from 'tdesign-icons-vue-next';
 import type { PropType } from 'vue';
 import { computed, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import LogoFull from '@/assets/assets-logo-full.svg?component';
 import { prefix } from '@/config/global';
@@ -106,6 +106,8 @@ import type { MenuRoute, ModeType } from '@/types/interface';
 import MenuContent from './MenuContent.vue';
 import Notice from './Notice.vue';
 import Search from './Search.vue';
+
+const route = useRoute();
 
 const props = defineProps({
   theme: {
@@ -160,7 +162,7 @@ const onClickConfigurationWorkbench = () => {
   });
 };
 
-const active = computed(() => getActive());
+const active = computed(() => getActive(route));
 
 const layoutCls = computed(() => [`${prefix}-header-layout`]);
 

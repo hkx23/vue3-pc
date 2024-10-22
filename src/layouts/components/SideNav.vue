@@ -34,7 +34,7 @@ import union from 'lodash/union';
 import { DialogPlugin } from 'tdesign-vue-next';
 import type { PropType } from 'vue';
 import { computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import AssetLogoFull from '@/assets/assets-logo-full.svg?component';
 import AssetLogo from '@/assets/assets-t-logo.svg?component';
@@ -44,6 +44,8 @@ import { useSettingStore, useUserStore } from '@/store';
 import type { MenuRoute, ModeType } from '@/types/interface';
 
 import MenuContent from './MenuContent.vue';
+
+const route = useRoute();
 
 const MIN_POINT = 992 - 1;
 
@@ -84,10 +86,10 @@ const showCollapsedButton = computed(() => {
   return layout === 'mix' && isFixed;
 });
 
-const active = computed(() => getActive());
+const active = computed(() => getActive(route));
 
 const defaultExpanded = computed(() => {
-  const path = getActive();
+  const path = getActive(route);
   const parentPath = path.substring(0, path.lastIndexOf('/'));
   const expanded = getRoutesExpanded();
   return union(expanded, parentPath === '' ? [] : [parentPath]);
