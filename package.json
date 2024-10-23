@@ -19,6 +19,7 @@
     "fix-memory-limit": "cross-env LIMIT=8192 increase-memory-limit"
   },
   "dependencies": {
+    "@imengyu/vue3-context-menu": "^1.4.3",
     "@js-preview/docx": "^1.6.0",
     "@js-preview/excel": "^1.6.4",
     "@js-preview/pdf": "^1.6.3",
