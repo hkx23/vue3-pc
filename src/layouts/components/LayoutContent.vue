@@ -18,52 +18,12 @@
         :draggable="!routeItem.isHome"
       >
         <template #label>
-          <t-dropdown
-            trigger="context-menu"
-            :min-column-width="128"
-            :popup-props="{
-              overlayClassName: 'route-tabs-dropdown',
-              onVisibleChange: (visible: boolean, ctx: PopupVisibleChangeContext) =>
-                handleTabMenuClick(visible, ctx, routeItem.path),
-              visible: activeTabPath === routeItem.path,
-            }"
-          >
+          <div @contextmenu.prevent="(e) => handleContextMenu(routeItem, index, e)">
             <template v-if="!routeItem.isHome">
               {{ renderMenuTitle(routeItem.title) }}
             </template>
-            <t-icon v-else name="home" />
-            <template #dropdown>
-              <t-dropdown-menu>
-                <!-- <t-dropdown-item @click="() => handleRefresh(routeItem, index)">
-                  <t-icon name="refresh" />
-                  {{ $t('layout.tagTabs.refresh') }}
-                </t-dropdown-item> -->
-                <t-dropdown-item v-if="index > 1" @click="() => handleCloseAhead(routeItem.path, index)">
-                  <t-icon name="arrow-left" />
-                  {{ $t('layout.tagTabs.closeLeft') }}
-                </t-dropdown-item>
-                <t-dropdown-item
-                  v-if="index < tabRouters.length - 1"
-                  @click="() => handleCloseBehind(routeItem.path, index)"
-                >
-                  <t-icon name="arrow-right" />
-                  {{ $t('layout.tagTabs.closeRight') }}
-                </t-dropdown-item>
-                <t-dropdown-item v-if="tabRouters.length > 2" @click="() => handleCloseOther(routeItem.path, index)">
-                  <t-icon name="close-circle" />
-                  {{ $t('layout.tagTabs.closeOther') }}
-                </t-dropdown-item>
-                <t-dropdown-item v-if="isMenuFavorite(routeItem)" @click="() => handleRemovefavorite(routeItem, index)">
-                  <t-icon name="star" />
-                  {{ $t('layout.tagTabs.remveFavority') }}
-                </t-dropdown-item>
-                <t-dropdown-item v-else @click="() => handleAddfavorite(routeItem, index)">
-                  <t-icon name="star" />
-                  {{ $t('layout.tagTabs.addFavority') }}
-                </t-dropdown-item>
-              </t-dropdown-menu>
-            </template>
-          </t-dropdown>
+            <home-icon v-else></home-icon>
+          </div>
         </template>
       </t-tab-panel>
     </t-tabs>
@@ -77,14 +37,24 @@
   </t-layout>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
+import ContextMenu from '@imengyu/vue3-context-menu';
 import { some } from 'lodash';
-import type { PopupVisibleChangeContext } from 'tdesign-vue-next';
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CloseCircleIcon,
+  HomeIcon,
+  StarFilledIcon,
+  StarIcon,
+} from 'tdesign-icons-vue-next';
+// import type { PopupVisibleChangeContext } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { api, Favorite } from '@/api/main';
 import { prefix } from '@/config/global';
+import { t } from '@/locales';
 import { renderMenuTitle } from '@/router/locale';
 import { useSettingStore, useTabsRouterStore, useUserStore } from '@/store';
 import type { TRouterInfo, TTabRemoveOptions } from '@/types/interface';
@@ -196,10 +166,6 @@ const handleOperationEffect = (type: 'other' | 'ahead' | 'behind', routeIndex: n
 
   activeTabPath.value = null;
 };
-const handleTabMenuClick = (visible: boolean, ctx: PopupVisibleChangeContext, path: string) => {
-  if (ctx.trigger === 'document') activeTabPath.value = null;
-  if (visible) activeTabPath.value = path;
-};
 
 const handleDragend = (options: { currentIndex: number; targetIndex: number }) => {
   const { tabRouters } = tabsRouterStore;
@@ -208,6 +174,69 @@ const handleDragend = (options: { currentIndex: number; targetIndex: number }) =
     tabRouters[options.targetIndex],
     tabRouters[options.currentIndex],
   ];
+};
+
+const handleContextMenu = (routeItem, index, e: MouseEvent) => {
+  activeTabPath.value = routeItem.path;
+  ContextMenu.showContextMenu({
+    theme: 'mac',
+    x: e.x,
+    y: e.y,
+    items: [
+      ...(index > 1
+        ? [
+            {
+              label: t('layout.tagTabs.closeLeft'),
+              icon: <ArrowLeftIcon />,
+              onClick: () => {
+                handleCloseAhead(routeItem.path, index);
+              },
+            },
+          ]
+        : []),
+      ...(index < tabRouters.value.length - 1
+        ? [
+            {
+              label: t('layout.tagTabs.closeRight'),
+              icon: <ArrowRightIcon />,
+              onClick: () => {
+                handleCloseBehind(routeItem.path, index);
+              },
+            },
+          ]
+        : []),
+      ...(tabRouters.value.length > 2
+        ? [
+            {
+              label: t('layout.tagTabs.closeOther'),
+              icon: <CloseCircleIcon />,
+              onClick: () => {
+                handleCloseOther(routeItem.path, index);
+              },
+            },
+          ]
+        : []),
+      ...(isMenuFavorite(routeItem)
+        ? [
+            {
+              label: t('layout.tagTabs.remveFavority'),
+              icon: <StarFilledIcon style={{ color: '#FF0000' }} />,
+              onClick: () => {
+                handleRemovefavorite(routeItem, index);
+              },
+            },
+          ]
+        : [
+            {
+              label: t('layout.tagTabs.addFavority'),
+              icon: <StarIcon />,
+              onClick: () => {
+                handleAddfavorite(routeItem, index);
+              },
+            },
+          ]),
+    ],
+  });
 };
 </script>
 <style lang="less" scoped>

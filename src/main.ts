@@ -1,6 +1,6 @@
 /* eslint-disable simple-import-sort/imports */
-import TDesign from 'tdesign-vue-next';
 import { createApp } from 'vue';
+import TDesign from 'tdesign-vue-next';
 import CmpPlugins from '@/components/cmp-plugins';
 
 import '@/utils/core';
@@ -11,6 +11,7 @@ import i18n from './locales';
 import router from './router';
 import { store } from './store';
 
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import '@/style/index.less';
 import './permission';
 

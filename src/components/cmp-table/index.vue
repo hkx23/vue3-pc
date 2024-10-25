@@ -873,7 +873,7 @@ const getRouterPath = () => {
   // 但是还存在页面没有在tab里面使用的
   // 判断思路：抓取当前浏览器的URL
   const url = window.location.pathname + window.location.hash;
-  const routerPath = JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath;
+  const routerPath = JSON.parse(localStorage.getItem('tabsRouter'))?.currentRouterPath;
   if (url.includes('/#/')) {
     return routerPath;
   }

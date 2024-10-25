@@ -88,6 +88,10 @@ onMounted(() => {
       if (item?.completedQty > 0 && item?.status === 'RUNNING') return false;
       return !!parent;
     }),
+    gantt.attachEvent('onTaskDblClick', () => {
+      // 空函数，不做任何操作
+      return false; // 返回 false 以阻止默认行为
+    }),
   );
 
   gantt.plugins({
