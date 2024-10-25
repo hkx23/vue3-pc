@@ -72,7 +72,6 @@
                   row-key="id"
                   :loading="loading"
                   class="son-table"
-                  select-on-row-click
                   :selected-row-keys="selectedRowKeys"
                   :table-column="barcodeColumns"
                   :table-data="labelBelowList.list"
@@ -82,11 +81,29 @@
                   @select-change="onPrintChange"
                   @refresh="onRefreshBelow"
                 >
-                  <template #title> 条码列表 </template>
+                  <template #title>
+                    <div style="display: flex">
+                      <span> 条码列表 </span>
+                      <span v-if="labelBelowList.list && labelBelowList.list.length > 0" class="table-title-info">
+                        容器:
+                      </span>
+                      <span v-if="labelBelowList.list && labelBelowList.list.length > 0" style="margin-left: 8px">
+                        <bcmp-select-business
+                          v-model="headerContainerId"
+                          type="containerAuth"
+                          input-width="80"
+                          :show-title="false"
+                          :custom-conditions="containerCustomConditions"
+                          @selection-change="(value) => headerContainerIdChange(value)"
+                        ></bcmp-select-business>
+                      </span>
+                    </div>
+                  </template>
                   <template #button>
                     <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck @change="onRefreshBelow"
                       >仅显示已生成</t-radio
                     >
+                    <t-button theme="primary" @click="onRegisterContainer"> 注册容器 </t-button>
                     <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
                       <t-option
                         v-for="item in onPrintTemplateList.list"
@@ -103,6 +120,15 @@
                       @before-print="onPrint"
                       >打印</cmp-print-button
                     >
+                  </template>
+                  <template #containerId="{ row }">
+                    <bcmp-select-business
+                      v-model="row.containerId"
+                      type="containerAuth"
+                      :show-title="false"
+                      :custom-conditions="containerCustomConditions"
+                      @selection-change="(value) => dtlContainerIdChange(value)"
+                    ></bcmp-select-business>
                   </template>
                 </cmp-table>
               </cmp-card>
@@ -286,6 +312,7 @@ import dayjs from 'dayjs';
 import _, { map } from 'lodash';
 import {
   CustomValidateResolveType,
+  DialogPlugin,
   FormInstanceFunctions,
   FormRules,
   MessagePlugin,
@@ -299,6 +326,7 @@ import { api as apiWarehouse } from '@/api/warehouse';
 import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import { openPage } from '@/router';
 import { getTabsRouterStore } from '@/store';
 import commmon from '@/utils/common';
 // 表单定义规则
@@ -386,7 +414,7 @@ const delivertRowKeys: Ref<any[]> = ref([]); // 工单表数组
 const selectedManageRowKeys: Ref<any[]> = ref([]); // 打印数组
 const selectedStockIneRowKeys: Ref<any[]> = ref([]); // 打印数组
 const isReprintCancellation = ref(0);
-
+const containerCustomConditions = ref([{ field: 'status', operator: 'EQ', value: 'IDLE' }]);
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
@@ -402,11 +430,12 @@ const onClose = () => {
 };
 
 // 定义外部变量 isSuccess
-let isSuccess = true;
+let isSuccess = false;
 
 // 点击 打印事件
 const onPrint = async () => {
   try {
+    isSuccess = false;
     // 打印模板校验
     if (!printMode.value.printTempId) {
       // 提示错误信息
@@ -414,66 +443,97 @@ const onPrint = async () => {
       isSuccess = false; // 设置失败标志
       return isSuccess; // 返回失败标志
     }
-
-    printData.value = [];
-    pageLoading.value = true;
-    const printDatas = [];
-    const delivery = deliveryList.list.find((item) => item.deliveryDtlId === printMode.value.deliveryDtlId);
-    selectedRowKeys.value.forEach((id) => {
-      const foundItem = labelBelowList.list.find((item) => item.id === id);
-      const excItem = {};
-      Object.assign(excItem, foundItem);
-      // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
-      Object.keys(excItem).forEach((key) => {
-        if (_.isFunction(excItem[key])) {
-          excItem[key] = null;
-        } else if (_.isObject(excItem[key])) {
-          excItem[key] = null;
-        }
-      });
-      const DataBase = {
-        LABEL_NO: foundItem.labelNo,
-        QTY: foundItem.balanceQty,
-        LOT_NO: foundItem.lotNo,
-        C_INV_STD: delivery.mitemName,
-        BATCH_NO: foundItem.batchNo,
-        SUPPLIER_NAME: delivery.supplierName,
-        SUPPLIER_CODE: delivery.supplierCode,
-        MITEM_CODE: delivery.mitemCode,
-        MITEM_DESC: delivery.mitemDesc,
-        DATETIME_ARRIVE: delivery.datetimeArrive,
-        CONTAINER_TYPE: delivery.containerType,
-        SUPPLIER_LOT_NO: foundItem.supplierLotNo,
-        qualityCharacteristics: delivery.qualityCharacteristics,
-        ...excItem,
-      };
-      printDatas.push(DataBase);
-      // 多个对象则打印多页
-      // printData.value.push({
-      //   variable: DataBase,
-      //   dataSource: { DataBase },
-      // });
-    });
-
-    printData.value.push({
-      variable: printDatas,
-      dataSource: printDatas,
-    });
-
-    await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
-
-    onRefreshBelow();
-    onRefresh();
-    MessagePlugin.success('打印成功');
-    return true; // 打印成功时返回 true
+    const printDataInfo = await printTipPromise();
+    if (printDataInfo) {
+      isSuccess = true;
+    } else {
+      isSuccess = false;
+    }
   } catch (e) {
     console.log(e);
-    isSuccess = false;
-    return false; // 打印失败时返回 false
   } finally {
     pageLoading.value = false;
   }
+  return isSuccess;
 };
+
+const printTipPromise = () => {
+  return new Promise((resolve, reject) => {
+    const confirmDia = DialogPlugin({
+      header: '提醒',
+      body: '请确认是否需要绑定容器,是否继续打印?',
+      theme: 'warning',
+      confirmBtn: '确认',
+      cancelBtn: '取消',
+      onConfirm: async () => {
+        printData.value = [];
+        pageLoading.value = true;
+        const printDatas = [];
+        const delivery = deliveryList.list.find((item) => item.deliveryDtlId === printMode.value.deliveryDtlId);
+        selectedRowKeys.value.forEach((id) => {
+          const foundItem = labelBelowList.list.find((item) => item.id === id);
+          const excItem = {};
+          Object.assign(excItem, foundItem);
+          // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
+          Object.keys(excItem).forEach((key) => {
+            if (_.isFunction(excItem[key])) {
+              excItem[key] = null;
+            } else if (_.isObject(excItem[key])) {
+              excItem[key] = null;
+            }
+          });
+          const DataBase = {
+            LABEL_NO: foundItem.labelNo,
+            QTY: foundItem.balanceQty,
+            LOT_NO: foundItem.lotNo,
+            C_INV_STD: delivery.mitemName,
+            BATCH_NO: foundItem.batchNo,
+            SUPPLIER_NAME: delivery.supplierName,
+            SUPPLIER_CODE: delivery.supplierCode,
+            MITEM_CODE: delivery.mitemCode,
+            MITEM_DESC: delivery.mitemDesc,
+            DATETIME_ARRIVE: delivery.datetimeArrive,
+            CONTAINER_TYPE: delivery.containerType,
+            SUPPLIER_LOT_NO: foundItem.supplierLotNo,
+            qualityCharacteristics: delivery.qualityCharacteristics,
+            ...excItem,
+          };
+          printDatas.push(DataBase);
+          // 多个对象则打印多页
+          // printData.value.push({
+          //   variable: DataBase,
+          //   dataSource: { DataBase },
+          // });
+        });
+
+        printData.value.push({
+          variable: printDatas,
+          dataSource: printDatas,
+        });
+
+        const printLabels = labelBelowList.list.filter((item) => selectedRowKeys.value.includes(item.id));
+
+        await apiMain.label.printBarcode({
+          ids: selectedRowKeys.value,
+          printTempId: printMode.value.printTempId,
+          printLabels,
+        });
+
+        onRefreshBelow();
+        onRefresh();
+        MessagePlugin.success('打印成功');
+        pageLoading.value = false;
+        confirmDia.hide();
+        resolve(true);
+      },
+      onClose: () => {
+        confirmDia.hide();
+        reject();
+      },
+    });
+  });
+};
+
 // 点击 打印事件
 const onPrintManager = async () => {
   try {
@@ -587,14 +647,10 @@ const onConfirm = async () => {
       MessagePlugin.success('补打成功');
       onRefreshManage();
     } else if (isReprintCancellation.value === 3) {
-      const intValue = parseInt(reprintDialog.value.splitNum, 10);
-      if (!Number.isInteger(intValue) || intValue === 0 || intValue > reprintDialog.value.qty) {
-        MessagePlugin.warning(`拆分数量需为小于${reprintDialog.value.qty}的正整数`);
-        return false;
-      }
+      const converValue = Number(reprintDialog.value.splitNum);
       await apiMain.label.splitBarcode({
         labelId: reprintDialog.value.labelId,
-        splitNum: intValue,
+        splitNum: converValue,
         printTempId: printMode.value.printTempId,
         reason,
       });
@@ -1093,6 +1149,12 @@ const barcodeColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
+    colKey: 'containerId',
+    title: '容器',
+    align: 'center',
+    width: '130',
+  },
+  {
     colKey: 'uomName',
     title: '单位',
     align: 'center',
@@ -1175,16 +1237,16 @@ const pkgBarcodeManageColumns = computed(() => {
     },
     {
       colKey: 'qty',
-      title: '初始数量',
+      title: '数量',
       align: 'center',
       width: '130',
     },
-    {
-      colKey: 'balanceQty',
-      title: '结余数量',
-      align: 'center',
-      width: '130',
-    },
+    // {
+    //   colKey: 'balanceQty',
+    //   title: '结余数量',
+    //   align: 'center',
+    //   width: '130',
+    // },
     {
       colKey: 'uomName',
       title: '单位',
@@ -1208,6 +1270,16 @@ const pkgBarcodeManageColumns = computed(() => {
       title: '货位',
       align: 'center',
       width: '130',
+    },
+    {
+      colKey: 'containerCode',
+      title: '容器编码', // 容器编码名称
+      align: 'center',
+    },
+    {
+      colKey: 'containerName',
+      title: '容器名称', // 容器名称
+      align: 'center',
     },
     {
       colKey: 'creatorName',
@@ -1548,6 +1620,27 @@ const onRowClick = ({ row }) => {
   // 条码标签刷新按钮
   onRefreshBelow();
 };
+
+const headerContainerId = ref('');
+const isChangeContainer = ref(false);
+// 表头容器修改
+const headerContainerIdChange = (val: any) => {
+  if (labelBelowList.list && labelBelowList.list.length > 0) {
+    labelBelowList.list.forEach((item: any) => {
+      item.containerId = val.id;
+    });
+  }
+};
+// 明细容器修改
+const dtlContainerIdChange = (val: any) => {
+  console.log('🚀 ~ dtlContainerIdChange ~ val:', val);
+  isChangeContainer.value = true;
+};
+
+// 注册容器
+const onRegisterContainer = () => {
+  openPage('/main#/supplierContainer');
+};
 </script>
 
 <style lang="less" scoped>
@@ -1555,5 +1648,9 @@ const onRowClick = ({ row }) => {
   display: flex;
   justify-content: flex-end;
   // margin-top: 20px;
+}
+
+.table-title-info {
+  margin-left: 36px;
 }
 </style>

@@ -1049,8 +1049,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -2507,8 +2507,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -3072,8 +3072,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -5120,6 +5120,129 @@ export interface ResultPagingDataMoReleaseVO {
   data?: PagingDataMoReleaseVO;
 }
 
+/** 工单释放表 */
+export interface MoRelease {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工单名称 */
+  moCode?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  /** 暂挂（置尾）原因 */
+  holdReason?: string;
+  /**
+   * 工单释放时间
+   * @format date-time
+   */
+  datetimeRelease?: string;
+  userReleaseId?: string;
+  userMoCloseId?: string;
+  /** 计划单号 */
+  planNo?: string;
+  /**
+   * 需求日期
+   * @format date-time
+   */
+  datetimeRequire?: string;
+  /** 非标工单速率 */
+  moRate?: number;
+  workcenterId?: string;
+  /** 工单释放标识 */
+  moReleaseFlag?: string;
+  /** 工单释放版本号 */
+  moReleaseVersion?: string;
+  /** 生产速率 */
+  uph?: number;
+}
+
 /** 工单状态控制 */
 export interface MoStatusControl {
   /** 需要控制的工单 */
@@ -5534,13 +5657,13 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   /** 容器类型名称 */
   containerTypeName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  isForceInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5761,15 +5884,15 @@ export interface MitemVO {
   minPackagingQty?: string;
   /** 扩展属性 */
   properties?: MouldPropertyVO[];
-  isProductName?: string;
-  isProductChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isState?: boolean;
-  isRawName?: string;
   isBatchName?: string;
-  stateName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -6290,10 +6413,7 @@ export interface LabelSearch {
   createNum?: number;
   /** @format int32 */
   thisNumber?: number;
-  /**
-   * 拆分数量
-   * @format int32
-   */
+  /** 拆分数量 */
   splitNum?: number;
   /**
    * 行号
@@ -6338,6 +6458,34 @@ export interface LabelSearch {
   incomingReceiveNo?: string;
   /** 物料标签集合 */
   barcodeList?: string[];
+  containerId?: string;
+  /** 物料标签管理-打印提交数据 */
+  printLabels?: LabelVO[];
+}
+
+export interface LabelSplitScanDTO {
+  /** 标签号 */
+  labelNo?: string;
+  /** 拆分数量 */
+  splitQty?: number;
+  /**
+   * 拆分个数
+   * @format int32
+   */
+  splitNum?: number;
+}
+
+/** 通用响应类 */
+export interface ResultListLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: LabelVO[] | null;
 }
 
 /** 响应数据 */
@@ -6445,19 +6593,6 @@ export interface ResultLabelVO {
   message?: string;
   /** 显示产品条码管理 */
   data?: LabelVO;
-}
-
-/** 通用响应类 */
-export interface ResultListLabelVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: LabelVO[] | null;
 }
 
 /** 标签表 */
@@ -7596,6 +7731,58 @@ export interface DeleteModel {
   ids?: string[];
 }
 
+export interface BatchDynamicUpdateDTO {
+  /** 表唯一主键 */
+  primaryKey?: string;
+  /** 领域名称 */
+  businessDomain?: string;
+  /** 表名 */
+  tableName?: string;
+  /** 更新的字段列表 */
+  columnList?: DynamicColumn[];
+  /** 更新的数据信息 */
+  rows?: Record<string, object>[];
+}
+
+/** 动态列字段 */
+export interface DynamicColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 字段名称 */
+  columnField?: string;
+  /** 字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDateType?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /** 默认值 */
+  defaultValue?: string;
+}
+
 /** 领域参数分组表 */
 export interface DomainParamGroup {
   id?: string;
@@ -8146,10 +8333,7 @@ export interface DeliveryCardSearch {
   /** 原因 */
   reason?: string;
   deliveryCardId?: string;
-  /**
-   * 拆分数量
-   * @format int32
-   */
+  /** 拆分数量 */
   splitNum?: number;
   /** 标签拆分模型-一个标签拆分多个 */
   groupLabelVOS?: GroupLabelVO[];
@@ -8224,6 +8408,8 @@ export type DeliveryCardVO = {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
   /**
    * 计划数量
    * @format int32
@@ -8685,8 +8871,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -9936,6 +10122,8 @@ export interface BarcodePkgVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 工单号 */
+  moCode?: string;
   /**
    * 计划数量
    * @format int32
@@ -10028,8 +10216,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -11554,12 +11742,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12126,13 +12314,13 @@ export interface ResultListProcessTmpl {
 export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  userId?: string;
   groupId?: string;
+  processInstanceId?: string;
   taskId?: string;
+  userId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  scopeDefinitionId?: string;
 }
 
 /** 通用响应类 */
@@ -12154,47 +12342,47 @@ export type Task = {
   priority?: number;
   name?: string;
   owner?: string;
-  parentTaskId?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  localizedName?: string;
-  formKey?: string;
-  category?: string;
+  suspended?: boolean;
+  description?: string;
+  tenantId?: string;
   /** @format date-time */
   dueDate?: string;
+  formKey?: string;
   assignee?: string;
-  tenantId?: string;
-  description?: string;
+  localizedName?: string;
+  category?: string;
   localizedDescription?: string;
-  suspended?: boolean;
+  delegationState?: 'PENDING' | 'RESOLVED';
+  parentTaskId?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  caseVariables?: Record<string, object>;
-  /** @format date-time */
-  inProgressStartTime?: string;
-  inProgressStartedBy?: string;
-  /** @format date-time */
-  suspendedTime?: string;
-  taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
-  taskDefinitionId?: string;
-  taskDefinitionKey?: string;
-  identityLinks?: IdentityLinkInfo[];
   processInstanceId?: string;
-  scopeDefinitionId?: string;
-  processDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  executionId?: string;
-  /** @format date-time */
-  claimTime?: string;
-  claimedBy?: string;
-  suspendedBy?: string;
   /** @format date-time */
   createTime?: string;
   propagatedStageInstanceId?: string;
   /** @format date-time */
+  inProgressStartTime?: string;
+  /** @format date-time */
   inProgressStartDueDate?: string;
+  taskLocalVariables?: Record<string, object>;
+  processVariables?: Record<string, object>;
+  inProgressStartedBy?: string;
+  processDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  caseVariables?: Record<string, object>;
+  claimedBy?: string;
+  /** @format date-time */
+  claimTime?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  suspendedTime?: string;
+  executionId?: string;
+  scopeDefinitionId?: string;
+  identityLinks?: IdentityLinkInfo[];
+  taskDefinitionKey?: string;
+  taskDefinitionId?: string;
 } | null;
 
 /** 响应数据 */
@@ -12202,13 +12390,13 @@ export type IdentityLink = {
   processDefinitionId?: string;
   type?: string;
   scopeId?: string;
-  processInstanceId?: string;
-  scopeDefinitionId?: string;
-  subScopeId?: string;
-  scopeType?: string;
-  userId?: string;
   groupId?: string;
+  processInstanceId?: string;
   taskId?: string;
+  userId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  scopeDefinitionId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -16557,6 +16745,21 @@ export const api = {
      * No description
      *
      * @tags 工单排产表
+     * @name UpdateBatchMoSche
+     * @summary 批量更新排产单信息
+     * @request POST:/moSchedule/updateBatchMoSche
+     * @secure
+     */
+    updateBatchMoSche: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/updateBatchMoSche`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
      * @name SearchRunningMoSche
      * @summary 弹出框公共方法-查询有效的排产单信息-已排产，已备料，已上线
      * @request POST:/moSchedule/searchRunningMoSche
@@ -16704,6 +16907,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddBatchMoSche
+     * @summary 批量新增排产单信息
+     * @request POST:/moSchedule/addBatchMoSche
+     * @secure
+     */
+    addBatchMoSche: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addBatchMoSche`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   moRelease: {
     /**
@@ -16717,6 +16935,21 @@ export const api = {
      */
     getList: (data: MoReleaseSearch) =>
       http.request<ResultPagingDataMoReleaseVO['data']>(`/api/main/moRelease/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单释放表
+     * @name AddBatchMoRelease
+     * @summary 获得主界面数据
+     * @request POST:/moRelease/addBatchMoRelease
+     * @secure
+     */
+    addBatchMoRelease: (data: MoRelease[]) =>
+      http.request<ResultObject['data']>(`/api/main/moRelease/addBatchMoRelease`, {
         method: 'POST',
         body: data as any,
       }),
@@ -16741,6 +16974,21 @@ export const api = {
      * No description
      *
      * @tags 工单表
+     * @name UpdateMoStatusSetSchedule
+     * @summary 更新工单状态为排产
+     * @request POST:/mo/updateMoStatusSetSchedule
+     * @secure
+     */
+    updateMoStatusSetSchedule: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/mo/updateMoStatusSetSchedule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单表
      * @name UpdateMoRouting
      * @summary 工单的工艺路线修改
      * @request POST:/mo/updateMoRouting
@@ -16748,6 +16996,21 @@ export const api = {
      */
     updateMoRouting: (data: MoSchedule) =>
       http.request<ResultObject['data']>(`/api/main/mo/updateMoRouting`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单表
+     * @name UpdateMoPlanTimeList
+     * @summary 更新工单排产时间信息
+     * @request POST:/mo/updateMoPlanTimeList
+     * @secure
+     */
+    updateMoPlanTimeList: (data: Mo[]) =>
+      http.request<ResultObject['data']>(`/api/main/mo/updateMoPlanTimeList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -17362,12 +17625,27 @@ export const api = {
      *
      * @tags 标签表
      * @name SplitBarcodes
-     * @summary 拆分条码-一个条码拆分多个
+     * @summary 拆分条码-一个条码拆分多个,需要手动先生成条码
      * @request POST:/label/splitBarcodes
      * @secure
      */
     splitBarcodes: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/splitBarcodes`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name SplitBarcodesAuto
+     * @summary 拆分条码-一个条码拆分多个,自动生成条码
+     * @request POST:/label/splitBarcodesAuto
+     * @secure
+     */
+    splitBarcodesAuto: (data: LabelSplitScanDTO) =>
+      http.request<ResultListLabelVO['data']>(`/api/main/label/splitBarcodesAuto`, {
         method: 'POST',
         body: data as any,
       }),
@@ -18478,6 +18756,21 @@ export const api = {
      * No description
      *
      * @tags 动态服务
+     * @name BatchUpdateData
+     * @summary 根据领域进行动态表字段更新
+     * @request POST:/dynamicManage/batchUpdateData
+     * @secure
+     */
+    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
+      http.request<ResultObject['data']>(`/api/main/dynamicManage/batchUpdateData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
      * @name SqlTables
      * @summary 根据领域获取数据表列表-SQL方式
      * @request GET:/dynamicManage/sqlTables
@@ -18934,6 +19227,21 @@ export const api = {
      */
     splitBarcodes: (data: DeliveryCardSearch) =>
       http.request<ResultObject['data']>(`/api/main/deliveryCard/splitBarcodes`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
+     * @name SplitBarcodesAuto
+     * @summary 拆分条码-一个条码拆分多个,自动生成条码
+     * @request POST:/deliveryCard/splitBarcodesAuto
+     * @secure
+     */
+    splitBarcodesAuto: (data: LabelSplitScanDTO) =>
+      http.request<ResultListDeliveryCardVO['data']>(`/api/main/deliveryCard/splitBarcodesAuto`, {
         method: 'POST',
         body: data as any,
       }),

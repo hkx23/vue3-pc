@@ -9,6 +9,15 @@
  * ---------------------------------------------------------------
  */
 
+/** 完工入库标提交实体 */
+export interface WipCompletionDTO {
+  id?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  labelList?: WipCompletionLabelDTO[];
+}
+
 /** 完工入库标签实体 */
 export interface WipCompletionLabelDTO {
   dtlBarcodeId?: string;
@@ -617,10 +626,10 @@ export interface TransferDtlBarcodeVO {
   /** ERP单据明细号 */
   erpLineNo?: string;
   transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
-  /** 单据状态名称 */
-  billStatusName?: string;
   /** 标签类型名称 */
   barcodeTypeName?: string;
+  /** 单据状态名称 */
+  billStatusName?: string;
 }
 
 /** 交易单身表 */
@@ -711,6 +720,7 @@ export interface TransferDtlVO {
   moCode?: string;
   /** 交易单身标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  mitemIdInOrg?: string;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
 }
@@ -967,6 +977,27 @@ export interface BarcodeWip {
    * @format date-time
    */
   datetimeStockin?: string;
+  /** 称重实际值 */
+  weightValue?: number;
+  /**
+   * 称重采集时间
+   * @format date-time
+   */
+  datetimeWeight?: string;
+  /** 泄密实际值 */
+  gasTightnessValue?: number;
+  /**
+   * 泄密采集时间
+   * @format date-time
+   */
+  datetimeGasTightness?: string;
+  /** 保压实际值 */
+  pressureValue?: number;
+  /**
+   * 保压采集时间
+   * @format date-time
+   */
+  datetimePressure?: string;
 }
 
 /** 显示产品条码管理 */
@@ -1153,6 +1184,12 @@ export type LabelVO = {
   checkStatus?: string;
   /** 领料单 */
   sourceBillNo?: string;
+  /** 容器编码 */
+  containerCode?: string;
+  /** 容器名称 */
+  containerName?: string;
+  fromOrgId?: string;
+  toOrgId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3119,12 +3156,12 @@ export interface DeliveryDtlVO {
   transferDtlId?: string;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   /** 已扫箱数 */
   boxScanQty?: number;
   /** 待扫箱数 */
   boxWaitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -3987,6 +4024,8 @@ export interface DeliveryCardVO {
   moScheduleId?: string;
   /** 排产单编码 */
   scheCode?: string;
+  /** 生产订单编码 */
+  moCode?: string;
   /**
    * 计划生产日期
    * @format date-time
@@ -3996,6 +4035,8 @@ export interface DeliveryCardVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
   /**
    * 计划数量
    * @format int32
@@ -4018,6 +4059,10 @@ export interface DeliveryCardVO {
   thisTimeQty?: number;
   /** 计量单位名称 */
   uomName?: string;
+  /** 车间id */
+  workshopId?: string;
+  /** 车间编码 */
+  workshopCode?: string;
   /** 车间名称 */
   workshopName?: string;
   /** 工作中心名称 */
@@ -5000,11 +5045,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  tlpickQty?: number;
   flpickQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  bfpickQty?: number;
-  tlpickQty?: number;
 }
 
 export interface MoIssuanceVO {
@@ -6771,10 +6816,10 @@ export interface MaterialRequisitionDtlVO {
    */
   centerCompletedQty?: number;
   /**
-   * 最小包装计算需要-用需求数量(LineMoRequestQty)-申请中数量-已领用量
+   * 工作中心对应的工单在制用量
    * @format int32
    */
-  calMinPackagingQty?: number;
+  centerMoUsingQty?: number;
   /**
    * 需求数量-源工单BOM需求数量
    * @format int32
@@ -6785,13 +6830,13 @@ export interface MaterialRequisitionDtlVO {
    * @format int32
    */
   lineMoRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
-   * 工作中心对应的工单在制用量
+   * 最小包装计算需要-用需求数量(LineMoRequestQty)-申请中数量-已领用量
    * @format int32
    */
-  centerMoUsingQty?: number;
+  calMinPackagingQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -7336,6 +7381,49 @@ export interface ResultPagingDataLineWarehouseVO {
   data?: PagingDataLineWarehouseVO;
 }
 
+export interface LabelSplitScanVO {
+  /** 标签号 */
+  labelNo?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 显示产品条码管理 */
+  labelVO?: LabelVO;
+  /** 配送卡输出类 */
+  deliveryCardVO?: DeliveryCardVO;
+  /** 标签类型 */
+  labelType?: string;
+  /** 标签集合 */
+  labelVOList?: LabelVO[];
+  /** 配送卡集合 */
+  deliveryCardVOList?: DeliveryCardVO[];
+  /**
+   * 拆分数量
+   * @format int32
+   */
+  splitQty?: number;
+  /**
+   * 拆分个数
+   * @format int32
+   */
+  splitNum?: number;
+}
+
+/** 通用响应类 */
+export interface ResultLabelSplitScanVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: LabelSplitScanVO;
+}
+
 /** 产品标签拆分模型 */
 export interface GroupLabelVO {
   /** 标签号 */
@@ -7412,10 +7500,7 @@ export interface LabelSearch {
   createNum?: number;
   /** @format int32 */
   thisNumber?: number;
-  /**
-   * 拆分数量
-   * @format int32
-   */
+  /** 拆分数量 */
   splitNum?: number;
   /**
    * 行号
@@ -7460,6 +7545,9 @@ export interface LabelSearch {
   incomingReceiveNo?: string;
   /** 物料标签集合 */
   barcodeList?: string[];
+  containerId?: string;
+  /** 物料标签管理-打印提交数据 */
+  printLabels?: LabelVO[];
 }
 
 /** 通用响应类 */
@@ -8025,6 +8113,58 @@ export interface InsertOrUpdateModel {
 export interface DeleteModel {
   tableName?: string;
   ids?: string[];
+}
+
+export interface BatchDynamicUpdateDTO {
+  /** 表唯一主键 */
+  primaryKey?: string;
+  /** 领域名称 */
+  businessDomain?: string;
+  /** 表名 */
+  tableName?: string;
+  /** 更新的字段列表 */
+  columnList?: DynamicColumn[];
+  /** 更新的数据信息 */
+  rows?: Record<string, object>[];
+}
+
+/** 动态列字段 */
+export interface DynamicColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 字段名称 */
+  columnField?: string;
+  /** 字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDateType?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /** 默认值 */
+  defaultValue?: string;
 }
 
 /** 货区与物料关系表 */
@@ -8890,6 +9030,8 @@ export interface AllocationExecuteDTO {
   businessCategoryCode?: string;
   businessCategoryName?: string;
   billType?: string;
+  fromOrgId?: string;
+  toOrgId?: string;
 }
 
 /** 重新加载数据库最新的的单据信息 */
@@ -9173,6 +9315,8 @@ export interface AllocationVO {
   billType?: string;
   /** 调拨明细-物料维度 */
   dtls?: AllocationExecuteDtlVO[];
+  fromOrgId?: string;
+  toOrgId?: string;
   /** 单据状态名称 */
   statusName?: string;
   /** 单据类型名称 */
@@ -10254,11 +10398,11 @@ export const api = {
      * @tags 单据信息表
      * @name Submit
      * @summary 根据单据ID提交单据状态
-     * @request PUT:/billInfo/submit/{id}
+     * @request PUT:/billInfo/submit
      * @secure
      */
-    submit: (id: string, data: WipCompletionLabelDTO[]) =>
-      http.request<ResultObject['data']>(`/api/warehouse/billInfo/submit/${id}`, {
+    submit: (data: WipCompletionDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/billInfo/submit`, {
         method: 'PUT',
         body: data as any,
       }),
@@ -10272,7 +10416,7 @@ export const api = {
      * @request PUT:/billInfo/setLoc
      * @secure
      */
-    setLoc: (query: { billNo: string; districtId: string; locId: string }) =>
+    setLoc: (query: { billNo: string; districtId: string; locId: string; warehouseId: string }) =>
       http.request<ResultObject['data']>(`/api/warehouse/billInfo/setLoc`, {
         method: 'PUT',
         params: query,
@@ -13707,6 +13851,22 @@ export const api = {
         body: data as any,
       }),
   },
+  labelSplit: {
+    /**
+     * No description
+     *
+     * @tags 标签拆分
+     * @name ScanMitemLabel
+     * @summary 扫描物料标签
+     * @request POST:/labelSplit/scanMitemLabel
+     * @secure
+     */
+    scanMitemLabel: (data: LabelSplitScanVO) =>
+      http.request<ResultLabelSplitScanVO['data']>(`/api/warehouse/labelSplit/scanMitemLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   label: {
     /**
      * No description
@@ -14214,6 +14374,21 @@ export const api = {
      */
     dynamicDeleteDataSql: (data: DeleteModel) =>
       http.request<ResultObject['data']>(`/api/warehouse/dynamicManage/dynamicDeleteDataSql`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name BatchUpdateData
+     * @summary 根据领域进行动态表字段更新
+     * @request POST:/dynamicManage/batchUpdateData
+     * @secure
+     */
+    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
       }),
@@ -14935,7 +15110,12 @@ export const api = {
      * @request GET:/allocationExecute/getTotalBarcodesBySourceLineNo
      * @secure
      */
-    getTotalBarcodesBySourceLineNo: (query: { sourceBillNo: string; mitemId: string; businessCategoryCode: string }) =>
+    getTotalBarcodesBySourceLineNo: (query: {
+      sourceBillNo: string;
+      mitemId: string;
+      businessCategoryCode: string;
+      fromOrgId: string;
+    }) =>
       http.request<ResultListTransferDtlBarcodeVO['data']>(
         `/api/warehouse/allocationExecute/getTotalBarcodesBySourceLineNo`,
         {
@@ -14953,7 +15133,7 @@ export const api = {
      * @request GET:/allocationExecute/getAllocationDtl
      * @secure
      */
-    getAllocationDtl: (query: { billNo: string; trandtlId: string; businessCategoryCode: string }) =>
+    getAllocationDtl: (query: { billNo: string; trandtlId: string; businessCategoryCode: string; fromOrgId: string }) =>
       http.request<ResultAllocationExecuteDtlVO['data']>(`/api/warehouse/allocationExecute/getAllocationDtl`, {
         method: 'GET',
         params: query,
