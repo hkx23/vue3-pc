@@ -20,6 +20,11 @@
         <template #button>
           <t-button @click="showForm">{{ t('common.button.add') }}</t-button>
         </template>
+        <template #op="{ row }">
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="deleteApp(row)">
+            <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+          </t-popconfirm>
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -53,12 +58,13 @@
       <t-form-item :label="t('appBase.memo')" name="memo">
         <t-textarea v-model="formData.memo"></t-textarea>
       </t-form-item>
-      <t-form-item :label="t('appBase.appFile')">
+      <t-form-item :label="t('appBase.appFile')" name="appPath">
         <t-upload
+          ref="uploadRef"
           v-model="formData.appFiles"
           accept="application/vnd.android.package-archive"
-          :auto-upload="false"
-          @select-change="selectFile"
+          :before-upload="beforeUpload"
+          :request-method="requestMethod"
         />
       </t-form-item>
     </t-form>
@@ -67,7 +73,15 @@
 <script setup lang="ts">
 import JSZip from 'jszip';
 import _ from 'lodash';
-import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  Data,
+  FormRules,
+  MessagePlugin,
+  PrimaryTableCol,
+  RequestMethodResponse,
+  TableRowData,
+  UploadFile,
+} from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -114,6 +128,7 @@ const formData = reactive({
   appVersion: null,
   appBuild: 0,
   appFiles: [],
+  appPath: null,
   memo: null,
 });
 const formRules: FormRules<Data> = {
@@ -122,7 +137,7 @@ const formRules: FormRules<Data> = {
   appType: [{ required: true, message: t('common.validation.required'), type: 'error' }],
   appVersion: [{ required: true, message: t('common.validation.required'), type: 'error' }],
   appBuild: [{ min: 1, message: t('common.validation.number'), type: 'error' }],
-  appFiles: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+  appPath: [{ required: true, message: t('appBase.plsUploadFile'), type: 'error' }],
 };
 const columns: PrimaryTableCol<TableRowData>[] = [
   { title: t('appBase.appName'), width: 160, colKey: 'appName' },
@@ -132,6 +147,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   { title: t('appBase.appVersionName'), width: 160, colKey: 'appVersion' },
   { title: t('business.main.creator'), colKey: 'creatorName', width: 100 },
   { title: t('business.main.timeCreate'), colKey: 'timeCreate', width: 170 },
+  { title: t('common.button.operation'), colKey: 'op', align: 'center', fixed: 'right' },
 ];
 const appData = reactive({
   total: 0,
@@ -147,29 +163,6 @@ const conditionEnter = (data: any) => {
 
 const showForm = () => {
   formVisible.value = true;
-};
-const selectFile = (files: File[]) => {
-  setLoading(true);
-  const zip = new JSZip();
-  zip
-    .loadAsync(files[0])
-    .then((content) => {
-      return Promise.all([
-        content.files['AndroidManifest.xml'].async('arraybuffer'),
-        content.files['resources.arsc'].async('arraybuffer'),
-      ]);
-    })
-    .then((rlt) => {
-      const appInfo = new AppInfo(rlt[0], rlt[1]);
-      formData.packageName = appInfo.getPackage();
-      formData.appName = appInfo.getLabel();
-      formData.appBuild = appInfo.getVersionCode();
-      formData.appVersion = appInfo.getVersionName();
-      setLoading(false);
-    })
-    .catch(() => {
-      setLoading(false);
-    });
 };
 const onConfirmForm = () => {
   formRef.value.validate().then((result: any) => {
@@ -196,32 +189,86 @@ const getList = () => {
       setLoading(false);
     });
 };
-const addApp = () => {
-  setLoading(true);
-  api.appBase
-    .add(
-      {
+const uploadRef = ref();
+// 上传前处理
+const beforeUpload = async (file: UploadFile) => {
+  try {
+    const zip = new JSZip();
+    const content = await zip.loadAsync(file.raw);
+    const manifest = await content.files['AndroidManifest.xml'].async('arraybuffer');
+    const resource = await content.files['resources.arsc'].async('arraybuffer');
+    const appInfo = new AppInfo(manifest, resource);
+    formData.packageName = appInfo.getPackage();
+    formData.appName = appInfo.getLabel();
+    formData.appBuild = appInfo.getVersionCode();
+    formData.appVersion = appInfo.getVersionName();
+    return true;
+  } catch {
+    return false;
+  }
+};
+// 上传文件处理
+type RequestMethod = (files: UploadFile | UploadFile[]) => Promise<RequestMethodResponse>;
+const requestMethod: RequestMethod = async (file: UploadFile) => {
+  try {
+    const path = `/AppBase/${formData.appName}(${formData.packageName})-${formData.appVersion}.apk`;
+    // 底座文件比较大，获取签名直接上传到文件服务，不经过应用服务
+    const uploadUrl = await api.file.getUploadSignedUrl({ path });
+    await upLoadFile(file, uploadUrl);
+    formData.appPath = path;
+    return { status: 'success', response: {} };
+  } catch (error) {
+    console.error(error);
+    MessagePlugin.error(error.message);
+    return { status: 'fail', response: {} };
+  }
+};
+// 文件上传，底座太大了，fetch不支持获取上传进度，改成xhr，
+const upLoadFile = (file: UploadFile, url: string) => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = (event.loaded / event.total) * 100;
+        uploadRef.value.uploadFilePercent({
+          file,
+          percent: percent.toFixed(2),
+        });
+      }
+    };
+    xhr.onload = () => {
+      resolve(xhr.responseText);
+    };
+    xhr.onerror = (err) => {
+      reject(err);
+    };
+    xhr.open('PUT', url, true);
+    xhr.send(file.raw);
+  });
+};
+const addApp = async () => {
+  if (formData.appPath)
+    try {
+      setLoading(true);
+      await api.appBase.add({
         appName: formData.appName,
         appVersion: formData.appVersion,
         appType: formData.appType,
         appBuild: formData.appBuild,
         packageName: formData.packageName,
+        appPath: formData.appPath,
         memo: formData.memo,
-      },
-      {
-        file: formData.appFiles[0].raw,
-      },
-    )
-    .then(() => {
+      });
       MessagePlugin.success(t('appBase.saveSuccess'));
       formVisible.value = false;
       getList();
-
+    } finally {
       setLoading(false);
-    })
-    .catch(() => {
-      setLoading(false);
-    });
+    }
+};
+const deleteApp = async (row: any) => {
+  await api.appBase.delete(row.id);
+  getList();
 };
 onMounted(() => {
   getList();
