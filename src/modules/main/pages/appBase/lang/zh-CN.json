@@ -10,6 +10,7 @@
     "memo": "备注",
     "parsing": "正在解析...",
     "saving": "正在保存...",
-    "saveSuccess": "保存成功"
+    "saveSuccess": "保存成功",
+    "plsUploadFile": "请上传文件"
   }
 }

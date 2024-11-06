@@ -45,7 +45,8 @@
     </div>
 
     <footer class="copyright">
-      Copyright ©2023-2024 BumbleBee Team All rights reserved. <span class="download-btn">下载软件</span>
+      Copyright ©2023-2024 BumbleBee Team All rights reserved.
+      <span class="download-btn" @click="downloadApp">下载软件</span>
     </footer>
   </cmp-row>
 </template>
@@ -59,6 +60,7 @@ import { ErrorCircleFilledIcon } from 'tdesign-icons-vue-next';
 import { DropdownOption } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
+import { api } from '@/api/main';
 import InternetIcon from '@/assets/assets-login-internet.svg?component';
 import TdesignSetting from '@/layouts/setting.vue';
 import { langList, langName } from '@/locales/index';
@@ -76,6 +78,15 @@ const changeLang = (lang: DropdownOption) => {
 const type = ref('login');
 const switchType = (val: string) => {
   type.value = val;
+};
+const downloadApp = async () => {
+  const appBase = await api.appBase.getNewApp({
+    packageName: null,
+    appBuild: null,
+  });
+  if (appBase) {
+    window.open(appBase.appPath);
+  }
 };
 </script>
 
