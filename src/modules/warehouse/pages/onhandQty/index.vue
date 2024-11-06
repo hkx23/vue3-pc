@@ -85,8 +85,6 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, reactive, ref } from 'vue';
 
 import { api, OnhandQtyDtlVO, OnhandQtyVO } from '@/api/warehouse';
-import CmpQuery from '@/components/cmp-query/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 // 是否显示标签信息
@@ -114,8 +112,13 @@ const handQtyData = reactive({ list: [] });
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
+    colKey: 'warehouseCode',
+    title: '仓库编码',
+    width: '120',
+  },
+  {
     colKey: 'warehouseName',
-    title: '仓库',
+    title: '仓库名称',
     width: '110',
   },
   {
@@ -128,11 +131,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     title: '货位',
     width: '120',
   },
-  {
-    colKey: 'erpWarehouseCode',
-    title: 'ERP仓库',
-    width: '120',
-  },
+
   {
     colKey: 'mitemCode',
     title: '物料编码',

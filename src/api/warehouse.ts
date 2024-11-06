@@ -626,10 +626,10 @@ export interface TransferDtlBarcodeVO {
   /** ERP单据明细号 */
   erpLineNo?: string;
   transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
-  /** 标签类型名称 */
-  barcodeTypeName?: string;
   /** 单据状态名称 */
   billStatusName?: string;
+  /** 标签类型名称 */
+  barcodeTypeName?: string;
 }
 
 /** 交易单身表 */
@@ -3156,10 +3156,10 @@ export interface DeliveryDtlVO {
   transferDtlId?: string;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 已扫箱数 */
   boxScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   /** 待扫箱数 */
   boxWaitScanQty?: number;
 }
@@ -5045,11 +5045,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  bfpickQty?: number;
+  tlpickQty?: number;
+  flpickQty?: number;
 }
 
 export interface MoIssuanceVO {
@@ -6258,6 +6258,8 @@ export interface MaterialRequisitionExcuteDtlVO {
   workcenterCode?: string;
   /** 工作中心名称 */
   workcenterName?: string;
+  /** 地点 */
+  wcLocation?: string;
   /**
    * 是否目标仓库启用货位管理
    * @format int32
@@ -6608,6 +6610,8 @@ export interface MaterialRequisitionVO {
   isCanSubmit?: boolean;
   /** 可提交的执行单据 */
   zxBillNo?: string;
+  /** 备注 */
+  remark?: string;
   /** 单据状态名称 */
   statusName?: string;
 }
@@ -6816,25 +6820,25 @@ export interface MaterialRequisitionDtlVO {
    */
   centerCompletedQty?: number;
   /**
-   * 工作中心对应的工单在制用量
+   * 需求数量-源工单BOM需求数量-考虑线边库存和工单占用
    * @format int32
    */
-  centerMoUsingQty?: number;
+  lineMoRequestQty?: number;
   /**
    * 需求数量-源工单BOM需求数量
    * @format int32
    */
   originMoRequestQty?: number;
   /**
-   * 需求数量-源工单BOM需求数量-考虑线边库存和工单占用
-   * @format int32
-   */
-  lineMoRequestQty?: number;
-  /**
    * 最小包装计算需要-用需求数量(LineMoRequestQty)-申请中数量-已领用量
    * @format int32
    */
   calMinPackagingQty?: number;
+  /**
+   * 工作中心对应的工单在制用量
+   * @format int32
+   */
+  centerMoUsingQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
 }
@@ -8960,6 +8964,7 @@ export interface BillManagementVO {
   uploadStatus?: string;
   /** 上传返回信息 */
   uploadMessage?: string;
+  relationBillNo?: string;
   uploadStatusName?: string;
 }
 
@@ -9530,8 +9535,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -9559,8 +9564,6 @@ export interface GoodsSentOutDTO {
   /** 发货单-单据号 */
   saleDeliveryBillNo?: string;
   saleDeliveryId?: string;
-  /** 交易事务-单据号 */
-  billNo?: string;
   /** 交易事务-源单据号即发货单号 */
   erpBillNo?: string;
   /** 提交的模型-明细信息 */
@@ -9574,13 +9577,15 @@ export interface GoodsSentOutDTO {
    * @format int32
    */
   isFifo?: number;
-  /** 扫描条码型-明细信息 */
+  /** 重新加载数据库最新的的单据信息 */
   dtlInfo?: GoodsSentOutDtlVO;
   /** 数量 */
   batchQty?: number;
+  /** 重新加载数据库最新的的单据信息 */
+  latestDtlList?: GoodsSentOutDtlVO[];
 }
 
-/** 扫描条码型-明细信息 */
+/** 重新加载数据库最新的的单据信息 */
 export interface GoodsSentOutDtlVO {
   id?: string;
   /**
@@ -9684,6 +9689,8 @@ export interface GoodsSentOutDtlVO {
   /** 自动推荐货位列表 */
   recommendOutLocationList?: LocationVO[];
   isLoadingFinish?: boolean;
+  /** 是否存在可以提交的数据-是否能提交 */
+  isCanSubmit?: boolean;
   /**
    * 已扫描数量
    * @format double
@@ -9694,6 +9701,26 @@ export interface GoodsSentOutDtlVO {
    * @format double
    */
   waitingScanQty?: number;
+}
+
+/** 扫描后返回条码信息 */
+export type GoodsSentScanLabelVO = {
+  mitemId?: string;
+  /** 信息提醒 */
+  message?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultGoodsSentScanLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 扫描后返回条码信息 */
+  data?: GoodsSentScanLabelVO;
 }
 
 export interface GoodsSentOutVO {
@@ -9796,9 +9823,9 @@ export interface GoodsSentOutVO {
   modifiedTime?: string;
   /** 交易事务表-来源单据号 */
   erpBillNo?: string;
-  /** 交易事务表-单据号 */
-  transBillNo?: string;
   dtls?: GoodsSentOutDtlVO[];
+  /** 是否存在可以提交的数据-是否能提交 */
+  isCanSubmit?: boolean;
   /** 单据状态名称 */
   statusName?: string;
 }
@@ -14618,20 +14645,6 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
-
-    /**
-     * No description
-     *
-     * @tags 配送指令表
-     * @name Test
-     * @summary JOB方法测试
-     * @request GET:/deliveryCommand/test
-     * @secure
-     */
-    test: () =>
-      http.request<ResultObject['data']>(`/api/warehouse/deliveryCommand/test`, {
-        method: 'GET',
-      }),
   },
   delivery: {
     /**
@@ -15302,7 +15315,7 @@ export const api = {
      * @secure
      */
     scanMitemBarcode: (data: GoodsSentOutDTO) =>
-      http.request<ResultString['data']>(`/api/warehouse/GoodsSentOut/scanMitemBarcode`, {
+      http.request<ResultGoodsSentScanLabelVO['data']>(`/api/warehouse/GoodsSentOut/scanMitemBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -15321,6 +15334,24 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 成品发货
+     * @name GetTotalBarcodesBySourceLineNo
+     * @summary 根据单明细行获取所有成品发货单的条码
+     * @request GET:/GoodsSentOut/getTotalBarcodesBySourceLineNo
+     * @secure
+     */
+    getTotalBarcodesBySourceLineNo: (query: { sourceBillNo: string; mitemId: string }) =>
+      http.request<ResultListTransferDtlBarcodeVO['data']>(
+        `/api/warehouse/GoodsSentOut/getTotalBarcodesBySourceLineNo`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
 
     /**
      * No description

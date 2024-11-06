@@ -79,6 +79,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apiWarehouse, SaleDeliveryVO } from '@/api/warehouse';
 import CmpPrintButton from '@/components/cmp-print-button/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -156,6 +157,7 @@ const opts = computed(() => {
 // 状态下拉初始数据
 const statusOption = ref([
   { value: 'CREATED', label: t('salesDelivery.已创建') },
+  { value: 'DELIVERING', label: t('salesDelivery.发货中') },
   { value: 'DELIVERED', label: t('salesDelivery.已发货') },
   { value: 'CANCELED', label: t('salesDelivery.已取消') },
 ]);
@@ -181,8 +183,8 @@ const tableChildrenColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.单位'), width: 140, colKey: 'uomName' },
   { title: t('salesDelivery.仓库'), width: 140, colKey: 'warehouseName' },
   // { title: '货区', width: 140, colKey: 'districtName' },
-  { title: t('salesDelivery.本次发货数'), width: 140, colKey: 'qty' },
-  // { title: '待发货数', width: 140, colKey: 'requireQty' },
+  { title: t('salesDelivery.订单数量'), width: 140, colKey: 'requireQty' },
+  { title: t('salesDelivery.已发货数量'), width: 140, colKey: 'deliveriedQty' },
   { title: t('salesDelivery.销售订单'), width: 140, colKey: 'saleOrderNo' },
   { title: t('salesDelivery.销售订单行号'), width: 140, colKey: 'saleOrderLineNo' },
   { title: t('salesDelivery.备注'), width: 140, colKey: 'memo' },
@@ -343,7 +345,7 @@ const onPrintClick = async () => {
   }
   return isSuccess;
 };
-// 打印方法;
+// 打印方法
 const getPrintBillInfo = (billNo) => {
   return new Promise((resolve, reject) => {
     const billInfoData = apiWarehouse.saleDelivery.getPrintBillInfo({

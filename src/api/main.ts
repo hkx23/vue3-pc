@@ -2507,8 +2507,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -5659,11 +5659,11 @@ export interface MitemInSupplierVO {
   containerTypeName?: string;
   stateName?: string;
   isState?: boolean;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5886,13 +5886,13 @@ export interface MitemVO {
   properties?: MouldPropertyVO[];
   stateName?: string;
   isState?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isProductName?: string;
   isRawName?: string;
-  isProductChecked?: boolean;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -6035,8 +6035,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -10903,6 +10903,46 @@ export interface ResultPagingDataAssetBrandVO {
   data?: PagingDataAssetBrandVO;
 }
 
+/** APP底座表 */
+export interface AppBase {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** APP名称 */
+  appName?: string;
+  /** APP版本号 */
+  appVersion?: string;
+  /** APP类型 */
+  appType?: string;
+  /** APP地址 */
+  appPath?: string;
+  /** APP构建版本号 */
+  appBuild?: number;
+  /** 包名称 */
+  packageName?: string;
+  /** 备注 */
+  memo?: string;
+}
+
 /** 显示行政组织层级实体 */
 export interface AdminOrgVO {
   id?: string;
@@ -12315,12 +12355,12 @@ export interface IdentityLinkInfo {
   type?: string;
   scopeId?: string;
   groupId?: string;
-  processInstanceId?: string;
   taskId?: string;
   userId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   scopeType?: string;
   subScopeId?: string;
-  scopeDefinitionId?: string;
 }
 
 /** 通用响应类 */
@@ -12345,44 +12385,44 @@ export type Task = {
   suspended?: boolean;
   description?: string;
   tenantId?: string;
+  localizedDescription?: string;
+  parentTaskId?: string;
+  delegationState?: 'PENDING' | 'RESOLVED';
   /** @format date-time */
   dueDate?: string;
-  formKey?: string;
   assignee?: string;
-  localizedName?: string;
   category?: string;
-  localizedDescription?: string;
-  delegationState?: 'PENDING' | 'RESOLVED';
-  parentTaskId?: string;
+  formKey?: string;
+  localizedName?: string;
   id?: string;
   state?: string;
   scopeId?: string;
-  processInstanceId?: string;
-  /** @format date-time */
-  createTime?: string;
-  propagatedStageInstanceId?: string;
   /** @format date-time */
   inProgressStartTime?: string;
   /** @format date-time */
   inProgressStartDueDate?: string;
   taskLocalVariables?: Record<string, object>;
-  processVariables?: Record<string, object>;
   inProgressStartedBy?: string;
-  processDefinitionId?: string;
-  scopeType?: string;
-  subScopeId?: string;
+  processVariables?: Record<string, object>;
   caseVariables?: Record<string, object>;
-  claimedBy?: string;
   /** @format date-time */
   claimTime?: string;
-  suspendedBy?: string;
+  claimedBy?: string;
   /** @format date-time */
   suspendedTime?: string;
-  executionId?: string;
-  scopeDefinitionId?: string;
+  suspendedBy?: string;
+  /** @format date-time */
+  createTime?: string;
+  processDefinitionId?: string;
   identityLinks?: IdentityLinkInfo[];
-  taskDefinitionKey?: string;
+  executionId?: string;
   taskDefinitionId?: string;
+  taskDefinitionKey?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
+  scopeType?: string;
+  subScopeId?: string;
+  propagatedStageInstanceId?: string;
 } | null;
 
 /** 响应数据 */
@@ -12391,12 +12431,12 @@ export type IdentityLink = {
   type?: string;
   scopeId?: string;
   groupId?: string;
-  processInstanceId?: string;
   taskId?: string;
   userId?: string;
+  processInstanceId?: string;
+  scopeDefinitionId?: string;
   scopeType?: string;
   subScopeId?: string;
-  scopeDefinitionId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -12607,46 +12647,6 @@ export interface ResultBarcodePkgVO {
   /** 显示包装条码管理 */
   data?: BarcodePkgVO;
 }
-
-/** APP底座表 */
-export type AppBase = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** APP名称 */
-  appName?: string;
-  /** APP版本号 */
-  appVersion?: string;
-  /** APP类型 */
-  appType?: string;
-  /** APP地址 */
-  appPath?: string;
-  /** APP构建版本号 */
-  appBuild?: number;
-  /** 包名称 */
-  packageName?: string;
-  /** 备注 */
-  memo?: string;
-} | null;
 
 /** 通用响应类 */
 export interface ResultAppBase {
@@ -18463,6 +18463,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name GetUploadSignedUrl
+     * @summary 获取上传签名URL(60秒有效)
+     * @request GET:/file/getUploadSignedUrl
+     * @secure
+     */
+    getUploadSignedUrl: (query: { path: string }) =>
+      http.request<ResultString['data']>(`/api/main/file/getUploadSignedUrl`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   favorite: {
     /**
@@ -21205,24 +21220,9 @@ export const api = {
      * @request POST:/appBase/add
      * @secure
      */
-    add: (
-      query: {
-        appName: string;
-        appVersion: string;
-        appType: string;
-        /** @format int32 */
-        appBuild: number;
-        packageName: string;
-        memo: string;
-      },
-      data: {
-        /** @format binary */
-        file: File;
-      },
-    ) =>
+    add: (data: AppBase) =>
       http.request<ResultObject['data']>(`/api/main/appBase/add`, {
         method: 'POST',
-        params: query,
         body: data as any,
       }),
 
@@ -21265,6 +21265,20 @@ export const api = {
       http.request<ResultPagingDataAppBaseVO['data']>(`/api/main/appBase/getList`, {
         method: 'GET',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags APP底座表
+     * @name Delete
+     * @summary 删除底座
+     * @request DELETE:/appBase/delete/{id}
+     * @secure
+     */
+    delete: (id: string) =>
+      http.request<ResultObject['data']>(`/api/main/appBase/delete/${id}`, {
+        method: 'DELETE',
       }),
   },
   adminOrg: {
