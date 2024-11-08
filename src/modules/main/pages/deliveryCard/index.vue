@@ -1581,6 +1581,8 @@ const onInput = async (data: any) => {
 const onHandleResetting = () => {
   topPrintID.value = null; // 置空行ID
   pageUI.value.page = 1;
+  selectedCardKeys.value = [];
+  selectedRowKeys.value = [];
 };
 </script>
 
