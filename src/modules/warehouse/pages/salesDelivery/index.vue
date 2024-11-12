@@ -22,14 +22,14 @@
         >
           <template #title>发货单据列表</template>
           <template #button>
-            <!-- <t-button theme="primary" @click="onClickAdd">
+            <t-button theme="primary" @click="onClickAdd">
               {{ t('common.button.add') }}
             </t-button>
             <t-popconfirm :content="$t('确认作废销售发货单？')" @confirm="onBatchCancelledClick">
               <t-button theme="default" :disabled="selectRowKeys?.length == 0">
                 {{ t('salesDelivery.cancel') }}
               </t-button>
-            </t-popconfirm> -->
+            </t-popconfirm>
 
             <cmp-print-button
               template-code="DELIVERY_LIST"
@@ -73,10 +73,10 @@
 </template>
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api as apiWarehouse } from '@/api/warehouse';
+import { api as apiWarehouse, SaleDeliveryVO } from '@/api/warehouse';
 import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -206,7 +206,7 @@ const tableChildrenColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.备注'), width: 140, colKey: 'memo' },
 ];
 
-// const formVisible = ref(false); // 显示和隐藏销售发货制单弹出框
+const formVisible = ref(false); // 显示和隐藏销售发货制单弹出框
 const formRef = ref(null); // 规则主表
 const mainDataTotal = ref(0);
 const childrenDataTotal = ref(0);
@@ -271,18 +271,18 @@ const fetchTable = async () => {
 };
 
 // 批量作废
-// const onBatchCancelledClick = async () => {
-//   const ids = [];
-//   selectRowKeys.value.forEach((element) => {
-//     ids.push(element);
-//   });
-//   const deleteModel: SaleDeliveryVO = {
-//     cancelledIds: ids,
-//   };
-//   await apiWarehouse.saleDelivery.updateBillNoByCancelled(deleteModel);
-//   fetchTable();
-//   MessagePlugin.success(t('salesDelivery.作废成功'));
-// };
+const onBatchCancelledClick = async () => {
+  const ids = [];
+  selectRowKeys.value.forEach((element) => {
+    ids.push(element);
+  });
+  const deleteModel: SaleDeliveryVO = {
+    cancelledIds: ids,
+  };
+  await apiWarehouse.saleDelivery.updateBillNoByCancelled(deleteModel);
+  fetchTable();
+  MessagePlugin.success(t('salesDelivery.作废成功'));
+};
 
 // 加载销售发货制单明细表格
 const fetchChildrenTable = async () => {
@@ -309,14 +309,14 @@ const clearSalesDeliveryDtl = async () => {
 };
 
 // 弹出新增销售发货制单界面
-// const onClickAdd = () => {
-//   const { reset } = formRef.value;
-//   reset();
-//   const { showPopform } = formRef.value;
-//   showPopform();
-//   formVisible.value = true;
-//   isAdd.value = true;
-// };
+const onClickAdd = () => {
+  const { reset } = formRef.value;
+  reset();
+  const { showPopform } = formRef.value;
+  showPopform();
+  formVisible.value = true;
+  isAdd.value = true;
+};
 
 // 新增界面-提交后调用
 const onHandleShowClose = () => {
