@@ -22,20 +22,19 @@
         >
           <template #title>发货单据列表</template>
           <template #button>
-            <t-button theme="primary" @click="onClickAdd">
+            <!-- <t-button theme="primary" @click="onClickAdd">
               {{ t('common.button.add') }}
             </t-button>
             <t-popconfirm :content="$t('确认作废销售发货单？')" @confirm="onBatchCancelledClick">
               <t-button theme="default" :disabled="selectRowKeys?.length == 0">
                 {{ t('salesDelivery.cancel') }}
               </t-button>
-            </t-popconfirm>
+            </t-popconfirm> -->
 
             <cmp-print-button
               template-code="DELIVERY_LIST"
               :disabled="selectRowKeys?.length == 0"
               :data="printData"
-              :show-icon="false"
               @before-print="onPrintClick"
             >
               {{ t('common.button.print') }}
@@ -74,16 +73,16 @@
 </template>
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api as apiWarehouse, SaleDeliveryVO } from '@/api/warehouse';
+import { api as apiWarehouse } from '@/api/warehouse';
 import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import formSalesDelivery from './formSalesDelivery.vue';
+// import formSalesDelivery from './formSalesDelivery.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
@@ -152,14 +151,30 @@ const opts = computed(() => {
         lazyLoad: true,
       },
     },
+    saleType: {
+      label: t('salesDelivery.销售订单类型'),
+      comp: 't-select',
+      defaultVal: [],
+      bind: {
+        class: 'check-box-conditon',
+        options: saleTypeOption.value,
+        lazyLoad: true,
+      },
+    },
   };
 });
 // 状态下拉初始数据
 const statusOption = ref([
   { value: 'CREATED', label: t('salesDelivery.已创建') },
-  { value: 'DELIVERING', label: t('salesDelivery.发货中') },
-  { value: 'DELIVERED', label: t('salesDelivery.已发货') },
+  { value: 'DELIVERING', label: t('salesDelivery.执行中') },
+  { value: 'DELIVERED', label: t('salesDelivery.已完成') },
   { value: 'CANCELED', label: t('salesDelivery.已取消') },
+]);
+
+// 销售订单类型下拉初始数据
+const saleTypeOption = ref([
+  { value: 'DELIVERY', label: t('salesDelivery.销售发货') },
+  { value: 'RETURN', label: t('salesDelivery.销售退货') },
 ]);
 
 const tableMainData = ref([]);
@@ -170,6 +185,7 @@ const tableMainColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.客户名称'), width: 140, colKey: 'customerName' },
   { title: t('salesDelivery.单据状态'), width: 100, colKey: 'statusName' },
   { title: t('salesDelivery.发货时间'), width: 200, colKey: 'datetimeDelivery' },
+  { title: t('salesDelivery.销售订单类型'), width: 200, colKey: 'saleTypeName' },
   { title: t('salesDelivery.创建人'), width: 100, colKey: 'creatorName' },
   { title: t('salesDelivery.创建时间'), width: 200, colKey: 'timeCreate' },
   { title: t('salesDelivery.更新人'), width: 100, colKey: 'modifierName' },
@@ -184,13 +200,13 @@ const tableChildrenColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.仓库'), width: 140, colKey: 'warehouseName' },
   // { title: '货区', width: 140, colKey: 'districtName' },
   { title: t('salesDelivery.订单数量'), width: 140, colKey: 'requireQty' },
-  { title: t('salesDelivery.已发货数量'), width: 140, colKey: 'deliveriedQty' },
+  { title: t('salesDelivery.已完成数量'), width: 140, colKey: 'deliveriedQty' },
   { title: t('salesDelivery.销售订单'), width: 140, colKey: 'saleOrderNo' },
   { title: t('salesDelivery.销售订单行号'), width: 140, colKey: 'saleOrderLineNo' },
   { title: t('salesDelivery.备注'), width: 140, colKey: 'memo' },
 ];
 
-const formVisible = ref(false); // 显示和隐藏销售发货制单弹出框
+// const formVisible = ref(false); // 显示和隐藏销售发货制单弹出框
 const formRef = ref(null); // 规则主表
 const mainDataTotal = ref(0);
 const childrenDataTotal = ref(0);
@@ -215,6 +231,7 @@ const formData = reactive({
   mitemId: '',
   saleOrderNo: '',
   status: '',
+  saleType: '',
 });
 // 点击查询按钮
 const onSearch = (query: any) => {
@@ -227,7 +244,7 @@ const onSearch = (query: any) => {
   formData.mitemId = query.mitemId;
   formData.saleOrderNo = query.saleOrderNo;
   formData.status = query.status;
-
+  formData.saleType = query.saleType;
   pageUI.value.page = 1;
   fetchTable();
 };
@@ -242,13 +259,7 @@ const fetchTable = async () => {
     const data = await apiWarehouse.saleDelivery.getSalesDeliveryList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      salesTimeBegin: formData.salesTimeBegin,
-      salesTimeEnd: formData.salesTimeEnd,
-      billNo: formData.billNo,
-      customerId: formData.customerId,
-      mitemId: formData.mitemId,
-      saleOrderNo: formData.saleOrderNo,
-      status: formData.status,
+      ...formData,
     });
     tableMainData.value = data.list;
     mainDataTotal.value = data.total;
@@ -260,18 +271,18 @@ const fetchTable = async () => {
 };
 
 // 批量作废
-const onBatchCancelledClick = async () => {
-  const ids = [];
-  selectRowKeys.value.forEach((element) => {
-    ids.push(element);
-  });
-  const deleteModel: SaleDeliveryVO = {
-    cancelledIds: ids,
-  };
-  await apiWarehouse.saleDelivery.updateBillNoByCancelled(deleteModel);
-  fetchTable();
-  MessagePlugin.success(t('salesDelivery.作废成功'));
-};
+// const onBatchCancelledClick = async () => {
+//   const ids = [];
+//   selectRowKeys.value.forEach((element) => {
+//     ids.push(element);
+//   });
+//   const deleteModel: SaleDeliveryVO = {
+//     cancelledIds: ids,
+//   };
+//   await apiWarehouse.saleDelivery.updateBillNoByCancelled(deleteModel);
+//   fetchTable();
+//   MessagePlugin.success(t('salesDelivery.作废成功'));
+// };
 
 // 加载销售发货制单明细表格
 const fetchChildrenTable = async () => {
@@ -298,14 +309,14 @@ const clearSalesDeliveryDtl = async () => {
 };
 
 // 弹出新增销售发货制单界面
-const onClickAdd = () => {
-  const { reset } = formRef.value;
-  reset();
-  const { showPopform } = formRef.value;
-  showPopform();
-  formVisible.value = true;
-  isAdd.value = true;
-};
+// const onClickAdd = () => {
+//   const { reset } = formRef.value;
+//   reset();
+//   const { showPopform } = formRef.value;
+//   showPopform();
+//   formVisible.value = true;
+//   isAdd.value = true;
+// };
 
 // 新增界面-提交后调用
 const onHandleShowClose = () => {

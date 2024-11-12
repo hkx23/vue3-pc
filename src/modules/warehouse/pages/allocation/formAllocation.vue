@@ -39,7 +39,6 @@
                 <bcmp-select-business
                   v-model="formData.mitemCategoryId"
                   :multiple="false"
-                  :disabled="formData.isLock"
                   type="mitemCategory"
                   :show-title="false"
                   @change="resetMitems"
@@ -49,7 +48,6 @@
               <t-form-item :label="t('allocation.mitemIds')" name="mitemIds">
                 <bcmp-select-business
                   v-model="formData.mitemIds"
-                  :disabled="formData.isLock"
                   :table-width="1200"
                   :custom-conditions="filterConditions"
                   type="mitem"
@@ -61,6 +59,7 @@
               <t-form-item :label="t('allocation.warehouseId')" name="warehouseId">
                 <bcmp-select-business
                   v-model="formData.warehouseId"
+                  :disabled="formData.isLock"
                   type="warehouseAuth"
                   :show-title="false"
                 ></bcmp-select-business

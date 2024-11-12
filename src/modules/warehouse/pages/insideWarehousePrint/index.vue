@@ -27,6 +27,7 @@
                         type="mitem"
                         :show-title="false"
                         @change="onSelectMinPkgQty"
+                        @selection-change="onChangeMitem"
                       ></bcmp-select-business>
                     </t-form-item>
                   </t-col>
@@ -85,6 +86,19 @@
                           :value="item.id"
                         />
                       </t-select>
+                    </t-form-item>
+                  </t-col>
+                  <t-col :span="4">
+                    <t-form-item label="条码类型" label-align="right" label-width="110px" name="barcodeType">
+                      <t-radio-group v-model="barcodeType" @change="onChangeBarcodeType">
+                        <t-radio :value="0">原材料</t-radio>
+                        <t-radio :value="1">配送卡</t-radio>
+                      </t-radio-group>
+                    </t-form-item>
+                  </t-col>
+                  <t-col :span="4">
+                    <t-form-item label="生产日期" label-align="right" name="dateTimeManufacture">
+                      <t-date-picker v-model="dateTimeManufacture" style="width: 300px" allow-input clearable />
                     </t-form-item>
                   </t-col>
                 </t-row>
@@ -247,6 +261,7 @@
 </template>
 
 <script setup lang="tsx">
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import {
   CustomValidateResolveType,
@@ -264,7 +279,6 @@ import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-const lotNoCreateRule = ref('1844200132197044226');
 // 表单定义规则
 function validateNumberOne(value: any): boolean | CustomValidateResolveType {
   if (Number.isNaN(Number(value))) {
@@ -315,7 +329,21 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
     try {
       pageLoading.value = true;
-      await apiMain.label.generateBarcodeStockIn(stockInData.value);
+      if (barcodeType.value === 0) {
+        // 生成原材料标签
+        await apiMain.label.generateBarcodeStockIn(stockInData.value);
+      } else {
+        // 生成配送卡标签
+        deliveryData.value.barcodeRuleId = stockInData.value.barcodeRuleId;
+        deliveryData.value.createNum = stockInData.value.thisNumber;
+        deliveryData.value.createSize = stockInData.value.minPkgQty;
+        deliveryData.value.mitemId = stockInData.value.mitemId;
+        deliveryData.value.isNormalGenerate = false;
+        deliveryData.value.batchNo = stockInData.value.lotNo;
+        deliveryData.value.thisNumber = stockInData.value.thisNumber;
+        await apiMain.deliveryCard.generateBarcode(deliveryData.value);
+      }
+
       MessagePlugin.success('生成成功');
       onRefreshStockIn();
     } catch (e) {
@@ -370,6 +398,81 @@ const stockInData = ref({
   mitemCode: '',
   lotNo: '',
 });
+// 配送卡生成数据
+const deliveryData = ref({
+  barcodeRuleId: '', // select ID
+  createNum: 0, // 变化后的数字
+  createSize: 0, // 生成规格/最小包装数量
+  mitemId: null, // 物料ID
+  isNormalGenerate: false, // 是否正常生成 true:正常生成 false:库存生成
+  batchNo: null, // 批次
+  onhandId: null, // 库存ID
+  thisNumber: 0, // 本次生成数量
+});
+const barcodeType = ref(0); // 条码类型
+const dateTimeManufacture = ref(null); // 生产日期
+
+const onChangeBarcodeType = async (value) => {
+  barcodeType.value = value;
+  await onBracodeRulesData();
+  onPrintTemplateData();
+};
+const onChangeMitem = async (value: any) => {
+  await setBarcodeType(value);
+  await onBracodeRulesData();
+  onPrintTemplateData();
+};
+// 判断条码类型
+const setBarcodeType = async (mitemInfo: any) => {
+  if (mitemInfo) {
+    barcodeType.value = 0;
+    if (mitemInfo.isRaw === 1) {
+      barcodeType.value = 0;
+    } else if (mitemInfo.isInProcess === 1) {
+      barcodeType.value = 1;
+    } else if (mitemInfo.isProduct === 1) {
+      barcodeType.value = 1;
+    }
+  }
+};
+// 获取条码规则 下拉数据
+const onBracodeRulesList = reactive({ list: [] });
+const onBracodeRulesData = async () => {
+  if (barcodeType.value === 0) {
+    // 获取 原材料条码规则 下拉数据
+    const res = await apiMain.label.getLabelBarcodeRuleList();
+    onBracodeRulesList.list = res;
+    if (res && res.length > 0) {
+      stockInData.value.barcodeRuleId = res[0].id;
+    }
+  } else {
+    // 获取配送卡条码规则下拉数据
+    const res = await apiMain.deliveryCard.getBarcodeRuleListByMitemId({ mitemId: stockInData.value.mitemId });
+    onBracodeRulesList.list = res?.list;
+    if (res && res?.list.length > 0) {
+      stockInData.value.barcodeRuleId = res.list[0].id;
+    }
+  }
+};
+
+// 获取 打印模板 下拉数据
+const onPrintTemplateList = reactive({ list: [] });
+const onPrintTemplateData = async () => {
+  if (barcodeType.value === 0) {
+    const res = await apiMain.label.getLabelPrintTmplList();
+    onPrintTemplateList.list = res;
+    if (res && res.length > 0) {
+      printMode.value.printTempId = res[0].id;
+    }
+  } else {
+    const res = await apiMain.deliveryCard.getDeliveryCardPrintTmplList();
+    onPrintTemplateList.list = res;
+    if (res && res.length > 0) {
+      printMode.value.printTempId = res[0].id;
+    }
+  }
+};
+
 const onSelectMinPkgQty = async () => {
   if (!stockInData.value.mitemId && !stockInData.value.supplierId) {
     return;
@@ -380,29 +483,6 @@ const onSelectMinPkgQty = async () => {
     stockInData.value.supplierCode = res.supplierCode;
     stockInData.value.minPkgQty = res.minPkgQty;
   }
-  refreshLotNo();
-};
-// 根据条码规则刷新大批次
-const refreshLotNo = async () => {
-  // 判断物料是否选中
-  if (!stockInData.value.mitemId) {
-    return;
-  }
-  // 判断供应商是否选中
-  if (!stockInData.value.supplierId) {
-    return;
-  }
-  // 判断大批次代码生成规则是否存在
-  if (lotNoCreateRule.value === '') {
-    return;
-  }
-  const lotNoGenData = {
-    mitemId: stockInData.value.mitemId,
-    supplierId: stockInData.value.supplierId,
-    barcodeRuleId: lotNoCreateRule.value,
-  };
-  const res = await apiMain.label.generateLotNoByBarcodeRule(lotNoGenData);
-  stockInData.value.lotNo = res;
 };
 const onNumberChange = async () => {
   const { minPkgQty } = stockInData.value;
@@ -424,19 +504,6 @@ const onNumberChange = async () => {
   const remainder = thisNumber % minPkgQty;
   stockInData.value.createNumber = remainder === 0 ? quotient : quotient + 1;
 };
-
-const loadLotNoBarcodeRule = async () => {
-  const res = await apiMain.barcodeRule.getBarcodeRuleList({
-    pageNum: 1,
-    pageSize: 1,
-    selectKeyword: 'LOT_NO', // 下拉模糊查询关键词
-  });
-  const lotNoRule = res.list;
-  if (lotNoRule.length > 0) {
-    lotNoCreateRule.value = lotNoRule[0].id;
-  }
-};
-
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
@@ -551,6 +618,9 @@ const onPrintStockIn = async () => {
     const printDatas = [];
     selectedStockIneRowKeys.value.forEach((id) => {
       const foundItem = stockInDataList.list.find((item) => item.id === id);
+      if (foundItem.isProduct === 1 && foundItem.customerCode) {
+        foundItem.mitemCode = foundItem.customerCode;
+      }
       const excItem = {};
       Object.assign(excItem, foundItem);
       // fucntion 或 Object 类型传入参数 打印会显示空白,无法打印
@@ -561,19 +631,42 @@ const onPrintStockIn = async () => {
           excItem[key] = null;
         }
       });
-      const DataBase = {
-        LABEL_NO: foundItem.labelNo,
-        QTY: foundItem.balanceQty,
-        LOT_NO: foundItem.lotNo,
-        C_INV_STD: foundItem.mitemName,
-        BATCH_NO: foundItem.batchNo,
-        SUPPLIER_NAME: foundItem.supplierName,
-        SUPPLIER_CODE: foundItem.supplierCode,
-        MITEM_CODE: foundItem.mitemCode,
-        MITEM_DESC: foundItem.mitemDesc,
-        ...excItem,
-      };
-      printDatas.push(DataBase);
+      console.log('foundItem', foundItem);
+      if (barcodeType.value === 0) {
+        // 打印原材料条码
+        const DataBase = {
+          LABEL_NO: foundItem.labelNo,
+          QTY: foundItem.balanceQty,
+          LOT_NO: foundItem.lotNo,
+          C_INV_STD: foundItem.mitemName,
+          BATCH_NO: foundItem.batchNo,
+          SUPPLIER_NAME: foundItem.supplierName,
+          SUPPLIER_CODE: foundItem.supplierCode,
+          MITEM_CODE: foundItem.mitemCode,
+          MITEM_DESC: foundItem.mitemDesc,
+          SUPPLIER_LOT_NO: foundItem.supplierLotNo,
+          ...excItem,
+        };
+        printDatas.push(DataBase);
+      } else {
+        // 打印配送卡条码
+        const DataBase = {
+          DELIVERY_CARD_NO: foundItem.labelNo,
+          TIME_CREATE: foundItem.timeCreate,
+          PRINT_SEQ: foundItem.printSeq,
+          QTY: foundItem.qty,
+          MITEM_CODE: foundItem.mitemCode,
+          MITEM_NAME: foundItem.mitemName,
+          SCHE_CODE: foundItem.scheCode,
+          WC_NAME: foundItem.workcenterName,
+          DATETIME_SCHE: dateTimeManufacture.value ? dateTimeManufacture.value : dayjs().format('YYYY-MM-DD'),
+          ORG_NAME: foundItem.orgName,
+          BATCH_NO: foundItem.lotNo,
+          ...excItem,
+        };
+        printDatas.push(DataBase);
+      }
+
       // 多个对象则打印多页
       // printStockInData.value.push({
       //   variable: DataBase,
@@ -585,10 +678,17 @@ const onPrintStockIn = async () => {
       variable: printDatas,
       dataSource: printDatas,
     });
-    await apiMain.label.printBarcode({
-      ids: selectedStockIneRowKeys.value,
-      printTempId: printMode.value.printTempId,
-    });
+    if (barcodeType.value === 0) {
+      // 打印原材料条码
+      await apiMain.label.printBarcode({
+        ids: selectedStockIneRowKeys.value,
+        printTempId: printMode.value.printTempId,
+      });
+    } else {
+      // 打印配送卡条码
+      await apiMain.deliveryCard.printBarcode({ ids: selectedStockIneRowKeys.value });
+    }
+
     MessagePlugin.success('打印成功');
 
     selectedStockIneRowKeys.value = [];
@@ -758,17 +858,28 @@ const onRefreshManage = async () => {
 const onRefreshStockIn = async () => {
   try {
     loading.value = true;
-    await apiMain.label
-      .getStockInLabelList({
+
+    // 标签
+    if (barcodeType.value === 0) {
+      const data = await apiMain.label.getStockInLabelList({
         isMySelf: isMySelf.value,
         pageSize: pageUIStockIn.value.rows,
         pageNum: pageUIStockIn.value.page,
-      })
-      .then((data) => {
-        stockInDataList.list = data.list;
-        stockInTabTotal.value = data.total;
       });
-    selectedStockIneRowKeys.value = [];
+      stockInDataList.list = data.list;
+      stockInTabTotal.value = data.total;
+      selectedStockIneRowKeys.value = [];
+    } else {
+      // 配送卡
+      const data = await apiMain.label.getInventoryDeliveryCardList({
+        isMySelf: isMySelf.value,
+        pageSize: pageUIStockIn.value.rows,
+        pageNum: pageUIStockIn.value.page,
+      });
+      stockInDataList.list = data.list;
+      stockInTabTotal.value = data.total;
+      selectedStockIneRowKeys.value = [];
+    }
   } catch (e) {
     console.log(e);
   } finally {
@@ -777,18 +888,6 @@ const onRefreshStockIn = async () => {
 };
 const logNodeCode = ref(null);
 
-// 获取 条码规则 下拉数据
-const onBracodeRulesList = reactive({ list: [] });
-const onBracodeRulesData = async () => {
-  const res = await apiMain.label.getLabelBarcodeRuleList();
-  onBracodeRulesList.list = res;
-};
-// 获取 打印模板 下拉数据
-const onPrintTemplateList = reactive({ list: [] });
-const onPrintTemplateData = async () => {
-  const res = await apiMain.label.getLabelPrintTmplList();
-  onPrintTemplateList.list = res;
-};
 // 日志界面 表格数据
 const logInterface: PrimaryTableCol<TableRowData>[] = [
   {
@@ -1064,7 +1163,6 @@ onMounted(async () => {
   await onReprintSelextData(); // 获取补打原因列表
   await onsplitelextData(); // 获取拆分原因列表
   await onCancellationSelextData(); // 获取作废原因列表
-  await loadLotNoBarcodeRule(); // 获取大批次编码规则
 });
 </script>
 

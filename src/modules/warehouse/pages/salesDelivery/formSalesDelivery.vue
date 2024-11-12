@@ -246,7 +246,7 @@ const tableSalesDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.客户名称'), width: 120, colKey: 'customerName' },
   { title: t('salesDelivery.产品编码'), width: 120, colKey: 'mitemCode' },
   { title: t('salesDelivery.总需求数量'), width: 120, colKey: 'requireQty' },
-  { title: t('salesDelivery.已发货数量'), width: 120, colKey: 'deliveriedQty' },
+  { title: t('salesDelivery.已完成数量'), width: 120, colKey: 'deliveriedQty' },
   { title: t('salesDelivery.待发货数量'), width: 120, colKey: 'waitDeliveriedQty' },
   { title: t('salesDelivery.仓库'), width: 160, colKey: 'warehouseName' },
   // { title: '货区', width: 160, colKey: 'districtName' },
@@ -273,7 +273,7 @@ const tableSalesOrderColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.产品编码'), width: 120, colKey: 'mitemCode' },
   { title: t('salesDelivery.要求发货时间'), width: 120, colKey: 'datetimeDelivery' },
   { title: t('salesDelivery.要求发货数量'), width: 120, colKey: 'requireQty' },
-  { title: t('salesDelivery.已发货数量'), width: 120, colKey: 'deliveriedQty' },
+  { title: t('salesDelivery.已完成数量'), width: 120, colKey: 'deliveriedQty' },
   { title: t('salesDelivery.备注'), width: 120, colKey: 'memo' },
 ];
 
