@@ -2,6 +2,7 @@ export default {
   showFooter: false,
   isSidebarCompact: false,
   showBreadcrumb: false,
+  menuAutoCollapsed: false,
   mode: 'light',
   layout: 'mix',
   splitMenu: true,

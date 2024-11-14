@@ -4,7 +4,7 @@
       v-model="searchData"
       :options="flattenRouters"
       :class="['header-search', { 'hover-active': isSearchFocus }]"
-      :placeholder="$t('layout.searchPlaceholder')"
+      :placeholder="t('layout.searchPlaceholder')"
       @blur="changeSearchFocusDelay(false)"
       @focus="changeSearchFocus(true)"
       @enter="onEnterSearch"
@@ -30,7 +30,7 @@
       v-model="searchData"
       :options="flattenRouters"
       :class="['header-search', { 'width-zero': !isSearchFocus }]"
-      :placeholder="$t('layout.searchPlaceholder')"
+      :placeholder="t('layout.searchPlaceholder')"
       :autofocus="isSearchFocus"
       @blur="changeSearchFocusDelay(false)"
       @enter="onEnterSearch"
@@ -50,6 +50,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { RouteItem } from '@/api/model/permissionModel';
+import { t } from '@/locales';
 import { renderMenuTitle } from '@/router/locale';
 import { usePermissionStore } from '@/store';
 

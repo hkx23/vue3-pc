@@ -19,7 +19,7 @@
 
       <div v-else class="empty-list">
         <component :is="getEmpty()" />
-        <p>{{ $t('layout.notice.empty') }}</p>
+        <p>{{ t('layout.notice.empty') }}</p>
       </div>
     </div>
     <template #footer>

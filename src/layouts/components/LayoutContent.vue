@@ -182,6 +182,7 @@ const handleContextMenu = (routeItem, index, e: MouseEvent) => {
     theme: 'mac',
     x: e.x,
     y: e.y,
+    zIndex: 9999,
     items: [
       ...(index > 1
         ? [

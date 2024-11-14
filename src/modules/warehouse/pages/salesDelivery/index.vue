@@ -25,7 +25,7 @@
             <t-button theme="primary" @click="onClickAdd">
               {{ t('common.button.add') }}
             </t-button>
-            <t-popconfirm :content="$t('确认作废销售发货单？')" @confirm="onBatchCancelledClick">
+            <t-popconfirm :content="t('确认作废销售发货单？')" @confirm="onBatchCancelledClick">
               <t-button theme="default" :disabled="selectRowKeys?.length == 0">
                 {{ t('salesDelivery.cancel') }}
               </t-button>

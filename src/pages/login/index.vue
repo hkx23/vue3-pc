@@ -4,7 +4,7 @@
       <div class="logo"></div>
       <cmp-row>
         <cmp-card :md="6" :xs="0" :ghost="true" class="login-main-image">
-          <div class="slogan">{{ $t('pages.login.slogan') }}</div>
+          <div class="slogan">{{ t('pages.login.slogan') }}</div>
         </cmp-card>
         <cmp-card :md="6" :xs="12" :ghost="true">
           <t-space break-line size="5" class="toolbar">
@@ -28,7 +28,7 @@
           </t-space>
           <div class="login-container">
             <div class="title-container">
-              {{ $t('pages.login.loginTitle') }}
+              {{ t('pages.login.loginTitle') }}
             </div>
 
             <login v-if="type === 'login'" />
@@ -63,7 +63,7 @@ import { ref } from 'vue';
 import { api } from '@/api/main';
 import InternetIcon from '@/assets/assets-login-internet.svg?component';
 import TdesignSetting from '@/layouts/setting.vue';
-import { langList, langName } from '@/locales/index';
+import { langList, langName, t } from '@/locales';
 import { useLocale } from '@/locales/useLocale';
 
 import Login from './components/Login.vue';

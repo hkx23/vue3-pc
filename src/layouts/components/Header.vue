@@ -45,19 +45,19 @@
             <template #dropdown>
               <t-dropdown-menu>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="handleNav('/user/index')">
-                  <user-circle-icon />{{ $t('layout.header.user') }}
+                  <user-circle-icon />{{ t('layout.header.user') }}
                 </t-dropdown-item>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="onChangePassword">
-                  <user-password-icon />{{ $t('layout.header.changePassword') }}
+                  <user-password-icon />{{ t('layout.header.changePassword') }}
                 </t-dropdown-item>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="onClickConfigurationWorkbench">
-                  <edit2-icon />{{ $t('layout.header.configurationWorkbench') }}
+                  <edit2-icon />{{ t('layout.header.configurationWorkbench') }}
                 </t-dropdown-item>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="onClickToggleSettingPanel">
-                  <setting-icon />{{ $t('layout.header.themeSettings') }}
+                  <setting-icon />{{ t('layout.header.themeSettings') }}
                 </t-dropdown-item>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="handleLogout">
-                  <poweroff-icon />{{ $t('layout.header.signOut') }}
+                  <poweroff-icon />{{ t('layout.header.signOut') }}
                 </t-dropdown-item>
               </t-dropdown-menu>
             </template>
@@ -96,6 +96,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import LogoFull from '@/assets/assets-logo-full.svg?component';
 import { prefix } from '@/config/global';
+import { t } from '@/locales';
 import { langList } from '@/locales/index';
 import { useLocale } from '@/locales/useLocale';
 import ChangePasswordForm from '@/pages/login/components/ChangePasswordForm.vue';

@@ -142,7 +142,7 @@
               />
             </t-col>
             <t-col flex="1">
-              <t-button theme="primary" style="margin-left: 10px" @click="onSalesOrdeSearch">{{ $t('搜索') }}</t-button>
+              <t-button theme="primary" style="margin-left: 10px" @click="onSalesOrdeSearch">{{ t('搜索') }}</t-button>
             </t-col>
           </t-row>
         </cmp-card>

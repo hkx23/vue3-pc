@@ -11,9 +11,9 @@
       <t-form-item name="account">
         <div class="form-label">
           <username-icon class="icon"></username-icon>
-          {{ `${$t('pages.login.input.account')}` }}
+          {{ `${t('pages.login.input.account')}` }}
         </div>
-        <t-input v-model="formData.account" autofocus :placeholder="`${$t('pages.login.input.accountPlaceholder')}`">
+        <t-input v-model="formData.account" autofocus :placeholder="`${t('pages.login.input.accountPlaceholder')}`">
           <!-- <template #prefix-icon>
             <t-icon name="user" />
           </template> -->
@@ -23,13 +23,13 @@
       <t-form-item name="password">
         <div class="form-label">
           <password-icon class="icon"></password-icon>
-          {{ `${$t('pages.login.input.password')}` }}
+          {{ `${t('pages.login.input.password')}` }}
         </div>
         <t-input
           v-model="formData.password"
           :type="showPsw ? 'text' : 'password'"
           clearable
-          :placeholder="`${$t('pages.login.input.passwordPlaceholder')}`"
+          :placeholder="`${t('pages.login.input.passwordPlaceholder')}`"
         >
           <!-- <template #prefix-icon>
             <t-icon name="lock-on" />
@@ -41,13 +41,13 @@
       </t-form-item>
 
       <div class="check-container remember-pwd">
-        <!-- <t-checkbox>{{ $t('pages.login.remember') }}</t-checkbox> -->
-        <!-- <span class="tip">{{ $t('pages.login.forget') }}</span> -->
+        <!-- <t-checkbox>{{ t('pages.login.remember') }}</t-checkbox> -->
+        <!-- <span class="tip">{{ t('pages.login.forget') }}</span> -->
       </div>
     </template>
 
     <t-form-item v-if="type !== 'qrcode'" class="btn-container">
-      <t-button block type="submit"> {{ $t('pages.login.signIn') }} </t-button>
+      <t-button block type="submit"> {{ t('pages.login.signIn') }} </t-button>
     </t-form-item>
   </t-form>
 </template>
