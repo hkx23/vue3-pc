@@ -4,12 +4,12 @@
       <t-radio-group v-model="layoutValue" size="small" default-value="1" variant="primary-filled" class="layout-icon">
         <t-radio-button value="1" shape="circle" theme="primary">
           <template #default>
-            <t-icon name="view-list" size="medium" />
+            <t-icon name="view-list" size="small" />
           </template>
         </t-radio-button>
         <t-radio-button value="2">
           <template #default>
-            <t-icon name="view-list" size="medium" style="transform: rotate(90deg)" />
+            <t-icon name="view-list" size="small" style="transform: rotate(90deg)" />
           </template>
         </t-radio-button>
       </t-radio-group>
@@ -86,14 +86,18 @@ const getMenuList = (list: MenuRoute[], basePath?: string): ListItemType[] => {
 .vertical-wrapper {
   :deep .t-list__inner {
     display: flex;
-    flex-flow: column wrap;
-    width: max-content;
-    max-height: 740px;
+    flex-flow: row wrap;
+    width: 100%;
+    height: calc(100vh - 150px);
+    transform: scale(calc(100vh / var(--original-height)));
   }
 
   :deep .t-list-item {
     flex: 0 1 auto;
-    width: 160px;
+    width: 189px;
+    border-right: 1px solid #eeeef0;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 
   :deep .t-list-item__meta-description {
@@ -102,12 +106,24 @@ const getMenuList = (list: MenuRoute[], basePath?: string): ListItemType[] => {
     gap: 5px;
 
     > div {
-      padding: 5px 0;
+      width: 100%;
+      // padding: 5px 0;
+      height: var(--td-comp-size-m);
+      line-height: var(--td-comp-size-m);
+      cursor: pointer;
+
+      :hover {
+        color: var(--td-brand-color);
+      }
     }
   }
 }
 
 .inline-wrapper {
+  :deep .t-list-item {
+    padding: var(--td-comp-paddingTB-l) var(--td-comp-paddingLR-l);
+  }
+
   :deep .t-list-item__meta {
     width: 100%;
   }
@@ -130,6 +146,11 @@ const getMenuList = (list: MenuRoute[], basePath?: string): ListItemType[] => {
 
     > div {
       width: 145px;
+      cursor: pointer;
+
+      :hover {
+        color: var(--td-brand-color);
+      }
     }
   }
 }
@@ -143,6 +164,6 @@ const getMenuList = (list: MenuRoute[], basePath?: string): ListItemType[] => {
   position: absolute;
   right: 29px;
   top: 19px;
-  z-index: 9999;
+  z-index: 99;
 }
 </style>
