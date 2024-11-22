@@ -1,6 +1,7 @@
 <template>
   <!-- <router-view /> -->
   <div v-show="activeRouteIsNotIframe" class="component-wrapper">
+    <menu-tiling v-show="isFirstLevelroute" />
     <router-view v-slot="{ Component, route }">
       <!-- <transition name="fade"> -->
       <keep-alive>
@@ -25,13 +26,19 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import FramePage from '@/layouts/frame/index.vue';
+
 // import { useTabsRouterStore } from '@/store';
+import MenuTiling from './MenuTiling.vue';
 
 const router = useRouter();
 
 const activeRouteIsNotIframe = computed(() => {
   const { currentRoute } = router;
   return !currentRoute.value.meta.frameSrc;
+});
+const isFirstLevelroute = computed(() => {
+  const { currentRoute } = router;
+  return currentRoute.value.matched.length === 1;
 });
 
 // const aliveViews = computed(() => {
